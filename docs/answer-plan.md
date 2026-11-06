@@ -91,7 +91,7 @@ A later option, only if step 3 shows values being missed: index configuration ke
 The pilot met one target of four. It also changed what the plan assumed:
 
 - **Passages are longer than planned:** about 20 lines in total, not 15. On the earlier sets, this reached noticeably more of the gold.
-- **Adding the search rank as a third list made the biggest single difference** on the first set, from 12 to 17 of 31 in Turkish. The analysis above predates it.
+- **Adding the search rank as a third list, and letting neighbouring windows merge,** took the first set from 12 to 17 of 31 in Turkish. The analysis above predates both.
 - **Expecting the model to say "none" was wrong for 3B.** It never did, so refusals now rest on a mechanical rule.
 
 Half of the losses come before the model, and these are proposals, none of them approved or built:
