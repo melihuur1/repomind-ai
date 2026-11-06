@@ -1,0 +1,1397 @@
+{
+ "model": "qwen2.5:3b",
+ "base_url": "http://127.0.0.1:11535/v1",
+ "dataset_sha256": "0f5c03a4285eed71ba746516cfb7e95f10799deb2669ceee83ef77ccfdb6ae2d",
+ "summary": {
+  "answerable_questions": 31,
+  "answered": 28,
+  "answered_citing_gold": 21,
+  "gold_was_in_context": 24,
+  "refused_answerable": 3,
+  "invalid_responses": 0,
+  "unanswerable_questions": 6,
+  "unanswerable_refused": 1,
+  "citations_shown": 88,
+  "citations_rejected_by_backend": 26,
+  "input_tokens": 76302,
+  "output_tokens": 8200,
+  "cost_usd": 0.0,
+  "max_context_chars": 9910,
+  "mean_seconds": 43.0
+ },
+ "answerable_citations_rechecked_valid": 77,
+ "answerable_citations_shown": 77,
+ "answerable": [
+  {
+   "question": "sg-stock-consistency",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1538,
+   "output_tokens": 181,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4162,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 29.5,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "sg-reservation-cancel",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Rezervasyon iptali `ReservationService.cancel` metodunda yönetiliyor [S2]. Bu metod, `ReservationTransactions.cancel` metodu ile birlikte çalışır ve bu metod, hold edilen ürünlerin yeniden satılık durumuna dönüştürülmesini sağlar [S5].",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 92,
+     "end_line": 97
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 92,
+     "end_line": 100
+    }
+   ],
+   "rejected": [
+    "S2: lines 40-52 are outside the source range 92-97",
+    "S5: lines 116-124 are outside the source range 92-100"
+   ],
+   "warnings": [],
+   "input_tokens": 1899,
+   "output_tokens": 142,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6066,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 33.6,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sg-db-connection-error",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "PostgreSQL bağlantı hatası yakalanarak ele alınır [S1]. GlobalExceptionHandler sınıfındaki `isLostConnection` metodu, PostgreSQL SQLSTATE değeri ile eşleşen SQLException'ler için bir durumu belirler ve bu durumda bir bağlantı kaybı olduğunu belirtir. Eğer veri tabanı kapalı veya başka bir sorunla ilgili bir hata mesajı içeriyorsa, `isLostConnection` metodu bu durumu kabul eder [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 82,
+     "end_line": 95
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 29,
+     "end_line": 42
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2211,
+   "output_tokens": 172,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7647,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 41.1,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sg-user-permissions",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Kullanıcı yetkileri kontrolü `AuthController.register` metodunda gerçekleştirilir. Bu metot, `AuthService.AuthService` sınıfının içinde bulunur ve `AuthService.AuthService(AuthService.AuthService)` yapıcı fonksiyonunun bir parçasıdır [S5]. `AuthService.AuthService` sınıfı, `AppUserRepository`, `PasswordEncoder`, `AuthenticationManager`, `JwtTokenService`, ve `AuditTrail` gibi bağımlılıkların içinde bulunur. Bu sınıfların içinden, `SecurityConfig.authenticationManager(UserDetailsService users, PasswordEncoder encoder)` metodu oluşturulur ve bu metod, Spring Security'deki yetki yönetimi işlemlerini içerir [S7]. Ancak, verilen kaynaklar genellikle kullanıcı yetkilerinin nasıl kontrol edildiğının detaylarını açıklayan tam bir açıklama sağlayamaz. Kullanıcı yetkilere yönelik doğrulama ve kontrol işlemi genel olarak `AuthController.register` metodunda gerçekleştirilir.",
+   "citations": [
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 34,
+     "end_line": 45
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 108,
+     "end_line": 113
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1506,
+   "output_tokens": 277,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4548,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 36.0,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "sg-oversell",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Aynı anda gelen isteklerde fazla satışın önlenmesi, `ReservationRepository.settleIfPendingAndInTime` metodundan sağlanır. Bu metot, belirli bir idempotent key ve status 'PENDING' olan ve kapanma saati (expires_at) şu anki zamandan büyük olan bir rezervasyonun durumunu 'target' olarak güncellemek için güncelleme sorgusu gönderir [S1]. Eğer güncelleme sorgusu 0 döndüğünde, `ReservationTransactions.settle` metodu ile daha önce yapılan istek replay edilmesi gereken bir rezervasyonun durumunu değiştirir ve bu durumda hata fırlatılır [S4]. Bu süreçte, `StockLevelRepository.moveAvailableToReserved` metodunda da fazla satışı önlemeye yardımcı olur. Bu metot, belirli bir ürünün kalmış (available_quantity) ve kullanılmış (reserved_quantity) stokları güncellemek için güncelleme sorgusu gönderir [S2].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 54,
+     "end_line": 68
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 61
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 109,
+     "end_line": 114
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2282,
+   "output_tokens": 321,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7573,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 51.3,
+   "citations_recheck_valid": 3,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sg-idempotency",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Idempotency-Key ile tekrar eden rezervasyon istekleri ele alınıp kontrol edilir [S1]. Eğer aynı `Idempotency-Key` ve aynı istek bodyiyle tekrar istek gönderilirse, bu istekte bulunulan idempotent key, istek hash ve zaman dilimleri ile önceki isteğin ayrıntılarını kontrol eder. Eğer önceki istek ile eşleşiyorsa, yeni istek iptal edilir ve önceki istek sonuçları döndürülür [S2]. Ancak, eğer eşleşme bulunmazsa veya istek hatası oluşursa, yeni bir rezervasyon oluşturulur [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 43,
+     "end_line": 60
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 72,
+     "end_line": 80
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2323,
+   "output_tokens": 227,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7799,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 44.5,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sg-expiry",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Rezervasyonların süre dolan durumunda temizlenmesi, `ReservationExpiryService.expireDueBatch` metodundan başlar. Bu metot, `ReservationRepository.expireDue` metodunun sonucunu sıralar ve her bir rezervasyon için `StockLedger.releaseReserved` metodunu çağırarak temizleme işlemini gerçekleştirir [S3]. `ReservationExpiryService.expireDueBatch` metodunda kullanılan `ReservationRepository.expireDue` metod, `ReservationRepository.settleIfPendingAndInTime` metodunun sonucunu kullanır ve bu metod, `ReservationRepository.ExpiredReservation` arayüzündeki `ExpiredReservation` nesnelerini güncellemek için gerekli olan `status`, `settled_at` ve `id` değerlerini günceller [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 70,
+     "end_line": 90
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48
+    }
+   ],
+   "rejected": [
+    "S1: lines 54-68 are outside the source range 70-90",
+    "S3: lines 11-20 are outside the source range 14-48"
+   ],
+   "warnings": [],
+   "input_tokens": 2437,
+   "output_tokens": 245,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 8888,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 49.3,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sg-retry",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "A deadlock or lock timeout causes a transaction to be rolled back [S1]. The service then retries the operation with the same request parameters, including the Idempotency-Key, which is safe because it ensures that only one logical operation occurs for each unique set of parameters [S5-S6]. This retry mechanism does not re-execute failed operations but instead allows the system to handle transient database failures by returning a 503 Service Unavailable response with a Retry-After header indicating how long to wait before retrying, ensuring that no new reservations are created during this period [S4-S7].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 25
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 47
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 29,
+     "end_line": 52
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/reservation/CreateReservationCommand.java",
+     "start_line": 9,
+     "end_line": 26
+    }
+   ],
+   "rejected": [
+    "S5: lines 39-48 are outside the source range 43-60"
+   ],
+   "warnings": [],
+   "input_tokens": 2697,
+   "output_tokens": 265,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 9910,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 56.4,
+   "citations_recheck_valid": 4,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sg-lock-order",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Reservation transactions use a fixed lock order where the reservation row is locked first and then the stock row, ensuring that these transactions cannot deadlock against each other [S1]. This order prevents potential deadlocks by always holding the reservation row lock before the stock row lock, thus preventing any interleaving of operations between different transaction units [S2].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 17,
+     "end_line": 30
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 25
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2237,
+   "output_tokens": 131,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7937,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 39.6,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sg-jwt",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "JWT (JSON Web Token) oluşturulması ve imzalanması şu şekilde gerçekleşir: İlk olarak, `JwtTokenService.issue` metodundan bir JWT claims seti oluşturulur. Bu claims seti, kullanıcının userId, username ve rol bilgilerini içerir [S3]. Sonra, bu claims seti `JwtEncoder.encode` metoduna geçirilerek bir JWT değeri oluşturulur [S4]. Bu değere `JwtDecoder.decode` metodunun imzalandırılmasıyla imza eklenecektir. Bu imza, `SecurityConfig.jwtAuthenticationConverter` metodunda JwtGrantedAuthoritiesConverter sınıfının JwtValidator ile karşılaştırılır ve doğru bir JwtGrantedAuthoritiesConverter elde edilir [S2]. Son olarak, `JwtEncoder.encode` metodunun sonucu, `SecurityConfig.jwtDecoder` metodundan bir JwtDecoder ile doğrulanır ve imza doğrulanır [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 89,
+     "end_line": 96
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 75,
+     "end_line": 82
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 15,
+     "end_line": 47
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 84,
+     "end_line": 87
+    }
+   ],
+   "rejected": [
+    "S1: lines 7-9 are outside the source range 89-96"
+   ],
+   "warnings": [],
+   "input_tokens": 1762,
+   "output_tokens": 306,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5495,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 39.9,
+   "citations_recheck_valid": 4,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sg-password",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Şifreler BCrypt hashleniyor ve 72 bayt sınırı için kullanılan. Şifre uzunluğu 72 baytdan büyükse, bir ApiException oluşturulur [S1]. Bunun nedeni şifrenin uzunluğu 72 bayta sınırlıdır ve daha uzun parolaların hashlenmesi, bu durumda şifre doğrulanırken zayıflandırılabilir olabileceğinden [S2] ve diğer işlemlerle karışık olabilir. Şifrenin uzunluğu 72 bayt içinde tutulur çünkü daha uzun parolaların hashlenmesi, şifre doğrulanırken zayıflanabilir olabilecek bir durumda [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 22,
+     "end_line": 32
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 85,
+     "end_line": 89
+    }
+   ],
+   "rejected": [
+    "S1: lines 8-20 are outside the source range 22-32",
+    "S2: lines 45-63 are outside the source range 85-89"
+   ],
+   "warnings": [],
+   "input_tokens": 1908,
+   "output_tokens": 238,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5909,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 41.0,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sg-audit",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Denetim kayıtları iş işlemiyle aynı transaction içinde yazılıyor [S2]. Bu, `ConsistencyService` sınıfının metodlarında belirtiliyor. Özellikle, `ConsistencyService` sınıfında `REPEATABLE READ` veri okumasını sağlar ve bu durumda bir in-and-out işlemi gerçekleşir: bir işlevin tamamlandığı veya iptal edildiği anlamlı olarak görünür olur [S2].",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 11,
+     "end_line": 22
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 108,
+     "end_line": 116
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1877,
+   "output_tokens": 165,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5883,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 36.8,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "sg-stale-version",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Eski sürüme dayanan değişiklikler reddediliyor `ProductService.update` metodunda. Bu metot, güncellemelerin eski verilere dayandığını kontrol eder ve bu durumda güncelleme işlemi iptal edilir [S1]. Eğer ürünün sürümü güncellenmemişse (yani eski sürümle eşleşmese), güncelleme işlemi devam eder ve yeni sürümü kaydeder. Ancak, sürümü güncellediğinde eski sürümü korumak için `StockLevelRepository.removeReserved` ve `StockLevelRepository.moveReservedToAvailable` metodları kullanılır [S7 ve S8]. Bu metodlar, hold edilen ürünlerin varlığından çıkarılmasını ve yeni ürünün kullanılabilir hale getirilmesini sağlar [S5].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 39,
+     "end_line": 42
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 57,
+     "end_line": 63
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 76,
+     "end_line": 87
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1955,
+   "output_tokens": 273,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6946,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 42.1,
+   "citations_recheck_valid": 4,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sg-invariants",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Stok değişmezleri doğrulanma süreçi, `ConsistencyService` sınıfında gerçekleştirilmektedir. Bu sınıfın `recomputeInvariants` yöntemini çağırarak raw tabloları temel alan invaransları yeniden hesaplar ve bu işlem, testler, simülasyon ve yönetim uç noktalarının güvenilirliğini sağlar [S1]. Bu, REPEATABLE READ anlama getirildiğinde her kuralın aynı çekim alır, böylece bir rapor doğru kalıbaki yazmaya devam ederken yazmalar devam eder. Bir in-flight transaksiyonun tamamen görünürlüğü veya görünmüyüşü tamamen görünürlükten bağımsızdır [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 11,
+     "end_line": 22
+    }
+   ],
+   "rejected": [
+    "S1: lines 2-35 are outside the source range 11-22",
+    "S1: lines 79-96 are outside the source range 11-22"
+   ],
+   "warnings": [],
+   "input_tokens": 2129,
+   "output_tokens": 232,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6921,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 44.2,
+   "citations_recheck_valid": 1,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sg-simulation-race",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "SimulationService.run() initializes and starts all concurrent requests by creating a unique runId, initializing the product with this ID, and then calling SimulationService.race() to execute these requests simultaneously. The race method uses CountDownLatch to synchronize tasks so that they overlap in time [S3]. Each request is handled by SimulationService.reserve(), which sends an authenticated HTTP POST request to reserve resources on a target system [S2]. This ensures that all requests are processed concurrently without any task being interrupted, thus simulating real-time behavior.",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 90,
+     "end_line": 107
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 157,
+     "end_line": 169
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 118,
+     "end_line": 145
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 108,
+     "end_line": 116
+    }
+   ],
+   "rejected": [
+    "S3: lines 158-169 are outside the source range 118-145",
+    "S2: lines 40-65 are outside the source range 157-169"
+   ],
+   "warnings": [],
+   "input_tokens": 2323,
+   "output_tokens": 219,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 8363,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 47.4,
+   "citations_recheck_valid": 4,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sg-first-admin",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "İlk yönetici hesabı oluşturulma prosedürü `AdminSeeder` sınıfında tanımlanmıştır. Bu sınıfın `run` metodu, `ApplicationArguments` argümanının içindeki `args` değişkenine atanmış bir `ApplicationRunner` implementasyonu kullanır [S1]. Eğer yapılandırma dosyasıda yönetici hesabının ad ve şifresi belirtilmemişse, log filtrelerini aktifleştirir ve işlemi durdurur [S1]. AdminSeeder sınıfında tanımlanan `auth.seedAdmin(admin.username(), admin.password())` metodu, veritabanına ilk yönetici hesabı ekler [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/user/AdminSeeder.java",
+     "start_line": 24,
+     "end_line": 30
+    }
+   ],
+   "rejected": [
+    "S1: lines 56-70 are outside the source range 11-33"
+   ],
+   "warnings": [],
+   "input_tokens": 1848,
+   "output_tokens": 203,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6142,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 34.9,
+   "citations_recheck_valid": 1,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sn-realtime",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "SyncNotes gerçek zamanlı düzenlemeyi yaparken, Y.Doc nesnesi ile bir IndexeddbPersistence nesnesi oluşturur [S1]. Bu süreçte, kullanıcıların yazma yetkisi değiştiğinde replica (yani veriyi tutan kopya) yeniden oluşturulur ve yeni bir role sahip editorler için yaratılır. Yeni token oluşturulur ve bu durumda WebSocketProvider ile WebSocket bağlantısı yapılır [S2]. Bu süreç, kullanıcıların düzenlemelerini server'a gönderirken, bu düzenlemelerin yerel kayıtlarda saklanması sağlanır [S3]. Eğer bağlantı kesilirse, kullanıcıların düzenlemeleri yerel kayıtlardan sonra birleştirilecektir ve bu durumda 'Offline' durumu ile ilgili durum belirtildiği gibi gösterilir [S8].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109
+    },
+    {
+     "source": "S2",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 36,
+     "end_line": 71
+    },
+    {
+     "source": "S3",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 141,
+     "end_line": 177
+    },
+    {
+     "source": "S8",
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 28,
+     "end_line": 56
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 3081,
+   "output_tokens": 301,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 9909,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 68.4,
+   "citations_recheck_valid": 4,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sn-user-permissions",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1348,
+   "output_tokens": 23,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 3292,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 17.6,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "sn-revocation",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "A user's access to an open WebSocket session is closed by every collaboration server instance when the note owner (userId) is removed [S2]. This action is triggered in `MembersService.remove` method, which publishes membership changes to Redis pub/sub channel 'syncnotes:access-events' [S3]. The change is enforced on live connections immediately, leading to a WebSocket close event with reason 'access-revoked' [S5] and the user's connection phase collapses from 'synced' to 'reconnecting' [S7].",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 9,
+     "end_line": 21
+    },
+    {
+     "source": "S3",
+     "path": "packages/shared/src/access-events.ts",
+     "start_line": 3,
+     "end_line": 8
+    },
+    {
+     "source": "S5",
+     "path": "packages/shared/src/collab.ts",
+     "start_line": 25,
+     "end_line": 29
+    },
+    {
+     "source": "S7",
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 10,
+     "end_line": 20
+    }
+   ],
+   "rejected": [
+    "S5: lines 46-60 are outside the source range 25-29"
+   ],
+   "warnings": [],
+   "input_tokens": 1786,
+   "output_tokens": 227,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5141,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 37.7,
+   "citations_recheck_valid": 4,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "sn-lost-updates",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Güncelleme güncellemeleri kaybolması için önlemler, sunucu tarafından yürütülen hizmetler ve uzantılar kullanılarak gerçekleştirilmiştir. Sunucu, notun sürüm hissi oluştururken, değişiklikleri bir Y.Doc üzerinde oluşturur ve yeniden oluşturur [S7]. API, bu sürümlemeleri listeler ve client tarafından okunabilir önizleme için binary durumu sunar [S6]. Bu süreçte, notun sahibinin rolünün değiştirilebilir olmadığı belirlenir ve bu durumda hata yayınlanır [S8]. Ayrıca, API'nin bir üyelik güncelleme işlemi yapması durumunda, bu işlemi sunucu tarafından yayınlanan 'member.updated' etkinlikle işlenir [S8], böylece diğer sunucuların live sesleri yeniden başlatılmadan değiştirilebilir [S8].",
+   "citations": [
+    {
+     "source": "S6",
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 113,
+     "end_line": 144
+    },
+    {
+     "source": "S7",
+     "path": "apps/api/src/notes/versions.service.ts",
+     "start_line": 6,
+     "end_line": 12
+    },
+    {
+     "source": "S8",
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 70,
+     "end_line": 89
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2352,
+   "output_tokens": 301,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7223,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 52.3,
+   "citations_recheck_valid": 3,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "sn-redis-outage",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Redis kesildiğinde, işbirliği sunucusu Redis pub/sub kanalını kullanarak API'nin değişikliklerini dinleyen ve uygun şekilde etkinleştirilen AccessEventsPublisher sınıfının `publish` yöntemini çağırır [S2]. Bu, Redis bağlantısı kesildiğinde API'nin hangi kanallara erişmesi gerektiğini belirler ve bu kanalları kullanarak tüm sunucuların değişikliklerini takip eder [S5]. Ayrıca, `ResilientRedisExtension` sınıfının `onClientStatusChange` yöntemini çağırır ve Redis bağlantısı durumu değiştiğinde bu durumun işbirliği sunucusuna bildirildiğini belirtir [S7]. Bu, Redis bağlantısı kesildiğinde veya yeniden bağlanıldığında, Redis bağlantısı durumu etkileşimde olup olmadığını kontrol eder ve uygun şekilde etkinleştirilen Extension'lerin (örneğin, `DegradedReconcilerExtension` ve `AccessControlExtension`) işlevselliğini değiştirir [S3] ve [S4].",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 9,
+     "end_line": 21
+    },
+    {
+     "source": "S3",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 32,
+     "end_line": 52
+    },
+    {
+     "source": "S4",
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 19,
+     "end_line": 37
+    },
+    {
+     "source": "S5",
+     "path": "packages/shared/src/access-events.ts",
+     "start_line": 3,
+     "end_line": 8
+    },
+    {
+     "source": "S7",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 54,
+     "end_line": 75
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2398,
+   "output_tokens": 340,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7609,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 56.5,
+   "citations_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sn-offline",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2341,
+   "output_tokens": 21,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7011,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 35.7,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "sn-ticket",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Collaboration WebSocket bağlantısı için kimlik doğrulama bileti oluşturulur ve doğrulanırken, `NotesController.ticket` fonksiyonu kullanılarak API tarafından oluşturulan bir short-lived ticket (gözlemci tescilli) verilir [S3]. Bu bileti doğrula `verifyTicket` fonksiyonu ile. Bu fonksiyon, belirlenen token ve belirli bir secret key ile jwt.verify() fonksiyonunu kullanır ve HS256 algoritmasıyla şifrelenen bir JWT payloadi döndürür [S1]. Daha sonra, claims dizisi oluşturulur ve sub (kullanıcı ID), nid (notun adı) ve name (görünüm adı) gibi bilgiler içerir [S4]. Bu claims dizisi doğrulanırken `verifyTicket` fonksiyonu kullanılır. Eğer claimlerin biri eksik veya geçersizse, TicketError hata oluşturulur ve kullanıcıya gösterilir [S1]. Eğer claimler doğruysa, `AccessControlExtension.onAuthenticate` fonksiyonu ile API tarafından sağlanan rol bilgisi doğrulanır. Bu fonksiyon, belirlenen token, notun adı ve bağlantı yapılandırma bilgileri kullanılarak, belirli bir rol (gözlemci veya yazıcı) belirtir [S5]. Eğer rol yanlışsa, `CollabAccessError` hata oluşturulur ve kullanıcıya gösterilir. Eğer rol doğruysa, `HocuspocusProvider` fonksiyonu ile WebSocket bağlantısı oluşturulur ve her zaman yeni bir short-lived token verilir [S6], bağlantı durumu değişikliklerini takip eder ve belirlenen roldeki yazıcılık veya gözlemci statusunu günceller [S7].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/collab/src/ticket.ts",
+     "start_line": 10,
+     "end_line": 40
+    },
+    {
+     "source": "S3",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 92,
+     "end_line": 102
+    },
+    {
+     "source": "S4",
+     "path": "packages/shared/src/collab.ts",
+     "start_line": 7,
+     "end_line": 15
+    },
+    {
+     "source": "S5",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 124,
+     "end_line": 147
+    },
+    {
+     "source": "S6",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 141,
+     "end_line": 177
+    },
+    {
+     "source": "S7",
+     "path": "apps/web/src/lib/config.ts",
+     "start_line": 1,
+     "end_line": 7
+    }
+   ],
+   "rejected": [
+    "S1: lines 40-52 are outside the source range 10-40"
+   ],
+   "warnings": [],
+   "input_tokens": 2206,
+   "output_tokens": 576,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6468,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 69.5,
+   "citations_recheck_valid": 6,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sn-refresh-reuse",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "A refresh token'ın yeniden kullanılması tespit edilirken, `AuthService.refresh` fonksiyonu kullanılır [S4]. Bu fonksiyon, verilen bir refresh tokenin hash'sini kontrol eder ve eğer bu hash'in daha önce kullanılan bir tokenin hash'idirse, 'Refresh token already rotated' hata mesajı ile bir UnauthorizedException oluşturur [S1] [S2]. Bu durumda, `AuthService.refresh` fonksiyonu, verilen refresh tokenun yeniden kullanılmasını engellemek için atomic bir işlemi gerçekleştirmektedir [S4].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 116,
+     "end_line": 150
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 34,
+     "end_line": 40
+    },
+    {
+     "source": "S4",
+     "path": "apps/api/src/auth/token.service.ts",
+     "start_line": 16,
+     "end_line": 37
+    }
+   ],
+   "rejected": [
+    "S1: lines 34-50 are outside the source range 116-150",
+    "S2: lines 16-28 are outside the source range 34-40",
+    "S4: lines 72-90 are outside the source range 16-37"
+   ],
+   "warnings": [],
+   "input_tokens": 1967,
+   "output_tokens": 222,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5475,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 41.9,
+   "citations_recheck_valid": 3,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sn-csrf",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "CSRF koruması uygulanır şekilde, her state-changing istekte Double-submit-cookie CSRF koruması uygulanır [S1]. Bu, SameSite cookies ve e-posta erişim listesi ile birleştirilerek, kullanıcıya auth cookie üzerinden gizli bir istekte yürüyüşe neden olan cross-site istekleri engelleyebilir..csrfTokensMatch fonksiyonu, cookie değerini ve HTTP başlığındaki CSRF token değerlerinin eşleşip eşleşmediğini kontrol eder [S7]. Eğer eşleşirse, csrfGuard sınıfının canActivate metodunda csrfTokensMatch fonksiyonunu çağırarak CSRF token eşleşmesi durumuna göre bir ForbiddenException hatası fırlatılır [S1].csrfToken fonksiyonu, cookie veya HTTP başlığındaki CSRF token değerlerini okur ve eğer her ikisi de mevcutsa, decodeURIComponent ile kodlanmış değer döner [S6].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 20,
+     "end_line": 32
+    },
+    {
+     "source": "S6",
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 45,
+     "end_line": 53
+    },
+    {
+     "source": "S7",
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 8,
+     "end_line": 12
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1535,
+   "output_tokens": 297,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 3641,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 39.3,
+   "citations_recheck_valid": 3,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sn-password",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Şifreler hashlenmek için `apps/api/src/auth/token.service.ts`'deki `sha256` fonksiyonu kullanılır. Bu fonksiyon, verilen değeri sha256 algoritmasıyla şifreler [S4]. Kullanıcı girişinde kullanıcı tahmini güvenliği için `apps/collab/src/extensions/access-control.ts`'deki `AccessControlExtension` sınıfı kullanılır. Bu sınıf, oturum açma ve üyelik olaylarını doğrularken kullanıcı rolünü kontrol eder ve revokasyonun uygulanmasını sağlar [S3].",
+   "citations": [
+    {
+     "source": "S3",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 46,
+     "end_line": 60
+    },
+    {
+     "source": "S4",
+     "path": "apps/api/src/auth/token.service.ts",
+     "start_line": 7,
+     "end_line": 9
+    }
+   ],
+   "rejected": [
+    "S3: lines 24-32 are outside the source range 46-60"
+   ],
+   "warnings": [],
+   "input_tokens": 1438,
+   "output_tokens": 199,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 3291,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 30.2,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "sn-version-restore",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Not eski sürümü restore işlemi `VersionService.restore` fonksiyonu ile gerçekleştirilir. Bu fonksiyon, belirli bir notun ve sürümün id'sine göre önceki sürümünü alır [S1]. Sonraki adımlarda, sürümün içeriği live dosyaya kaydedilir ve yeni bir snapshot oluşturulur [S2]. Bu restore işlemi, önceki sürümü yeniden oluşturmak için kullanılır. Ancak, bu restore işlemi eski sürümü geri yüklemek için gerekli değildir, çünkü notun eski sürümlerini kontrol etmek için `VersionsService.list` ve `VersionsService.get` fonksiyonları kullanılabilir [S2].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 46,
+     "end_line": 52
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/notes/versions.service.ts",
+     "start_line": 15,
+     "end_line": 30
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2608,
+   "output_tokens": 226,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 8060,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 55.2,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sn-auto-version",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Otomatik sürümler oluşturulması ve eski sürümlerin temizlenmesi, `PersistenceExtension.maybeAutoVersion` fonksiyonu tarafından gerçekleştirilir. Bu fonksiyon, belirlenen bir süre içinde (config.COLLAB_ENV_SCHEMA.AUTO_VERSION_INTERVAL_MINUTES) belirli bir not üzerinde düzenlemelerin kaydedilmesini sağlar ve bu sürümleri `VersionService.pruneAuto` fonksiyonu ile eski sürümlerden siler [S3, S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 66,
+     "end_line": 76
+    },
+    {
+     "source": "S3",
+     "path": "apps/collab/src/extensions/persistence.ts",
+     "start_line": 103,
+     "end_line": 127
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2725,
+   "output_tokens": 186,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 8717,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 54.8,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sn-presence",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Notta bulunan diğer kullanıcılar gösterilmek için `MembersController.list` metodu kullanılır. Bu metod, belirli bir nottan bağımlı olan tüm kullanıcıları listeler [S4].",
+   "citations": [
+    {
+     "source": "S4",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 105,
+     "end_line": 142
+    }
+   ],
+   "rejected": [
+    "S4: lines 58-62 are outside the source range 105-142"
+   ],
+   "warnings": [],
+   "input_tokens": 1835,
+   "output_tokens": 90,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4563,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 30.7,
+   "citations_recheck_valid": 1,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "sn-viewer-readonly",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Görüntüleyici rolünde düzenleme yapma engeli Viewers rolündeki kullanıcılara uygulanır. Bu, `useCollaboration` fonksiyonunun `IndexeddbPersistence` nesnesinin oluşturulması durumuna bağlı olarak yapılır [S1]. Eğer role 'VIEWER' olan bir kullanıcı düzenlemeyi yapmayı denemesi durumunda, bu kullanıcının düzenlemelerini tutamaz ve bu düzenleme engelleyici bir işlem uygulanır. Bu işlem, `AccessControlExtension.applyRole` fonksiyonunun çağrılmasıyla gerçekleştirilir [S8]. Bu fonksiyon, verilen role 'VIEWER' olan bir kullanıcı için okuma sertifikasını değiştirir ve bu değişiklik, tüm bağlantılar üzerinde uygulanır [S8].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109
+    },
+    {
+     "source": "S8",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 209,
+     "end_line": 217
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1779,
+   "output_tokens": 246,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4751,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 40.3,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "sn-session-refresh",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Frontend süresi dolan oturumu yenileme işlemi, `AuthProvider.logout` fonksiyonunun çalışmasıyla gerçekleştirilir. Bu fonksiyon, oturumun son kullanıcının tokenını kaldırır ve oturumun son kullanıcısına ait bir familyId ile yeni bir oturum açma işlemini başlatır [S1]. Yeni oturumu oluşturmak için `AuthService.startSession` fonksiyonu çalıştırılır, bu fonksiyon, oturumun tokenları (giriş ve çıkış) oluşturur [S7]. Oturumun son kullanıcısının tokeninin geçerlilik süresi dolanmadığından emin olmak için `AuthService.refresh` fonksiyonu çalıştırılır. Bu fonksiyon, oturumu yenilemek için bir refresh token kullanır ve oturumun son kullanıcısıyla ilişkili bir familyId ile yeni bir oturum açma işlemi başlatır [S6].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/providers/auth.tsx",
+     "start_line": 40,
+     "end_line": 52
+    },
+    {
+     "source": "S6",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 116,
+     "end_line": 150
+    },
+    {
+     "source": "S7",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 206,
+     "end_line": 228
+    }
+   ],
+   "rejected": [
+    "S7: lines 113-150 are outside the source range 206-228"
+   ],
+   "warnings": [],
+   "input_tokens": 2446,
+   "output_tokens": 320,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7893,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 59.5,
+   "citations_recheck_valid": 3,
+   "cites_gold": false,
+   "gold_in_context": false
+  }
+ ],
+ "unanswerable": [
+  {
+   "question": "sg-neg-kafka",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "StockGuard Kafka mesajlarını tüketmek için `JwtTokenService` sınıfının `issue` metodu kullanılır. Bu metod, JWT (JSON Web Token) oluşturur ve bu token, `JwtDecoder` sınıfı tarafından doğrulanır. `JwtDecoder` sınıfında, `SecurityConfig.java` dosyasındaki `jwtDecoder` ve `signingKey` yöntemleri ile kullanılan JWT secret key'yi kullanır. Ayrıca, `StockGuardProperties` sınıfından alınan yapılandırma bilgileri de kullanılır [S6, S7, S8].",
+   "citations": [
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 98,
+     "end_line": 101
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 64,
+     "end_line": 65
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 15,
+     "end_line": 47
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1878,
+   "output_tokens": 158,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6122,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 37.2,
+   "refused": false
+  },
+  {
+   "question": "sg-neg-stripe",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1564,
+   "output_tokens": 83,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4698,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 27.2,
+   "refused": true
+  },
+  {
+   "question": "sg-neg-email",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Reservation onay e-postası gönderilmek için `ReservationController.confirm` metodundan yararlanılır. Bu metot, `ReservationService.reservations.confirm` fonksiyonunu çağırır ve bu fonksiyon, `ConsistencyService` sınıfında belirtilen SQL sorgusunu kullanarak veritabanından onay durumunu kontrol eder [S1]. Eğer rezervasyonun statusu 'CONFIRMED' ise, `ReservationController.ReservationResponse.from(reservations.confirm(Actor.from(jwt), id))` metodu, onay e-postası oluşturur ve bu e-posta veritabanına gönderilir [S2].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 85,
+     "end_line": 90
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 39,
+     "end_line": 41
+    }
+   ],
+   "rejected": [
+    "S1: lines 79-96 are outside the source range 85-90",
+    "S2: lines 85-90 are outside the source range 39-41"
+   ],
+   "warnings": [],
+   "input_tokens": 1776,
+   "output_tokens": 208,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5591,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 39.8,
+   "refused": false
+  },
+  {
+   "question": "sn-neg-graphql",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "GraphQL şeması tanımlı `apps/collab/src/schema.graphql` dosyasında [S5]. Bu dosya, SyncNotes uygulamasının GraphQL API'nin nasıl çalışacağını açıklar ve notların nasıl sorgulanacağını belirtir.",
+   "citations": [
+    {
+     "source": "S5",
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 28,
+     "end_line": 56
+    }
+   ],
+   "rejected": [
+    "S5: lines 17-28 are outside the source range 28-56"
+   ],
+   "warnings": [],
+   "input_tokens": 2421,
+   "output_tokens": 101,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7197,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 44.7,
+   "refused": false
+  },
+  {
+   "question": "sn-neg-2fa",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "İki faktörlü doğrulama, `apps/web/src/pages/auth-pages.tsx` dosyasındaki `RegisterPage` komponentinde gerçekleştirilir. Kullanıcı adı ve e-posta bilgileri ile birlikte şifrelenmiş bir parola hash'ini kontrol eder [S2]. Eğer doğru bir doğrulama bulunursa, kullanıcıya bir tane oluşturulan account oluşturulur [S6]. Bu süreç, argon2id hashing kullanarak gerçek bir parolayı hash'ler ve bu hash'i verilen e-posta ile karşılaştırır [S6].",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 198,
+     "end_line": 242
+    },
+    {
+     "source": "S6",
+     "path": "apps/api/src/auth/password.service.ts",
+     "start_line": 4,
+     "end_line": 38
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2287,
+   "output_tokens": 202,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6997,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 47.9,
+   "refused": false
+  },
+  {
+   "question": "sn-neg-s3",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Not ekleri S3'e yüklenmek için, `NotesService` sınıfının oluşturucusunda `MembershipWithNote` türü kullanılarak notun sahibi olan üyelerin rolü kontrol edilir [S7]. Bu tür, `MembersService` üzerinden üyelerin notu sahip olup olmadığını belirler ve `FoldersService` üzerinden notun hangi klasöre ait olduğunu de belirler [S2]. Notun sahibi olan üyelerin rolü doğrulanarak, notun S3'e yüklenmesi sağlanır. Bu işlem genellikle bir API çağrısı olarak gerçekleştirilir ve notun verilerinin Redis deposuna yüklenmesi durumunda, `ResilientRedis` sınıfı tarafından yönetilen bir depolama sistemi kullanılarak notun verileri Redis deposuna yüklenir [S4].",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 123,
+     "end_line": 138
+    },
+    {
+     "source": "S4",
+     "path": "apps/api/src/common/decorators.ts",
+     "start_line": 14,
+     "end_line": 14
+    },
+    {
+     "source": "S7",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 26,
+     "end_line": 28
+    }
+   ],
+   "rejected": [
+    "S7: lines 26-52 are outside the source range 26-28",
+    "S2: lines 11-16 are outside the source range 123-138"
+   ],
+   "warnings": [],
+   "input_tokens": 1599,
+   "output_tokens": 276,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 3951,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 36.0,
+   "refused": false
+  }
+ ]
+}

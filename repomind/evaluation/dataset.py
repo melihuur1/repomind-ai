@@ -12,6 +12,7 @@ from repomind.config import PROJECT_ROOT, get_setting
 from repomind.errors import RepoMindError
 
 DEFAULT_DATASET_PATH = PROJECT_ROOT / "eval" / "questions.yaml"
+HOLDOUT_UNANSWERABLE_PATH = PROJECT_ROOT / "eval" / "unanswerable_holdout.yaml"
 
 # One question in three is available for tuning; the rest stay held out.
 DEV_SHARE = 3
@@ -84,6 +85,23 @@ def split_of(question_id: str, questions: tuple[Question, ...]) -> str:
     return "dev" if ordered.index(question_id) % DEV_SHARE == 0 else "test"
 
 
+def _unanswerable_questions(raw: dict) -> tuple[UnanswerableQuestion, ...]:
+    return tuple(
+        UnanswerableQuestion(
+            id=entry["id"],
+            repo=entry["repo"],
+            tr=entry["tr"],
+            en=entry["en"],
+            absent_terms=tuple(entry["absent_terms"]),
+        )
+        for entry in raw["unanswerable"]
+    )
+
+
+def load_holdout_unanswerable(path: Path | str = HOLDOUT_UNANSWERABLE_PATH) -> tuple[UnanswerableQuestion, ...]:
+    return _unanswerable_questions(yaml.safe_load(Path(path).read_bytes()))
+
+
 def load_dataset(path: Path | str = DEFAULT_DATASET_PATH) -> Dataset:
     path = Path(path)
     try:
@@ -106,16 +124,7 @@ def load_dataset(path: Path | str = DEFAULT_DATASET_PATH) -> Dataset:
         )
         for entry in raw["questions"]
     )
-    unanswerable = tuple(
-        UnanswerableQuestion(
-            id=entry["id"],
-            repo=entry["repo"],
-            tr=entry["tr"],
-            en=entry["en"],
-            absent_terms=tuple(entry["absent_terms"]),
-        )
-        for entry in raw["unanswerable"]
-    )
+    unanswerable = _unanswerable_questions(raw)
     identifiers = [q.id for q in questions] + [q.id for q in unanswerable]
     if len(identifiers) != len(set(identifiers)):
         raise RepoMindError("Evaluation set contains duplicate question ids.")

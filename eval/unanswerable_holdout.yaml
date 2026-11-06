@@ -1,0 +1,58 @@
+# Fresh unanswerable questions, committed before the sufficiency check was implemented.
+#
+# The check was designed while looking at the six unanswerable questions in
+# questions.yaml, so those can no longer measure it fairly. These can. Some name a
+# technology and some deliberately do not, because a check based on unknown terms
+# should find the second kind harder.
+#
+# Every absent term is verified by tests/test_gold_labels.py at the pinned commits.
+
+unanswerable:
+  - id: sg-new-excel
+    repo: stockguard
+    tr: StockGuard raporları Excel'e nasıl aktarıyor?
+    en: How does StockGuard export reports to Excel?
+    absent_terms: [excel, xlsx]
+
+  - id: sg-new-images
+    repo: stockguard
+    tr: Ürün görselleri nasıl saklanıyor?
+    en: How are product images stored?
+    # Not plain "image": test code mentions Docker images, which is unrelated.
+    absent_terms: [thumbnail, productImage, imageUrl, image_url]
+
+  - id: sg-new-refunds
+    repo: stockguard
+    tr: Müşteri iadeleri nasıl işleniyor?
+    en: How are customer refunds processed?
+    absent_terms: [refund, refunds, customer_id]
+
+  - id: sg-new-redis
+    repo: stockguard
+    tr: StockGuard'da Redis önbelleği nerede yapılandırılıyor?
+    en: Where is the Redis cache configured in StockGuard?
+    absent_terms: [redis]
+
+  - id: sn-new-elasticsearch
+    repo: syncnotes
+    tr: Notların Elasticsearch ile indekslenmesi nasıl çalışıyor?
+    en: How does Elasticsearch indexing of notes work?
+    absent_terms: [elasticsearch]
+
+  - id: sn-new-forgot-password
+    repo: syncnotes
+    tr: Kullanıcılar unuttukları şifreyi nasıl sıfırlıyor?
+    en: How do users reset a forgotten password?
+    absent_terms: [forgot, forgotten, resetPassword]
+
+  - id: sn-new-push
+    repo: syncnotes
+    tr: Mobil cihazlara anlık bildirimler nasıl gönderiliyor?
+    en: How are push notifications sent to mobile devices?
+    absent_terms: [firebase, apns, fcm]
+
+  - id: sn-new-pdf
+    repo: syncnotes
+    tr: Bir not PDF olarak nasıl dışa aktarılıyor?
+    en: How is a note exported to PDF?
+    absent_terms: [pdf]

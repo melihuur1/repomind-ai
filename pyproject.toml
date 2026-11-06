@@ -8,7 +8,6 @@ version = "0.1.0"
 description = "Intelligent GitHub repository analyzer: syntax-aware code retrieval with verifiable citations."
 readme = "README.md"
 requires-python = ">=3.11"
-license = "MIT"
 authors = [{ name = "Melih Uğur", email = "melihuur1@gmail.com" }]
 dependencies = [
     "tree-sitter>=0.25,<0.27",

@@ -6,7 +6,7 @@ import re
 
 import pytest
 
-from repomind.evaluation.dataset import load_dataset, split_of
+from repomind.evaluation.dataset import load_dataset, load_holdout_unanswerable, split_of
 from repomind.ingest.filters import classify_content, classify_path, normalize_source
 from repomind.ingest.git_source import GitRepository
 
@@ -68,7 +68,7 @@ def test_gold_files_are_indexable(question):
 
 
 @pytest.mark.gold
-@pytest.mark.parametrize("question", DATASET.unanswerable, ids=lambda q: q.id)
+@pytest.mark.parametrize("question", DATASET.unanswerable + load_holdout_unanswerable(), ids=lambda q: q.id)
 def test_unanswerable_terms_are_absent_from_all_indexable_source(question):
     git = _repository(question.repo)
     commit = DATASET.repositories[question.repo].commit
