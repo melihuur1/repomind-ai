@@ -13,6 +13,7 @@ from repomind.errors import RepoMindError
 
 DEFAULT_DATASET_PATH = PROJECT_ROOT / "eval" / "questions.yaml"
 HOLDOUT_UNANSWERABLE_PATH = PROJECT_ROOT / "eval" / "unanswerable_holdout.yaml"
+V2_DATASET_PATH = PROJECT_ROOT / "eval" / "questions_v2.yaml"
 
 # One question in three is available for tuning; the rest stay held out.
 DEV_SHARE = 3
@@ -33,6 +34,8 @@ class Question:
     tr: str
     en: str
     gold: tuple[GoldSpan, ...]
+    kind: str = "code"
+    expected: str = ""
 
     def text(self, language: str) -> str:
         return self.tr if language == "tr" else self.en
@@ -121,6 +124,8 @@ def load_dataset(path: Path | str = DEFAULT_DATASET_PATH) -> Dataset:
             tr=entry["tr"],
             en=entry["en"],
             gold=tuple(GoldSpan(**span) for span in entry["gold"]),
+            kind=entry.get("kind", "code"),
+            expected=entry.get("expected", ""),
         )
         for entry in raw["questions"]
     )

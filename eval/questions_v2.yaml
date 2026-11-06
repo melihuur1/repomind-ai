@@ -1,0 +1,419 @@
+# RepoMind independent evaluation set, version 2.
+#
+# Written after phase 1, before any phase 2 feature existed, from reading code regions
+# that the first set did not use. It is the held-out set for phase 2:
+#   * No reranker, prompt or threshold was tuned on these questions.
+#   * Questions were phrased as a user would ask them, avoiding the code's identifiers,
+#     which was a known weakness of the first set.
+#   * "expected" states the facts a correct answer must contain, so AI answers are graded
+#     against a target fixed in advance rather than by impression.
+#   * Gold spans and absent terms are verified at the pinned commits by
+#     tests/test_gold_labels.py. A failed question stays in the set and gets reported.
+
+version: 2
+
+corrections: []
+
+repositories:
+  stockguard:
+    commit: b6698d81475232f2b8ca95af45336fae5665cd81
+    url: https://github.com/melihuur1/stockguard
+    path_env: REPOMIND_REPO_STOCKGUARD
+  syncnotes:
+    commit: bb217cddc89088f27b68715cf9585e94ce2fe3a6
+    url: https://github.com/melihuur1/syncnotes
+    path_env: REPOMIND_REPO_SYNCNOTES
+
+questions:
+  # ---------------------------------------------------------------- StockGuard
+  - id: v2-sg-negative-stock-db
+    repo: stockguard
+    kind: sql
+    tr: Stok sayaçlarının eksiye düşmesini veritabanı seviyesinde ne engelliyor?
+    en: What stops stock counters from going negative at the database level?
+    expected: CHECK constraints on stock_levels require available and reserved to be at least 0 and total to equal available plus reserved.
+    gold:
+      - path: src/main/resources/db/migration/V2__catalog_and_stock.sql
+        start_line: 23
+        end_line: 26
+        anchor: "ck_stock_available_non_negative"
+
+  - id: v2-sg-settled-immutable
+    repo: stockguard
+    kind: sql
+    tr: Sonuçlanmış bir rezervasyonun sonradan değiştirilmesi veritabanında nasıl engelleniyor?
+    en: How does the database stop a settled reservation from being changed later?
+    expected: A BEFORE UPDATE trigger raises an exception when the old status is not PENDING, and also forbids changing product, user or quantity.
+    gold:
+      - path: src/main/resources/db/migration/V3__reservations.sql
+        start_line: 25
+        end_line: 43
+        anchor: "reservations_guard_update"
+
+  - id: v2-sg-append-only
+    repo: stockguard
+    kind: sql
+    tr: Stok hareketleri ve denetim kayıtlarının silinmesi veya güncellenmesi nasıl önleniyor?
+    en: How are stock movement and audit rows protected from being edited or deleted?
+    expected: BEFORE UPDATE OR DELETE triggers on both tables call a function that always raises an exception, making them append-only.
+    gold:
+      - path: src/main/resources/db/migration/V4__ledger_and_audit.sql
+        start_line: 41
+        end_line: 54
+        anchor: "forbid_history_rewrite"
+
+  - id: v2-sg-sweep-index
+    repo: stockguard
+    kind: sql
+    tr: Süresi geçen rezervasyonları tarayan işlem için hangi veritabanı indeksi var?
+    en: Which database index supports the scan for overdue reservations?
+    expected: A partial index on expires_at limited to rows whose status is PENDING.
+    gold:
+      - path: src/main/resources/db/migration/V3__reservations.sql
+        start_line: 20
+        end_line: 21
+        anchor: "ix_reservations_pending_expiry"
+
+  - id: v2-sg-why-separate-stock
+    repo: stockguard
+    kind: sql
+    tr: Stok sayaçları neden ürün tablosundan ayrı bir yerde tutuluyor?
+    en: Why are stock counters kept apart from the product table?
+    expected: It is the most contended row, and separating it means a catalogue edit and a reservation never compete for the same row lock.
+    gold:
+      - path: src/main/resources/db/migration/V2__catalog_and_stock.sql
+        start_line: 14
+        end_line: 16
+        anchor: "hottest row"
+
+  - id: v2-sg-lock-timeout-config
+    repo: stockguard
+    kind: yaml
+    tr: Veritabanı kilit bekleme süresi nerede ayarlanıyor ve değeri ne?
+    en: Where is the database lock wait limit configured and what is its value?
+    expected: In the Hikari connection-init-sql of application.yml, lock_timeout is 3 seconds, kept above PostgreSQL's 1 second deadlock_timeout.
+    gold:
+      - path: src/main/resources/application.yml
+        start_line: 12
+        end_line: 14
+        anchor: "lock_timeout = '3s'"
+
+  - id: v2-sg-reservation-defaults
+    repo: stockguard
+    kind: yaml
+    tr: Bir rezervasyon varsayılan olarak ne kadar tutuluyor ve süresi dolanlar ne sıklıkla taranıyor?
+    en: How long is a reservation held by default, and how often are expired ones scanned?
+    expected: The default hold is 15 minutes, the sweep runs every 5 seconds by default, with a batch size of 100.
+    gold:
+      - path: src/main/resources/application.yml
+        start_line: 61
+        end_line: 66
+        anchor: "default-ttl: 15m"
+
+  - id: v2-sg-two-instances
+    repo: stockguard
+    kind: yaml
+    tr: Uygulamanın iki kopyası aynı veritabanını paylaşacak şekilde nasıl başlatılıyor?
+    en: How is the application started as two copies sharing one database?
+    expected: Docker Compose defines services app-1 and app-2 from a shared template, each with its own instance id and host port.
+    gold:
+      - path: compose.yaml
+        start_line: 48
+        end_line: 62
+        anchor: "STOCKGUARD_INSTANCE_ID: app-1"
+
+  - id: v2-sg-auth-error-format
+    repo: stockguard
+    kind: code
+    tr: Giriş yapmamış bir kullanıcının isteği reddedilince istemciye nasıl bir hata dönüyor?
+    en: What does the client receive when a request is rejected for lack of authentication?
+    expected: A problem+json body with a stable code such as UNAUTHENTICATED and a WWW-Authenticate Bearer header, written by a handler because this happens before Spring MVC.
+    gold:
+      - path: src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java
+        start_line: 27
+        end_line: 51
+        anchor: "APPLICATION_PROBLEM_JSON_VALUE"
+
+  - id: v2-sg-username-race
+    repo: stockguard
+    kind: code
+    tr: İki kişi aynı anda aynı kullanıcı adıyla kaydolursa ne oluyor?
+    en: What happens if two people sign up with the same username at the same moment?
+    expected: The insert uses ON CONFLICT DO NOTHING, so the loser affects zero rows and receives a USERNAME_TAKEN error.
+    gold:
+      - path: src/main/java/com/stockguard/user/AppUserRepository.java
+        start_line: 14
+        end_line: 25
+        anchor: "ON CONFLICT (username) DO NOTHING"
+      - path: src/main/java/com/stockguard/user/AuthService.java
+        start_line: 47
+        end_line: 55
+        anchor: "ErrorCode.USERNAME_TAKEN"
+
+  - id: v2-sg-simulation-limit
+    repo: stockguard
+    kind: code
+    tr: Yarış simülasyonunda en fazla kaç eşzamanlı istek gönderilebilir?
+    en: What is the largest number of simultaneous requests a race simulation accepts?
+    expected: 1000, set by a validation limit on concurrentRequests.
+    gold:
+      - path: src/main/java/com/stockguard/simulation/SimulationController.java
+        start_line: 37
+        end_line: 41
+        anchor: "@Max(1000) Integer concurrentRequests"
+
+  - id: v2-sg-error-status-map
+    repo: stockguard
+    kind: code
+    tr: Yetersiz stok hatası hangi HTTP durum koduyla dönüyor?
+    en: Which HTTP status does an out-of-stock error return?
+    expected: 409 Conflict, through the INSUFFICIENT_STOCK error code.
+    gold:
+      - path: src/main/java/com/stockguard/common/error/ErrorCode.java
+        start_line: 5
+        end_line: 21
+        anchor: "INSUFFICIENT_STOCK(HttpStatus.CONFLICT)"
+
+  - id: v2-sg-add-stock-limits
+    repo: stockguard
+    kind: code
+    tr: Depoya mal girişi isteğinde miktar için hangi sınırlar geçerli?
+    en: What limits apply to the quantity when receiving goods into stock?
+    expected: The quantity must be between 1 and 1,000,000.
+    gold:
+      - path: src/main/java/com/stockguard/inventory/InventoryController.java
+        start_line: 60
+        end_line: 63
+        anchor: "@Max(1_000_000) Integer quantity"
+
+  # ----------------------------------------------------------------- SyncNotes
+  - id: v2-sn-one-owner
+    repo: syncnotes
+    kind: sql
+    tr: Bir notun iki sahibi olması veritabanında nasıl önleniyor?
+    en: How does the database prevent a note from having two owners?
+    expected: A partial unique index on note_id for rows whose role is OWNER.
+    gold:
+      - path: packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql
+        start_line: 1
+        end_line: 6
+        anchor: "note_members_one_owner_per_note"
+
+  - id: v2-sn-collab-instances
+    repo: syncnotes
+    kind: yaml
+    tr: Tüm sistem Docker ile açıldığında işbirliği sunucusundan kaç kopya çalışıyor?
+    en: How many collaboration server copies run when the whole system starts under Docker?
+    expected: Two, collab-1 and collab-2.
+    gold:
+      - path: docker-compose.yml
+        start_line: 78
+        end_line: 88
+        anchor: "INSTANCE_NAME: collab-2"
+
+  - id: v2-sn-redis-durability
+    repo: syncnotes
+    kind: yaml
+    tr: Redis verilerini diske hangi ayarla yazıyor?
+    en: With which setting does Redis write its data to disk?
+    expected: redis-server is started with appendonly set to yes.
+    gold:
+      - path: docker-compose.yml
+        start_line: 42
+        end_line: 53
+        anchor: "--appendonly"
+
+  - id: v2-sn-cookie-flags
+    repo: syncnotes
+    kind: code
+    tr: Oturum çerezleri hangi güvenlik ayarlarıyla gönderiliyor?
+    en: Which security settings do the session cookies use?
+    expected: Both are httpOnly, secure comes from configuration, access uses sameSite lax, and refresh uses sameSite strict and is limited to the auth path.
+    gold:
+      - path: apps/api/src/common/cookies.ts
+        start_line: 9
+        end_line: 33
+        anchor: "sameSite: 'strict'"
+
+  - id: v2-sn-env-validation
+    repo: syncnotes
+    kind: code
+    tr: Uygulama açılırken yapılandırma değerleri nasıl denetleniyor?
+    en: How are configuration values checked when the application starts?
+    expected: A zod schema validates them, requires secrets of at least 32 characters that differ from each other, and startup fails with a list of the problems.
+    gold:
+      - path: apps/api/src/config/env.ts
+        start_line: 7
+        end_line: 31
+        anchor: "must be at least 32 characters"
+      - path: apps/api/src/config/env.ts
+        start_line: 37
+        end_line: 46
+        anchor: "Invalid environment configuration"
+
+  - id: v2-sn-account-lock
+    repo: syncnotes
+    kind: code
+    tr: Çok sayıda hatalı girişten sonra hesaba ne oluyor?
+    en: What happens to an account after too many failed logins?
+    expected: A counter is incremented, reaching the configured maximum sets lockedUntil for a configured number of minutes, and login then answers 429.
+    gold:
+      - path: apps/api/src/auth/auth.service.ts
+        start_line: 188
+        end_line: 204
+        anchor: "locked after repeated failed logins"
+      - path: apps/api/src/auth/auth.service.ts
+        start_line: 94
+        end_line: 99
+        anchor: "temporarily locked"
+
+  - id: v2-sn-folder-delete
+    repo: syncnotes
+    kind: code
+    tr: Bir klasör silinince içindeki notlara ne oluyor?
+    en: What happens to the notes inside a folder when it is deleted?
+    expected: They are not deleted. They return to unfiled, because the foreign key uses ON DELETE SET NULL.
+    gold:
+      - path: apps/api/src/folders/folders.service.ts
+        start_line: 63
+        end_line: 67
+        anchor: "Notes inside the folder are not deleted"
+
+  - id: v2-sn-note-search
+    repo: syncnotes
+    kind: code
+    tr: Not listesinde arama yapınca hangi alanlara bakılıyor?
+    en: Which fields are looked at when searching the notes list?
+    expected: Title and plain text, with a case-insensitive contains match.
+    gold:
+      - path: apps/api/src/notes/notes.service.ts
+        start_line: 61
+        end_line: 69
+        anchor: "plainText: { contains: q"
+
+  - id: v2-sn-health-redis
+    repo: syncnotes
+    kind: code
+    tr: Redis kapalıyken sağlık kontrolü ne döndürüyor?
+    en: What does the health check return while Redis is down?
+    expected: It still answers ok and reports redis as down. Only a database failure produces 503.
+    gold:
+      - path: apps/api/src/health/health.controller.ts
+        start_line: 15
+        end_line: 33
+        anchor: "Redis is reported but not required"
+
+  - id: v2-sn-logout-access-token
+    repo: syncnotes
+    kind: code
+    tr: Çıkış yapıldıktan sonra süresi henüz dolmamış erişim anahtarı neden kabul edilmiyor?
+    en: Why is an access token that has not expired yet refused after logging out?
+    expected: The auth guard also checks that the token's refresh-token family still has an active session, so revoking the family invalidates it immediately.
+    gold:
+      - path: apps/api/src/common/guards/jwt-auth.guard.ts
+        start_line: 16
+        end_line: 22
+        anchor: "invalidates access"
+      - path: apps/api/src/common/guards/jwt-auth.guard.ts
+        start_line: 54
+        end_line: 63
+        anchor: "Session has been revoked"
+
+  - id: v2-sn-cursor-color
+    repo: syncnotes
+    kind: code
+    tr: Her kullanıcıya imleç rengi nasıl atanıyor?
+    en: How is each user given a cursor colour?
+    expected: An FNV-1a hash of the user id selects from a fixed palette, so the colour stays the same across sessions.
+    gold:
+      - path: apps/web/src/lib/colors.ts
+        start_line: 15
+        end_line: 23
+        anchor: "FNV-1a"
+
+  - id: v2-sn-title-merge
+    repo: syncnotes
+    kind: code
+    tr: Başlığı aynı anda düzenleyen kişilerin yazdıkları neden kaybolmuyor?
+    en: Why do simultaneous edits to a title not overwrite each other?
+    expected: Only the minimal change, found from the common prefix and suffix, is applied to the CRDT text instead of replacing the whole string.
+    gold:
+      - path: apps/web/src/lib/ytext.ts
+        start_line: 3
+        end_line: 34
+        anchor: "Minimal edits matter for CRDTs"
+
+  - id: v2-sn-theme-flash
+    repo: syncnotes
+    kind: code
+    tr: Sayfa açılırken kısa süreliğine yanlış temanın görünmesi nasıl engelleniyor?
+    en: How does the page avoid briefly showing the wrong theme while loading?
+    expected: An external script runs before first paint, reads the stored preference and the system setting, and toggles the dark class.
+    gold:
+      - path: apps/web/public/theme-init.js
+        start_line: 1
+        end_line: 12
+        anchor: "before first paint"
+
+# The repositories do not do these things. Some name a technology, and several
+# deliberately use only ordinary words that the code does contain.
+unanswerable:
+  - id: v2-sg-neg-transfer
+    repo: stockguard
+    tr: Stok bir depodan başka bir depoya nasıl aktarılıyor?
+    en: How is stock moved from one warehouse to another?
+    absent_terms: [transferStock, warehouses, warehouse_id, warehouseId]
+
+  - id: v2-sg-neg-coupon
+    repo: stockguard
+    tr: İndirim kuponları nasıl uygulanıyor?
+    en: How are discount coupons applied?
+    absent_terms: [coupon, coupons, discount]
+
+  - id: v2-sg-neg-password-reset
+    repo: stockguard
+    tr: Kullanıcı şifresini nasıl değiştiriyor?
+    en: How does a user change their password?
+    absent_terms: [changePassword, resetPassword, change-password, reset-password]
+
+  - id: v2-sg-neg-backorder
+    repo: stockguard
+    tr: Stok bitince ön sipariş nasıl alınıyor?
+    en: How are pre-orders taken when stock runs out?
+    absent_terms: [preorder, backorder, pre-order]
+
+  - id: v2-sg-neg-mongodb
+    repo: stockguard
+    tr: StockGuard MongoDB bağlantısını nasıl kuruyor?
+    en: How does StockGuard connect to MongoDB?
+    absent_terms: [mongodb, mongo]
+
+  - id: v2-sn-neg-tags
+    repo: syncnotes
+    tr: Notlara etiket eklemek nasıl çalışıyor?
+    en: How does adding labels to notes work?
+    absent_terms: [addTag, noteTag, note_tags, labels]
+
+  - id: v2-sn-neg-comments
+    repo: syncnotes
+    tr: Notların üzerine yorum bırakma özelliği nasıl çalışıyor?
+    en: How does leaving comments on a note work?
+    absent_terms: [addComment, commentId, note_comments, NoteComment]
+
+  - id: v2-sn-neg-public-link
+    repo: syncnotes
+    tr: Bir not herkese açık bağlantıyla nasıl paylaşılıyor?
+    en: How is a note shared through a public link?
+    absent_terms: [publicLink, shareLink, public_link, share_token]
+
+  - id: v2-sn-neg-ldap
+    repo: syncnotes
+    tr: SyncNotes LDAP ile kullanıcıları nasıl doğruluyor?
+    en: How does SyncNotes authenticate users against LDAP?
+    absent_terms: [ldap]
+
+  - id: v2-sn-neg-invite-mail
+    repo: syncnotes
+    tr: Davet e-postası nasıl gönderiliyor?
+    en: How is the invitation email sent?
+    absent_terms: [nodemailer, sendgrid, smtp, sendMail]
