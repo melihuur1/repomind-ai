@@ -10,6 +10,7 @@ from repomind.evaluation.dataset import (
     V2_DATASET_PATH,
     V3_DATASET_PATH,
     V4_DATASET_PATH,
+    V5_DATASET_PATH,
     load_dataset,
     load_holdout_unanswerable,
     split_of,
@@ -21,13 +22,15 @@ DATASET = load_dataset()
 DATASET_V2 = load_dataset(V2_DATASET_PATH)
 DATASET_V3 = load_dataset(V3_DATASET_PATH)
 DATASET_V4 = load_dataset(V4_DATASET_PATH)
-ALL_QUESTIONS = DATASET.questions + DATASET_V2.questions + DATASET_V3.questions + DATASET_V4.questions
+DATASET_V5 = load_dataset(V5_DATASET_PATH)
+ALL_QUESTIONS = DATASET.questions + DATASET_V2.questions + DATASET_V3.questions + DATASET_V4.questions + DATASET_V5.questions
 ALL_UNANSWERABLE = (
     DATASET.unanswerable
     + load_holdout_unanswerable()
     + DATASET_V2.unanswerable
     + DATASET_V3.unanswerable
     + DATASET_V4.unanswerable
+    + DATASET_V5.unanswerable
 )
 
 
@@ -90,6 +93,25 @@ def test_fourth_set_covers_every_kind_and_asks_nothing_asked_before():
     assert not asked & ({q.tr for q in DATASET_V4.questions} | {q.en for q in DATASET_V4.questions})
     spans = {(s.path, s.start_line, s.end_line) for q in earlier for s in q.gold}
     assert not spans & {(s.path, s.start_line, s.end_line) for q in DATASET_V4.questions for s in q.accepted}
+
+
+def test_fifth_set_has_the_agreed_size_and_its_gold_touches_no_earlier_gold():
+    assert len(DATASET_V5.questions) == 16
+    assert len(DATASET_V5.unanswerable) == 8
+    assert {q.repo for q in DATASET_V5.questions} == {"stockguard", "syncnotes"}
+    assert {q.kind for q in DATASET_V5.questions} == {"code", "sql", "yaml"}
+    assert {s.path.rsplit(".", 1)[-1] for q in DATASET_V5.questions for s in q.gold} >= {"java", "ts", "sql", "yml"}
+    assert all(q.expected for q in DATASET_V5.questions)
+    earlier = DATASET.questions + DATASET_V2.questions + DATASET_V3.questions + DATASET_V4.questions
+    earlier_negatives = DATASET.unanswerable + load_holdout_unanswerable() + DATASET_V2.unanswerable + DATASET_V3.unanswerable + DATASET_V4.unanswerable
+    asked = {q.tr for q in (*earlier, *earlier_negatives)} | {q.en for q in (*earlier, *earlier_negatives)}
+    assert not asked & {text for q in (*DATASET_V5.questions, *DATASET_V5.unanswerable) for text in (q.tr, q.en)}
+    for question in DATASET_V5.questions:
+        for span in question.gold:
+            for old in earlier:
+                for other in old.accepted:
+                    overlap = old.repo == question.repo and other.path == span.path and span.start_line <= other.end_line and other.start_line <= span.end_line
+                    assert not overlap, f"{question.id} overlaps {old.id}"
 
 
 @pytest.mark.gold

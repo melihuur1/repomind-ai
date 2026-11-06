@@ -1,0 +1,340 @@
+# RepoMind evaluation set, version 5. See eval/PILOT_V5.md for how it is scored.
+#
+# Written by reading the code at the pinned commits, from regions no earlier gold span covers, with no
+# search run on these questions. It is meant to be run once.
+#   * 16 answerable and 8 unanswerable Turkish questions, over Java, TypeScript, SQL and YAML, in two repositories.
+#   * "gold" spans are the main source. "acceptable" spans are other places that also answer the
+#     question, listed before any run.
+#   * Spans and absent terms are verified at the pinned commits by tests/test_gold_labels.py.
+#   * The same developer wrote this set and the system it measures, so it is not an independent external test.
+#   * Nothing here is changed because of a result. A failed question stays and gets reported.
+
+version: 5
+
+corrections: []
+
+repositories:
+  stockguard:
+    commit: b6698d81475232f2b8ca95af45336fae5665cd81
+    url: https://github.com/melihuur1/stockguard
+    path_env: REPOMIND_REPO_STOCKGUARD
+  syncnotes:
+    commit: bb217cddc89088f27b68715cf9585e94ce2fe3a6
+    url: https://github.com/melihuur1/syncnotes
+    path_env: REPOMIND_REPO_SYNCNOTES
+
+questions:
+  # ---------------------------------------------------------------- StockGuard, Java
+  - id: v5-sg-jwt-secret-length
+    repo: stockguard
+    kind: code
+    tr: JWT imzalamak için kullanılan gizli anahtar en az kaç karakter olmalı?
+    en: How many characters must the secret used to sign JWTs have at least?
+    expected: At least 32 characters, which HS256 requires.
+    gold:
+      - path: src/main/java/com/stockguard/common/config/StockGuardProperties.java
+        start_line: 22
+        end_line: 22
+        anchor: "@Size(min = 32"
+
+  - id: v5-sg-sku-locked
+    repo: stockguard
+    kind: code
+    tr: Bir ürünün SKU kodu oluşturulduktan sonra değiştirilebilir mi?
+    en: Can a product's SKU be changed after it is created?
+    expected: No. The column is not updatable, and an update changes only the name and description.
+    gold:
+      - path: src/main/java/com/stockguard/catalog/Product.java
+        start_line: 27
+        end_line: 28
+        anchor: "updatable = false"
+    acceptable:
+      - path: src/main/java/com/stockguard/catalog/Product.java
+        start_line: 56
+        end_line: 59
+        anchor: "public void rename(String name, String description)"
+      - path: src/main/java/com/stockguard/catalog/ProductController.java
+        start_line: 90
+        end_line: 94
+        anchor: "public record UpdateProductRequest("
+
+  - id: v5-sg-page-envelope
+    repo: stockguard
+    kind: code
+    tr: Sayfalı API cevaplarında Spring'in kendi sayfa biçimi neden doğrudan dönülmüyor?
+    en: Why do paged API responses not return Spring's own page format directly?
+    expected: A stable envelope, so that the API contract does not depend on Spring Data's internal Page format.
+    gold:
+      - path: src/main/java/com/stockguard/common/web/PageResponse.java
+        start_line: 7
+        end_line: 8
+        anchor: "Stable pagination envelope"
+
+  - id: v5-sg-root-redirect
+    repo: stockguard
+    kind: code
+    tr: Uygulamanın kök adresine gidildiğinde kullanıcı nereye yönlendiriliyor?
+    en: Where is a user redirected when they open the application's root address?
+    expected: To /demo/index.html.
+    gold:
+      - path: src/main/java/com/stockguard/common/config/WebConfig.java
+        start_line: 12
+        end_line: 12
+        anchor: 'addRedirectViewController("/", "/demo/index.html")'
+
+  - id: v5-sg-movements-order
+    repo: stockguard
+    kind: code
+    tr: Bir ürünün stok hareketleri API'den hangi sırayla dönüyor?
+    en: In what order does the API return a product's stock movements?
+    expected: Newest first, by descending id.
+    gold:
+      - path: src/main/java/com/stockguard/inventory/InventoryService.java
+        start_line: 60
+        end_line: 60
+        anchor: 'Sort.Direction.DESC, "id"'
+    acceptable:
+      - path: src/main/java/com/stockguard/inventory/InventoryController.java
+        start_line: 52
+        end_line: 52
+        anchor: "Browse the stock ledger, newest first"
+
+  # ---------------------------------------------------------------- StockGuard, SQL and YAML
+  - id: v5-sg-zero-quantity
+    repo: stockguard
+    kind: sql
+    tr: Veritabanı miktarı sıfır olan bir rezervasyon kaydını kabul eder mi?
+    en: Does the database accept a reservation row whose quantity is zero?
+    expected: No. A CHECK constraint requires quantity to be above 0.
+    gold:
+      - path: src/main/resources/db/migration/V3__reservations.sql
+        start_line: 15
+        end_line: 15
+        anchor: "CHECK (quantity > 0)"
+
+  - id: v5-sg-api-language
+    repo: stockguard
+    kind: yaml
+    tr: API, istemcinin istediği dile göre farklı dilde hata mesajı döndürüyor mu?
+    en: Does the API return error messages in a different language depending on what the client asks for?
+    expected: No. It uses one language, English, with a fixed locale resolver, whatever Accept-Language says.
+    gold:
+      - path: src/main/resources/application.yml
+        start_line: 27
+        end_line: 29
+        anchor: "locale-resolver: fixed"
+
+  - id: v5-sg-simulation-default
+    repo: stockguard
+    kind: yaml
+    tr: Yarış simülasyonu uygulamada varsayılan olarak açık mı?
+    en: Is the race simulation enabled by default in the application?
+    expected: Not in the application's own configuration, where it defaults to false. The Docker setup turns it on by default.
+    gold:
+      - path: src/main/resources/application.yml
+        start_line: 68
+        end_line: 68
+        anchor: "STOCKGUARD_SIMULATION_ENABLED:false"
+    acceptable:
+      - path: compose.yaml
+        start_line: 27
+        end_line: 27
+        anchor: "STOCKGUARD_SIMULATION_ENABLED:-true"
+
+  # ---------------------------------------------------------------- SyncNotes, TypeScript
+  - id: v5-sn-logout-expired
+    repo: syncnotes
+    kind: code
+    tr: Erişim anahtarının süresi dolmuş bir kullanıcı çıkış yapabilir mi?
+    en: Can a user whose access token has expired still log out?
+    expected: Yes. The logout route is public, and the token is only decoded to find which session to revoke.
+    gold:
+      - path: apps/api/src/auth/auth.controller.ts
+        start_line: 87
+        end_line: 89
+        anchor: "a user with an expired access token can still log out"
+    acceptable:
+      - path: apps/api/src/auth/auth.controller.ts
+        start_line: 95
+        end_line: 96
+        anchor: "Expired tokens are fine here"
+
+  - id: v5-sn-nonmember-status
+    repo: syncnotes
+    kind: code
+    tr: Bir notun üyesi olmayan kullanıcı o nota erişmeye çalışırsa hangi HTTP durumu dönüyor?
+    en: Which HTTP status does a user who is not a member of a note get when trying to access it?
+    expected: 404, so that the note's existence is not revealed. A member with too low a role gets 403.
+    gold:
+      - path: apps/api/src/common/decorators.ts
+        start_line: 10
+        end_line: 12
+        anchor: "Non-members get 404"
+    acceptable:
+      - path: apps/api/src/common/note-access/note-access.service.ts
+        start_line: 25
+        end_line: 29
+        anchor: "404 when the caller is not a member"
+      - path: apps/api/src/common/note-access/note-access.service.ts
+        start_line: 32
+        end_line: 32
+        anchor: "throw new NotFoundException('Note not found')"
+
+  - id: v5-sn-version-list-limit
+    repo: syncnotes
+    kind: code
+    tr: Bir notun sürüm geçmişinde en fazla kaç sürüm listeleniyor?
+    en: How many versions at most are listed in a note's version history?
+    expected: 100, newest first.
+    gold:
+      - path: apps/api/src/notes/versions.service.ts
+        start_line: 18
+        end_line: 19
+        anchor: "take: 100"
+
+  - id: v5-sn-version-viewer
+    repo: syncnotes
+    kind: code
+    tr: Görüntüleyici rolündeki bir kullanıcı not için sürüm oluşturabilir mi?
+    en: Can a user with the viewer role create a version of a note?
+    expected: No. The collaboration server checks a fresh role and replies that only editors can manage versions.
+    gold:
+      - path: apps/collab/src/extensions/versions-handler.ts
+        start_line: 49
+        end_line: 54
+        anchor: "Only editors can manage versions"
+    acceptable:
+      - path: apps/collab/src/extensions/versions-handler.ts
+        start_line: 47
+        end_line: 48
+        anchor: "Mutating commands always use a fresh role"
+      - path: apps/web/src/components/history-panel.tsx
+        start_line: 134
+        end_line: 135
+        anchor: "{canEdit && ("
+
+  - id: v5-sn-log-format
+    repo: syncnotes
+    kind: code
+    tr: İşbirliği sunucusu loglarını hangi biçimde yazıyor?
+    en: In what format does the collaboration server write its logs?
+    expected: Structured JSON lines, with warnings and errors going to stderr and the rest to stdout.
+    gold:
+      - path: apps/collab/src/logger.ts
+        start_line: 12
+        end_line: 12
+        anchor: "JSON lines"
+    acceptable:
+      - path: apps/collab/src/logger.ts
+        start_line: 16
+        end_line: 17
+        anchor: "JSON.stringify({ t: new Date()"
+
+  # ---------------------------------------------------------------- SyncNotes, SQL and YAML
+  - id: v5-sn-email-unique
+    repo: syncnotes
+    kind: sql
+    tr: Aynı e-posta adresiyle iki hesap açılabilir mi?
+    en: Can two accounts be opened with the same e-mail address?
+    expected: No. The users table has a unique index on e-mail, and registration replies with a conflict.
+    gold:
+      - path: packages/db/prisma/migrations/20261104110838_init/migration.sql
+        start_line: 90
+        end_line: 90
+        anchor: 'CREATE UNIQUE INDEX "users_email_key"'
+    acceptable:
+      - path: apps/api/src/auth/auth.service.ts
+        start_line: 65
+        end_line: 65
+        anchor: "An account with this e-mail already exists"
+      - path: apps/api/src/auth/auth.service.ts
+        start_line: 75
+        end_line: 78
+        anchor: "Unique violation from a concurrent registration"
+
+  - id: v5-sn-version-kinds
+    repo: syncnotes
+    kind: sql
+    tr: Not sürümleri hangi türlerde olabilir?
+    en: What kinds of note versions are there?
+    expected: MANUAL, AUTO and RESTORE.
+    gold:
+      - path: packages/db/prisma/migrations/20261104110838_init/migration.sql
+        start_line: 5
+        end_line: 5
+        anchor: "'MANUAL', 'AUTO', 'RESTORE'"
+    acceptable:
+      - path: packages/shared/src/api-types.ts
+        start_line: 54
+        end_line: 54
+        anchor: "kind: 'MANUAL' | 'AUTO' | 'RESTORE'"
+
+  - id: v5-sn-migrate-first
+    repo: syncnotes
+    kind: yaml
+    tr: Docker ile başlatırken API açılmadan önce veritabanı şeması nasıl güncelleniyor?
+    en: When starting with Docker, how is the database schema updated before the API opens?
+    expected: A separate migrate service runs first, and the API waits until it has completed successfully.
+    gold:
+      - path: docker-compose.yml
+        start_line: 74
+        end_line: 76
+        anchor: "migrate: { condition: service_completed_successfully }"
+    acceptable:
+      - path: docker-compose.yml
+        start_line: 55
+        end_line: 62
+        anchor: "target: migrate"
+      - path: docker-compose.yml
+        start_line: 20
+        end_line: 22
+        anchor: "migrate: { condition: service_completed_successfully }"
+
+unanswerable:
+  - id: v5-sg-neg-price
+    repo: stockguard
+    tr: Bir ürünün satış fiyatı nasıl güncelleniyor?
+    en: How is a product's sale price updated?
+    absent_terms: [price, pricing]
+
+  - id: v5-sg-neg-invoice
+    repo: stockguard
+    tr: Onaylanan bir rezervasyon için fatura nasıl oluşturuluyor?
+    en: How is an invoice created for a confirmed reservation?
+    absent_terms: [invoice, billing]
+
+  - id: v5-sg-neg-category
+    repo: stockguard
+    tr: Ürünler kategorilere göre nasıl filtreleniyor?
+    en: How are products filtered by category?
+    absent_terms: [category, categories]
+
+  - id: v5-sg-neg-shipping
+    repo: stockguard
+    tr: Onaylanan rezervasyonların kargo takibi nasıl yapılıyor?
+    en: How are shipments of confirmed reservations tracked?
+    absent_terms: [shipment, shipping]
+
+  - id: v5-sn-neg-google
+    repo: syncnotes
+    tr: Google hesabıyla giriş nasıl çalışıyor?
+    en: How does signing in with a Google account work?
+    absent_terms: [google, oauth]
+
+  - id: v5-sn-neg-photo
+    repo: syncnotes
+    tr: Kullanıcı profil fotoğrafı nasıl yükleniyor?
+    en: How is a user's profile photo uploaded?
+    absent_terms: [photo, upload, picture]
+
+  - id: v5-sn-neg-reminder
+    repo: syncnotes
+    tr: Bir not için hatırlatıcı nasıl kuruluyor?
+    en: How is a reminder set for a note?
+    absent_terms: [reminder, reminders]
+
+  - id: v5-sn-neg-workspace
+    repo: syncnotes
+    tr: Kullanıcılar ortak bir çalışma alanı nasıl oluşturuyor?
+    en: How do users create a shared workspace?
+    absent_terms: [workspace, teams]

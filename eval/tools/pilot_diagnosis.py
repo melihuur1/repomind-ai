@@ -37,7 +37,7 @@ for name in sys.argv[1:]:
     missed_by_search = [r for r in answerable if not r["gold_in_search"]]
     missed_by_passages = [r for r in answerable if r["gold_in_search"] and not r["gold_in_context"]]
     offered = [r for r in answerable if r["gold_in_context"]]
-    print("  Where the 12 answerable questions ended")
+    print(f"  Where the {len(answerable)} answerable questions ended")
     print(f"    search missed the gold code           {len(missed_by_search):>2}  {short(missed_by_search)}")
     print(f"    in the chunks, not in the passages    {len(missed_by_passages):>2}  {short(missed_by_passages)}")
     print(f"    offered to the model                  {len(offered):>2}")
@@ -55,10 +55,16 @@ for name in sys.argv[1:]:
         rows = [r for r in absent if how_it_ended(r) == ending]
         print(f"    {ending:<38}{len(rows):>2}  {short(rows)}")
 
-    print("  The 6 unanswerable questions")
+    print(f"  The {len(negatives)} unanswerable questions")
     for ending in ("answered", "the model declined", "the model chose lines, and the evidence rule dropped them", "refused by a rule, the model was not asked"):
         rows = [r for r in negatives if how_it_ended(r) == ending]
         print(f"    {ending:<38}{len(rows):>2}  {short(rows)}")
+
+    print("  Sources to review, which are never counted as answers")
+    with_candidates = [r for r in answerable + negatives if r.get("review_candidates")]
+    print(f"    questions with one                    {len(with_candidates):>2}  {short(with_candidates)}")
+    gold_candidates = [r for r in answerable if r.get("review_candidate_is_gold")]
+    print(f"    the right lines, turned down by the rule {len(gold_candidates):>2}  {short(gold_candidates)}")
 
     rows = answerable + negatives
     asked = [r for r in rows if r["sources_sent"]]

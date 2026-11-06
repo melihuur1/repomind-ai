@@ -14,13 +14,13 @@ sys.path.insert(0, str(ROOT))
 sys.stdout.reconfigure(encoding="utf-8")
 
 from repomind.evaluation.citations import CitationVerifier  # noqa: E402
-from repomind.evaluation.dataset import V3_DATASET_PATH, V4_DATASET_PATH, load_dataset  # noqa: E402
+from repomind.evaluation.dataset import V3_DATASET_PATH, V4_DATASET_PATH, V5_DATASET_PATH, load_dataset  # noqa: E402
 from repomind.evaluation.metrics import touches  # noqa: E402
 from repomind.ingest.git_source import GitRepository  # noqa: E402
 
 RESULTS = ROOT / "eval" / "results"
 UNITS = {"KiB": 1 / 1024 / 1024, "MiB": 1 / 1024, "GiB": 1.0, "B": 1 / 1024**3}
-datasets = [load_dataset(path) for path in (V3_DATASET_PATH, V4_DATASET_PATH)]
+datasets = [load_dataset(path) for path in (V3_DATASET_PATH, V4_DATASET_PATH, V5_DATASET_PATH)]
 gold = {q.id: q.accepted for dataset in datasets for q in dataset.questions}
 verifiers = {name: CitationVerifier(GitRepository(pin.local_path), pin.commit) for name, pin in datasets[0].repositories.items()}
 

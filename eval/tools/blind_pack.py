@@ -20,7 +20,7 @@ language = sys.argv[2]
 runs = dict(argument.split("=", 1) for argument in sys.argv[3:])
 questions: dict = {}
 negatives: dict = {}
-for name in ("questions_v2.yaml", "questions_v3.yaml", "questions_v4.yaml"):
+for name in ("questions_v2.yaml", "questions_v3.yaml", "questions_v4.yaml", "questions_v5.yaml"):
     raw = yaml.safe_load((ROOT / "eval" / name).read_bytes())
     questions.update({q["id"]: q for q in raw["questions"]})
     negatives.update({q["id"]: q for q in raw["unanswerable"]})

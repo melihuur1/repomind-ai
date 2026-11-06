@@ -16,6 +16,7 @@ HOLDOUT_UNANSWERABLE_PATH = PROJECT_ROOT / "eval" / "unanswerable_holdout.yaml"
 V2_DATASET_PATH = PROJECT_ROOT / "eval" / "questions_v2.yaml"
 V3_DATASET_PATH = PROJECT_ROOT / "eval" / "questions_v3.yaml"
 V4_DATASET_PATH = PROJECT_ROOT / "eval" / "questions_v4.yaml"
+V5_DATASET_PATH = PROJECT_ROOT / "eval" / "questions_v5.yaml"
 
 # One question in three is available for tuning; the rest stay held out.
 DEV_SHARE = 3
