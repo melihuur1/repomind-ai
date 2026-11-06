@@ -26,7 +26,8 @@ class LLMConfig:
     model: str
     api_key: str | None = None
     allow_remote: bool = False
-    max_context_chunks: int = 8
+    # Passage selection narrows these to a few lines, so more of them cost no model time.
+    max_context_chunks: int = 12
     max_input_tokens: int = 4000
     # Per request. The reply is a short list of passage ids and at most one sentence.
     max_output_tokens: int = 250
@@ -70,7 +71,7 @@ def load_llm_config() -> LLMConfig | None:
         model=model,
         api_key=get_setting("REPOMIND_LLM_API_KEY"),
         allow_remote=get_setting("REPOMIND_LLM_ALLOW_REMOTE", "0") == "1",
-        max_context_chunks=int(number("REPOMIND_LLM_MAX_CONTEXT_CHUNKS", 8)),
+        max_context_chunks=int(number("REPOMIND_LLM_MAX_CONTEXT_CHUNKS", 12)),
         max_input_tokens=int(number("REPOMIND_LLM_MAX_INPUT_TOKENS", 4000)),
         max_output_tokens=int(number("REPOMIND_LLM_MAX_OUTPUT_TOKENS", 250)),
         input_usd_per_mtok=number("REPOMIND_LLM_INPUT_USD_PER_MTOK", 0.0),

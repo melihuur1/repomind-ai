@@ -1,0 +1,620 @@
+{
+"12,1": {
+"sg-neg-kafka": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-neg-stripe": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-neg-email": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-neg-graphql": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-neg-2fa": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-neg-s3": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-excel": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-images": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-refunds": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-redis": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-elasticsearch": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-forgot-password": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-push": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-pdf": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-transfer": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-coupon": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-password-reset": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-backorder": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-mongodb": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-tags": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-comments": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-public-link": {
+"status": "answered",
+"chosen": [
+"apps/web/src/pages/note-page.tsx:133-137"
+],
+"note": "`ShareDialog` is used to share a note via a link."
+},
+"v2-sn-neg-ldap": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-invite-mail": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sg-neg-extend-reservation": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sg-neg-low-stock-alert": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sg-neg-barcode": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sn-neg-trash": {
+"status": "answered",
+"chosen": [
+"apps/collab/src/versions.ts:46-50"
+],
+"note": "`VersionService.restore` metodu notları geri getirme işlemi gerçekleştirmektedir."
+},
+"v3-sn-neg-mention": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sn-neg-sunset-theme": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+}
+},
+"8,1": {
+"sg-neg-kafka": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-neg-stripe": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-neg-email": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-neg-graphql": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-neg-2fa": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-neg-s3": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-excel": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-images": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-refunds": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-redis": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-elasticsearch": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-forgot-password": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-push": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-pdf": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-transfer": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-coupon": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-password-reset": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-backorder": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-mongodb": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-tags": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-comments": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-public-link": {
+"status": "answered",
+"chosen": [
+"apps/web/src/pages/note-page.tsx:133-137"
+],
+"note": ""
+},
+"v2-sn-neg-ldap": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-invite-mail": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sg-neg-extend-reservation": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sg-neg-low-stock-alert": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sg-neg-barcode": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sn-neg-trash": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sn-neg-mention": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sn-neg-sunset-theme": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+}
+},
+"12,0": {
+"sg-neg-kafka": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-neg-stripe": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-neg-email": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-neg-graphql": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-neg-2fa": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-neg-s3": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-excel": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-images": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-refunds": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-redis": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-elasticsearch": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-forgot-password": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-push": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-pdf": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-transfer": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-coupon": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-password-reset": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-backorder": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-mongodb": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-tags": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-comments": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-public-link": {
+"status": "answered",
+"chosen": [
+"apps/web/src/pages/note-page.tsx:133-137"
+],
+"note": ""
+},
+"v2-sn-neg-ldap": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-invite-mail": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sg-neg-extend-reservation": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sg-neg-low-stock-alert": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sg-neg-barcode": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sn-neg-trash": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sn-neg-mention": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sn-neg-sunset-theme": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+}
+},
+"8,0": {
+"sg-neg-kafka": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-neg-stripe": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-neg-email": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-neg-graphql": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-neg-2fa": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-neg-s3": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-excel": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-images": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-refunds": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sg-new-redis": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-elasticsearch": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-forgot-password": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-push": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"sn-new-pdf": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-transfer": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-coupon": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-password-reset": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-backorder": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sg-neg-mongodb": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-tags": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-comments": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-public-link": {
+"status": "answered",
+"chosen": [
+"apps/web/src/pages/note-page.tsx:133-137"
+],
+"note": ""
+},
+"v2-sn-neg-ldap": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v2-sn-neg-invite-mail": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sg-neg-extend-reservation": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sg-neg-low-stock-alert": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sg-neg-barcode": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sn-neg-trash": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sn-neg-mention": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+},
+"v3-sn-neg-sunset-theme": {
+"status": "insufficient",
+"chosen": [],
+"note": ""
+}
+}
+}

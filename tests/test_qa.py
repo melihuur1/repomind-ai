@@ -12,10 +12,18 @@ from repomind.indexing import index_repository
 from repomind.qa import engine as engine_module
 from repomind.qa.engine import QAEngine, assemble_answer
 from repomind.qa.llm import LLMConfig, LLMResponse, load_llm_config, validate_config
-from repomind.qa.passages import MAX_PASSAGE_LINES, MAX_PASSAGES, Passage, is_evidence, select_passages
+from repomind.qa.passages import (
+    MAX_PASSAGE_LINES,
+    MAX_PASSAGES,
+    MAX_PASSAGES_PER_FILE,
+    Passage,
+    is_evidence,
+    select_passages,
+)
 from repomind.qa.prompt import SYSTEM_PROMPT, build_selection_prompt, estimate_tokens, fit_passages
 from repomind.qa.verification import MAX_CHOSEN, verify_selection
 from repomind.search.engine import SearchEngine
+from repomind.search.translation import keep_technical_terms
 from repomind.store.database import ChunkRow
 from tests.conftest import FakeEmbedder, commit_all, write
 
@@ -75,8 +83,17 @@ class TestPassageSelection:
         assert [(p.start_line, p.end_line) for p in passages] == [(7, 7)]
 
     def test_the_number_of_passages_is_capped(self):
-        big = chunk(start=1, end=60, content=numbered_content(1, 60))
-        assert len(select_passages([big], ["compute"], None)) == MAX_PASSAGES
+        chunks = [chunk(path=f"src/{n}.ts", start=1, end=60, content=numbered_content(1, 60), identifier=n) for n in range(3)]
+        chunks[1] = chunk(path="src/1.ts", start=1, end=60, content=numbered_content(100, 159), identifier=1)
+        chunks[2] = chunk(path="src/2.ts", start=1, end=60, content=numbered_content(200, 259), identifier=2)
+        assert len(select_passages(chunks, ["compute"], None)) == MAX_PASSAGES
+
+    def test_one_file_cannot_fill_every_passage(self):
+        big = chunk(path="src/big.ts", start=1, end=60, content=numbered_content(1, 60), identifier=1)
+        other = chunk(path="src/other.ts", start=1, end=9, content=numbered_content(300, 308), identifier=2)
+        passages = select_passages([big, other], ["compute"], None)
+        assert sum(p.path == "src/big.ts" for p in passages) == MAX_PASSAGES_PER_FILE
+        assert any(p.path == "src/other.ts" for p in passages)
 
     def test_a_passage_stays_short_even_when_neighbours_merge(self):
         big = chunk(start=1, end=60, content=numbered_content(1, 60))
@@ -98,7 +115,8 @@ class TestPassageSelection:
 
     def test_ids_follow_the_order_of_the_passages(self):
         big = chunk(start=1, end=60, content=numbered_content(1, 60))
-        assert [p.id for p in select_passages([big], ["compute"], None)] == [f"P{i}" for i in range(1, MAX_PASSAGES + 1)]
+        passages = select_passages([big], ["compute"], None)
+        assert [p.id for p in passages] == [f"P{i}" for i in range(1, len(passages) + 1)]
 
     def test_an_embedder_is_used_when_there_is_one_but_cannot_bring_in_unrelated_lines(self):
         source = chunk(start=1, end=9, content="alpha compute\n\n\n\nbeta compute\n\n\n\ngamma compute")
@@ -106,6 +124,25 @@ class TestPassageSelection:
         assert select_passages([source], ["gamma compute"], embedder)
         assert embedder.embedded
         assert select_passages([source], ["kafka"], embedder) == []
+
+
+class TestTechnicalTerms:
+    @pytest.mark.parametrize(
+        "term",
+        ["`applyDiscount`", "applyDiscount", "OrderService", "MAX_RETRIES", "application.yml", "apps/api/src/main.ts", "CSRF"],
+    )
+    def test_a_term_the_translator_dropped_is_added_back(self, term):
+        result = keep_technical_terms(f"{term} nasıl çalışıyor?", "How does it work?")
+        assert result == f"How does it work? {term.strip('`')}"
+
+    def test_a_kept_term_is_not_repeated(self):
+        assert keep_technical_terms("OrderService nasıl çalışıyor?", "How does orderservice work?") == "How does orderservice work?"
+
+    def test_ordinary_words_are_left_to_the_translation(self):
+        assert keep_technical_terms("Rezervasyon iptali nasıl yapılıyor?", "How is it cancelled?") == "How is it cancelled?"
+
+    def test_a_turkish_suffix_does_not_hide_a_file_name(self):
+        assert keep_technical_terms("README.md'de ne yazıyor?", "What does it say?") == "What does it say? README.md"
 
 
 class TestEvidenceRule:
@@ -498,6 +535,26 @@ class TestEngine:
         assert result.status == "insufficient"
         assert result.translated_query is None
         assert all("(In English:" not in call["user"] for call in client.calls)
+
+    def test_a_second_translation_is_searched_when_a_translator_is_available(self, store, search):
+        class Local:
+            def translate(self, text):
+                return "cancelOrder release"
+
+        def model(user):
+            return '{"english": "something unrelated"}' if "<passage-" not in user else NONE
+
+        search.translator = Local()
+        result = QAEngine(store, search, LOCAL, FakeClient(model)).ask("Sipariş nasıl iptal ediliyor?", ["shop"])
+        assert result.translated_query == "something unrelated", "the model's wording stays the main one"
+        assert any(hit.chunk.path.endswith("OrderService.java") for hit in result.hits)
+
+    def test_technical_terms_survive_the_translation(self, store, search):
+        def model(user):
+            return '{"english": "How does the order get cancelled?"}' if "<passage-" not in user else NONE
+
+        result = QAEngine(store, search, LOCAL, FakeClient(model)).ask("cancelOrder sipariş nasıl iptal ediyor?", ["shop"])
+        assert "cancelOrder" in result.translated_query
 
     def test_english_question_is_not_translated(self, store, search):
         client = FakeClient(NONE)

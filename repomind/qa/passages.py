@@ -26,6 +26,9 @@ MAX_PASSAGES = 5
 # Neighbouring windows merge, so that a passage reads as one piece. On the earlier question sets,
 # 5 lines kept nearly all of what 7 or 9 reached, at about 21 lines per question in total.
 MAX_PASSAGE_LINES = 5
+# So that one file cannot fill every passage. Limits per chunk and on near duplicates were
+# measured too, and they did not help.
+MAX_PASSAGES_PER_FILE = 3
 # The small model almost never declines, so refusing cannot be left to it. One shared word is
 # what nearby code looks like. On an earlier question set, this rule took unanswerable questions
 # refused from 3 of 10 to 7 of 10, and wrong sources from 11 of 26 to 7, while gold fell from 15 to 13.
@@ -79,7 +82,9 @@ def _unit(vector) -> np.ndarray:
 
 
 def _by_meaning(windows: Sequence[_Window], queries: Sequence[str], embedder: Embedder) -> list[int]:
-    matrix = np.stack([_unit(v) for v in embedder.embed_passages([w.text for w in windows])])
+    # With its path and symbol, as chunks are embedded, because 3 lines alone say little.
+    texts = [f"{w.chunk.path} {w.chunk.symbol or ''}\n{w.text}" for w in windows]
+    matrix = np.stack([_unit(v) for v in embedder.embed_passages(texts)])
     cosines = np.full(len(windows), -1.0)
     for query in queries:
         cosines = np.maximum(cosines, matrix @ _unit(embedder.embed_query(query)))
@@ -118,7 +123,8 @@ def _merged(ordered: Sequence[_Window], terms: set[str], limit: int) -> list[Pas
                 item[1], item[2] = wider
                 break
         else:
-            if len(taken) == limit:
+            same_file = sum(item[0].path == chunk.path for item in taken)
+            if len(taken) == limit or same_file >= MAX_PASSAGES_PER_FILE:
                 continue
             for other, first, last in taken:
                 if other.id == chunk.id and start <= last and first <= end:

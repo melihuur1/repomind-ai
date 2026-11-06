@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from typing import Sequence
 
 from repomind.embeddings.provider import Embedder
 from repomind.errors import RepoMindError
@@ -86,6 +87,10 @@ class SearchEngine:
             return asks_about_tests(query) or (translated is not None and asks_about_tests(translated))
         return self.config.include_tests
 
+    def local_translation(self, query: str, warnings: list[str]) -> str | None:
+        """The local translator's wording, which needs no LLM. None for a query that is not Turkish."""
+        return self._translate(query, warnings)
+
     def _translate(self, query: str, warnings: list[str]) -> str | None:
         if self.translator is None or not looks_turkish(query):
             return None
@@ -110,10 +115,10 @@ class SearchEngine:
         return index.postings
 
     def _keyword_hits(
-        self, query: str, translated: str | None, snapshot_ids: list[int], include_tests: bool, limit: int
+        self, query: str, wordings: Sequence[str], snapshot_ids: list[int], include_tests: bool, limit: int
     ) -> list[SearchHit]:
-        # Identifiers usually survive in the original text, so both versions count.
-        text = f"{translated} {query}" if translated else query
+        # Identifiers usually survive in the original text, so every version counts.
+        text = " ".join([*wordings, query])
         return [
             SearchHit(
                 chunk=match.chunk,
@@ -173,8 +178,13 @@ class SearchEngine:
         repos: list[str] | None = None,
         limit: int = 5,
         translated: str | None = None,
+        more_wordings: Sequence[str] = (),
     ) -> SearchResult:
-        """``translated`` is an English wording the caller already has; otherwise the translator makes one."""
+        """``translated`` is an English wording the caller already has; otherwise the translator makes one.
+
+        ``more_wordings`` are other wordings of the same question, each searched on its own, so
+        that one wrong translation cannot decide alone what search finds.
+        """
         if not query.strip():
             raise RepoMindError("The search query is empty.")
         if mode not in MODES:
@@ -185,15 +195,17 @@ class SearchEngine:
         translated = translated or self._translate(query, warnings)
         include_tests = self._tests_included(query, translated)
         depth = max(limit, self.config.candidates)
+        wordings = list(dict.fromkeys(w for w in (translated, *more_wordings) if w))
 
         lists: dict[str, list[SearchHit]] = {}
         if mode in ("keyword", "hybrid"):
-            lists["keyword"] = self._keyword_hits(query, translated, snapshot_ids, include_tests, depth)
+            lists["keyword"] = self._keyword_hits(query, wordings, snapshot_ids, include_tests, depth)
         if mode in ("semantic", "hybrid"):
             self._require_embeddings(snapshot_ids, warnings)
             lists["semantic"] = self._semantic_hits(query, snapshot_ids, include_tests, depth)
-            if translated:
-                lists["semantic_translated"] = self._semantic_hits(translated, snapshot_ids, include_tests, depth)
+            for number, wording in enumerate(wordings, start=1):
+                name = "semantic_translated" if number == 1 else f"semantic_translated_{number}"
+                lists[name] = self._semantic_hits(wording, snapshot_ids, include_tests, depth)
 
         if len(lists) == 1:
             hits = next(iter(lists.values()))[:limit]

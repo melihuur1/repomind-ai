@@ -7,6 +7,7 @@ imperfect, which is why the translated query is added to the original, never rep
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Protocol
 
@@ -30,6 +31,24 @@ def looks_turkish(text: str) -> bool:
     if any(character in _TURKISH_LETTERS for character in text):
         return True
     return any(fold(word) in _TURKISH_WORDS for word in _WORD.findall(text))
+
+
+_TECHNICAL_TERM = re.compile(
+    r"`[^`\n]+`"
+    r"|[\w./-]*\w\.(?:java|tsx?|jsx?|sql|ya?ml|json|md|py)\b"
+    r"|[\w.-]+/[\w./-]+"
+    r"|\b[A-Za-z]+_\w+\b"
+    r"|\b[a-z]+[A-Z]\w*\b"
+    r"|\b[A-Z][a-z]+[A-Z]\w*\b"
+    r"|\b[A-Z]{2,}\d*\b"
+)
+
+
+def keep_technical_terms(question: str, translation: str) -> str:
+    """File paths, symbol names and acronyms must reach search as written, whatever a translator did to them."""
+    terms = (term.strip("`") for term in dict.fromkeys(_TECHNICAL_TERM.findall(question)))
+    missing = [term for term in terms if term.casefold() not in translation.casefold()]
+    return f"{translation} {' '.join(missing)}" if missing else translation
 
 
 class QueryTranslator(Protocol):

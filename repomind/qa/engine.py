@@ -20,12 +20,13 @@ from repomind.qa.prompt import (
 from repomind.qa.sufficiency import check_sufficiency
 from repomind.qa.verification import VerifiedCitation, verify_selection
 from repomind.search.engine import SearchEngine, SearchHit
-from repomind.search.translation import looks_turkish
+from repomind.search.translation import keep_technical_terms, looks_turkish
 from repomind.store.database import Store
 
 # If the endpoint reports far fewer input tokens than we sent, it truncated the prompt
 # silently (for example Ollama's small default context) and sources were never seen.
 _TRUNCATION_RATIO = 0.5
+_CHUNKS_WITHOUT_A_MODEL = 12
 _TRANSLATION_OUTPUT_TOKENS = 80
 _MAX_TRANSLATION_CHARACTERS = 400
 
@@ -164,15 +165,17 @@ class QAEngine:
             return None
         if not isinstance(english, str) or not english.strip() or len(english) > _MAX_TRANSLATION_CHARACTERS:
             return None
-        return english.strip()
+        return keep_technical_terms(question, english.strip())
 
     def ask(self, question: str, repos: list[str] | None = None) -> AskResult:
-        chunk_limit = self.config.max_context_chunks if self.config else 8
+        chunk_limit = self.config.max_context_chunks if self.config else _CHUNKS_WITHOUT_A_MODEL
         result = AskResult(status="no_llm", question=question)
         # Before the search: a refused question should not leave anything half done.
         self.search.check_repositories(repos)
         english = self._translate_with_the_model(question, result)
-        retrieved = self.search.search(question, "hybrid", repos, chunk_limit, translated=english)
+        # A second translator's wording is searched too, so one wrong translation cannot decide alone.
+        second = self.search.local_translation(question, result.warnings) if english else None
+        retrieved = self.search.search(question, "hybrid", repos, chunk_limit, translated=english, more_wordings=[second] if second else ())
         result.hits = retrieved.hits
         result.translated_query = retrieved.translated_query
         result.warnings.extend(retrieved.warnings)
@@ -192,7 +195,7 @@ class QAEngine:
             result.status = "insufficient"
             return result
 
-        queries = [text for text in (question, retrieved.translated_query) if text]
+        queries = [text for text in (question, retrieved.translated_query, second) if text]
         found = select_passages([hit.chunk for hit in retrieved.hits], queries, self.search.embedder)
         result.passages = self._verified_passages(found, result)
         if not result.passages:

@@ -1,0 +1,659 @@
+{
+"12,1": {
+"v2-sg-negative-stock-db": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": true
+},
+"v2-sg-settled-immutable": {
+"status": "answered",
+"chosen": [
+"src/main/resources/db/migration/V3__reservations.sql:25-27",
+"src/main/resources/db/migration/V3__reservations.sql:29-33"
+],
+"note": "`reservations_guard_update` işlevi bir mevcut rezervasyonun durumu değiştirilmesini engellemektedir.",
+"correct": true,
+"offered": true
+},
+"v2-sg-append-only": {
+"status": "answered",
+"chosen": [
+"src/main/resources/db/migration/V4__ledger_and_audit.sql:48-50",
+"src/main/resources/db/migration/V4__ledger_and_audit.sql:52-54"
+],
+"note": "`tg_stock_movements_append_only` ve `tg_audit_events_append_only` trigger'ları, veri silinmesini veya güncellenmesini önler.",
+"correct": true,
+"offered": true
+},
+"v2-sg-sweep-index": {
+"status": "answered",
+"chosen": [
+"src/main/resources/db/migration/V3__reservations.sql:20-21"
+],
+"note": "`ix_reservations_pending_expiry` indeksi süresi geçen PENDING rezervasyonları hızlı bir şekilde tarar.",
+"correct": true,
+"offered": true
+},
+"v2-sg-why-separate-stock": {
+"status": "answered",
+"chosen": [
+"src/main/resources/db/migration/V2__catalog_and_stock.sql:14-18"
+],
+"note": "`stock_levels` tablosu ürün satırından ayrı olarak tutulur: bu sistemde en sıcak satır olanıdır ve bununla ilişkili bir katalog düzenlemesi ve rezervasyon aynı satır kilidi için contend etmez.",
+"correct": true,
+"offered": true
+},
+"v2-sg-lock-timeout-config": {
+"status": "answered",
+"chosen": [
+"src/main/resources/application.yml:10-14"
+],
+"note": "`connection-init-sql: \"SET lock_timeout = '3s'; SET idle_in_transaction_session_timeout = '30s'`",
+"correct": true,
+"offered": true
+},
+"v2-sg-reservation-defaults": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": false
+},
+"v2-sg-two-instances": {
+"status": "answered",
+"chosen": [
+"compose.yaml:1-3"
+],
+"note": "`stockguard` adlı iki uygulama örneği aynı PostgreSQL veritabanını paylaşıyor.",
+"correct": false,
+"offered": false
+},
+"v2-sg-auth-error-format": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java:34-38"
+],
+"note": "`ProblemAuthErrorHandler.handle` istemciye `AccessDeniedException` durumunda bir hata iletilisi döndürür.",
+"correct": true,
+"offered": true
+},
+"v2-sg-username-race": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/user/AppUserRepository.java:12-16"
+],
+"note": "",
+"correct": true,
+"offered": true
+},
+"v2-sg-simulation-limit": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/simulation/SimulationController.java:31-35",
+"src/main/java/com/stockguard/simulation/SimulationController.java:37-41"
+],
+"note": "`SimulationController.run` ve `SimulationRequest.concurrentRequests` ile ilgili metotlar, en fazla 1000 adet eşzamanlı istek gönderilebilir.",
+"correct": true,
+"offered": true
+},
+"v2-sg-error-status-map": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:150-154"
+],
+"note": "`HttpStatus.resolve(status.value())` ifadesi STOK YETERSİZLİĞİ durumunda bir HTTP durum kodu belirliyor.",
+"correct": false,
+"offered": true
+},
+"v2-sg-add-stock-limits": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": false
+},
+"v2-sn-one-owner": {
+"status": "answered",
+"chosen": [
+"packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql:1-5"
+],
+"note": "`CREATE UNIQUE INDEX` kullanılarak her notaya sadece bir sahip olunması garanti edilir.",
+"correct": true,
+"offered": true
+},
+"v2-sn-collab-instances": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": true
+},
+"v2-sn-redis-durability": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": true
+},
+"v2-sn-cookie-flags": {
+"status": "answered",
+"chosen": [
+"apps/api/src/common/cookies.ts:12-14"
+],
+"note": "`base` fonksiyonu oturum çerezlerinin `secure` ve `sameSite: 'lax'` ayarlarını gösteriyor.",
+"correct": true,
+"offered": true
+},
+"v2-sn-env-validation": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": true
+},
+"v2-sn-account-lock": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": true
+},
+"v2-sn-folder-delete": {
+"status": "answered",
+"chosen": [
+"apps/api/src/folders/folders.service.ts:63-67"
+],
+"note": "`FoldersService.remove` notelere sadece bir yerinden diğerine taşınır ve silmez.",
+"correct": true,
+"offered": true
+},
+"v2-sn-note-search": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": true
+},
+"v2-sn-health-redis": {
+"status": "answered",
+"chosen": [
+"apps/api/src/health/health.controller.ts:19-23",
+"apps/api/src/health/health.controller.ts:31-33"
+],
+"note": "`check` fonksiyonu Redis'in durumunu 'up' veya 'down' olarak döndürür.",
+"correct": true,
+"offered": true
+},
+"v2-sn-logout-access-token": {
+"status": "answered",
+"chosen": [
+"apps/api/src/common/guards/jwt-auth.guard.ts:50-52"
+],
+"note": "`Invalid or expired access token` hatasını atıyor, bu yüzden süresi dolmamış erişim anahtarı da kabul edilmiyor.",
+"correct": false,
+"offered": false
+},
+"v2-sn-cursor-color": {
+"status": "answered",
+"chosen": [
+"apps/web/src/lib/colors.ts:15-19"
+],
+"note": "`colorForUser` fonksiyonu kullanıcının rengini belirler.",
+"correct": true,
+"offered": true
+},
+"v2-sn-title-merge": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": false
+},
+"v2-sn-theme-flash": {
+"status": "answered",
+"chosen": [
+"apps/web/public/theme-init.js:1-5"
+],
+"note": "`Applied before first paint so the page never flashes the wrong theme.` bu satır, sayfa yüklenirken yanlış tema geçici olarak görünmemesi için kullanıldığını gösterir.",
+"correct": true,
+"offered": true
+},
+"v3-sg-instance-header": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java:14-18"
+],
+"note": "`InstanceHeaderFilter` bileşeni istemciye hangi örneğin yanıt verdiğini bildirir.",
+"correct": false,
+"offered": false
+},
+"v3-sg-audit-page-size": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/audit/AuditController.java:30-34"
+],
+"note": "`AuditController.search` metodunun `size` parametresinin değeri 1 ile 100 aralığında olabilir, bu sayede her sayfada en fazla 100 denetim kaydı listelenebilir.",
+"correct": true,
+"offered": true
+},
+"v3-sg-movement-types": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/inventory/MovementType.java:3-5",
+"src/main/java/com/stockguard/inventory/StockMovement.java:69-73"
+],
+"note": "`MovementType` dizini `STOCK_IN` ve `RESERVED` türlerini içeriyor ve `StockMovement` sınıfı bu türleri kullanıyor.",
+"correct": true,
+"offered": true
+},
+"v3-sg-username-lowercase": {
+"status": "answered",
+"chosen": [
+"src/main/resources/db/migration/V1__users.sql:7-11"
+],
+"note": "`username = lower(username)` ifadesi kullanıcı adlarının küçük harfle saklanmasını zorunlu kılar.",
+"correct": true,
+"offered": true
+},
+"v3-sg-request-fingerprint": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/reservation/CreateReservationCommand.java:11-15"
+],
+"note": "`CreateReservationCommand` sınıfının açıklaması, aynı anahtarlardan gelen farklı taleplerin nasıl ayırt edildiğine dair bilgi veriyor.",
+"correct": true,
+"offered": true
+},
+"v3-sg-no-setters": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/inventory/StockLevel.java:11-15"
+],
+"note": "`StockLevel` sınıfının nesneleri IMMUTABLE olarak tasarlandığı ve sadece `StockLevelRepository`'un koşullu ifadeleri aracılığıyla değiştirildiği` belirtiliyor.",
+"correct": true,
+"offered": true
+},
+"v3-sn-register-password": {
+"status": "answered",
+"chosen": [
+"apps/api/src/auth/dto.ts:18-22"
+],
+"note": "`@MinLength(8, { message: 'password must be at least 8 characters' })` ve `@MaxLength(128)` bu satırlar şifrenin en az 8 karakter olmalı ve en fazla 128 karakter olabilir olduğunu gösterir.",
+"correct": true,
+"offered": true
+},
+"v3-sn-who-can-edit": {
+"status": "answered",
+"chosen": [
+"packages/shared/src/roles.ts:20-22"
+],
+"note": "`canEdit` fonksiyonu `EDITOR` rolünü kontrol eder, bu da hangi roller bir notu düzenleyebileceğini gösterir.",
+"correct": true,
+"offered": true
+},
+"v3-sn-share-ownership": {
+"status": "answered",
+"chosen": [
+"apps/api/src/notes/dto.ts:41-45"
+],
+"note": "`OWNER` is deliberately not assignable — ownership cannot be granted through sharing.",
+"correct": false,
+"offered": true
+},
+"v3-sn-role-cache-ttl": {
+"status": "answered",
+"chosen": [
+"apps/collab/src/config.ts:9-13"
+],
+"note": "`PERMISSION_CACHE_TTL_MS` ayarlıyor ki rol önbelleğinin veritabanından yeniden okunması ne kadar sonra olacağını.",
+"correct": true,
+"offered": true
+},
+"v3-sn-redis-access-events": {
+"status": "answered",
+"chosen": [
+"apps/api/src/notes/members.service.ts:70-74"
+],
+"note": "`MembersService.updateRole` işlemi,Redis kapalı olmasına bakmaksızın çalışır.",
+"correct": false,
+"offered": true
+},
+"v3-sn-user-delete-sql": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": false
+}
+},
+"8,0": {
+"v2-sg-negative-stock-db": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": true
+},
+"v2-sg-settled-immutable": {
+"status": "answered",
+"chosen": [
+"src/main/resources/db/migration/V3__reservations.sql:25-27"
+],
+"note": "`reservations_guard_update` işlevi bir mevcut rezervasyonun durumu değiştirilmesini engellemek için kullanılır.",
+"correct": true,
+"offered": true
+},
+"v2-sg-append-only": {
+"status": "answered",
+"chosen": [
+"src/main/resources/db/migration/V4__ledger_and_audit.sql:48-50",
+"src/main/resources/db/migration/V4__ledger_and_audit.sql:52-54"
+],
+"note": "`tg_stock_movements_append_only` ve `tg_audit_events_append_only` trigger'lerinde güncelleme veya silme önceden engellenmektedir.",
+"correct": true,
+"offered": true
+},
+"v2-sg-sweep-index": {
+"status": "answered",
+"chosen": [
+"src/main/resources/db/migration/V3__reservations.sql:20-21"
+],
+"note": "`ix_reservations_pending_expiry` indeksi süresi geçen rezervasyonları tarayan işleme özel olarak tasarlanmıştır.",
+"correct": true,
+"offered": true
+},
+"v2-sg-why-separate-stock": {
+"status": "answered",
+"chosen": [
+"src/main/resources/db/migration/V2__catalog_and_stock.sql:14-18"
+],
+"note": "`stock_levels` tablosu ürün satırından ayrıdır: bu sistemde en sıcak satır olduğundan, bir katalog düzenleme ve bir rezervasyon aynı satır kilidi için contend etmekle karşılaşmaz.",
+"correct": true,
+"offered": true
+},
+"v2-sg-lock-timeout-config": {
+"status": "answered",
+"chosen": [
+"src/main/resources/application.yml:10-14"
+],
+"note": "`connection-init-sql: \"SET lock_timeout = '3s'; SET idle_in_transaction_session_timeout = '30s'` bu satırlar veritabanı kilit bekleme süresini ve iddle-in-transaction zaman aşımını ayarlıyor.",
+"correct": true,
+"offered": true
+},
+"v2-sg-reservation-defaults": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": false
+},
+"v2-sg-two-instances": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": false
+},
+"v2-sg-auth-error-format": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java:34-38"
+],
+"note": "`ProblemAuthErrorHandler.handle` methodu istemciye `ACCESS_DENIED` kodunu ve mesajını döndürmektedir.",
+"correct": true,
+"offered": true
+},
+"v2-sg-username-race": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/user/AppUserRepository.java:12-16"
+],
+"note": "",
+"correct": true,
+"offered": true
+},
+"v2-sg-simulation-limit": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/simulation/SimulationController.java:31-35",
+"src/main/java/com/stockguard/simulation/SimulationController.java:37-41"
+],
+"note": "`SimulationController.run` metodunda `concurrentRequests` parametresi, yarış simülasyonunda gönderilebilecek en fazla eşzamanlı isteği belirtir.",
+"correct": true,
+"offered": true
+},
+"v2-sg-error-status-map": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:150-154"
+],
+"note": "`HttpStatus.resolve(status.value())` ifadesi out of stock hatasının HTTP durum kodunu belirliyor.",
+"correct": false,
+"offered": true
+},
+"v2-sg-add-stock-limits": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": false
+},
+"v2-sn-one-owner": {
+"status": "answered",
+"chosen": [
+"packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql:1-5"
+],
+"note": "`every note has at most one OWNER membership` ve `CREATE UNIQUE INDEX` komutu veritabanında bir notun iki sahibi olmamasını sağlar.",
+"correct": true,
+"offered": true
+},
+"v2-sn-collab-instances": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": true
+},
+"v2-sn-redis-durability": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": true
+},
+"v2-sn-cookie-flags": {
+"status": "answered",
+"chosen": [
+"apps/api/src/common/cookies.ts:12-14"
+],
+"note": "`base` fonksiyonu çerezlerin güvenli modunu ve sameSite ayarını belirliyor.",
+"correct": true,
+"offered": true
+},
+"v2-sn-env-validation": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": true
+},
+"v2-sn-account-lock": {
+"status": "answered",
+"chosen": [
+"apps/api/src/auth/auth.service.ts:200-204"
+],
+"note": "Hesap birden fazla yanlış girişten sonra kilitlenir.",
+"correct": true,
+"offered": true
+},
+"v2-sn-folder-delete": {
+"status": "answered",
+"chosen": [
+"apps/api/src/folders/folders.service.ts:63-67"
+],
+"note": "`FoldersService.remove` silinen klasörün içindeki notları silmez — onlar `ON DELETE SET NULL` kurallı olarak 'unfiled' duruma döner.",
+"correct": true,
+"offered": true
+},
+"v2-sn-note-search": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": false
+},
+"v2-sn-health-redis": {
+"status": "answered",
+"chosen": [
+"apps/api/src/health/health.controller.ts:31-33"
+],
+"note": "",
+"correct": true,
+"offered": true
+},
+"v2-sn-logout-access-token": {
+"status": "answered",
+"chosen": [
+"apps/api/src/common/guards/jwt-auth.guard.ts:50-52"
+],
+"note": "`Invalid or expired access token` hatası gösterir ki geçersiz veya süresi dolmuş erişim anahtarı reddedilir.",
+"correct": false,
+"offered": false
+},
+"v2-sn-cursor-color": {
+"status": "answered",
+"chosen": [
+"apps/web/src/lib/colors.ts:15-19"
+],
+"note": "`colorForUser` fonksiyonu kullanıcının ID'sine göre imleç rengini belirler.",
+"correct": true,
+"offered": true
+},
+"v2-sn-title-merge": {
+"status": "answered",
+"chosen": [
+"apps/collab/src/extensions/persistence.ts:24-28"
+],
+"note": "",
+"correct": false,
+"offered": false
+},
+"v2-sn-theme-flash": {
+"status": "answered",
+"chosen": [
+"apps/web/public/theme-init.js:1-5"
+],
+"note": "`Applied before first paint so the page never flashes the wrong theme.` bu satır, sayfa ilk kez çizildiği zaman yanlış tema geçici olarak görünmemesini sağlar.",
+"correct": true,
+"offered": true
+},
+"v3-sg-instance-header": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": false
+},
+"v3-sg-audit-page-size": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/audit/AuditController.java:30-34"
+],
+"note": "`AuditController.search` metodunun `size` parametresi 1 ile 100 arasında olabilir, bu sayede her sayfada en fazla 100 denetim kaydı listelenebilir.",
+"correct": true,
+"offered": true
+},
+"v3-sg-movement-types": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/inventory/MovementType.java:3-5",
+"src/main/java/com/stockguard/inventory/StockMovement.java:69-73"
+],
+"note": "`MovementType` dizini `STOCK_IN` ve `RESERVED` türlerini gösteriyor. `StockMovement` sınıfı da bu türleri içeriyor.",
+"correct": true,
+"offered": true
+},
+"v3-sg-username-lowercase": {
+"status": "answered",
+"chosen": [
+"src/main/resources/db/migration/V1__users.sql:7-11"
+],
+"note": "`CONSTRAINT ck_app_users_username_lowercase CHECK (username = lower(username))` bu kısıtlama, kullanıcı adlarının küçük harf olarak saklanmasını zorunlu kılar.",
+"correct": true,
+"offered": true
+},
+"v3-sg-request-fingerprint": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/reservation/CreateReservationCommand.java:11-15"
+],
+"note": "`CreateReservationCommand`'den gelen notada, aynı anahtarı kullanılan farklı isteklerin tespit edilmesi için bir identifikator oluşturulması belirtiliyor.",
+"correct": true,
+"offered": true
+},
+"v3-sg-no-setters": {
+"status": "answered",
+"chosen": [
+"src/main/java/com/stockguard/inventory/StockLevel.java:11-15"
+],
+"note": "",
+"correct": true,
+"offered": true
+},
+"v3-sn-register-password": {
+"status": "answered",
+"chosen": [
+"apps/web/src/pages/auth-pages.tsx:226-230",
+"apps/web/src/pages/auth-pages.tsx:181-185"
+],
+"note": "`RegisterPage` komponentinde minimum şifre uzunluğu 8 karakter olarak belirtilmiş ve doğrulama işlemi de bu limiti kontrol ediyor.",
+"correct": false,
+"offered": true
+},
+"v3-sn-who-can-edit": {
+"status": "answered",
+"chosen": [
+"packages/shared/src/roles.ts:20-22"
+],
+"note": "`canEdit(role: NoteRole | null | undefined): boolean` fonksiyonu EDITOR rolünü kontrol eder, bu da notu düzenleyebilecek rolleri belirtir.",
+"correct": true,
+"offered": true
+},
+"v3-sn-share-ownership": {
+"status": "answered",
+"chosen": [
+"apps/api/src/notes/dto.ts:41-45"
+],
+"note": "`OWNER` is deliberately not assignable — ownership cannot be granted through sharing.",
+"correct": false,
+"offered": false
+},
+"v3-sn-role-cache-ttl": {
+"status": "answered",
+"chosen": [
+"apps/collab/src/config.ts:9-13"
+],
+"note": "`PERMISSION_CACHE_TTL_MS` değişkeni önbelleğin veritabanından yeniden okunmasına belirtiyor ve 5000 milisaniye olan bu değerden sonra yaplıyor.",
+"correct": true,
+"offered": true
+},
+"v3-sn-redis-access-events": {
+"status": "answered",
+"chosen": [
+"apps/api/src/notes/members.service.ts:70-74"
+],
+"note": "`MembersService.updateRole` işlevi Redis kapalı olduğunda çalışamayacağından bahsediyor.",
+"correct": false,
+"offered": false
+},
+"v3-sn-user-delete-sql": {
+"status": "insufficient",
+"chosen": [],
+"note": "",
+"correct": false,
+"offered": false
+}
+}
+}
