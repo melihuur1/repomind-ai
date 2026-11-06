@@ -91,17 +91,17 @@ Without a configured LLM, or with `--no-llm`, `ask` lists the closest lines and 
 
 ```bash
 docker compose --profile llm up -d ollama
-docker exec repomind-ollama ollama pull qwen2.5:3b
+docker exec repomind-ollama ollama pull qwen2.5:7b
 ```
 
 Then add to `.env`:
 
 ```bash
 REPOMIND_LLM_BASE_URL=http://127.0.0.1:11535/v1
-REPOMIND_LLM_MODEL=qwen2.5:3b
+REPOMIND_LLM_MODEL=qwen2.5:7b
 ```
 
-`qwen2.5:3b` is under the Qwen Research License rather than an open source license, so check that it suits your use. `qwen2.5:7b` is Apache-2.0 licensed, and used up to 7.7 GiB of memory before the current limits were set. Any OpenAI-compatible endpoint works. Sending code to a remote endpoint must be enabled explicitly, and paid use needs prices and a budget in `.env`.
+`qwen2.5:7b` is the default, is Apache-2.0 licensed, and took about 6.4 GB across RAM and VRAM in the pilot. The smaller `qwen2.5:3b` also works, but it is under the Qwen Research License rather than an open source license, and it did worse in the pilot. Any OpenAI-compatible endpoint works. Sending code to a remote endpoint must be enabled explicitly, and paid use needs prices and a budget in `.env`.
 
 The container keeps one model in memory at a time, is limited to 8 GB, and uses an NVIDIA GPU through `gpus: all` in `compose.yaml`. On a machine without one, remove that line and it runs on the CPU. To give the memory back when you are done, run `docker compose stop ollama`.
 
