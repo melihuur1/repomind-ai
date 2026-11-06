@@ -233,7 +233,11 @@ def blind(results: Path, pack: Path, key: Path) -> int:
             "label": label,
             "question": row["tr"],
             "question_en": row["en"],
-            "expected": row["expected"] or "UNANSWERABLE: the repository does not have this feature.",
+            "expected": (
+                "UNANSWERABLE: the repository does not have this feature."
+                if row["group"] in NEGATIVE_GROUPS
+                else row["expected"] or "No note for this question: judge by the question and the code."
+            ),
             "lines": [f"{by_id[i]['path']}:{by_id[i]['start_line']}-{by_id[i]['end_line']}\n{by_id[i]['text']}" for i in row["chosen"]],
             "models_reading": row["note"],
         })

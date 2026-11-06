@@ -15,6 +15,8 @@ The goal is to reach the right code reliably, explain it correctly, and know how
 | Does it refuse what it cannot answer? | **With 7B, so far yes:** 8 of 8 on the new set, and 28 or 29 of 30 on the earlier ones. It also refuses some answerable questions. |
 | Did the search changes measured on the fourth set help? | **Not clearly.** They helped on the earlier sets they were tuned on, but on the new set the right lines reached the model no more often. |
 | Did the search work after that help? | **On the questions it was tuned on, yes:** the right code reached the passages for 68 of 85 questions, up from 61, with no more unanswerable questions let through. It has had no independent test. See [the details](#search-work-after-the-fourth-set). |
+| Should the evidence rule be loosened? | **Not on this evidence.** A flexible rule added 4 correct sources and 3 wrong ones on 21 selected questions, which misses the bar set in advance. See [the trials](#two-short-trials). |
+| Does giving the model glossary terms help translation? | **The wording, yes; search, hardly.** It fixed 12 of 20 known errors and broke 2, but gold reached the passages for only 1 more of the 20. It is not adopted. |
 | Is `qwen2.5:7b` better than 3B? | **On the pilot, clearly.** They were not compared on the new set. Its older run on the second question set is `incomplete — interrupted due to memory pressure`. |
 
 ## Phase 2
@@ -421,7 +423,78 @@ Of 85 questions after these changes: search misses 8, passage selection misses 9
 
 - **`token-ttl` is found when named, and not when described.** "How long is the access token valid?" still misses it. Even when offered, `token-ttl: 60m` shares only one word with that question, and the rule asks for 2.
 - **The evidence rule is now a large loss.** Counting either translation, or the glossary, raised evidence by about 6 questions, but unanswerable refused fell from 26 to 20. Those then depend on the model declining, which only a run with the model can measure.
-- **Translation still costs something.** With the developer's own English as a perfect translation, before the glossary was added, passages rose from 65 to 68, anchors from 56 to 63 and evidence from 54 to 60. Unanswerable refused fell from 26 to 20, so some of today's refusals rest on poor translations. Passing glossary terms to the model's translation has not been tried, because it needs the model.
+- **Translation still costs something.** With the developer's own English as a perfect translation, before the glossary was added, passages rose from 65 to 68, anchors from 56 to 63 and evidence from 54 to 60. Unanswerable refused fell from 26 to 20, so some of today's refusals rest on poor translations.
+
+## Two short trials
+
+**These use questions already read, chosen because they were likely to change, so they show nothing about new questions.** The questions, checks and bars were [committed first](../eval/TRIALS.md). No answer benchmark ran, and nothing in `repomind/` changed because of them.
+
+### The evidence rule
+
+One 7B request per question, with each rule worked out from the same reply. The strict rule is today's. The flexible rule counts each Turkish word's glossary senses as one concept, and asks for 2 concepts.
+
+| 21 selected questions | Strict | Flexible | Either translation | Model alone |
+| --- | --- | --- | --- | --- |
+| Correct source, of 14 answerable | 0 | **4** | 4 | 8 |
+| Wrong source, on those 14 | 1 | **3** | 4 | 5 |
+| No answer, on those 14 | 13 | 7 | 6 | 1 |
+| Right lines the model chose and the rule dropped | 8 | 3 | 3 | 0 |
+| Unanswerable accepted, of 7 | 1 | **2** | 2 | 2 |
+| Model asked | 9 | 21 | 18 | 21 |
+
+Strict's 0 is by construction, because 12 of these questions were picked for it dropping their right lines. It is not its overall rate. On all 85 questions, its lines include the right ones for 56.
+
+**The flexible rule missed the bar.** It needed at least 4 more correct sources and at most 1 more wrong one, and it gave 4 more correct and 3 more wrong: 2 on answerable questions, and 1 on an unanswerable one. The strict rule stays.
+
+**Real lines are not the same as an answer.** All 105 lines offered matched Git, and none of the 15 choices was invented. Graded without labels, by one reviewer, those 15 were 7 correct, 3 partly correct, 3 wrong, and 2 on unanswerable questions with a note that claimed the feature exists. For 7 of them the first question set has no expected note, so they were graded against the question and the code.
+
+**Counting shared terms does not separate right from wrong here:**
+
+| Most terms shared by the chosen lines | Correct | Partly correct | Wrong | Claimed a missing feature |
+| --- | --- | --- | --- | --- |
+| 0 | 0 | 0 | 1 | 0 |
+| 1 | 7 | 2 | 2 | 1 |
+| 2 or more | 0 | 1 | 0 | 1 |
+
+The selection favours few shared terms, so this does not show the rule is useless overall. It does show that 7 correct choices and 3 bad ones look the same to it.
+
+**How 7B used "none":**
+
+| Questions | "none" | Chose lines |
+| --- | --- | --- |
+| Unanswerable, 7 | **5** | 2, both with a false note |
+| Right lines offered, 12 | 1 | 11, of which 8 touched the right lines |
+| Right lines not offered, 2 | 0 | 2, both wrong |
+
+**Not measured:** 10 unanswerable and 70 answerable questions reach the model under both rules, and there a looser rule could keep a wrong choice that the strict one drops.
+
+### Glossary terms in the translation
+
+| 20 questions with a known error | Original prompt | With glossary terms |
+| --- | --- | --- |
+| Passes its check, fixed in advance | 4 | **14** |
+| Terms found in the repository's vocabulary | 114 of 135 | 118 of 133 |
+| Terms shared with the gold anchors | 17 | 19 |
+| Gold code in the candidates, with no model | 16 | 17 |
+| Gold code in the passages | 14 | **15** |
+| Gold anchor in the passages | 11 | 12 |
+| Gold code passing the evidence rule | 8 | 10 |
+| Median seconds per translation | 2.15 | 2.05 |
+
+It fixed 12 errors and broke 2, and 4 stayed wrong. "Yenileme anahtarı" became "refresh token", and "çevrimdışı" became "offline" and not "online". Search barely moved because it already uses the Turkish question, a second translation and the glossary's seats.
+
+**It missed the bar, so step 2 on 85 questions did not run.** Passages rose by 1, and the bar was 2. On 25 technical names, the model's own reply lost one in each arm. With terms it dropped `Idempotency-Key`, and the original prompt garbled `RESERVED_DOES_NOT_MATCH_PENDING_RESERVATIONS`. The code added both back. One reply with terms also answered instead of translating, and invented a default value of 429.
+
+**A single run of translation is noisy.** At temperature 0, 6 of the 20 original translations differed from the stored ones, and 4 of those passed checks they had failed before.
+
+### Cost
+
+Both trials took about 5 minutes, with no memory stop. 7B took a median of 4.1 seconds per choice. The lowest available RAM was 11.6 GB, free commit 18.0 GB, VRAM 2,812 MiB, and Python 1,039 MB. Glossary terms added about 54 input tokens per translation.
+
+### Also found, and not changed
+
+- The check on notes treats `15m` as no number at all, so a true note saying 15 minutes was dropped. The lines were still shown.
+- The glossary reads `NOT` in `RESERVATION_NOT_FOUND` as the Turkish word "not", meaning note.
 
 # Phase 1
 
@@ -638,6 +711,7 @@ Stored results are in [`eval/results/`](../eval/results):
 | `v2-ask-phase1-3b.json`, `v2-ask-phase2-3b.json`, `v2-grades-3b-tr.json` | 3B answers on the second set and their grades |
 | `v3-old-3b-tr.json`, `v3-nollm-*.json`, `v3-new-3b-*.json`, `v3-new-7b-tr.json`, `v3-grades-*.json` | The pilot and its grades |
 | `v4-baseline-7b-tr.json`, `v4-improved-7b-tr.json`, `v4-grades-7b-tr.json` | The fourth question set and its grades |
+| `dev-phase5-*.json`, `resources/stats-dev-phase5-trials.csv` | The two short trials on questions already read, not independent |
 | `dev-phase4-*.json` | Search before and after the latest work, with no model, on questions already read, not independent |
 | `dev-phase3-*.json`, `dev-improved-7b-v3.json` | Tuning runs for the search changes measured on the fourth set, not independent |
 | `dev-selector-3b-v2.json` | The new pipeline on the second set, before the evidence rule, not independent |

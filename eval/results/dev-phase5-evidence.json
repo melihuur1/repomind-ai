@@ -1,0 +1,2100 @@
+{
+ "model": "qwen2.5:7b",
+ "status": "complete",
+ "rows": [
+  {
+   "question": "sg-oversell",
+   "language": "tr",
+   "group": "A",
+   "repo": "stockguard",
+   "tr": "Aynı anda gelen isteklerde fazla satış nasıl önleniyor?",
+   "en": "How is overselling prevented under concurrent requests?",
+   "expected": "",
+   "translated_query": "How is overselling prevented when there are concurrent requests?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 22,
+     "end_line": 24,
+     "text": "\n    -- The database itself refuses overselling, even if application code is wrong.\n    CONSTRAINT ck_stock_available_non_negative CHECK (available_quantity >= 0),",
+     "offered": true,
+     "shared_with_translation": [
+      "oversel"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 31,
+     "end_line": 35,
+     "text": "     * just inserted the same key, PostgreSQL blocks this statement until that transaction ends. If it\n     * committed, this returns 0 (a duplicate). If it rolled back, this insert simply goes ahead. That is what\n     * turns concurrent duplicates into exactly one logical operation.\n     */\n    @Modifying",
+     "offered": true,
+     "shared_with_translation": [
+      "concurr"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 52,
+     "text": "    /** The anti-overselling statement. An empty result means too little stock was left once it got the row lock. */\n    @Transactional(propagation = Propagation.MANDATORY)\n    @Query(nativeQuery = true, value = \"\"\"",
+     "offered": true,
+     "shared_with_translation": [
+      "oversel"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": true
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 98,
+     "end_line": 102,
+     "text": "        List<SimulatedUser> users = simulatedUsers(concurrentRequests);\n        List<String> targets = targets();\n        long startedAt = System.nanoTime();\n        List<RequestResult> results = race(concurrentRequests, index -> {\n            String target = targets.get(index % targets.size());",
+     "offered": true,
+     "shared_with_translation": [
+      "concurr",
+      "request"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 39,
+     "end_line": 43,
+     "text": "                (id, product_id, user_id, quantity, status, idempotency_key, request_hash, expires_at, created_at)\n            VALUES\n                (:id, :productId, :userId, :quantity, 'PENDING', :idempotencyKey, :requestHash,\n                 now() + make_interval(secs => :ttlSeconds), now())\n            ON CONFLICT (user_id, idempotency_key) DO NOTHING",
+     "offered": true,
+     "shared_with_translation": [
+      "request"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P1"
+   ],
+   "note": "`ck_stock_available_non_negative` kontrolü, veritabanı kendi kendini engelleyerek fazla satışları önler.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 9.37,
+   "input_tokens": 1007,
+   "output_tokens": 41,
+   "free_memory_gb": 18.44
+  },
+  {
+   "question": "sn-offline",
+   "language": "tr",
+   "group": "A",
+   "repo": "syncnotes",
+   "tr": "Çevrimdışı düzenlemeler nerede saklanıyor?",
+   "en": "Where are offline edits stored?",
+   "expected": "",
+   "translated_query": "Where are the online edits stored?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 16,
+     "end_line": 20,
+     "text": "  {\n    icon: WifiOff,\n    title: 'Works offline',\n    text: 'Keep writing without a connection; changes merge when you are back.',\n  },",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 100,
+     "end_line": 104,
+     "text": "    let disposed = false;\n    const doc = new Y.Doc();\n    // Viewers never write, so they don't keep an offline replica that could hold rejected edits.\n    const persistence = canEdit(roleRef.current)\n      ? new IndexeddbPersistence(localReplicaName(user.id, noteId), doc)",
+     "offered": true,
+     "shared_with_translation": [
+      "edit"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": true
+    },
+    {
+     "id": "P3",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 185,
+     "end_line": 189,
+     "text": "    const goOffline = () => {\n      setOnline(false);\n      provider.disconnect();\n    };\n    window.addEventListener('online', goOnline);",
+     "offered": true,
+     "shared_with_translation": [
+      "onlin"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 197,
+     "end_line": 201,
+     "text": "    return () => {\n      disposed = true;\n      window.removeEventListener('online', goOnline);\n      window.removeEventListener('offline', goOffline);\n      provider.destroy();",
+     "offered": true,
+     "shared_with_translation": [
+      "onlin"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 38,
+     "end_line": 42,
+     "text": "          unsyncedChanges > 0\n            ? `${pending} saved on this device — they will sync when you reconnect.`\n            : 'You can keep editing; changes are saved on this device.',\n        tone: 'warn',\n      };",
+     "offered": true,
+     "shared_with_translation": [
+      "edit"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P2"
+   ],
+   "note": "`IndexeddbPersistence` kullanılarak çevrimdışı düzenlemeler saklanıyor.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 3.71,
+   "input_tokens": 916,
+   "output_tokens": 32,
+   "free_memory_gb": 12.08
+  },
+  {
+   "question": "sn-ticket",
+   "language": "tr",
+   "group": "A",
+   "repo": "syncnotes",
+   "tr": "WebSocket bağlantısı için kimlik doğrulama bileti nasıl üretiliyor ve doğrulanıyor?",
+   "en": "How is the WebSocket authentication ticket issued and verified?",
+   "expected": "",
+   "translated_query": "How are authentication tickets generated and validated for a WebSocket connection?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/collab/src/ticket.ts",
+     "start_line": 10,
+     "end_line": 14,
+     "text": "/**\n * Verifies a collaboration ticket issued by the API.\n * The ticket only proves *identity* and *intent* (which note); authorisation is re-checked\n * against Postgres by the caller.\n */",
+     "offered": true,
+     "shared_with_translation": [
+      "ticket"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": true
+    },
+    {
+     "id": "P2",
+     "path": "apps/collab/src/ticket.ts",
+     "start_line": 15,
+     "end_line": 16,
+     "text": "export function verifyTicket(\n  token: string,",
+     "offered": true,
+     "shared_with_translation": [
+      "ticket"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": true
+    },
+    {
+     "id": "P3",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 46,
+     "end_line": 50,
+     "text": "/**\n * Authorisation for the collaboration WebSocket — *never* trusts the client:\n *\n * - handshake: verifies the API-issued ticket, then reads the role from Postgres\n * - viewers get a read-only connection: Hocuspocus drops their sync updates server-side",
+     "offered": true,
+     "shared_with_translation": [
+      "connect",
+      "socket",
+      "ticket",
+      "web",
+      "websocket"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 92,
+     "end_line": 96,
+     "text": "  /** Short-lived ticket for the collaboration WebSocket (see CollabTicketService). */\n  @Post(':noteId/collab-ticket')\n  @RequireNoteRole('VIEWER')\n  @HttpCode(200)\n  ticket(",
+     "offered": true,
+     "shared_with_translation": [
+      "socket",
+      "ticket",
+      "web",
+      "websocket"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "packages/shared/src/collab.ts",
+     "start_line": 7,
+     "end_line": 11,
+     "text": "/** Claims inside the short-lived, document-scoped ticket the API issues for the WebSocket handshake. */\nexport interface CollabTicketClaims {\n  /** user id */\n  sub: string;\n  /** note id (== Hocuspocus document name) */",
+     "offered": true,
+     "shared_with_translation": [
+      "socket",
+      "ticket",
+      "web",
+      "websocket"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P3"
+   ],
+   "note": "`AccessControlExtension` doğrulama bileti sadece API tarafından çıkarılan biletin doğrulanmasını sağlar ve ardından Postgres'ta rolü okur.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 5.13,
+   "input_tokens": 891,
+   "output_tokens": 50,
+   "free_memory_gb": 12.06
+  },
+  {
+   "question": "sn-version-restore",
+   "language": "tr",
+   "group": "A",
+   "repo": "syncnotes",
+   "tr": "Bir not eski sürümüne nasıl geri döndürülüyor?",
+   "en": "How is a note restored to an earlier version?",
+   "expected": "",
+   "translated_query": "How do you revert to an old version in a software repository?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 46,
+     "end_line": 49,
+     "text": "  /**\n   * Restores `versionId` into the live document.\n   * The current content is snapshotted first (kind RESTORE) so a restore can itself be undone.\n   */",
+     "offered": true,
+     "shared_with_translation": [
+      "version"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": true
+    },
+    {
+     "id": "P2",
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 50,
+     "end_line": 53,
+     "text": "  async restore(noteId: string, document: Y.Doc, versionId: string, userId: string): Promise<void> {\n    const version = await this.prisma.noteVersion.findFirst({\n      where: { id: versionId, noteId },\n      select: { state: true, label: true, createdAt: true },",
+     "offered": true,
+     "shared_with_translation": [
+      "version"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": true
+    },
+    {
+     "id": "P3",
+     "path": "apps/collab/src/extensions/persistence.ts",
+     "start_line": 22,
+     "end_line": 26,
+     "text": " *\n * Merge-on-write: inside a transaction holding the note's row lock we read the persisted state,\n * merge it *into the live document* and write back the union. Because Yjs merges are\n * commutative and idempotent:\n *  - two instances storing the same note can never overwrite each other's updates,",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 54,
+     "end_line": 58,
+     "text": "    });\n    if (!version) throw new VersionNotFoundError(versionId);\n\n    const name = version.label ?? version.createdAt.toISOString().slice(0, 16).replace('T', ' ');\n    await this.createSnapshot(noteId, document, {",
+     "offered": true,
+     "shared_with_translation": [
+      "version"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": true
+    },
+    {
+     "id": "P5",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 75,
+     "end_line": 79,
+     "text": "-- CreateTable\nCREATE TABLE \"note_versions\" (\n    \"id\" UUID NOT NULL,\n    \"note_id\" UUID NOT NULL,\n    \"kind\" \"VersionKind\" NOT NULL DEFAULT 'MANUAL',",
+     "offered": true,
+     "shared_with_translation": [
+      "version"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P1"
+   ],
+   "note": "`VersionService.restore` metodu eski sürümüne geri döndürmek için kullanılır.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 4.17,
+   "input_tokens": 984,
+   "output_tokens": 36,
+   "free_memory_gb": 12.08
+  },
+  {
+   "question": "sn-presence",
+   "language": "tr",
+   "group": "A",
+   "repo": "syncnotes",
+   "tr": "Notta bulunan diğer kullanıcılar nasıl gösteriliyor?",
+   "en": "How are the other users currently in a note shown?",
+   "expected": "",
+   "translated_query": "How are other users who are not logged in displayed?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 117,
+     "end_line": 121,
+     "text": "  @RequireNoteRole('OWNER')\n  invite(\n    @CurrentUser() user: AuthUser,\n    @Param('noteId') noteId: string,\n    @Body() dto: InviteMemberDto,",
+     "offered": true,
+     "shared_with_translation": [
+      "user"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 47,
+     "end_line": 51,
+     "text": "    @CurrentUser() user: AuthUser,\n    @Query() query: ListNotesQueryDto,\n  ): Promise<NoteSummaryDto[]> {\n    return this.notes.list(user.id, query);\n  }",
+     "offered": true,
+     "shared_with_translation": [
+      "user"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 53,
+     "end_line": 56,
+     "text": "  @Post()\n  create(@CurrentUser() user: AuthUser, @Body() dto: CreateNoteDto): Promise<NoteSummaryDto> {\n    return this.notes.create(user.id, dto.folderId);\n  }",
+     "offered": true,
+     "shared_with_translation": [
+      "user"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "apps/web/src/lib/offline-store.ts",
+     "start_line": 3,
+     "end_line": 7,
+     "text": "/**\n * IndexedDB database name for a user's local replica of a note.\n * Scoped by user so that two accounts on one browser never see each other's cached notes.\n */\nexport function localReplicaName(userId: string, noteId: string): string {",
+     "offered": true,
+     "shared_with_translation": [
+      "other",
+      "user"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "apps/web/src/collab/presence.tsx",
+     "start_line": 44,
+     "end_line": 48,
+     "text": "      aria-label={`${users.length} collaborators online`}\n    >\n      {shown.map((u) => (\n        <Avatar key={u.id} id={u.id} name={u.name} size=\"sm\" ring />\n      ))}",
+     "offered": true,
+     "shared_with_translation": [
+      "user"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": true
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P5"
+   ],
+   "note": "`PresenceAvatars` göstermektedir ki diğer kullanıcılar listeleniyor.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 3.45,
+   "input_tokens": 904,
+   "output_tokens": 29,
+   "free_memory_gb": 12.06
+  },
+  {
+   "question": "v2-sg-negative-stock-db",
+   "language": "tr",
+   "group": "A",
+   "repo": "stockguard",
+   "tr": "Stok sayaçlarının eksiye düşmesini veritabanı seviyesinde ne engelliyor?",
+   "en": "What stops stock counters from going negative at the database level?",
+   "expected": "CHECK constraints on stock_levels require available and reserved to be at least 0 and total to equal available plus reserved.",
+   "translated_query": "What is preventing the inventory counters from decreasing at the database level?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 22,
+     "end_line": 26,
+     "text": "\n    -- The database itself refuses overselling, even if application code is wrong.\n    CONSTRAINT ck_stock_available_non_negative CHECK (available_quantity >= 0),\n    CONSTRAINT ck_stock_reserved_non_negative  CHECK (reserved_quantity >= 0),\n    CONSTRAINT ck_stock_total_is_sum           CHECK (total_quantity = available_quantity + reserved_quantity)",
+     "offered": true,
+     "shared_with_translation": [
+      "databas"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": true
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 15,
+     "text": "/**\n * Read model of the stock counters. {@code @Immutable} and the absence of setters are deliberate: a counter\n * written back from a Java copy is the classic lost update, so the counters only ever change through the\n * conditional statements in {@link StockLevelRepository}.\n */",
+     "offered": true,
+     "shared_with_translation": [
+      "counter",
+      "level"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 5,
+     "end_line": 7,
+     "text": "    description VARCHAR(2000),\n    -- Optimistic lock for admin edits. Stock counters live elsewhere so they never bump this.\n    version     BIGINT       NOT NULL,",
+     "offered": true,
+     "shared_with_translation": [
+      "counter"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 18,
+     "text": "-- Stock is kept apart from the product row: this is the hottest row in the system, and separating it\n-- means that a catalogue edit and a reservation never contend for the same row lock.\nCREATE TABLE stock_levels (\n    product_id         UUID        PRIMARY KEY REFERENCES products (id),\n    total_quantity     INTEGER     NOT NULL,",
+     "offered": true,
+     "shared_with_translation": [
+      "level"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 89,
+     "end_line": 91,
+     "text": "    /** The counters as they were left by the statement that returned them, read under the row lock. */\n    interface StockCounts {\n        int getTotal();",
+     "offered": true,
+     "shared_with_translation": [
+      "counter"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P1"
+   ],
+   "note": "`ck_stock_available_non_negative` ve `ck_stock_reserved_non_negative` kısıtlamaları stok miktarlarının negatif olmamasını sağlar.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 4.87,
+   "input_tokens": 986,
+   "output_tokens": 46,
+   "free_memory_gb": 12.05
+  },
+  {
+   "question": "v2-sg-reservation-defaults",
+   "language": "tr",
+   "group": "A",
+   "repo": "stockguard",
+   "tr": "Bir rezervasyon varsayılan olarak ne kadar tutuluyor ve süresi dolanlar ne sıklıkla taranıyor?",
+   "en": "How long is a reservation held by default, and how often are expired ones scanned?",
+   "expected": "The default hold is 15 minutes, the sweep runs every 5 seconds by default, with a batch size of 100.",
+   "translated_query": "How much is typically reserved and how frequently are those reservations polled when they expire?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 28,
+     "end_line": 32,
+     "text": "     * Expires one batch in a single transaction. A batch touches several stock rows, so two sweepers locking\n     * them in different orders could deadlock; releasing in a fixed product order rules that out.\n     *\n     * @return how many reservations were expired\n     */",
+     "offered": true,
+     "shared_with_translation": [
+      "expir",
+      "reserv"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 34,
+     "end_line": 38,
+     "text": "    public int expireDueBatch(int batchSize) {\n        List<ExpiredReservation> expired = reservations.expireDue(batchSize).stream()\n                .sorted(Comparator.comparing(ExpiredReservation::getProductId))\n                .toList();\n        for (ExpiredReservation reservation : expired) {",
+     "offered": true,
+     "shared_with_translation": [
+      "expir",
+      "reserv"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "src/main/resources/application.yml",
+     "start_line": 61,
+     "end_line": 65,
+     "text": "  reservation:\n    default-ttl: 15m\n    expiry:\n      enabled: true\n      sweep-interval: ${STOCKGUARD_EXPIRY_SWEEP_INTERVAL:5s}",
+     "offered": true,
+     "shared_with_translation": [
+      "reserv"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": true
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 44,
+     "end_line": 48,
+     "text": "                    \"quantity\", reservation.getQuantity()));\n        }\n        return expired.size();\n    }\n}",
+     "offered": true,
+     "shared_with_translation": [
+      "expir",
+      "reserv"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 15,
+     "end_line": 19,
+     "text": "/**\n * Deadlines are compared with the database clock ({@code now()}), never the JVM clock, so all instances agree\n * on when a reservation has expired regardless of clock skew between them.\n */\ninterface ReservationRepository extends Repository<Reservation, UUID> {",
+     "offered": true,
+     "shared_with_translation": [
+      "expir",
+      "reserv"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P3"
+   ],
+   "note": "",
+   "note_problem": "it gives numbers that are not in the chosen lines: 15, 5",
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 8.51,
+   "input_tokens": 972,
+   "output_tokens": 87,
+   "free_memory_gb": 12.02
+  },
+  {
+   "question": "v2-sg-add-stock-limits",
+   "language": "tr",
+   "group": "A",
+   "repo": "stockguard",
+   "tr": "Depoya mal girişi isteğinde miktar için hangi sınırlar geçerli?",
+   "en": "What limits apply to the quantity when receiving goods into stock?",
+   "expected": "The quantity must be between 1 and 1,000,000.",
+   "translated_query": "What are the valid limits for the amount when logging in to Depoya?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 80,
+     "end_line": 82,
+     "text": "                 ORDER BY expires_at\n                 LIMIT :limit\n                 FOR UPDATE SKIP LOCKED",
+     "offered": true,
+     "shared_with_translation": [
+      "limit"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 86,
+     "end_line": 90,
+     "text": "              FROM due\n             WHERE r.id = due.id\n            RETURNING r.id AS \"id\", r.product_id AS \"productId\", r.user_id AS \"userId\", r.quantity AS \"quantity\"\n            \"\"\")\n    List<ExpiredReservation> expireDue(@Param(\"limit\") int limit);",
+     "offered": true,
+     "shared_with_translation": [
+      "limit"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 67,
+     "text": "    /** Confirmation: reserved units leave the warehouse. Available was already reduced when they were reserved. */\n    @Transactional(propagation = Propagation.MANDATORY)\n    @Query(nativeQuery = true, value = \"\"\"\n            UPDATE stock_levels\n               SET total_quantity = total_quantity - :quantity,",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+     "start_line": 60,
+     "end_line": 63,
+     "text": "    public record AddStockRequest(\n            @NotNull @Min(1) @Max(1_000_000) Integer quantity,\n            @Size(max = 200) String note) {\n    }",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": true
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 54,
+     "end_line": 55,
+     "text": "    public record LoginRequest(@NotBlank @Size(max = 64) String username, @NotBlank @Size(max = 256) String password) {\n    }",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    }
+   ],
+   "outcome": "none",
+   "chosen": [],
+   "note": "",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 2.1,
+   "input_tokens": 927,
+   "output_tokens": 10,
+   "free_memory_gb": 12.05
+  },
+  {
+   "question": "v2-sn-collab-instances",
+   "language": "tr",
+   "group": "A",
+   "repo": "syncnotes",
+   "tr": "Tüm sistem Docker ile açıldığında işbirliği sunucusundan kaç kopya çalışıyor?",
+   "en": "How many collaboration server copies run when the whole system starts under Docker?",
+   "expected": "Two, collab-1 and collab-2.",
+   "translated_query": "How many instances are running from the service broker when the entire system starts up with Docker?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "docker-compose.yml",
+     "start_line": 80,
+     "end_line": 82,
+     "text": "    environment:\n      <<: *server-env\n      INSTANCE_NAME: collab-1",
+     "offered": true,
+     "shared_with_translation": [
+      "instanc"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": true
+    },
+    {
+     "id": "P2",
+     "path": "docker-compose.yml",
+     "start_line": 86,
+     "end_line": 88,
+     "text": "    environment:\n      <<: *server-env\n      INSTANCE_NAME: collab-2",
+     "offered": true,
+     "shared_with_translation": [
+      "instanc"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": true
+    },
+    {
+     "id": "P3",
+     "path": "docker-compose.yml",
+     "start_line": 33,
+     "end_line": 35,
+     "text": "    volumes:\n      - pgdata:/var/lib/postgresql/data\n      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro",
+     "offered": true,
+     "shared_with_translation": [
+      "docker"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "apps/collab/src/extensions/health.ts",
+     "start_line": 9,
+     "end_line": 13,
+     "text": "      instanceName: string;\n      isRedisHealthy: () => boolean;\n      startedAt: number;\n    },\n  ) {}",
+     "offered": true,
+     "shared_with_translation": [
+      "instanc",
+      "start"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "apps/collab/src/config.ts",
+     "start_line": 19,
+     "end_line": 21,
+     "text": "  AUTO_VERSION_KEEP: z.coerce.number().int().positive().default(50),\n  /** How often open documents are reconciled through Postgres while Redis is unavailable. */\n  DEGRADED_RECONCILE_INTERVAL_MS: z.coerce.number().int().positive().default(3000),",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P1",
+    "P2"
+   ],
+   "note": "`services.collab-1` ve `services.collab-2` adlı hizmetler tanımlanmış, bu da iki kopya çalıştığını gösterir.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 5.58,
+   "input_tokens": 826,
+   "output_tokens": 54,
+   "free_memory_gb": 12.03
+  },
+  {
+   "question": "v2-sn-note-search",
+   "language": "tr",
+   "group": "A",
+   "repo": "syncnotes",
+   "tr": "Not listesinde arama yapınca hangi alanlara bakılıyor?",
+   "en": "Which fields are looked at when searching the notes list?",
+   "expected": "Title and plain text, with a case-insensitive contains match.",
+   "translated_query": "What fields are checked when searching in the package repository?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 11,
+     "end_line": 15,
+     "text": "export interface ListNotesQuery {\n  scope?: NoteScope;\n  /** folder uuid, or `none` for notes that are not in any folder */\n  folderId?: string;\n  q?: string;",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 8,
+     "end_line": 9,
+     "text": "-- Fast dashboard listing / search on derived text columns.\nCREATE INDEX \"notes_updated_at_idx\" ON \"notes\" (\"updated_at\" DESC);",
+     "offered": true,
+     "shared_with_translation": [
+      "search"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 54,
+     "end_line": 58,
+     "text": "  async list(userId: string, query: ListNotesQuery): Promise<NoteSummaryDto[]> {\n    const where: Prisma.NoteMemberWhereInput = { userId };\n    if (query.scope === 'owned') where.role = 'OWNER';\n    if (query.scope === 'shared') where.role = { not: 'OWNER' };\n    if (query.folderId === 'none') where.folderId = null;",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 17,
+     "end_line": 19,
+     "text": "export function useNotes(filters: NoteFilters) {\n  return useQuery({ queryKey: keys.notes(filters), queryFn: () => api.notes.list(filters) });\n}",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 62,
+     "end_line": 64,
+     "text": "    if (q) {\n      where.note = {\n        OR: [",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": true
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P1"
+   ],
+   "note": "`ListNotesQuery` interfacenin tanımlamaları gösteriyor ve arama yaparken kullanılan alanları belirtiyor.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 4.54,
+   "input_tokens": 898,
+   "output_tokens": 41,
+   "free_memory_gb": 11.93
+  },
+  {
+   "question": "v4-sg-username-format",
+   "language": "tr",
+   "group": "A",
+   "repo": "stockguard",
+   "tr": "Kayıt olurken kullanıcı adı hangi kurallara uymalı?",
+   "en": "What rules must a username follow when registering?",
+   "expected": "3 to 64 letters, digits, dots, underscores or hyphens, starting with a letter or digit.",
+   "translated_query": "What rules should a username follow when signing up?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 33,
+     "end_line": 36,
+     "text": "    @Operation(operationId = \"register\", summary = \"Register a new user with the USER role\")\n    public RegisteredUser register(@Valid @RequestBody RegisterRequest request) {\n        return auth.register(request.username(), request.password());\n    }",
+     "offered": true,
+     "shared_with_translation": [
+      "usernam"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 47,
+     "end_line": 51,
+     "text": "    /** Self-registration can only ever create the USER role. */\n    @Transactional\n    public RegisteredUser register(String username, String rawPassword) {\n        requireBcryptCompatible(rawPassword);\n        String normalized = normalize(username);",
+     "offered": true,
+     "shared_with_translation": [
+      "usernam"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 95,
+     "end_line": 96,
+     "text": "    public record RegisteredUser(UUID id, String username) {\n    }",
+     "offered": true,
+     "shared_with_translation": [
+      "usernam"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 45,
+     "end_line": 47,
+     "text": "    public record RegisterRequest(\n            // Must start with a letter or digit, which keeps the reserved \"__sim-\" namespace out of reach.\n            @NotBlank",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": true
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 126,
+     "end_line": 127,
+     "text": "    private record Rule(String name, String sql) {\n    }",
+     "offered": true,
+     "shared_with_translation": [
+      "rule"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P1",
+    "P4"
+   ],
+   "note": "`AuthController.register` ve `RegisterRequest` sınıfı belirtiyor ki kullanıcı adı bir harf veya rakib olmalı.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 4.78,
+   "input_tokens": 869,
+   "output_tokens": 44,
+   "free_memory_gb": 11.94
+  },
+  {
+   "question": "v4-sn-postgres-port",
+   "language": "tr",
+   "group": "A",
+   "repo": "syncnotes",
+   "tr": "Uygulama Docker ile çalışırken PostgreSQL'e bilgisayardan hangi porttan bağlanılır?",
+   "en": "When the application runs with Docker, on which port can PostgreSQL be reached from the computer?",
+   "expected": "5433, mapped to 5432 inside the container.",
+   "translated_query": "When working with an application using Docker, from which port does the computer connect to PostgreSQL?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "docker-compose.yml",
+     "start_line": 31,
+     "end_line": 32,
+     "text": "    ports:\n      - '5433:5432'",
+     "offered": true,
+     "shared_with_translation": [
+      "port"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": true
+    },
+    {
+     "id": "P2",
+     "path": "docker-compose.yml",
+     "start_line": 33,
+     "end_line": 35,
+     "text": "    volumes:\n      - pgdata:/var/lib/postgresql/data\n      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro",
+     "offered": true,
+     "shared_with_translation": [
+      "docker",
+      "postgr",
+      "postgresql"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "docker-compose.yml",
+     "start_line": 26,
+     "end_line": 26,
+     "text": "    image: postgres:17-alpine",
+     "offered": true,
+     "shared_with_translation": [
+      "postgr"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "packages/db/prisma.config.ts",
+     "start_line": 13,
+     "end_line": 17,
+     "text": "  datasource: {\n    // `prisma generate` does not need a database; fall back so it works in CI/Docker builds.\n    url:\n      process.env.DATABASE_URL ?? 'postgresql://placeholder:placeholder@localhost:5432/placeholder',\n  },",
+     "offered": true,
+     "shared_with_translation": [
+      "docker",
+      "postgresql",
+      "work"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "apps/collab/src/config.ts",
+     "start_line": 9,
+     "end_line": 13,
+     "text": "  /** Unique per instance; shows up in logs and the health endpoint. */\n  INSTANCE_NAME: z.string().default(`collab-${process.pid}`),\n  /** Max age of a cached role before it is re-read from Postgres. */\n  PERMISSION_CACHE_TTL_MS: z.coerce.number().int().positive().default(5000),\n  /** Every open connection is re-authorised this often — also connections that never send. */",
+     "offered": true,
+     "shared_with_translation": [
+      "connect",
+      "postgr"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P1"
+   ],
+   "note": "`ports: - '5433:5432'",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 3.43,
+   "input_tokens": 872,
+   "output_tokens": 27,
+   "free_memory_gb": 11.9
+  },
+  {
+   "question": "v2-sg-neg-transfer",
+   "language": "tr",
+   "group": "B",
+   "repo": "stockguard",
+   "tr": "Stok bir depodan başka bir depoya nasıl aktarılıyor?",
+   "en": "How is stock moved from one warehouse to another?",
+   "expected": "",
+   "translated_query": "How can a package be transferred from one repository to another?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 67,
+     "text": "    /** Confirmation: reserved units leave the warehouse. Available was already reduced when they were reserved. */\n    @Transactional(propagation = Propagation.MANDATORY)\n    @Query(nativeQuery = true, value = \"\"\"\n            UPDATE stock_levels\n               SET total_quantity = total_quantity - :quantity,",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 10,
+     "end_line": 14,
+     "text": "/**\n * The single gateway for changing stock. Each operation performs one atomic counter update and records its\n * ledger line while the row lock is still held. Callers own the transaction, so the change, the ledger line\n * and the caller's own writes commit or roll back as one unit.\n */",
+     "offered": true,
+     "shared_with_translation": [
+      "one"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 73,
+     "end_line": 75,
+     "text": "            int deltaReserved,\n            StockLevelRepository.StockCounts after,\n            String note) {",
+     "offered": true,
+     "shared_with_translation": [
+      "repositori"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/inventory/StockMovementRepository.java",
+     "start_line": 8,
+     "end_line": 12,
+     "text": "interface StockMovementRepository extends Repository<StockMovement, Long> {\n\n    StockMovement save(StockMovement movement);\n\n    Page<StockMovement> findByProductId(UUID productId, Pageable pageable);",
+     "offered": true,
+     "shared_with_translation": [
+      "repositori"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 16,
+     "end_line": 20,
+     "text": "@Transactional(propagation = Propagation.MANDATORY)\npublic class StockLedger {\n\n    private final StockLevelRepository levels;\n    private final StockMovementRepository movements;",
+     "offered": true,
+     "shared_with_translation": [
+      "repositori"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    }
+   ],
+   "outcome": "none",
+   "chosen": [],
+   "note": "",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 2.1,
+   "input_tokens": 916,
+   "output_tokens": 10,
+   "free_memory_gb": 11.92
+  },
+  {
+   "question": "v2-sn-neg-tags",
+   "language": "tr",
+   "group": "B",
+   "repo": "syncnotes",
+   "tr": "Notlara etiket eklemek nasıl çalışıyor?",
+   "en": "How does adding labels to notes work?",
+   "expected": "",
+   "translated_query": "How does tagging notes work?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 135,
+     "end_line": 139,
+     "text": "        onOpenChange={setShareOpen}\n        noteId={note.id}\n        members={note.members}\n        role={collab.role}\n      />",
+     "offered": true,
+     "shared_with_translation": [
+      "note"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 76,
+     "end_line": 78,
+     "text": "              className=\"relative z-10 -mr-1 -mt-1 rounded-md p-1 text-subtle opacity-0 transition hover:bg-surface-2 hover:text-fg focus:opacity-100 group-hover:opacity-100 data-[state=open]:opacity-100\"\n              aria-label={`Actions for ${note.title}`}\n            >",
+     "offered": true,
+     "shared_with_translation": [
+      "note"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 40,
+     "end_line": 43,
+     "text": "  constructor(\n    private readonly notes: NotesService,\n    private readonly tickets: CollabTicketService,\n  ) {}",
+     "offered": true,
+     "shared_with_translation": [
+      "note"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 53,
+     "end_line": 56,
+     "text": "  @Post()\n  create(@CurrentUser() user: AuthUser, @Body() dto: CreateNoteDto): Promise<NoteSummaryDto> {\n    return this.notes.create(user.id, dto.folderId);\n  }",
+     "offered": true,
+     "shared_with_translation": [
+      "note"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 119,
+     "end_line": 120,
+     "text": "-- AddForeignKey\nALTER TABLE \"notes\" ADD CONSTRAINT \"notes_created_by_id_fkey\" FOREIGN KEY (\"created_by_id\") REFERENCES \"users\"(\"id\") ON DELETE CASCADE ON UPDATE CASCADE;",
+     "offered": true,
+     "shared_with_translation": [
+      "note"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    }
+   ],
+   "outcome": "none",
+   "chosen": [],
+   "note": "",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 1.96,
+   "input_tokens": 931,
+   "output_tokens": 10,
+   "free_memory_gb": 11.9
+  },
+  {
+   "question": "v2-sn-neg-comments",
+   "language": "tr",
+   "group": "B",
+   "repo": "syncnotes",
+   "tr": "Notların üzerine yorum bırakma özelliği nasıl çalışıyor?",
+   "en": "How does leaving comments on a note work?",
+   "expected": "",
+   "translated_query": "How does the feature to leave comments on commits work?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 72,
+     "end_line": 76,
+     "text": "  return useMutation({\n    mutationFn: (noteId: string) => api.notes.leave(noteId),\n    onSuccess: () => {\n      invalidate();\n      toast.success('You left the note');",
+     "offered": true,
+     "shared_with_translation": [
+      "leav"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 81,
+     "end_line": 85,
+     "text": "  @Post(':noteId/leave')\n  @RequireNoteRole('VIEWER')\n  @HttpCode(204)\n  leave(\n    @CurrentUser() user: AuthUser,",
+     "offered": true,
+     "shared_with_translation": [
+      "leav"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 86,
+     "end_line": 90,
+     "text": "    @Param('noteId') noteId: string,\n    @CurrentNoteRole() role: NoteRole,\n  ): Promise<void> {\n    return this.notes.leave(user.id, noteId, role);\n  }",
+     "offered": true,
+     "shared_with_translation": [
+      "leav"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 122,
+     "end_line": 126,
+     "text": "  async leave(userId: string, noteId: string, role: string): Promise<void> {\n    if (role === 'OWNER') {\n      throw new BadRequestException('The owner cannot leave a note; delete it instead');\n    }\n    await this.members.remove(noteId, userId);",
+     "offered": true,
+     "shared_with_translation": [
+      "leav"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 70,
+     "end_line": 71,
+     "text": "export function useLeaveNote() {\n  const invalidate = useInvalidateNotes();",
+     "offered": true,
+     "shared_with_translation": [
+      "leav"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P1",
+    "P2"
+   ],
+   "note": "`useLeaveNote` hook çağrısında `api.notes.leave` fonksiyonu kullanılarak notun üzerine yorum bırakma işlemi gerçekleştirilir. Bu işlem, kullanıcıya başarılı bir işlem mesajını verir ve kaynakları yeniden geçerli hale getirir.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 7.79,
+   "input_tokens": 870,
+   "output_tokens": 80,
+   "free_memory_gb": 11.88
+  },
+  {
+   "question": "v3-sg-neg-low-stock-alert",
+   "language": "tr",
+   "group": "B",
+   "repo": "stockguard",
+   "tr": "Stok azaldığında yöneticiye nasıl uyarı gönderiliyor?",
+   "en": "How is the admin alerted when stock runs low?",
+   "expected": "",
+   "translated_query": "How is an alert sent to the administrator when the stock increases?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/user/AdminSeeder.java",
+     "start_line": 25,
+     "end_line": 29,
+     "text": "    @Override\n    public void run(ApplicationArguments args) {\n        if (!StringUtils.hasText(admin.username()) || !StringUtils.hasText(admin.password())) {\n            log.warn(\"No administrator configured: set STOCKGUARD_ADMIN_USERNAME and STOCKGUARD_ADMIN_PASSWORD.\");\n            return;",
+     "offered": true,
+     "shared_with_translation": [
+      "administr"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 64,
+     "end_line": 65,
+     "text": "    protected StockMovement() {\n    }",
+     "offered": true,
+     "shared_with_translation": [
+      "stock"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/common/config/StockGuardProperties.java",
+     "start_line": 25,
+     "end_line": 29,
+     "text": "    }\n\n    /** Both blank means no administrator is seeded. */\n    public record Admin(String username, String password) {\n    }",
+     "offered": true,
+     "shared_with_translation": [
+      "administr"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/user/AdminSeeder.java",
+     "start_line": 11,
+     "end_line": 15,
+     "text": "/** Creates the first administrator from environment configuration. There is no built-in default password. */\n@Component\npublic class AdminSeeder implements ApplicationRunner {\n\n    private static final Logger log = LoggerFactory.getLogger(AdminSeeder.class);",
+     "offered": true,
+     "shared_with_translation": [
+      "administr"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+     "start_line": 41,
+     "end_line": 45,
+     "text": "    @PostMapping\n    @Operation(operationId = \"addStock\", summary = \"Receive stock (admin)\")\n    public StockCountsResponse add(\n            @PathVariable UUID productId,\n            @Valid @RequestBody AddStockRequest request,",
+     "offered": true,
+     "shared_with_translation": [
+      "stock"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    }
+   ],
+   "outcome": "none",
+   "chosen": [],
+   "note": "",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 2.12,
+   "input_tokens": 883,
+   "output_tokens": 10,
+   "free_memory_gb": 11.93
+  },
+  {
+   "question": "v4-sg-neg-reduce-quantity",
+   "language": "tr",
+   "group": "B",
+   "repo": "stockguard",
+   "tr": "Mevcut bir rezervasyonun miktarı sonradan nasıl azaltılıyor?",
+   "en": "How is the quantity of an existing reservation reduced later?",
+   "expected": "",
+   "translated_query": "How can the amount of an existing reservation be reduced later?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 120,
+     "end_line": 124,
+     "text": "            case PENDING, EXPIRED -> new ApiException(ErrorCode.RESERVATION_EXPIRED, \"This reservation has expired.\");\n            case CONFIRMED, CANCELLED -> new ApiException(ErrorCode.RESERVATION_ALREADY_SETTLED,\n                    \"This reservation is already \" + latest.getStatus() + \".\");\n        };\n    }",
+     "offered": true,
+     "shared_with_translation": [
+      "reserv"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 25,
+     "end_line": 29,
+     "text": "-- Last line of defence for the state machine: a settled reservation can never change again,\n-- and no update can move a reservation to another product, user or quantity.\nCREATE FUNCTION reservations_guard_update() RETURNS trigger AS $$\nBEGIN\n    IF OLD.status <> 'PENDING' THEN",
+     "offered": true,
+     "shared_with_translation": [
+      "reserv"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 31,
+     "end_line": 35,
+     "text": "            USING ERRCODE = 'check_violation', CONSTRAINT = 'tg_reservations_terminal_state';\n    END IF;\n    IF (NEW.product_id, NEW.user_id, NEW.quantity) IS DISTINCT FROM (OLD.product_id, OLD.user_id, OLD.quantity) THEN\n        RAISE EXCEPTION 'reservation % product, user and quantity are immutable', OLD.id\n            USING ERRCODE = 'check_violation', CONSTRAINT = 'tg_reservations_immutable_fields';",
+     "offered": true,
+     "shared_with_translation": [
+      "reserv"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 86,
+     "end_line": 90,
+     "text": "              FROM due\n             WHERE r.id = due.id\n            RETURNING r.id AS \"id\", r.product_id AS \"productId\", r.user_id AS \"userId\", r.quantity AS \"quantity\"\n            \"\"\")\n    List<ExpiredReservation> expireDue(@Param(\"limit\") int limit);",
+     "offered": true,
+     "shared_with_translation": [
+      "reserv"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 67,
+     "end_line": 71,
+     "text": "               SET total_quantity = total_quantity - :quantity,\n                   reserved_quantity = reserved_quantity - :quantity,\n                   updated_at = now()\n             WHERE product_id = :productId\n               AND reserved_quantity >= :quantity",
+     "offered": true,
+     "shared_with_translation": [
+      "reserv"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    }
+   ],
+   "outcome": "none",
+   "chosen": [],
+   "note": "",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 2.21,
+   "input_tokens": 1054,
+   "output_tokens": 10,
+   "free_memory_gb": 11.92
+  },
+  {
+   "question": "sn-redis-outage",
+   "language": "tr",
+   "group": "C",
+   "repo": "syncnotes",
+   "tr": "Redis kesildiğinde işbirliği sunucusu nasıl çalışmaya devam ediyor?",
+   "en": "How does the collaboration server keep working during a Redis outage?",
+   "expected": "",
+   "translated_query": "How does the cluster continue to operate when Redis fails?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 12,
+     "end_line": 15,
+     "text": " *\n * Postgres is the source of truth; this is a *latency optimisation*. If Redis is unavailable\n * the publish is dropped after a short timeout (the HTTP request still succeeds) and the\n * collaboration server falls back to its TTL-bounded permission re-check.",
+     "offered": true,
+     "shared_with_translation": [
+      "redi"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 165,
+     "end_line": 168,
+     "text": "  private connectionFailed(): boolean {\n    const failed = ['reconnecting', 'close', 'end'];\n    return failed.includes(this.pub.status) || failed.includes(this.sub.status);\n  }",
+     "offered": true,
+     "shared_with_translation": [
+      "fail"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "apps/collab/src/server.ts",
+     "start_line": 33,
+     "end_line": 37,
+     "text": "/**\n * Composition root of the collaboration server. Extension order matters for hooks that run in\n * sequence (Hocuspocus sorts by `priority`, then by registration order):\n * access control → persistence → versions → redis fan-out → degraded reconciler → health.\n */",
+     "offered": true,
+     "shared_with_translation": [
+      "redi"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 13,
+     "end_line": 17,
+     "text": " * 1. push — the API publishes an access event over Redis and we `set`/`invalidate` immediately;\n * 2. pull — entries expire after `ttlMs`, so even if an event is lost (Redis down) a revoked\n *    user is cut off within `ttlMs` on their next message.\n *\n * If Postgres itself is unreachable we keep serving the last known role (availability over a",
+     "offered": true,
+     "shared_with_translation": [
+      "redi"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 9,
+     "end_line": 11,
+     "text": "/**\n * Publishes membership changes so every collaboration-server instance can enforce them on\n * already-open WebSocket sessions.",
+     "offered": true,
+     "shared_with_translation": [],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P4"
+   ],
+   "note": "`pull — entries expire after ttlMs`, so even if an event is lost (Redis down) a revoked user is cut off within ttlMs on their next message.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 4.72,
+   "input_tokens": 938,
+   "output_tokens": 46,
+   "free_memory_gb": 11.93
+  },
+  {
+   "question": "sn-session-refresh",
+   "language": "tr",
+   "group": "C",
+   "repo": "syncnotes",
+   "tr": "Frontend süresi dolan oturumu nasıl yeniliyor?",
+   "en": "How does the frontend refresh an expired session?",
+   "expected": "",
+   "translated_query": "How do you renew a session that has hit the frontend timeout?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 20,
+     "end_line": 24,
+     "text": "    new Promise<T>((_, reject) => {\n      timer = setTimeout(() => reject(new Error(`timed out after ${ms}ms`)), ms);\n    }),\n  ]).finally(() => clearTimeout(timer));\n}",
+     "offered": true,
+     "shared_with_translation": [
+      "timeout"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 14,
+     "end_line": 14,
+     "text": "const LOAD_TIMEOUT_MS = 3000;",
+     "offered": true,
+     "shared_with_translation": [
+      "timeout"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 134,
+     "end_line": 138,
+     "text": "\n    if (session.rotatedAt) {\n      if (Date.now() - session.rotatedAt.getTime() < REFRESH_REUSE_GRACE_MS) {\n        throw new UnauthorizedException('Refresh token already rotated');\n      }",
+     "offered": true,
+     "shared_with_translation": [
+      "session"
+     ],
+     "strict": false,
+     "flexible": true,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 123,
+     "end_line": 127,
+     "text": "        case 'access.revoked':\n          void endSession('revoked');\n          break;\n        case 'note.deleted':\n          void endSession('deleted');",
+     "offered": true,
+     "shared_with_translation": [
+      "session"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 34,
+     "end_line": 38,
+     "text": " * hardened so that a Redis outage degrades the system instead of breaking it:\n *\n * 1. `lockTimeout: 0` — the extension's Redlock would *abort persistence* when Redis is down.\n *    Concurrent stores are serialised by a Postgres row lock + CRDT merge instead.\n * 2. Document loads never block on Redis: while it is unavailable, the subscription is deferred.",
+     "offered": true,
+     "shared_with_translation": [
+      "timeout"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P3"
+   ],
+   "note": "`AuthService.refresh` kontrol eder ve mevcut oturumu yenileyebilir.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 3.7,
+   "input_tokens": 913,
+   "output_tokens": 32,
+   "free_memory_gb": 11.9
+  },
+  {
+   "question": "v4-sn-neg-view-log",
+   "language": "tr",
+   "group": "D",
+   "repo": "syncnotes",
+   "tr": "Bir notu kimin ne zaman görüntülediği nereye kaydediliyor?",
+   "en": "Where is it recorded who viewed a note and when?",
+   "expected": "",
+   "translated_query": "Where is it recorded who viewed a note and when?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "packages/shared/src/roles.ts",
+     "start_line": 8,
+     "end_line": 10,
+     "text": "const ROLE_RANK: Record<NoteRole, number> = {\n  VIEWER: 1,\n  EDITOR: 2,",
+     "offered": true,
+     "shared_with_translation": [
+      "note",
+      "record"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 17,
+     "end_line": 21,
+     "text": "const ACCESS_MESSAGES: Record<Exclude<AccessState, 'ok'>, { title: string; text: string }> = {\n  revoked: {\n    title: 'Your access was removed',\n    text: 'The owner removed you from this note. Your local copy has been cleared.',\n  },",
+     "offered": true,
+     "shared_with_translation": [
+      "note",
+      "record"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 92,
+     "end_line": 96,
+     "text": "  /** Short-lived ticket for the collaboration WebSocket (see CollabTicketService). */\n  @Post(':noteId/collab-ticket')\n  @RequireNoteRole('VIEWER')\n  @HttpCode(200)\n  ticket(",
+     "offered": true,
+     "shared_with_translation": [
+      "note"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 58,
+     "end_line": 62,
+     "text": "  @Get(':noteId')\n  @RequireNoteRole('VIEWER')\n  get(@CurrentUser() user: AuthUser, @Param('noteId') noteId: string): Promise<NoteDetailDto> {\n    return this.notes.get(user.id, noteId);\n  }",
+     "offered": true,
+     "shared_with_translation": [
+      "note"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 32,
+     "end_line": 36,
+     "text": "  return {\n    id: m.note.id,\n    title: m.note.title,\n    excerpt: m.note.excerpt,\n    role: m.role,",
+     "offered": true,
+     "shared_with_translation": [
+      "note"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    }
+   ],
+   "outcome": "none",
+   "chosen": [],
+   "note": "",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 2.07,
+   "input_tokens": 919,
+   "output_tokens": 10,
+   "free_memory_gb": 11.93
+  },
+  {
+   "question": "v3-sn-neg-sunset-theme",
+   "language": "tr",
+   "group": "D",
+   "repo": "syncnotes",
+   "tr": "Karanlık tema gün batımında otomatik olarak nasıl açılıyor?",
+   "en": "How does the dark theme turn on automatically at sunset?",
+   "expected": "",
+   "translated_query": "How does the dark theme automatically turn on at sunset?",
+   "vocabulary_gate": false,
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/web/src/providers/theme.tsx",
+     "start_line": 11,
+     "end_line": 11,
+     "text": "export type ThemePreference = 'light' | 'dark' | 'system';",
+     "offered": true,
+     "shared_with_translation": [
+      "dark",
+      "theme"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P2",
+     "path": "apps/web/src/providers/theme.tsx",
+     "start_line": 34,
+     "end_line": 38,
+     "text": "export function ThemeProvider({ children }: { children: ReactNode }) {\n  const [preference, setPreferenceState] = useState<ThemePreference>(readPreference);\n  const [systemIsDark, setSystemIsDark] = useState(systemDark);\n\n  useEffect(() => {",
+     "offered": true,
+     "shared_with_translation": [
+      "dark",
+      "theme"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P3",
+     "path": "apps/web/public/theme-init.js",
+     "start_line": 5,
+     "end_line": 9,
+     "text": "    var stored = localStorage.getItem('syncnotes:theme');\n    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;\n    var dark = stored === 'dark' || ((!stored || stored === 'system') && prefersDark);\n    document.documentElement.classList.toggle('dark', dark);\n  } catch {",
+     "offered": true,
+     "shared_with_translation": [
+      "dark",
+      "theme"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P4",
+     "path": "apps/web/src/components/theme-toggle.tsx",
+     "start_line": 5,
+     "end_line": 9,
+     "text": "export function ThemeToggle() {\n  const { resolved, toggle } = useTheme();\n  const next = resolved === 'dark' ? 'light' : 'dark';\n  return (\n    <Button",
+     "offered": true,
+     "shared_with_translation": [
+      "dark",
+      "theme"
+     ],
+     "strict": true,
+     "flexible": true,
+     "either": true,
+     "gold": false
+    },
+    {
+     "id": "P5",
+     "path": "apps/web/src/providers/theme.tsx",
+     "start_line": 44,
+     "end_line": 48,
+     "text": "  }, []);\n\n  const resolved = preference === 'system' ? (systemIsDark ? 'dark' : 'light') : preference;\n\n  useEffect(() => {",
+     "offered": true,
+     "shared_with_translation": [
+      "dark"
+     ],
+     "strict": false,
+     "flexible": false,
+     "either": false,
+     "gold": false
+    }
+   ],
+   "outcome": "chosen",
+   "chosen": [
+    "P3"
+   ],
+   "note": "`document.documentElement.classList.toggle('dark', dark);` gün batımında karanlık themayı otomatik olarak açar.",
+   "note_problem": null,
+   "reason": null,
+   "lines_failing_git": [],
+   "seconds": 4.1,
+   "input_tokens": 856,
+   "output_tokens": 39,
+   "free_memory_gb": 11.93
+  }
+ ]
+}

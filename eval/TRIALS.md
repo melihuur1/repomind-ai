@@ -1,5 +1,7 @@
 # Two short trials on questions already read
 
+**Result: neither passed its bar, and step 2 of trial 2 did not run.** See [the results](../docs/evaluation.md#two-short-trials). The rest of this page is as fixed before the trials, except for one corrected count of questions that was committed with it.
+
 Fixed before either trial ran. These questions have all been read, so nothing here can show how the system does on new questions. No answer benchmark runs, and no new question set is written. Nothing in `repomind/` changes because of these trials until the owner decides.
 
 Both use `qwen2.5:7b` on the GPU, in Turkish, and start only with at least 12 GB of free physical memory and commit space. Each finished question goes to a checkpoint at once, and a run stops between questions below 4 GB.

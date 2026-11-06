@@ -98,11 +98,7 @@ The pilot met one target of four. It also changed what the plan assumed:
 
 [Later search work](evaluation.md#search-work-after-the-fourth-set), with no model, took the right code reaching the passages from 61 to 68 of 85 questions already read. That is not independent. Any claim about it needs a new question set, because all four have been read.
 
-These are proposals, none of them approved:
-
-1. **Decide the evidence rule with a short run on earlier questions.** It would drop the right lines for 12 of those 85 if chosen, and loosening it sends about 6 more unanswerable questions to the model. Only the model can show whether it declines them.
-2. **Try glossary terms in the model's translation prompt,** in the same run.
-3. **Write and commit a small fifth question set,** and measure the result once with `qwen2.5:7b`.
+[Two short trials](evaluation.md#two-short-trials) then tested the evidence rule and glossary terms in the translation prompt. Neither passed its bar, so the strict rule and the original prompt stay. The next step is the owner's decision. A fifth question set has not been written.
 
 ## Trying 7B safely
 

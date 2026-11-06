@@ -1,0 +1,17 @@
+{
+ "sn-redis-outage": "wrong",
+ "v2-sn-neg-comments": "fabricated",
+ "v2-sn-note-search": "wrong",
+ "v3-sn-neg-sunset-theme": "fabricated",
+ "sn-session-refresh": "wrong",
+ "v2-sg-negative-stock-db": "correct",
+ "sn-offline": "correct",
+ "sn-version-restore": "correct",
+ "sn-presence": "correct",
+ "sn-ticket": "partial",
+ "sg-oversell": "partial",
+ "v2-sn-collab-instances": "correct",
+ "v2-sg-reservation-defaults": "correct",
+ "v4-sn-postgres-port": "correct",
+ "v4-sg-username-format": "partial"
+}
