@@ -21,6 +21,9 @@ dependencies = [
     "numpy>=2",
     "pyyaml>=6",
     "snowballstemmer>=2.2",
+    "ctranslate2>=4.5,<5",
+    "sentencepiece>=0.2,<0.3",
+    "huggingface-hub>=0.24",
 ]
 
 [project.optional-dependencies]
