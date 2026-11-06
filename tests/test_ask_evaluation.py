@@ -10,12 +10,13 @@ import pytest
 from repomind.embeddings.provider import FastEmbedProvider
 from repomind.evaluation.ask_runner import run_ask_evaluation
 from repomind.evaluation.dataset import Dataset, GoldSpan, Question, RepositoryPin, UnanswerableQuestion
+from repomind.evaluation.metrics import overlaps, touches
 from repomind.indexing import index_repository
 from repomind.qa.engine import QAEngine
 from repomind.qa.llm import LLMConfig, OpenAICompatibleClient, load_llm_config
 from repomind.search.engine import SearchEngine
 from tests.conftest import commit_all, git, write
-from tests.test_qa import LOCAL, FakeClient, reply
+from tests.test_qa import LOCAL, FakeClient, only_about_order_service
 
 
 @pytest.mark.db
@@ -33,16 +34,28 @@ def test_ask_evaluation_counts_what_it_claims(store, sample_repo, fake_embedder)
         unanswerable=(UnanswerableQuestion("u1", "shop", "kafka", "kafka", ("kafka",)),),
         sha256="x",
     )
-    qa = QAEngine(store, SearchEngine(store, fake_embedder), LOCAL, FakeClient(reply(answer="It does [S1].")))
+    # This fake model answers about the order service whatever it is asked.
+    qa = QAEngine(store, SearchEngine(store, fake_embedder), LOCAL, FakeClient(only_about_order_service))
 
-    summary = run_ask_evaluation(qa, dataset, ("en",))["summary"]
+    results = run_ask_evaluation(qa, dataset, ("en",))
+    summary = results["summary"]
 
     assert summary["answered"] == 1
     assert summary["answered_citing_gold"] == 1
     assert summary["gold_was_in_context"] == 1
     assert summary["unanswerable_questions"] == 1
-    assert summary["unanswerable_refused"] == 0  # this fake model always answers: must count as a failure
+    assert summary["unanswerable_refused"] == 0  # the model answered, so this must count as a failure
     assert summary["cost_usd"] == 0
+    assert results["answerable"][0]["readings"], "what the model said about each source is kept for inspection"
+
+
+def test_a_one_line_citation_counts_as_citing_a_longer_gold_span():
+    gold = GoldSpan("a.java", 5, 10, "x")
+    cited = GoldSpan("a.java", 7, 7, "x")
+    assert touches(cited, gold)
+    assert not overlaps(cited, gold)
+    assert not touches(GoldSpan("a.java", 11, 12, "x"), gold)
+    assert not touches(GoldSpan("b.java", 7, 7, "x"), gold)
 
 
 def _running_llm() -> LLMConfig:

@@ -28,7 +28,8 @@ class LLMConfig:
     allow_remote: bool = False
     max_context_chunks: int = 8
     max_input_tokens: int = 4000
-    max_output_tokens: int = 600
+    # Per request. Each request reads one source and returns one statement and its quote.
+    max_output_tokens: int = 250
     input_usd_per_mtok: float = 0.0
     output_usd_per_mtok: float = 0.0
     max_total_cost_usd: float = 0.0
@@ -71,7 +72,7 @@ def load_llm_config() -> LLMConfig | None:
         allow_remote=get_setting("REPOMIND_LLM_ALLOW_REMOTE", "0") == "1",
         max_context_chunks=int(number("REPOMIND_LLM_MAX_CONTEXT_CHUNKS", 8)),
         max_input_tokens=int(number("REPOMIND_LLM_MAX_INPUT_TOKENS", 4000)),
-        max_output_tokens=int(number("REPOMIND_LLM_MAX_OUTPUT_TOKENS", 600)),
+        max_output_tokens=int(number("REPOMIND_LLM_MAX_OUTPUT_TOKENS", 250)),
         input_usd_per_mtok=number("REPOMIND_LLM_INPUT_USD_PER_MTOK", 0.0),
         output_usd_per_mtok=number("REPOMIND_LLM_OUTPUT_USD_PER_MTOK", 0.0),
         max_total_cost_usd=number("REPOMIND_LLM_MAX_TOTAL_COST_USD", 0.0),

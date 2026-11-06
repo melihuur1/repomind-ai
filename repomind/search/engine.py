@@ -168,7 +168,19 @@ class SearchEngine:
             for rank, item in enumerate(fused[:limit], start=1)
         ]
 
-    def search(self, query: str, mode: str = "hybrid", repos: list[str] | None = None, limit: int = 5) -> SearchResult:
+    def check_repositories(self, repos: list[str] | None) -> None:
+        """Raises the same helpful error a search would, without doing any work."""
+        self._snapshot_ids(repos)
+
+    def search(
+        self,
+        query: str,
+        mode: str = "hybrid",
+        repos: list[str] | None = None,
+        limit: int = 5,
+        translated: str | None = None,
+    ) -> SearchResult:
+        """``translated`` is an English wording the caller already has; otherwise the translator makes one."""
         if not query.strip():
             raise RepoMindError("The search query is empty.")
         if mode not in MODES:
@@ -176,7 +188,7 @@ class SearchEngine:
 
         warnings: list[str] = []
         snapshot_ids = self._snapshot_ids(repos)
-        translated = self._translate(query, warnings)
+        translated = translated or self._translate(query, warnings)
         include_tests = self._tests_included(query, translated)
         depth = max(limit, self.config.candidates)
 

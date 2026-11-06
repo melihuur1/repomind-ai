@@ -26,6 +26,11 @@ def overlaps(hit: Located, gold: Located) -> bool:
     return overlap >= min(MIN_OVERLAP_LINES, gold_length)
 
 
+def touches(citation: Located, gold: Located) -> bool:
+    """For a citation of exact proof lines, one shared line is a match."""
+    return citation.path == gold.path and citation.start_line <= gold.end_line and gold.start_line <= citation.end_line
+
+
 def same_file(hit: Located, gold: Located) -> bool:
     return hit.path == gold.path
 

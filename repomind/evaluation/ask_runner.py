@@ -12,7 +12,7 @@ from typing import Sequence
 
 from repomind.evaluation.citations import CitationVerifier
 from repomind.evaluation.dataset import Dataset, UnanswerableQuestion
-from repomind.evaluation.metrics import overlaps
+from repomind.evaluation.metrics import overlaps, touches
 from repomind.ingest.git_source import GitRepository
 from repomind.qa.engine import AskResult, QAEngine
 
@@ -25,10 +25,24 @@ def _row(identifier: str, repo: str, language: str, result: AskResult, seconds: 
         "repo": repo,
         "language": language,
         "status": result.status,
+        "translated_query": result.translated_query,
         "answer": result.answer,
         "citations": [
             {"source": c.source_id, "path": c.path, "start_line": c.start_line, "end_line": c.end_line}
             for c in result.citations
+        ],
+        "readings": [
+            {
+                "source": r.source.id,
+                "path": r.source.chunk.path,
+                "start_line": r.source.chunk.start_line,
+                "end_line": r.source.chunk.end_line,
+                "outcome": r.outcome,
+                "reason": r.reason,
+                "statement": r.claimed_statement,
+                "quote": r.claimed_quote,
+            }
+            for r in result.readings
         ],
         "rejected": result.rejected,
         "warnings": result.warnings,
@@ -73,7 +87,7 @@ def run_ask_evaluation(
             row["citations_recheck_valid"] = sum(
                 verifier.check(c.path, c.start_line, c.end_line).valid for c in result.citations
             )
-            row["cites_gold"] = any(overlaps(c, span) for c in result.citations for span in question.gold)
+            row["cites_gold"] = any(touches(c, span) for c in result.citations for span in question.gold)
             row["gold_in_context"] = any(
                 overlaps(hit.chunk, span) for hit in result.hits[: result.sources_sent] for span in question.gold
             )
@@ -113,7 +127,7 @@ def run_ask_evaluation(
             "holdout_unanswerable_questions": len(holdout_rows),
             "holdout_unanswerable_refused": sum(r["refused"] for r in holdout_rows),
             "citations_shown": cited,
-            "citations_rejected_by_backend": sum(len(r["rejected"]) for r in rows),
+            "statements_discarded_by_backend": sum(len(r["rejected"]) for r in rows),
             "input_tokens": sum(r["input_tokens"] or 0 for r in rows),
             "output_tokens": sum(r["output_tokens"] or 0 for r in rows),
             "cost_usd": round(sum(r["cost_usd"] for r in rows), 6),

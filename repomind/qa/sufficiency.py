@@ -7,6 +7,12 @@ The topic of an unanswerable question simply does not occur in the code.
 
 Generic verbs such as "prevent" are often missing too, even from answerable questions,
 so a single ordinary missing word does not refuse a question. It only produces a warning.
+
+A translation is weaker evidence still. Machine translation renders ordinary Turkish as
+"retrialed" or "regulations", and on the development questions that refused three
+answerable questions while catching two unanswerable ones. So words seen only in a
+translation are reported and never refuse: those questions go on to the source reading,
+where an answer still needs a quote that exists.
 """
 
 from __future__ import annotations
@@ -29,10 +35,13 @@ _INTERNAL_CAPITAL = re.compile(r"[a-z0-9][A-Z]|[A-Z]{2}")
 class Sufficiency:
     missing_names: tuple[str, ...]
     missing_words: tuple[str, ...]
+    words_are_translated: bool = False
 
     @property
     def insufficient(self) -> bool:
-        return bool(self.missing_names) or len(self.missing_words) >= _ENOUGH_MISSING_WORDS
+        if self.missing_names:
+            return True
+        return not self.words_are_translated and len(self.missing_words) >= _ENOUGH_MISSING_WORDS
 
     @property
     def message(self) -> str | None:
@@ -74,4 +83,4 @@ def check_sufficiency(question: str, translated: str | None, vocabulary) -> Suff
             if len(word) >= _MIN_WORD_LENGTH and word.lower() not in _CONTRACTIONS and not _known(word, vocabulary)
         ]
     words = [word for word in dict.fromkeys(words) if word not in names]
-    return Sufficiency(tuple(dict.fromkeys(names)), tuple(words))
+    return Sufficiency(tuple(dict.fromkeys(names)), tuple(words), words_are_translated=bool(translated))

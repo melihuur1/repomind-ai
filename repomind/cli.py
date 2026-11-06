@@ -170,7 +170,7 @@ def command_evaluate(args: argparse.Namespace, settings: Settings) -> int:
 
     dataset = load_dataset(args.dataset)
     modes = tuple(args.modes)
-    embedder = _embedder(settings, args.model) if set(modes) & {"semantic", "hybrid"} else None
+    embedder = _embedder(settings, args.model) if set(modes) & {"semantic", "hybrid", "reranked"} else None
     config = SearchConfig(include_tests=args.include_tests, rrf_k=args.rrf_k, rerank_blend=args.rerank_blend)
     with _store(settings) as store:
         engine = SearchEngine(store, embedder, config, _translator(settings, args), _reranker(settings, args, modes))
@@ -230,15 +230,18 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
     for warning in result.warnings:
         _emit(f"warning: {safe_text(warning)}")
     if result.status == "answered":
-        _emit("")
-        _emit(safe_text(result.answer))
-        _emit("")
-        _emit("Verified sources:")
-        for citation in result.citations:
+        for item in result.evidence:
+            citation = item.citation
+            _emit("")
+            _emit(safe_text(item.statement))
             _emit(
                 f"  [{citation.source_id}] {citation.path}:{citation.start_line}-{citation.end_line}"
                 f"  ({citation.repo}@{citation.commit_sha[:12]})"
             )
+            for line in item.quote.split("\n"):
+                _emit(f"    | {safe_text(line)}")
+        _emit("")
+        _emit("Each quote above is checked against Git. Whether a statement describes its quote correctly is not.")
     else:
         _emit(_STATUS_MESSAGES[result.status])
         if result.hits:
@@ -246,13 +249,13 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
             _emit("Closest code found:" if result.status != "no_llm" else "Sources:")
             print_hits(result.hits, preview_lines=0)
     for rejection in result.rejected:
-        _emit(f"rejected citation: {safe_text(rejection)}")
+        _emit(f"discarded: {safe_text(rejection)}")
     if result.model:
         approximate = " (estimated)" if result.tokens_are_estimated else ""
         _emit("")
         _emit(
             f"model {result.model}: {result.input_tokens} input + {result.output_tokens} output tokens{approximate}, "
-            f"${result.cost_usd:.6f}; {result.sources_sent} sources sent ({result.context_chars} chars), "
+            f"${result.cost_usd:.6f}; {result.sources_sent} sources read, "
             f"{result.sources_dropped} left out by the limits"
         )
     return 0
@@ -268,10 +271,12 @@ def command_evaluate_ask(args: argparse.Namespace, settings: Settings) -> int:
             "No LLM is configured, so there are no answers to evaluate.",
             hint="Set REPOMIND_LLM_BASE_URL and REPOMIND_LLM_MODEL (see README).",
         )
-    dataset = load_dataset(DEFAULT_DATASET_PATH)
+    dataset = load_dataset(Path(args.dataset) if args.dataset else DEFAULT_DATASET_PATH)
+    # The old negatives held back from phase 1 belong only with the set they were written for.
+    holdout = () if args.dataset else load_holdout_unanswerable()
     with _store(settings) as store:
         qa = _qa_engine(store, settings, args)
-        results = run_ask_evaluation(qa, dataset, tuple(args.languages), _progress, load_holdout_unanswerable())
+        results = run_ask_evaluation(qa, dataset, tuple(args.languages), _progress, holdout)
     _emit(f"model {results['model']} at {results['base_url']}")
     for name, value in results["summary"].items():
         _emit(f"  {name:<32} {value}")
@@ -350,6 +355,7 @@ def build_parser() -> argparse.ArgumentParser:
     ask.set_defaults(handler=command_ask)
 
     evaluate_ask = commands.add_parser("evaluate-ask", help="measure answers from the configured LLM")
+    evaluate_ask.add_argument("--dataset", help="question set (default: eval/questions.yaml and its held-back negatives)")
     evaluate_ask.add_argument("--languages", nargs="+", choices=["tr", "en"], default=["tr"])
     evaluate_ask.add_argument("--model", help="embedding model")
     evaluate_ask.add_argument("--translate", action=argparse.BooleanOptionalAction, default=True)
@@ -364,7 +370,7 @@ def main(argv: list[str] | None = None) -> int:
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8", errors="replace")
     args = build_parser().parse_args(argv)
-    if getattr(args, "dataset", "unset") is None:
+    if getattr(args, "dataset", "unset") is None and args.command != "evaluate-ask":
         from repomind.evaluation.dataset import DEFAULT_DATASET_PATH
 
         args.dataset = DEFAULT_DATASET_PATH

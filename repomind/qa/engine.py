@@ -1,22 +1,33 @@
-"""Retrieve, build a bounded prompt, call the model if there is one, verify the result."""
+"""Retrieve, read each source separately, keep only what the source itself proves."""
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 
 from repomind.errors import RepoMindError
 from repomind.evaluation.citations import CitationVerifier
 from repomind.ingest.git_source import GitRepository
 from repomind.qa.llm import LLMClient, LLMConfig, cost_usd
-from repomind.qa.prompt import ContextSource, PreparedPrompt, build_prompt
+from repomind.qa.prompt import (
+    ContextSource,
+    PreparedPrompt,
+    build_reading_prompt,
+    build_translation_prompt,
+    new_nonce,
+    select_sources,
+)
 from repomind.qa.sufficiency import check_sufficiency
-from repomind.qa.verification import VerifiedCitation, verify_answer
+from repomind.qa.verification import Evidence, Reading, VerifiedCitation, verify_reading
 from repomind.search.engine import SearchEngine, SearchHit
+from repomind.search.translation import looks_turkish
 from repomind.store.database import Store
 
 # If the endpoint reports far fewer input tokens than we sent, it truncated the prompt
 # silently (for example Ollama's small default context) and sources were never seen.
 _TRUNCATION_RATIO = 0.5
+_TRANSLATION_OUTPUT_TOKENS = 80
+_MAX_TRANSLATION_CHARACTERS = 400
 
 
 @dataclass
@@ -24,19 +35,29 @@ class AskResult:
     status: str  # answered | insufficient | invalid_response | no_llm | no_results
     question: str
     answer: str = ""
-    citations: list[VerifiedCitation] = field(default_factory=list)
+    evidence: list[Evidence] = field(default_factory=list)
+    readings: list[Reading] = field(default_factory=list)
     rejected: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     hits: list[SearchHit] = field(default_factory=list)
     translated_query: str | None = None
     model: str | None = None
-    input_tokens: int | None = None
-    output_tokens: int | None = None
+    input_tokens: int = 0
+    output_tokens: int = 0
     tokens_are_estimated: bool = False
     context_chars: int = 0
     sources_sent: int = 0
     sources_dropped: int = 0
     cost_usd: float = 0.0
+
+    @property
+    def citations(self) -> list[VerifiedCitation]:
+        return [item.citation for item in self.evidence]
+
+
+def assemble_answer(evidence: list[Evidence]) -> str:
+    """Written by the backend, so that no sentence can appear without its proof."""
+    return "\n".join(f"{item.statement} [{item.citation.source_id}]" for item in evidence)
 
 
 class QAEngine:
@@ -78,16 +99,59 @@ class QAEngine:
                 hint="Raise REPOMIND_LLM_MAX_TOTAL_COST_USD if this spending is intended.",
             )
 
+    def _call(self, prompt: PreparedPrompt, max_output_tokens: int, result: AskResult) -> str:
+        """The one place that talks to the model, so that no request escapes the budget or the accounting."""
+        self._enforce_budget(prompt)
+        response = self.client.complete(prompt.system, prompt.user, max_output_tokens)
+
+        estimated = response.input_tokens is None or response.output_tokens is None
+        result.tokens_are_estimated = result.tokens_are_estimated or estimated
+        input_tokens = response.input_tokens if response.input_tokens is not None else prompt.estimated_input_tokens
+        output_tokens = response.output_tokens if response.output_tokens is not None else max(1, len(response.text) // 3)
+        cost = cost_usd(self.config, input_tokens, output_tokens)
+        result.input_tokens += input_tokens
+        result.output_tokens += output_tokens
+        result.cost_usd += cost
+        result.context_chars = max(result.context_chars, prompt.context_chars)
+        self.store.record_llm_usage(self.config.base_url, self.config.model, input_tokens, output_tokens, cost)
+        self._warn_if_truncated(response.input_tokens, prompt, result)
+        return response.text
+
+    @staticmethod
+    def _warn_if_truncated(reported: int | None, prompt: PreparedPrompt, result: AskResult) -> None:
+        if (
+            reported is not None
+            and reported < _TRUNCATION_RATIO * prompt.estimated_input_tokens
+            and not any("truncated" in warning for warning in result.warnings)
+        ):
+            result.warnings.append(
+                f"The endpoint reports {reported} input tokens for a prompt of about "
+                f"{prompt.estimated_input_tokens}: it may have truncated the source."
+            )
+
+    def _translate_with_the_model(self, question: str, result: AskResult) -> str | None:
+        """Far better than opus-mt on software terms. None falls back to the local translator."""
+        if self.client is None or self.config is None or not looks_turkish(question):
+            return None
+        try:
+            text = self._call(build_translation_prompt(question), _TRANSLATION_OUTPUT_TOKENS, result)
+            english = json.loads(text)["english"]
+        except (json.JSONDecodeError, KeyError, TypeError):
+            return None
+        if not isinstance(english, str) or not english.strip() or len(english) > _MAX_TRANSLATION_CHARACTERS:
+            return None
+        return english.strip()
+
     def ask(self, question: str, repos: list[str] | None = None) -> AskResult:
         chunk_limit = self.config.max_context_chunks if self.config else 8
-        retrieved = self.search.search(question, "hybrid", repos, chunk_limit)
-        result = AskResult(
-            status="no_llm",
-            question=question,
-            hits=retrieved.hits,
-            translated_query=retrieved.translated_query,
-            warnings=list(retrieved.warnings),
-        )
+        result = AskResult(status="no_llm", question=question)
+        # Before the search: a refused question should not leave anything half done.
+        self.search.check_repositories(repos)
+        english = self._translate_with_the_model(question, result)
+        retrieved = self.search.search(question, "hybrid", repos, chunk_limit, translated=english)
+        result.hits = retrieved.hits
+        result.translated_query = retrieved.translated_query
+        result.warnings.extend(retrieved.warnings)
         if not retrieved.hits:
             result.status = "no_results"
             return result
@@ -107,43 +171,40 @@ class QAEngine:
         if self.client is None or self.config is None:
             return result
 
-        prompt = build_prompt(
+        nonce = new_nonce()
+        sources, result.sources_dropped = select_sources(
             question,
             [hit.chunk for hit in retrieved.hits],
             self.config.max_context_chunks,
             self.config.max_input_tokens,
+            nonce,
+            english,
         )
         result.model = self.config.model
-        result.context_chars = prompt.context_chars
-        result.sources_sent = len(prompt.sources)
-        result.sources_dropped = prompt.dropped_chunks
-        if not prompt.sources:
+        result.sources_sent = len(sources)
+        if not sources:
             result.status = "insufficient"
             result.warnings.append("No source fits within the input token limit, so the model was not called.")
             return result
 
-        self._enforce_budget(prompt)
-        response = self.client.complete(prompt.system, prompt.user, self.config.max_output_tokens)
+        for source in sources:
+            prompt = build_reading_prompt(question, source, nonce, english)
+            reply = self._call(prompt, self.config.max_output_tokens, result)
+            reading = verify_reading(reply, source, self._git_check, question)
+            result.readings.append(reading)
+            if reading.evidence:
+                result.evidence.append(reading.evidence)
+            elif reading.reason:
+                result.rejected.append(f"{source.id}: {reading.reason}")
 
-        result.tokens_are_estimated = response.input_tokens is None or response.output_tokens is None
-        result.input_tokens = response.input_tokens if response.input_tokens is not None else prompt.estimated_input_tokens
-        result.output_tokens = (
-            response.output_tokens if response.output_tokens is not None else max(1, len(response.text) // 3)
-        )
-        result.cost_usd = cost_usd(self.config, result.input_tokens, result.output_tokens)
-        self.store.record_llm_usage(
-            self.config.base_url, self.config.model, result.input_tokens, result.output_tokens, result.cost_usd
-        )
-        if response.input_tokens is not None and response.input_tokens < _TRUNCATION_RATIO * prompt.estimated_input_tokens:
-            result.warnings.append(
-                f"The endpoint reports {response.input_tokens} input tokens for a prompt of about "
-                f"{prompt.estimated_input_tokens}: it may have truncated the sources."
-            )
-
-        verified = verify_answer(response.text, prompt.sources, self._git_check, question)
-        result.status = verified.status
-        result.answer = verified.answer
-        result.citations = verified.citations
-        result.rejected = verified.rejected
-        result.warnings.extend(verified.warnings)
+        if result.evidence:
+            result.status = "answered"
+            result.answer = assemble_answer(result.evidence)
+            if len(result.evidence) == 1:
+                result.warnings.append("Only one source supports this answer, so it may be incomplete.")
+        elif all(reading.outcome == "invalid" for reading in result.readings):
+            result.status = "invalid_response"
+            result.warnings.append("The model did not return the required JSON.")
+        else:
+            result.status = "insufficient"
         return result

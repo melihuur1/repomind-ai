@@ -9,7 +9,7 @@ from repomind.qa.engine import QAEngine
 from repomind.qa.sufficiency import check_sufficiency
 from repomind.search.engine import SearchEngine
 from repomind.search.tokenizer import tokenize
-from tests.test_qa import LOCAL, FakeClient, reply
+from tests.test_qa import GOOD_REPLY, LOCAL, FakeClient, only_about_order_service
 
 CODE = """
 class Reservation { void cancel() { stockLedger.release(); log("connection lost"); } }
@@ -65,9 +65,17 @@ def test_compound_is_only_known_as_a_whole():
     assert check_sufficiency("Where is the GraphQL schema?", None, vocabulary).missing_names == ("GraphQL",)
 
 
-def test_turkish_question_is_judged_through_its_translation():
+def test_turkish_question_is_compared_through_its_translation():
     result = check_sufficiency("Rezervasyon iptali nerede?", "Where is reservation cancel?", VOCABULARY)
     assert not result.insufficient
+
+
+def test_words_seen_only_in_a_translation_warn_but_never_refuse():
+    """Regression: translation noise such as "retrialed" refused answerable questions."""
+    result = check_sufficiency("Kilit zaman aşımında işlem nasıl tekrar ediliyor?", "How is the process retrialed?", VOCABULARY)
+    assert not result.insufficient
+    assert {"process", "retrialed"} <= set(result.missing_words)
+    assert "retrialed" in result.message
 
 
 def test_names_in_a_turkish_question_are_still_checked():
@@ -95,7 +103,7 @@ class TestInEngine:
         return SearchEngine(store, fake_embedder)
 
     def test_refusal_never_calls_the_model(self, store, search):
-        client = FakeClient(reply(answer="Kafka is consumed here [S1]."))
+        client = FakeClient(GOOD_REPLY)
         result = QAEngine(store, search, LOCAL, client).ask("How does cancelOrder publish to Kafka?", ["shop"])
         assert result.status == "insufficient"
         assert client.calls == []
@@ -108,7 +116,7 @@ class TestInEngine:
         assert result.status == "insufficient"
 
     def test_answerable_question_reaches_the_model(self, store, search):
-        client = FakeClient(reply(answer="It releases stock [S1]."))
+        client = FakeClient(only_about_order_service)
         result = QAEngine(store, search, LOCAL, client).ask("How does cancelOrder release stock?", ["shop"])
         assert result.status == "answered"
-        assert len(client.calls) == 1
+        assert client.calls
