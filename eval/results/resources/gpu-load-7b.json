@@ -1,0 +1,13 @@
+{
+ "model": "qwen2.5:7b",
+ "question": "Bir isteği uygulamanın hangi kopyasının karşıladığı istemciye nasıl bildiriliyor?",
+ "status": "insufficient",
+ "seconds": 12.3,
+ "input_tokens": 1067,
+ "output_tokens": 32,
+ "chosen": [],
+ "note": "",
+ "note_problem": null,
+ "python_peak_physical_mb": 920,
+ "python_commit_mb": 1369
+}

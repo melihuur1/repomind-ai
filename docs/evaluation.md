@@ -230,20 +230,25 @@ Also measured: an integration test indexes a comment ordering the model to reply
 
 ### GPU load check
 
-RepoMind's Ollama first ran on the CPU only, although this machine has an RTX 3050 with 4 GB of VRAM. After giving the container the GPU, one Turkish question went through the same pipeline on `qwen2.5:3b`. **This is a single question checking resources, not a measure of accuracy or typical speed.** It chose the same lines as the CPU run.
+RepoMind's Ollama first ran on the CPU only, although this machine has an RTX 3050 with 4 GB of VRAM. After giving the container the GPU, one Turkish question went through the same pipeline on each model. **These are single questions checking resources, not a measure of accuracy or typical speed.** Samples are in [`eval/results/resources`](../eval/results/resources).
 
-| | CPU, from the pilot | GPU, this check |
-| --- | --- | --- |
-| Where the model ran | 100% CPU | 100% GPU, 37 of 37 layers |
-| Time for this question | 23.2 s | 6.0 s |
-| VRAM used | 0 | 2,548 MiB of 4,096 |
-| Ollama container, peak | 2.39 GiB | 0.56 GiB |
-| Lowest available RAM | 10.8 GB, from 13.1 | 12.15 GB, from 13.1 |
-| Lowest free commit space | 4.5 GB, from 6.8 | **3.36 GB, from 7.2** |
+| | 3B, CPU, from the pilot | 3B, GPU | 7B, GPU |
+| --- | --- | --- | --- |
+| Where the model ran | 100% CPU | 100% GPU, 37 of 37 layers | 46% CPU and 54% GPU, 13 of 29 layers |
+| Time for this question | 23.2 s | 6.0 s | 12.3 s |
+| VRAM used | 0 | 2,548 MiB of 4,096 | 2,808 MiB of 4,096 |
+| Ollama container, peak | 2.39 GiB | 0.56 GiB | 0.85 GiB |
+| WSL process, peak working set and private | not sampled | 3.65 and 7.47 GB | 8.78 and 11.60 GB |
+| Page cache inside the VM, peak | not sampled | 3.15 GB | 6.42 GB |
+| Lowest available RAM | 10.8 GB, from 13.1 | 12.15 GB, from 13.1 | 10.23 GB, from 16.5 |
+| Lowest free commit space | 4.5 GB, from 6.8 | 3.36 GB, from 7.2 | 19.88 GB, from 29.4 |
 
-The CPU column covers the pilot's 18 questions, and the GPU column one question.
+The 3B CPU column covers the pilot's 18 questions, and the GPU columns one question. The 3B GPU check chose the same lines as the CPU run. On this question 7B ended in "I do not know", which says nothing about its accuracy.
 
-The GPU saves time and physical RAM, but not commit space. While the model was loaded, the WSL process's private memory rose by 2.87 GB, close to Ollama's 2.9 GB estimate for the model, although little of it was in use inside the VM. The likely reason is how WSL maps GPU memory, which this check did not establish. Commit space is therefore the limit to watch for 7B. With an available RAM of 13.2 GB and free commit space of 7.1 GB, the 7B check was not started, because its condition was 12 GB of each.
+- **The GPU saves time and physical RAM, but not commit space.** Through WSL, loading 3B raised the WSL process's private memory by 2.87 GB, close to Ollama's 2.9 GB estimate for the model. Loading 7B raised it by 8.3 GB. The exact accounting of GPU memory in WSL was not established.
+- **The container figure understates 7B.** With the GPU, Ollama maps the model file instead of copying it, so the file appears as page cache in the VM, which rose by 4.8 GB, and not as container memory. That cache can be reclaimed, but it stays for a while: 15 seconds after the container stopped, the WSL process still held 8.35 GB.
+- **The 7B check needed more commit space than was free before.** It ran only after the pagefile's start was raised to 16 GB, which took the commit limit to 47.3 GB. The pagefile itself was barely used, with a peak of 5 MB, so the larger start adds room to commit and causes no paging. See [the record](../eval/results/resources/pagefile-change.md).
+- **VRAM was not used up.** Ollama placed 13 of 7B's 29 layers, leaving 1,157 MiB free, because it counts 3.2 GiB as available. More layers might fit, which was not tried.
 
 ### Limits of the pilot
 

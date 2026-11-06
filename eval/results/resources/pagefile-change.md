@@ -2,6 +2,10 @@
 
 A record of one machine's Windows setting, kept so that it can be restored. RepoMind does not need this change on another machine.
 
+## Status
+
+Applied by the owner, and active since the restart on 2026-11-06 at 22:05. Measured at 22:14: setting 16,384 and 32,768 MB, allocated 16,384 MB, commit limit 47.3 GB, free commit 30.1 GB, available physical memory 17.1 GB.
+
 ## State before the change
 
 Read on 2026-11-06:
