@@ -11,7 +11,7 @@ import time
 from typing import Sequence
 
 from repomind.evaluation.citations import CitationVerifier
-from repomind.evaluation.dataset import Dataset
+from repomind.evaluation.dataset import Dataset, UnanswerableQuestion
 from repomind.evaluation.metrics import overlaps
 from repomind.ingest.git_source import GitRepository
 from repomind.qa.engine import AskResult, QAEngine
@@ -48,6 +48,7 @@ def run_ask_evaluation(
     dataset: Dataset,
     languages: Sequence[str] = ("tr",),
     progress=None,
+    holdout: Sequence[UnanswerableQuestion] = (),
 ) -> dict:
     snapshots = {s.repo: s for s in qa.store.active_snapshots()}
     verifiers = {
@@ -56,11 +57,12 @@ def run_ask_evaluation(
     }
     answerable: list[dict] = []
     unanswerable: list[dict] = []
-    total = (len(dataset.questions) + len(dataset.unanswerable)) * len(languages)
+    holdout_rows: list[dict] = []
+    total = (len(dataset.questions) + len(dataset.unanswerable) + len(holdout)) * len(languages)
 
     def report() -> None:
         if progress:
-            progress(len(answerable) + len(unanswerable), total)
+            progress(len(answerable) + len(unanswerable) + len(holdout_rows), total)
 
     for language in languages:
         for question in dataset.questions:
@@ -84,13 +86,17 @@ def run_ask_evaluation(
             row["refused"] = result.status in _REFUSALS
             unanswerable.append(row)
             report()
+        for question in holdout:
+            started = time.perf_counter()
+            result = qa.ask(question.text(language), [question.repo])
+            row = _row(question.id, question.repo, language, result, time.perf_counter() - started)
+            row["refused"] = result.status in _REFUSALS
+            holdout_rows.append(row)
+            report()
 
-    rows = answerable + unanswerable
+    rows = answerable + unanswerable + holdout_rows
     answered = [r for r in answerable if r["status"] == "answered"]
     cited = sum(len(r["citations"]) for r in rows)
-    valid = sum(r.get("citations_recheck_valid", 0) for r in answerable) + sum(
-        len(r["citations"]) for r in unanswerable
-    )
     return {
         "model": qa.config.model if qa.config else None,
         "base_url": qa.config.base_url if qa.config else None,
@@ -104,6 +110,8 @@ def run_ask_evaluation(
             "invalid_responses": sum(r["status"] == "invalid_response" for r in rows),
             "unanswerable_questions": len(unanswerable),
             "unanswerable_refused": sum(r["refused"] for r in unanswerable),
+            "holdout_unanswerable_questions": len(holdout_rows),
+            "holdout_unanswerable_refused": sum(r["refused"] for r in holdout_rows),
             "citations_shown": cited,
             "citations_rejected_by_backend": sum(len(r["rejected"]) for r in rows),
             "input_tokens": sum(r["input_tokens"] or 0 for r in rows),
@@ -116,4 +124,5 @@ def run_ask_evaluation(
         "answerable_citations_shown": sum(len(r["citations"]) for r in answerable),
         "answerable": answerable,
         "unanswerable": unanswerable,
+        "holdout_unanswerable": holdout_rows,
     }

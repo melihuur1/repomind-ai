@@ -11,7 +11,12 @@ from repomind.evaluation.citations import CitationCheck
 from repomind.qa.prompt import ContextSource
 
 _MARKER = re.compile(r"\[(S\d+)\]")
-_FILE_REFERENCE = re.compile(r"[\w./\\-]+\.(?:java|tsx?|jsx?|mjs|cjs|mts|cts)\b(?::\d+(?:-\d+)?)?")
+_FILE_REFERENCE = re.compile(
+    r"[\w./\\-]+\.(?:java|tsx?|jsx?|mjs|cjs|mts|cts|py|go|rs|kt|sql|graphql|gql|proto|ya?ml|json|xml|html|css|sh|md)\b"
+    r"(?::\d+(?:-\d+)?)?"
+)
+_BACKTICKED = re.compile(r"`([^`\n]+)`")
+_IDENTIFIER_PART = re.compile(r"[A-Za-z_$][\w$]{2,}")
 _JSON_OBJECT = re.compile(r"\{.*\}", re.DOTALL)
 
 GitCheck = Callable[[ContextSource, int, int], CitationCheck]
@@ -58,7 +63,31 @@ def _line_number(value: object) -> int | None:
     return None
 
 
-def verify_answer(raw_text: str, sources: Sequence[ContextSource], git_check: GitCheck) -> VerifiedAnswer:
+def _fabricated_references(answer: str, sources: Sequence[ContextSource], question: str) -> list[str]:
+    """Files and identifiers in the answer that the model cannot have read.
+
+    This catches invented names such as `schema.graphql` or `recomputeInvariants`.
+    It cannot catch a false statement made only with real names.
+    """
+    known_paths = {source.chunk.path for source in sources}
+    evidence = "\n".join(
+        [question, *(f"{s.chunk.path}\n{s.chunk.symbol or ''}\n{s.chunk.content}" for s in sources)]
+    ).casefold()
+    fabricated: list[str] = []
+    for mention in dict.fromkeys(_FILE_REFERENCE.findall(answer)):
+        path = re.sub(r":\d+(?:-\d+)?$", "", mention).replace("\\", "/")
+        if not any(known == path or known.endswith("/" + path) for known in known_paths):
+            fabricated.append(mention)
+    for identifier in dict.fromkeys(_BACKTICKED.findall(answer)):
+        for part in _IDENTIFIER_PART.findall(identifier):
+            if part.casefold() not in evidence and part not in fabricated:
+                fabricated.append(part)
+    return fabricated
+
+
+def verify_answer(
+    raw_text: str, sources: Sequence[ContextSource], git_check: GitCheck, question: str = ""
+) -> VerifiedAnswer:
     parsed = _parse(raw_text)
     if parsed is None or not isinstance(parsed.get("answer", ""), str):
         return VerifiedAnswer("invalid_response", warnings=["The model did not return the required JSON."])
@@ -127,14 +156,18 @@ def verify_answer(raw_text: str, sources: Sequence[ContextSource], git_check: Gi
         )
     answer = _MARKER.sub(lambda m: m.group(0) if m.group(1) in verified else "[unverified]", answer)
 
-    warnings: list[str] = []
-    known_paths = {source.chunk.path for source in sources}
-    for mention in dict.fromkeys(_FILE_REFERENCE.findall(answer)):
-        path = mention.rsplit(":", 1)[0] if re.search(r":\d", mention) else mention
-        normalized = path.replace("\\", "/")
-        if not any(known == normalized or known.endswith("/" + normalized) for known in known_paths):
-            warnings.append(f"The answer mentions {mention}, which is not among the verified sources.")
+    fabricated = _fabricated_references(answer, sources, question)
+    if fabricated:
+        return VerifiedAnswer(
+            "insufficient",
+            rejected=rejected,
+            warnings=[
+                "The model's answer was discarded because it refers to things that are not in "
+                "the sources: " + ", ".join(fabricated) + "."
+            ],
+        )
 
+    warnings: list[str] = []
     return VerifiedAnswer(
         "answered",
         answer=answer,

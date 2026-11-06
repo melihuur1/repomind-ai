@@ -113,10 +113,22 @@ Two ideas were tested and rejected:
 `repomind/qa/` answers only through this sequence:
 
 1. Retrieve up to 8 chunks with hybrid search.
-2. Without a configured LLM, stop and return the sources, labelled as not being an AI answer.
-3. Build a bounded prompt. Chunks are included whole or not at all, because cutting one would invalidate its line range.
-4. Enforce the budget, then call the endpoint.
-5. Verify the output before showing anything.
+2. Refuse if the question is about something the code never mentions.
+3. Without a configured LLM, stop and return the sources, labelled as not being an AI answer.
+4. Build a bounded prompt. Chunks are included whole or not at all, because cutting one would invalidate its line range.
+5. Enforce the budget, then call the endpoint.
+6. Verify the output before showing anything.
+
+### Refusing without a model
+
+The first run with a real model answered 5 of 6 unanswerable questions by inventing something, such as a `schema.graphql` file that does not exist. Saying "I do not know" therefore cannot be left to a small model.
+
+Retrieval similarity does not help: on the measured questions, unanswerable ones scored as high as answerable ones (cosine 0.82 to 0.87 against 0.80 to 0.89). Vocabulary does differ, so `repomind/qa/sufficiency.py` refuses before any model call when either of these holds:
+
+- a name-like term (`Kafka`, `GraphQL`, `S3`) from the question occurs nowhere in the code;
+- at least two ordinary words of the English question, or of its translation, occur nowhere in the code.
+
+A single missing ordinary word, such as "prevent", is common in answerable questions too, so it only produces a warning. Questions refused this way cost nothing. The check cannot catch a question whose every word happens to appear in the code.
 
 ### Citation verification
 
@@ -125,10 +137,10 @@ The model refers to sources by id (`S1`) and may give lines. For each citation, 
 - Path and SHA shown to the user come from the backend, never from model text.
 - A source cited with wrong lines is shown with its verified full range, and the rejection is reported.
 - An unverifiable inline marker becomes `[unverified]`.
-- A file mentioned in prose that is not a supplied source produces a warning.
+- An answer that names a file not among the sources, or puts an identifier in backticks that appears in neither the sources nor the question, is discarded whole.
 - Invalid JSON, `insufficient: true` or the absence of any verified citation yields "I do not know".
 
-**What this does not prove.** Verification shows that a cited location exists and contains the claimed code. It does not show that the model's sentence about that code is true. See [limitations](#known-limitations).
+**What this does not prove.** Verification shows that a cited location exists and contains the code shown, and that the answer names nothing the model cannot have read. It does not show that the model's sentence about that code is true. See [limitations](#known-limitations).
 
 ### Prompt injection
 
@@ -157,6 +169,7 @@ All providers share one small OpenAI-compatible client using only the standard l
 ## Known limitations
 
 - **Verified citations do not make a claim true.** When retrieval misses the right code, a small model can still give a wrong answer that cites real but irrelevant code. See [evaluation.md](evaluation.md#answer-layer).
+- **The refusal check is vocabulary based.** It misses questions whose every word appears in the code, and a poor translation can make it refuse a question that could be answered.
 - **Recall@5 is moderate**, about 0.5 to 0.6 on the held-out split. Most misses are ranking problems rather than candidate problems; see [evaluation.md](evaluation.md#why-results-are-where-they-are).
 - **Only Java, TypeScript and JavaScript are indexed.** SQL migrations and YAML configuration are invisible, so constraints such as StockGuard's database `CHECK`s cannot be cited.
 - **Turkish depends on an imperfect translator**, and detection relies on Turkish letters or common function words, so a bare `stok rezervasyon` is not translated.

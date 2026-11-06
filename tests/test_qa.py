@@ -166,13 +166,41 @@ class TestVerification:
         assert result.status == "answered"
         assert len(result.rejected) == 2
 
-    def test_invented_file_mention_in_prose_is_flagged(self):
-        result = verify_answer(reply(answer="See src/invented.ts:12 [S1]."), SOURCES, always_valid)
-        assert any("invented.ts" in warning for warning in result.warnings)
+    @pytest.mark.parametrize(
+        "answer",
+        [
+            "See src/invented.ts:12 [S1].",
+            "The schema is defined in `apps/collab/src/schema.graphql` [S1].",
+            "It is stored in config/settings.yaml [S1].",
+        ],
+    )
+    def test_invented_file_discards_the_whole_answer(self, answer):
+        """Regression: a real model cited a real source while naming a file that does not exist."""
+        result = verify_answer(reply(answer=answer), SOURCES, always_valid)
+        assert result.status == "insufficient"
+        assert result.answer == ""
+        assert "not in the sources" in result.warnings[0]
 
-    def test_mention_of_a_real_source_is_not_flagged(self):
-        result = verify_answer(reply(answer="See a.ts and src/b.ts [S1]."), SOURCES, always_valid)
-        assert result.warnings == []
+    def test_invented_identifier_discards_the_whole_answer(self):
+        result = verify_answer(reply(answer="It calls `recomputeInvariants` [S1]."), SOURCES, always_valid)
+        assert result.status == "insufficient"
+        assert "recomputeInvariants" in result.warnings[0]
+
+    def test_real_files_and_identifiers_are_accepted(self):
+        sources = (ContextSource("S1", chunk(content="class Ledger { void release() {} }", start=1, end=1)),)
+        answer = "In src/a.ts, `Ledger.release` frees it [S1]. See also `a.ts` [S1]."
+        result = verify_answer(reply(answer=answer), sources, always_valid)
+        assert result.status == "answered"
+
+    def test_identifier_from_the_question_is_accepted(self):
+        result = verify_answer(reply(answer="`applyDiscount` is unrelated [S1]."), SOURCES, always_valid, "What is applyDiscount?")
+        assert result.status == "answered"
+
+    def test_a_false_statement_with_real_names_cannot_be_caught(self):
+        """Documents the limit of this check: it knows names, not meaning."""
+        sources = (ContextSource("S1", chunk(content="hash = argon2(password)", start=1, end=1)),)
+        result = verify_answer(reply(answer="`password` is stored in plain text [S1]."), sources, always_valid)
+        assert result.status == "answered"
 
 
 class TestPromptSafety:

@@ -141,26 +141,23 @@ def run_evaluation(
                 if selected:
                     summaries.setdefault(split, {}).setdefault(language, {})[mode] = _summary(selected)
 
+    def paired_rows(mode: str, language: str, split: str) -> list[dict]:
+        selected = (
+            r
+            for r in rows
+            if r["mode"] == mode and r["language"] == language and (split == "all" or r["split"] == split)
+        )
+        return sorted(selected, key=lambda r: r["question"])
+
     comparisons: dict = {}
     if "hybrid" in modes:
         for split in ("all", "test"):
             for language in languages:
                 for other in (m for m in modes if m != "hybrid"):
-                    key = lambda r: r["question"]
-                    def pick(mode: str) -> list[dict]:
-                        return sorted(
-                            (
-                                r
-                                for r in rows
-                                if r["mode"] == mode
-                                and r["language"] == language
-                                and (split == "all" or r["split"] == split)
-                            ),
-                            key=key,
-                        )
                     for metric in ("recall_at_5", "reciprocal_rank"):
                         ci = paired_difference_ci(
-                            [r[metric] for r in pick("hybrid")], [r[metric] for r in pick(other)]
+                            [r[metric] for r in paired_rows("hybrid", language, split)],
+                            [r[metric] for r in paired_rows(other, language, split)],
                         )
                         comparisons[f"{split}/{language}/hybrid-minus-{other}/{metric}"] = {
                             "mean_difference": round(ci.mean, 4),

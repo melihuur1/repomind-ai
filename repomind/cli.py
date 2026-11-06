@@ -201,7 +201,7 @@ _STATUS_MESSAGES = {
         "To enable answers, set REPOMIND_LLM_BASE_URL and REPOMIND_LLM_MODEL (see README)."
     ),
     "no_results": "I do not know: no indexed code matches this question.",
-    "insufficient": "I do not know: the retrieved sources are not sufficient to answer this.",
+    "insufficient": "I do not know: the indexed code does not give enough evidence to answer this.",
     "invalid_response": "I do not know: the model did not return a valid response, so none of it is shown.",
 }
 
@@ -244,7 +244,7 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
 
 def command_evaluate_ask(args: argparse.Namespace, settings: Settings) -> int:
     from repomind.evaluation.ask_runner import run_ask_evaluation
-    from repomind.evaluation.dataset import DEFAULT_DATASET_PATH, load_dataset
+    from repomind.evaluation.dataset import DEFAULT_DATASET_PATH, load_dataset, load_holdout_unanswerable
     from repomind.qa.llm import load_llm_config
 
     if load_llm_config() is None:
@@ -255,7 +255,7 @@ def command_evaluate_ask(args: argparse.Namespace, settings: Settings) -> int:
     dataset = load_dataset(DEFAULT_DATASET_PATH)
     with _store(settings) as store:
         qa = _qa_engine(store, settings, args)
-        results = run_ask_evaluation(qa, dataset, tuple(args.languages), _progress)
+        results = run_ask_evaluation(qa, dataset, tuple(args.languages), _progress, load_holdout_unanswerable())
     _emit(f"model {results['model']} at {results['base_url']}")
     for name, value in results["summary"].items():
         _emit(f"  {name:<32} {value}")

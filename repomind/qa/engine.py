@@ -9,6 +9,7 @@ from repomind.evaluation.citations import CitationVerifier
 from repomind.ingest.git_source import GitRepository
 from repomind.qa.llm import LLMClient, LLMConfig, cost_usd
 from repomind.qa.prompt import ContextSource, PreparedPrompt, build_prompt
+from repomind.qa.sufficiency import check_sufficiency
 from repomind.qa.verification import VerifiedCitation, verify_answer
 from repomind.search.engine import SearchEngine, SearchHit
 from repomind.store.database import Store
@@ -90,6 +91,19 @@ class QAEngine:
         if not retrieved.hits:
             result.status = "no_results"
             return result
+
+        # Decided before any model call, which also spends nothing on such questions.
+        sufficiency = check_sufficiency(
+            question,
+            retrieved.translated_query,
+            self.search.vocabulary(question, retrieved.translated_query, repos),
+        )
+        if sufficiency.message:
+            result.warnings.append(sufficiency.message)
+        if sufficiency.insufficient:
+            result.status = "insufficient"
+            return result
+
         if self.client is None or self.config is None:
             return result
 
@@ -126,7 +140,7 @@ class QAEngine:
                 f"{prompt.estimated_input_tokens}: it may have truncated the sources."
             )
 
-        verified = verify_answer(response.text, prompt.sources, self._git_check)
+        verified = verify_answer(response.text, prompt.sources, self._git_check, question)
         result.status = verified.status
         result.answer = verified.answer
         result.citations = verified.citations

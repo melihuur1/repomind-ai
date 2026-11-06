@@ -104,6 +104,11 @@ class SearchEngine:
             self._indexes[key] = KeywordIndex(chunks, self.config.bm25)
         return self._indexes[key]
 
+    def vocabulary(self, query: str, translated: str | None, repos: list[str] | None = None):
+        """Every term in the code this query would search, for checking what it never mentions."""
+        index = self._keyword_index(self._snapshot_ids(repos), self._tests_included(query, translated))
+        return index.postings
+
     def _keyword_hits(
         self, query: str, translated: str | None, snapshot_ids: list[int], include_tests: bool, limit: int
     ) -> list[SearchHit]:

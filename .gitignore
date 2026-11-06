@@ -11,9 +11,6 @@ __pycache__/
 # Downloaded embedding and LLM models
 .models/
 
-# Read-only source snapshots, if ever used
-.snapshots/
-
 # Editors
 .vscode/
 .idea/
