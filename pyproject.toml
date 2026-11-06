@@ -44,4 +44,5 @@ addopts = "-q"
 markers = [
     "db: requires the RepoMind PostgreSQL container (skipped when it is not reachable)",
     "gold: requires local clones of the evaluation repositories (skipped when they are not configured)",
+    "llm: calls the configured local LLM (skipped when it is not running)",
 ]

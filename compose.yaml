@@ -24,8 +24,11 @@ services:
   # needs no account or API key, and listens on loopback only.
   ollama:
     profiles: ["llm"]
-    image: ollama/ollama:0.5.7
+    image: ollama/ollama:0.6.8
     container_name: repomind-ollama
+    environment:
+      # Ollama's small default context silently cuts long prompts, which would hide sources.
+      OLLAMA_CONTEXT_LENGTH: "8192"
     ports:
       - "127.0.0.1:${REPOMIND_OLLAMA_PORT:-11535}:11434"
     volumes:

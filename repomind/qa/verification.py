@@ -117,12 +117,13 @@ def verify_answer(raw_text: str, sources: Sequence[ContextSource], git_check: Gi
         else:
             rejected.append(f"{source_id}: {check.reason}")
 
-    valid_markers = {marker for marker in _MARKER.findall(answer) if marker in verified}
-    if not valid_markers:
+    # A verified structured citation backs the answer even without an inline marker:
+    # small local models often return one but not the other.
+    if not verified:
         return VerifiedAnswer(
             "insufficient",
             rejected=rejected,
-            warnings=["The model's answer had no verifiable citation behind its text, so it was discarded."],
+            warnings=["The model's answer had no verifiable citation behind it, so it was discarded."],
         )
     answer = _MARKER.sub(lambda m: m.group(0) if m.group(1) in verified else "[unverified]", answer)
 
@@ -137,7 +138,7 @@ def verify_answer(raw_text: str, sources: Sequence[ContextSource], git_check: Gi
     return VerifiedAnswer(
         "answered",
         answer=answer,
-        citations=[verified[marker] for marker in sorted(valid_markers, key=lambda m: int(m[1:]))],
+        citations=[verified[source_id] for source_id in sorted(verified, key=lambda s: int(s[1:]))],
         rejected=rejected,
         warnings=warnings,
     )

@@ -88,9 +88,24 @@ class TestVerification:
         assert result.status == "answered"
         assert (result.citations[0].start_line, result.citations[0].end_line) == (1, 5)
 
-    def test_answer_without_any_marker_is_discarded(self):
+    def test_answer_without_any_citation_is_discarded(self):
+        result = verify_answer(reply(answer="Trust me."), SOURCES, always_valid)
+        assert result.status == "insufficient"
+        assert result.answer == ""
+
+    def test_verified_structured_citation_backs_an_answer_without_markers(self):
+        """Regression: a local model's correct citation was thrown away for lacking a marker."""
         result = verify_answer(
-            reply(answer="Trust me.", citations=[{"source": "S1", "start_line": 10, "end_line": 11}]),
+            reply(answer="ReservationService.cancel", citations=[{"source": "S1", "start_line": 12, "end_line": 14}]),
+            SOURCES,
+            always_valid,
+        )
+        assert result.status == "answered"
+        assert (result.citations[0].start_line, result.citations[0].end_line) == (12, 14)
+
+    def test_structured_citation_that_fails_verification_does_not_back_an_answer(self):
+        result = verify_answer(
+            reply(answer="Trust me.", citations=[{"source": "S1", "start_line": 1, "end_line": 2}]),
             SOURCES,
             always_valid,
         )

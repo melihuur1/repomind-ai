@@ -242,6 +242,33 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
     return 0
 
 
+def command_evaluate_ask(args: argparse.Namespace, settings: Settings) -> int:
+    from repomind.evaluation.ask_runner import run_ask_evaluation
+    from repomind.evaluation.dataset import DEFAULT_DATASET_PATH, load_dataset
+    from repomind.qa.llm import load_llm_config
+
+    if load_llm_config() is None:
+        raise RepoMindError(
+            "No LLM is configured, so there are no answers to evaluate.",
+            hint="Set REPOMIND_LLM_BASE_URL and REPOMIND_LLM_MODEL (see README).",
+        )
+    dataset = load_dataset(DEFAULT_DATASET_PATH)
+    with _store(settings) as store:
+        qa = _qa_engine(store, settings, args)
+        results = run_ask_evaluation(qa, dataset, tuple(args.languages), _progress)
+    _emit(f"model {results['model']} at {results['base_url']}")
+    for name, value in results["summary"].items():
+        _emit(f"  {name:<32} {value}")
+    if args.output:
+        output = Path(args.output)
+        if not output.is_absolute():
+            output = PROJECT_ROOT / output
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(results, indent=1, ensure_ascii=False), encoding="utf-8")
+        _emit(f"\nFull results: {output}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="repomind", description="Find and explain code with verifiable citations.")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -302,6 +329,13 @@ def build_parser() -> argparse.ArgumentParser:
     ask.add_argument("--model", help="embedding model")
     ask.add_argument("--translate", action=argparse.BooleanOptionalAction, default=True)
     ask.set_defaults(handler=command_ask)
+
+    evaluate_ask = commands.add_parser("evaluate-ask", help="measure answers from the configured LLM")
+    evaluate_ask.add_argument("--languages", nargs="+", choices=["tr", "en"], default=["tr"])
+    evaluate_ask.add_argument("--model", help="embedding model")
+    evaluate_ask.add_argument("--translate", action=argparse.BooleanOptionalAction, default=True)
+    evaluate_ask.add_argument("--output", help="write answers and details to this JSON file")
+    evaluate_ask.set_defaults(handler=command_evaluate_ask)
 
     return parser
 
