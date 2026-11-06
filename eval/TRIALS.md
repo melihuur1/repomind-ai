@@ -47,3 +47,27 @@ Also measured: how many of a translation's terms exist in the repository's vocab
 **Step 2 runs only if step 1 clears this bar:** hints fix at least 5 more of the 20 errors than they break, lose no technical name, and take gold in the passages up by at least 2 of the 20. Then the hints prompt translates the 85 answerable questions, and search is measured with no model. No question is answered.
 
 **Bar for recommending the hints:** gold in the passages and gold passing the evidence rule each rise by at least 3 of 85. The 38 unanswerable questions are not translated in step 2, so its effect on them stays unmeasured.
+
+## Trial 2, the full comparison
+
+Step 1 missed its bar, so step 2 did not run. The owner then approved one comparison on all the questions, in place of the step 2 above. This is fixed before it runs, and it will not be run again.
+
+**What runs.** Both prompts translate all 85 answerable and 38 unanswerable questions, once each, in one session. Nothing else asks the model, and no question is answered. Search then runs with no model, on each prompt's translations.
+
+**What is reported, for each prompt:**
+
+- **Technical meaning.** Where the two translations differ, each is graded without knowing which prompt wrote it: bad if it changes what is asked, gives a technical word the wrong sense, or is not a translation of the question. Clumsy English is fine. Also how many terms of the developer's own English it shares, how many technical names the model's reply lost before the code adds them back, and how many replies are not a question.
+- **Gold code** in the search candidates, in the 5 passages, and in a passage that passes the strict evidence rule.
+- **Unanswerable questions refused before the model.**
+- **Regressions:** every question that reached a stage under the current prompt and does not under the glossary prompt.
+- **Time and memory.**
+
+**How much is noise.** At temperature 0, translations still differed between runs in step 1. So the stored translations are compared with this run's current prompt, and that difference shows how much two runs of one prompt can differ.
+
+**Bar for recommending the glossary prompt, all of:**
+
+1. Gold in the passages and gold passing the strict rule each rise by at least 3 of 85.
+2. On each of those two, more questions are gained than lost, and the rise is larger than the noise above.
+3. Unanswerable questions refused before the model fall by at most 2 of 38.
+
+If 3 fails, it is not adopted automatically, and the trade-off goes to the owner. Better translations alone do not meet the bar.

@@ -3,10 +3,13 @@
     python eval/tools/translation_trial.py check
     python eval/tools/translation_trial.py limited --output results.json
     python eval/tools/translation_trial.py all --output results.json
-    python eval/tools/translation_trial.py report results.json
+    python eval/tools/translation_trial.py report results.json [--grades grades.json --key key.json]
     python eval/tools/translation_trial.py wordings results.json --arm hints --output wordings.json
+    python eval/tools/translation_trial.py blind results.json --pack pack.json --key key.json
+    python eval/tools/translation_trial.py compare funnel_a.json funnel_b.json
 
 `wordings` writes what `retrieval_funnel.py --translations` reads, to measure search with no model.
+`compare` shows what changed between two of its result files, question by question.
 """
 
 from __future__ import annotations
@@ -118,8 +121,10 @@ def translate(qa, question: str, terms: list[str]) -> dict:
 
 def plan(store, questions: dict, step: str) -> list[dict]:
     if step == "all":
-        answerable = [q for q in questions.values() if hasattr(q, "accepted")]
-        return [{"kind": "question", "id": q.id, "repo": q.repo, "text": q.tr, "arms": ("hints",)} for q in answerable]
+        return [
+            {"kind": "question" if hasattr(q, "accepted") else "negative", "id": q.id, "repo": q.repo, "text": q.tr, "arms": ("original", "hints")}
+            for q in questions.values()
+        ]
     items = [{"kind": "error", "id": i, "repo": questions[i].repo, "text": questions[i].tr, "arms": ("original", "hints")} for i in KNOWN_ERRORS]
     items += [{"kind": "real name", "id": i, "repo": questions[i].repo, "text": questions[i].tr, "name": name, "arms": ("original", "hints")} for i, name in REAL_NAMES.items()]
     for repo, kind, name in indexed_names(store):
@@ -203,12 +208,107 @@ def passes(identifier: str, text: str | None) -> bool:
     return all(re.search(p, text, re.I) for p in must) and not any(re.search(p, text, re.I) for p in must_not)
 
 
-def report(results: Path) -> int:
+def report_all(rows: list[dict], grades_path: Path | None, key_path: Path | None) -> None:
+    from repomind.search.tokenizer import tokenize
+    from repomind.search.translation import _TECHNICAL_TERM
+
+    questions = all_questions()
+    for arm in ("original", "hints"):
+        members = [row for row in rows if row["arm"] == arm]
+        shares = []
+        for row in members:
+            english = set(tokenize(questions[row["question"]].en))
+            shares.append(len(set(tokenize(row["final"] or "")) & english) / max(len(english), 1))
+        names = lost = 0
+        lost_names = []
+        for row in members:
+            for name in dict.fromkeys(_TECHNICAL_TERM.findall(row["text"])):
+                name = name.strip("`")
+                names += 1
+                if not (row["raw"] and name.casefold() in row["raw"].casefold()):
+                    lost += 1
+                    lost_names.append(f"{row['question']}:{name}")
+        not_questions = [f"{row['question']}: {row['raw']}" for row in members if row["raw"] and not row["raw"].rstrip().endswith("?")]
+        print(f"\n{arm}: {len(members)} translations, mean share of the developer's English terms {sum(shares) / len(shares):.3f}")
+        print(f"  technical names lost in the reply: {lost} of {names} {lost_names}")
+        print(f"  replies that are not a question: {len(not_questions)}")
+        for item in not_questions:
+            print(f"    {item}")
+    by = {(row["question"], row["arm"]): row for row in rows}
+    differ = [i for (i, arm) in by if arm == "original" and (i, "hints") in by and by[(i, "original")]["final"] != by[(i, "hints")]["final"]]
+    print(f"\nthe two prompts wrote different wordings for {len(differ)} of {sum(arm == 'original' for _, arm in by)} questions")
+    if grades_path and key_path:
+        grades = json.loads(grades_path.read_text(encoding="utf-8"))
+        key = json.loads(key_path.read_text(encoding="utf-8"))
+        outcome: dict[str, list[str]] = {"both good": [], "both bad": [], "only the glossary prompt good": [], "only the current prompt good": []}
+        for label, grade in grades.items():
+            arms = {key[label]["A"]: grade["A"], key[label]["B"]: grade["B"]}
+            if arms["original"] == arms["hints"]:
+                outcome["both good" if arms["original"] == "good" else "both bad"].append(key[label]["question"])
+            else:
+                outcome["only the glossary prompt good" if arms["hints"] == "good" else "only the current prompt good"].append(key[label]["question"])
+        for name, members in outcome.items():
+            print(f"  {name}: {len(members)} {members}")
+
+
+def blind(results: Path, pack: Path, key_path: Path) -> int:
+    data = json.loads(results.read_text(encoding="utf-8"))
+    questions = all_questions()
+    by = {(row["question"], row["arm"]): row for row in data["rows"]}
+    differ = [i for (i, arm) in by if arm == "original" and (i, "hints") in by and by[(i, "original")]["final"] != by[(i, "hints")]["final"]]
+    shuffler = random.Random(20261107)
+    shuffler.shuffle(differ)
+    entries, key = [], {}
+    for number, identifier in enumerate(differ, start=1):
+        label = f"T{number:03d}"
+        first, second = shuffler.sample(("original", "hints"), 2)
+        key[label] = {"question": identifier, "A": first, "B": second}
+        entries.append({
+            "label": label,
+            "turkish": questions[identifier].tr,
+            "developers_english": questions[identifier].en,
+            "A": by[(identifier, first)]["final"],
+            "B": by[(identifier, second)]["final"],
+        })
+    pack.write_text(json.dumps(entries, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    key_path.write_text(json.dumps(key, indent=1) + "\n", encoding="utf-8")
+    print(f"{len(entries)} pairs to grade")
+    return 0
+
+
+def compare(first_path: Path, second_path: Path) -> int:
+    first = json.loads(first_path.read_text(encoding="utf-8"))
+    second = json.loads(second_path.read_text(encoding="utf-8"))
+    a, b = first["questions"], second["questions"]
+    print(f"{first_path.name} -> {second_path.name}")
+    answerable = [i for i, row in a.items() if not row.get("negative")]
+    negative = [i for i, row in a.items() if row.get("negative")]
+    for stage in ("candidates", "passages", "anchor", "evidence", "refused"):
+        won = [i for i in answerable if b[i][stage] and not a[i][stage]]
+        lost = [i for i in answerable if a[i][stage] and not b[i][stage]]
+        print(f"  {stage:<11}{sum(a[i][stage] for i in answerable):>4} -> {sum(b[i][stage] for i in answerable):<4} +{len(won)} {won}\n{'':<15}-{len(lost)} {lost}")
+    won = [i for i in negative if b[i]["refused"] and not a[i]["refused"]]
+    lost = [i for i in negative if a[i]["refused"] and not b[i]["refused"]]
+    print(f"  unanswerable refused before the model {sum(a[i]['refused'] for i in negative)} -> {sum(b[i]['refused'] for i in negative)} of {len(negative)}; newly refused {won}; no longer refused {lost}")
+    for name in sorted({row["set"] for row in a.values()}):
+        members = [i for i in answerable if a[i]["set"] == name]
+        print(f"  {name:<8} passages {sum(a[i]['passages'] for i in members)} -> {sum(b[i]['passages'] for i in members)}, evidence {sum(a[i]['evidence'] for i in members)} -> {sum(b[i]['evidence'] for i in members)} of {len(members)}")
+    config = [i for i in answerable if a[i]["config"]]
+    print(f"  SQL or YAML, {len(config)} questions: passages {sum(a[i]['passages'] for i in config)} -> {sum(b[i]['passages'] for i in config)}, evidence {sum(a[i]['evidence'] for i in config)} -> {sum(b[i]['evidence'] for i in config)}")
+    print(f"  {first['summary']}\n  {second['summary']}")
+    return 0
+
+
+def report(results: Path, grades_path: Path | None = None, key_path: Path | None = None) -> int:
     data = json.loads(results.read_text(encoding="utf-8"))
     rows = data["rows"]
     print(f"model {data['model']}, step {data['step']}, {data['status']}, {len(rows)} translations")
     by = {(row["question"], row["arm"]): row for row in rows}
     stored = stored_translations()
+    if data["step"] == "all":
+        report_all(rows, grades_path, key_path)
+        same = sum(by[(i, "original")]["final"] == stored.get(i) for i, arm in by if arm == "original")
+        print(f"\nthis run's current prompt matches the stored translation for {same} of {sum(arm == 'original' for _, arm in by)} questions")
     errors = [i for i in KNOWN_ERRORS if (i, "original") in by and (i, "hints") in by]
     if errors:
         print("\nknown errors")
@@ -242,7 +342,7 @@ def report(results: Path) -> int:
 
 def wordings(results: Path, arm: str, output: Path) -> int:
     data = json.loads(results.read_text(encoding="utf-8"))
-    chosen = {row["question"]: row["final"] for row in data["rows"] if row["arm"] == arm and row["final"] and ":" not in row["question"] and row["kind"] in ("error", "real name", "question")}
+    chosen = {row["question"]: row["final"] for row in data["rows"] if row["arm"] == arm and row["final"] and ":" not in row["question"] and row["kind"] in ("error", "real name", "question", "negative")}
     output.write_text(json.dumps(chosen, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(f"{len(chosen)} wordings written")
     return 0
@@ -277,17 +377,30 @@ def main() -> int:
         command.add_argument("--min-free-memory-gb", type=float, default=4.0)
     command = commands.add_parser("report")
     command.add_argument("results", type=Path)
+    command.add_argument("--grades", type=Path)
+    command.add_argument("--key", type=Path)
     command = commands.add_parser("wordings")
     command.add_argument("results", type=Path)
     command.add_argument("--arm", default="hints")
     command.add_argument("--output", type=Path, required=True)
+    command = commands.add_parser("blind")
+    command.add_argument("results", type=Path)
+    command.add_argument("--pack", type=Path, required=True)
+    command.add_argument("--key", type=Path, required=True)
+    command = commands.add_parser("compare")
+    command.add_argument("first", type=Path)
+    command.add_argument("second", type=Path)
     arguments = parser.parse_args()
     if arguments.command == "check":
         return check()
     if arguments.command in ("limited", "all"):
         return run(arguments.command, arguments.output, arguments.min_free_memory_gb)
     if arguments.command == "report":
-        return report(arguments.results)
+        return report(arguments.results, arguments.grades, arguments.key)
+    if arguments.command == "blind":
+        return blind(arguments.results, arguments.pack, arguments.key)
+    if arguments.command == "compare":
+        return compare(arguments.first, arguments.second)
     return wordings(arguments.results, arguments.arm, arguments.output)
 
 
