@@ -107,7 +107,7 @@ python -m repomind evaluate-ask --dataset eval/questions_v2.yaml --output eval/r
 
 `evaluate-ask` saves every question as it finishes. If it is stopped, the same command continues from there, and its results say `incomplete` until every question is done. It does not start, and stops between questions, when less than 3 GB of memory is free. A finished result is never replaced without `--overwrite`.
 
-To try a local model at low risk, [`eval/tools/resource_trial.ps1`](eval/tools/resource_trial.ps1) runs 10 evenly spaced questions, records memory use, and refuses to start with less than 10 GB free.
+To try a local model at low risk, [`eval/tools/resource_trial.ps1`](eval/tools/resource_trial.ps1) runs 10 evenly spaced questions, records memory use, and refuses to start with less than 12 GB free.
 
 ### Test
 
@@ -131,7 +131,7 @@ The full method, every stage of the investigation and the rejected ideas are in 
 
 - **AI answers are not reliable.** With `qwen2.5:3b`, none of 26 answers was fully correct, and 4 of 10 unanswerable questions were not refused.
 - **A verified quote does not prove the statement next to it.** Only the quote is checked against the code.
-- **`qwen2.5:7b` has not been evaluated independently.** It looks better on the questions the prompt was tuned on, which proves little.
+- **`qwen2.5:7b` has not been evaluated independently.** It looks better on the questions the prompt was tuned on, which proves little. The plan for improving answers is in [docs/answer-plan.md](docs/answer-plan.md).
 - Turkish retrieval is weaker than English (Hit@5 0.692 against 0.846) and depends on an imperfect local translator.
 - Answers are slow on a CPU: about 53 seconds per question with the small model.
 - The evaluation is small, covers two repositories and was labelled and graded by one reviewer. The gold labels are not exhaustive, so some reasonable results count as misses.

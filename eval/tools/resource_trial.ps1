@@ -5,14 +5,20 @@ It refuses to start when memory is short, never downloads a model, touches only 
 own Ollama container, and stops that container afterwards. Answers are saved after every
 question. Running the same command again continues an interrupted trial.
 
+    .\eval\tools\resource_trial.ps1 -CheckOnly
     .\eval\tools\resource_trial.ps1 -Model qwen2.5:7b -Questions 10
+
+The start limit is the worst case added to what must stay free: the container's 8 GB limit,
+1 GB for Python, and 3 GB of margin. Earlier, a run was killed with about 2 GB of commit space
+left. A run that comes down to the 4 GB limit stops between questions and keeps its answers.
 #>
 param(
     [string]$Model = 'qwen2.5:7b',
     [int]$Questions = 10,
     [string]$Language = 'tr',
-    [double]$MinFreeBeforeStartGb = 10,
-    [double]$MinFreeDuringRunGb = 3
+    [double]$MinFreeBeforeStartGb = 12,
+    [double]$MinFreeDuringRunGb = 4,
+    [switch]$CheckOnly
 )
 
 $root = (Resolve-Path "$PSScriptRoot\..\..").Path
@@ -27,8 +33,12 @@ $physical = $os.FreePhysicalMemory / 1MB
 $commit = $os.FreeVirtualMemory / 1MB
 "Free physical memory {0:N1} GB, free commit space {1:N1} GB." -f $physical, $commit
 if ([math]::Min($physical, $commit) -lt $MinFreeBeforeStartGb) {
-    "Not starting: this trial needs at least $MinFreeBeforeStartGb GB of both."
+    "Not ready: this trial needs at least $MinFreeBeforeStartGb GB of both."
     exit 1
+}
+if ($CheckOnly) {
+    "Ready: both are above $MinFreeBeforeStartGb GB. Nothing was started."
+    exit 0
 }
 
 docker compose --profile llm up -d --no-deps ollama
