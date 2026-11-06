@@ -207,7 +207,7 @@ Free memory here means the smaller of free physical memory and free commit space
 - **A verified line is not a proven answer.** The lines are real, and choosing them is still a judgement. In the pilot, the model chose lines that do not touch the gold span for 7 of 12 Turkish questions. See [evaluation.md](evaluation.md#pilot-answers-made-of-real-lines).
 - **The right lines often never reach the model.** In the pilot, search missed them for 3 of 12 Turkish questions, and passage selection for 3 more. The model then chooses among what it was given instead of declining.
 - **The refusal rules look at words, not meaning.** They miss questions whose words appear in nearby code. Features next to existing code are the hard case: "how are notes in the trash restored?" passes because notes and deletion both exist. They also refuse some answerable questions.
-- **A small model does not decline.** `qwen2.5:3b` never chose "none" in the pilot.
+- **Declining depends on the model.** `qwen2.5:3b` never chose "none" in the pilot, in 13 requests. `qwen2.5:7b` did so in 5 of 16, every time the right lines were absent.
 - **Recall@5 is good on the second set and moderate on the first**, 0.67 to 0.83 against 0.50 to 0.58. See [evaluation.md](evaluation.md).
 - **Turkish depends on an imperfect translator**, and detection relies on Turkish letters or common function words, so a bare `stok rezervasyon` is not translated.
 - **Adding SQL and YAML cost some Turkish ranking on code questions**, because the new chunks compete with code.

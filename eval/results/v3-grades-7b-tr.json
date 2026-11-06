@@ -1,0 +1,186 @@
+[
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sg-audit-page-size",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "src/main/java/com/stockguard/common/web/PageResponse.java:7-11\n/** Stable pagination envelope, so the API contract does not depend on Spring Data's internal Page format. */\npublic record PageResponse<T>(List<T> items, int page, int size, long totalElements, int totalPages) {\n\n    public static <E, T> PageResponse<T> of(Page<E> page, Function<E, T> mapper) {\n        return new PageResponse<>(\n\nModel's reading, not verified: `PageResponse.of` returns a PageResponse with totalElements and totalPages."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sg-instance-header",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java:14-18\n/** Tells clients which instance answered, which is how multi-instance tests prove requests were spread. */\n@Component\n@Order(Ordered.HIGHEST_PRECEDENCE)\npublic class InstanceHeaderFilter extends OncePerRequestFilter {\n\n\nModel's reading, not verified: InstanceHeaderFilter sınıfı, istemcilerin hangi sürümüne ait uygulama tarafından işlendiğini bildirir."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sg-movement-types",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "src/main/java/com/stockguard/inventory/StockLedger.java:33-37\n        Optional<StockCounts> after = levels.addAvailable(productId, quantity);\n        after.ifPresent(counts -> movements.save(new StockMovement(\n                productId, null, actorId, MovementType.STOCK_IN, quantity, 0, counts, note)));\n        return after;\n    }\n\nsrc/main/java/com/stockguard/inventory/InventoryService.java:48-52\n    @Transactional\n    public StockCounts addStock(UUID productId, int quantity, UUID actorId, String note) {\n        StockCounts after = ledger.receive(productId, quantity, actorId, note).orElseThrow(() -> notFound(productId));\n        audit.record(AuditEventType.STOCK_RECEIVED, actorId, \"PRODUCT\", productId, Map.of(\"quantity\", quantity));\n        return after;\n\nModel's reading, not verified: P3 shows StockLedger.receive and P4 shows InventoryService.addStock."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sg-neg-extend-reservation",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "harmless",
+  "answer": "src/main/java/com/stockguard/reservation/ReservationRepository.java:78-82\n                SELECT id FROM reservations\n                 WHERE status = 'PENDING' AND expires_at <= now()\n                 ORDER BY expires_at\n                 LIMIT :limit\n                 FOR UPDATE SKIP LOCKED\n\nModel's reading, not verified: expireDue SELECT id FROM reservations WHERE status = 'PENDING' AND expires_at <= now() ORDER BY expires_at LIMIT :limit FOR UPDATE SKIP LOCKED"
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sg-no-setters",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "src/main/java/com/stockguard/inventory/StockLevel.java:11-15\n/**\n * Read model of the stock counters. {@code @Immutable} and the absence of setters are deliberate: a counter\n * written back from a Java copy is the classic lost update, so the counters only ever change through the\n * conditional statements in {@link StockLevelRepository}.\n */\n\nModel's reading, not verified: `StockLevel` nesnesi değiştirilmiyor çünkü değişiklikleri yalnızca `StockLevelRepository` içindeki koşullu ifadelerle değiştirmek gerekli."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sg-request-fingerprint",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "src/main/java/com/stockguard/reservation/ReservationController.java:43-47\n    @PostMapping\n    @Operation(operationId = \"createReservation\", summary = \"Hold stock for a limited time\", description = \"\"\"\n            Retrying with the same `Idempotency-Key` and the same body returns the original reservation instead \\\n            of creating another one. A failed attempt holds nothing and does not use up the key.\"\"\")\n    @ApiResponse(responseCode = \"201\", description = \"Reservation created\")\n\nsrc/main/java/com/stockguard/reservation/ReservationController.java:51-55\n    @ApiResponse(responseCode = \"409\", description = \"INSUFFICIENT_STOCK\")\n    @ApiResponse(responseCode = \"422\", description = \"IDEMPOTENCY_KEY_REUSED with a different request\")\n    @ApiResponse(responseCode = \"503\", description = \"Temporary lock contention: safe to retry with the same key\")\n    public ResponseEntity<ReservationResponse> create(\n            @Parameter(description = \"Unique per logical operation, for example a UUID\")\n\nModel's reading, not verified: P1 ve P5 passagelarında aynı anahtarla gelen iki rezervasyon isteği için uygulanacak kararın belirlenmesi gösterilmektedir."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-neg-trash",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "harmless",
+  "answer": "apps/api/src/notes/notes.controller.ts:74-78\n  @Delete(':noteId')\n  @RequireNoteRole('OWNER')\n  @HttpCode(204)\n  remove(@Param('noteId') noteId: string): Promise<void> {\n    return this.notes.remove(noteId);\n\nModel's reading, not verified: The passage shows a method to remove notes."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-redis-access-events",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "apps/api/src/redis/access-events.publisher.ts:9-11\n/**\n * Publishes membership changes so every collaboration-server instance can enforce them on\n * already-open WebSocket sessions.\n\napps/api/src/notes/members.service.ts:70-74\n  async updateRole(noteId: string, userId: string, role: AssignableRole): Promise<MemberDto> {\n    const existing = await this.findMembership(noteId, userId);\n    if (existing.role === 'OWNER')\n      throw new BadRequestException(\"The owner's role cannot be changed\");\n\n\nModel's reading, not verified: Two passages show how membership changes are published to collaboration-server instances and a service that updates member roles."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-register-password",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "apps/api/src/auth/dto.ts:18-22\n\n  @IsString()\n  @MinLength(8, { message: 'password must be at least 8 characters' })\n  @MaxLength(128)\n  password!: string;\n\nModel's reading, not verified: `@MinLength(8, { message: 'password must be at least 8 characters' })` ve `@MaxLength(128)` ayıktır."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-role-cache-ttl",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "apps/collab/src/config.ts:9-13\n  /** Unique per instance; shows up in logs and the health endpoint. */\n  INSTANCE_NAME: z.string().default(`collab-${process.pid}`),\n  /** Max age of a cached role before it is re-read from Postgres. */\n  PERMISSION_CACHE_TTL_MS: z.coerce.number().int().positive().default(5000),\n  /** Every open connection is re-authorised this often — also connections that never send. */\n\napps/collab/src/permissions.ts:46-50\n      })\n      .catch((err: unknown) => {\n        if (cached) return cached.role; // DB blip: keep last known permission\n        throw err;\n      })"
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-share-ownership",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "apps/api/src/notes/notes.service.ts:56-60\n    if (query.scope === 'owned') where.role = 'OWNER';\n    if (query.scope === 'shared') where.role = { not: 'OWNER' };\n    if (query.folderId === 'none') where.folderId = null;\n    else if (query.folderId) where.folderId = query.folderId;\n\n\nModel's reading, not verified: `NotesService.list` checks if a query scope is 'shared' and sets `where.role = { not: 'OWNER' }`."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-user-delete-sql",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "wrong",
+  "answer": "apps/api/src/notes/notes.controller.ts:135-139\n\n  @Delete(':userId')\n  @RequireNoteRole('OWNER')\n  @HttpCode(204)\n  remove(@Param('noteId') noteId: string, @Param('userId') userId: string): Promise<void> {\n\nModel's reading, not verified: The passage shows a method to delete a user (`remove` method) and its role ('OWNER')."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-who-can-edit",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "apps/api/src/common/decorators.ts:10-14\n/**\n * Require the caller to hold at least `role` on the note identified by the `:noteId` route param.\n * Non-members get 404 (existence is not leaked), insufficient roles get 403.\n */\nexport const RequireNoteRole = (role: NoteRole) => SetMetadata(NOTE_ROLE_KEY, role);\n\npackages/shared/src/roles.ts:8-10\nconst ROLE_RANK: Record<NoteRole, number> = {\n  VIEWER: 1,\n  EDITOR: 2,\n\nModel's reading, not verified: RequireNoteRole requires at least a role to create a note."
+ },
+ {
+  "run": "v3-new-7b-tr.json",
+  "question": "v3-sg-audit-page-size",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "src/main/java/com/stockguard/audit/AuditController.java:30-34\n    public PageResponse<AuditEventResponse> search(\n            @RequestParam(required = false) UUID entityId,\n            @RequestParam(defaultValue = \"0\") @Min(0) int page,\n            @RequestParam(defaultValue = \"20\") @Min(1) @Max(100) int size) {\n        return PageResponse.of(audit.search(entityId, page, size), AuditEventResponse::from);\n\nModel's reading, not verified: `size` parametresi 1 ile 100 arasında belirlenir."
+ },
+ {
+  "run": "v3-new-7b-tr.json",
+  "question": "v3-sg-movement-types",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "src/main/java/com/stockguard/inventory/StockMovementRepository.java:8-12\ninterface StockMovementRepository extends Repository<StockMovement, Long> {\n\n    StockMovement save(StockMovement movement);\n\n    Page<StockMovement> findByProductId(UUID productId, Pageable pageable);\n\nsrc/main/java/com/stockguard/inventory/StockMovement.java:71-75\n            MovementType type,\n            int deltaAvailable,\n            int deltaReserved,\n            StockLevelRepository.StockCounts after,\n            String note) {\n\nModel's reading, not verified: `StockMovement` interface'si ve `StockMovement` constructor'una bakarak, hareket türleri (`MovementType`), stok miktarı değişiklikleri (`deltaAvailable`, `deltaReserved`) ve notlar bulunur."
+ },
+ {
+  "run": "v3-new-7b-tr.json",
+  "question": "v3-sg-no-setters",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "src/main/java/com/stockguard/inventory/StockLevel.java:11-15\n/**\n * Read model of the stock counters. {@code @Immutable} and the absence of setters are deliberate: a counter\n * written back from a Java copy is the classic lost update, so the counters only ever change through the\n * conditional statements in {@link StockLevelRepository}.\n */\n\nModel's reading, not verified: `StockLevel` sınıfının immutable olması ve set metodlarının olmaması, Java nesnelerinden doğrudan güncelleme yoluyla stok sayacıları değiştirilmesin diye bir kararlı yaklaşım gösteriyor."
+ },
+ {
+  "run": "v3-new-7b-tr.json",
+  "question": "v3-sg-request-fingerprint",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "src/main/java/com/stockguard/reservation/CreateReservationCommand.java:11-15\n\n    /**\n     * Identifies what was asked for, to detect a key reused for a different request. It is computed from the\n     * parsed values rather than the raw body, so whitespace or JSON key order cannot make equal requests differ.\n     * A null TTL stays \"default\" instead of being resolved, so changing the default cannot break a later replay.\n\nModel's reading, not verified: `CreateReservationCommand` sınıfının açıklaması, aynı anahtarı kullanılan farklı isteklerin ayıklanmadığını gösterir."
+ },
+ {
+  "run": "v3-new-7b-tr.json",
+  "question": "v3-sg-username-lowercase",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "partial",
+  "answer": "src/main/resources/db/migration/V1__users.sql:7-11\n\n    CONSTRAINT uq_app_users_username UNIQUE (username),\n    CONSTRAINT ck_app_users_username_lowercase CHECK (username = lower(username)),\n    CONSTRAINT ck_app_users_role CHECK (role IN ('ADMIN', 'USER'))\n);\n\nModel's reading, not verified: `ck_app_users_username_lowercase` kontrolü username'i küçük harfe dönüştürerek saklamak zorunlu kılar."
+ },
+ {
+  "run": "v3-new-7b-tr.json",
+  "question": "v3-sn-redis-access-events",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "apps/api/src/health/health.controller.ts:15-19\n  /**\n   * Postgres is required (503 when down). Redis is reported but not required: the API keeps\n   * serving requests without it (access events degrade to the collab server's TTL re-check).\n   */\n  @Public()\n\nModel's reading, not verified: `Redis` kapalı olduğunda API istekleri devam eder."
+ },
+ {
+  "run": "v3-new-7b-tr.json",
+  "question": "v3-sn-register-password",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "apps/web/src/pages/auth-pages.tsx:226-230\n            required\n            minLength={8}\n            value={password}\n            onChange={(e) => setPassword(e.target.value)}\n            placeholder=\"At least 8 characters\"\n\napps/api/src/auth/dto.ts:18-22\n\n  @IsString()\n  @MinLength(8, { message: 'password must be at least 8 characters' })\n  @MaxLength(128)\n  password!: string;\n\nModel's reading, not verified: `minLength={8}` ve `@MinLength(8` belirtiyor ki şifre en az 8 karakter olmalıdır. Ayrıca `@MaxLength(128)` şifrenin maksimum uzunluğu 128 karakter olduğunu gösteriyor."
+ },
+ {
+  "run": "v3-new-7b-tr.json",
+  "question": "v3-sn-role-cache-ttl",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "apps/collab/src/config.ts:9-13\n  /** Unique per instance; shows up in logs and the health endpoint. */\n  INSTANCE_NAME: z.string().default(`collab-${process.pid}`),\n  /** Max age of a cached role before it is re-read from Postgres. */\n  PERMISSION_CACHE_TTL_MS: z.coerce.number().int().positive().default(5000),\n  /** Every open connection is re-authorised this often — also connections that never send. */\n\nModel's reading, not verified: `PERMISSION_CACHE_TTL_MS` değişkeni önbelleğin veritabanından yeniden okunmasına belirler ve 5000 milisaniye sonra gerçekleşir."
+ },
+ {
+  "run": "v3-new-7b-tr.json",
+  "question": "v3-sn-share-ownership",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "apps/api/src/notes/dto.ts:41-45\n  email!: string;\n\n  /** OWNER is deliberately not assignable — ownership cannot be granted through sharing. */\n  @IsIn(ASSIGNABLE_ROLES)\n  role!: AssignableRole;\n\nModel's reading, not verified: `OWNER` is deliberately not assignable — ownership cannot be granted through sharing."
+ },
+ {
+  "run": "v3-new-7b-tr.json",
+  "question": "v3-sn-who-can-edit",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "packages/shared/src/roles.ts:20-22\nexport function canEdit(role: NoteRole | null | undefined): boolean {\n  return hasRole(role, 'EDITOR');\n}\n\nModel's reading, not verified: `canEdit` fonksiyonu EDITOR rollerine sahip olanlar tarafından çağrılabilir."
+ }
+]

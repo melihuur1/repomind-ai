@@ -32,16 +32,16 @@ Answers on the same set, in Turkish, with the small local model `qwen2.5:3b` (CP
 
 Of the 10 unanswerable questions, the first phase refused 4 and that version 6. **No answer was fully correct.** So the answer layer was redesigned: answers are now the code's own lines, and the model only chooses among them. A small pilot measured it against the same 18 new questions, with targets fixed in advance:
 
-| Pilot, Turkish, `qwen2.5:3b` | Previous version | Real lines | Target |
-| --- | --- | --- | --- |
-| Correct source, of 12 | 4 | 4 | at least 6 |
-| Wrong source, of 12 | 8 | 7 | at most 2 |
-| Unanswerable refused, of 6 | 3 | 4 | at least 5 |
-| Invalid file or line references | 0 | 0 | 0 |
-| Fully correct answers, of 12 | 1 | 3 | |
-| Mean seconds per question | 54 | 14 | |
+| Pilot, Turkish | Previous version, 3B | Real lines, 3B | Real lines, 7B | Target |
+| --- | --- | --- | --- | --- |
+| Correct source, of 12 | 4 | 4 | 7 | at least 6 |
+| Wrong source, of 12 | 8 | 7 | **3** | at most 2 |
+| Unanswerable refused, of 6 | 3 | 4 | 6 | at least 5 |
+| Invalid file or line references | 0 | 0 | 0 | 0 |
+| Fully correct answers, of 12 | 1 | 3 | 6 | |
+| Mean seconds per question | 54 | 14 | 6 | |
 
-**The pilot did not pass, so answers are still not reliable.** The redesign is about 4 times faster and invents less, but it finds the right source no more often. The right lines never reached the model for 6 of the 12 questions, and the model never once declined to choose. A pilot this small could not prove reliability even if it had passed. The larger model `qwen2.5:7b` has no independent result yet. Details are in the [full evaluation](docs/evaluation.md#pilot-answers-made-of-real-lines).
+**No configuration passed.** `qwen2.5:7b` missed the bar by one question, and it did much better than `qwen2.5:3b` here: it chose the right lines every time they were offered, and it declined when they were not. All of its failures came before the model, in search or passage selection. These are the same 18 questions used before, so this is a comparison and not an independent test, and it cannot prove reliability. The 7B column ran partly on a GPU, and the others on a CPU. Details are in the [full evaluation](docs/evaluation.md#pilot-answers-made-of-real-lines).
 
 ## How it works
 
@@ -140,12 +140,13 @@ The full method, every stage of the investigation and the rejected ideas are in 
 
 ## Known limitations
 
-- **AI answers are not reliable.** With `qwen2.5:3b`, the pilot found the right source for 4 of 12 questions, and refused 4 of 6 unanswerable ones.
-- **`qwen2.5:3b` does not decline.** Asked to choose lines or none, it chose every time, so all refusals come from mechanical rules, which also refuse some answerable questions and let some unanswerable ones through.
+- **AI answers are not proven reliable.** The best result so far is `qwen2.5:7b` on the pilot: the right source for 7 of 12 questions, and 6 of 6 unanswerable ones refused. It missed the target, on only 18 questions, and has had no independent test.
+- **The right lines often never reach the model.** For 5 of those 12 questions, search or passage selection lost them.
+- **`qwen2.5:3b` does not decline.** Asked to choose lines or none, it chose every time, so with that model all refusals come from mechanical rules.
 - **A verified line is not a proven answer.** Lines are checked against Git. Whether they answer the question is not checked.
-- **`qwen2.5:7b` has not been evaluated independently.** It looks better on the questions the prompt was tuned on, which proves little. The plan for improving answers is in [docs/answer-plan.md](docs/answer-plan.md).
-- Turkish retrieval is weaker than English (Hit@5 0.692 against 0.846) and depends on an imperfect local translator.
-- Answers take about 14 seconds per question on a CPU with the small model.
+- The plan for improving answers is in [docs/answer-plan.md](docs/answer-plan.md).
+- Turkish retrieval is weaker than English (Hit@5 0.692 against 0.846) and depends on an imperfect translation, which on the pilot still changed some questions' meaning.
+- Answers took about 6 seconds per question with 7B partly on an RTX 3050, and about 14 with 3B on an 8-core CPU.
 - The evaluation is small, covers two repositories and was labelled and graded by one reviewer. The gold labels are not exhaustive, so some reasonable results count as misses.
 - Secret detection recognizes known token formats and literal credential keys, not every hardcoded password.
 
