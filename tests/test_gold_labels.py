@@ -6,14 +6,21 @@ import re
 
 import pytest
 
-from repomind.evaluation.dataset import V2_DATASET_PATH, load_dataset, load_holdout_unanswerable, split_of
+from repomind.evaluation.dataset import (
+    V2_DATASET_PATH,
+    V3_DATASET_PATH,
+    load_dataset,
+    load_holdout_unanswerable,
+    split_of,
+)
 from repomind.ingest.filters import classify_content, classify_path, normalize_source
 from repomind.ingest.git_source import GitRepository
 
 DATASET = load_dataset()
 DATASET_V2 = load_dataset(V2_DATASET_PATH)
-ALL_QUESTIONS = DATASET.questions + DATASET_V2.questions
-ALL_UNANSWERABLE = DATASET.unanswerable + load_holdout_unanswerable() + DATASET_V2.unanswerable
+DATASET_V3 = load_dataset(V3_DATASET_PATH)
+ALL_QUESTIONS = DATASET.questions + DATASET_V2.questions + DATASET_V3.questions
+ALL_UNANSWERABLE = DATASET.unanswerable + load_holdout_unanswerable() + DATASET_V2.unanswerable + DATASET_V3.unanswerable
 
 
 def _repository(name: str) -> GitRepository:
@@ -52,6 +59,15 @@ def test_new_set_is_independent_of_the_first():
     assert not first_spans & {(s.path, s.start_line, s.end_line) for q in DATASET_V2.questions for s in q.gold}
     assert all(q.expected for q in DATASET_V2.questions)
     assert {q.kind for q in DATASET_V2.questions} == {"code", "sql", "yaml"}
+
+
+def test_pilot_set_has_the_agreed_size_and_uses_no_earlier_gold_file():
+    assert len(DATASET_V3.questions) == 12
+    assert len(DATASET_V3.unanswerable) == 6
+    assert {q.repo for q in DATASET_V3.questions} == {"stockguard", "syncnotes"}
+    assert all(q.expected for q in DATASET_V3.questions)
+    earlier = {s.path for q in DATASET.questions + DATASET_V2.questions for s in q.gold}
+    assert not earlier & {s.path for q in DATASET_V3.questions for s in q.gold}
 
 
 @pytest.mark.gold

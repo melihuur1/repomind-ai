@@ -1,0 +1,216 @@
+# RepoMind pilot set, version 3. See eval/PILOT.md for how it is scored.
+#
+# Written before the answer pipeline it measures existed, from reading code regions that no
+# earlier question used. It was committed before any search was run on it.
+#   * It mixes values, mechanisms and one "why" question on purpose, because the new pipeline
+#     is expected to do best on single-line values, and a set of only those would flatter it.
+#   * Gold spans are kept narrow, so that touching one means the right lines, not just the right file.
+#   * Gold spans and absent terms are verified at the pinned commits by tests/test_gold_labels.py.
+#   * Nothing here is changed because of a result. A failed question stays and gets reported.
+
+version: 3
+
+corrections: []
+
+repositories:
+  stockguard:
+    commit: b6698d81475232f2b8ca95af45336fae5665cd81
+    url: https://github.com/melihuur1/stockguard
+    path_env: REPOMIND_REPO_STOCKGUARD
+  syncnotes:
+    commit: bb217cddc89088f27b68715cf9585e94ce2fe3a6
+    url: https://github.com/melihuur1/syncnotes
+    path_env: REPOMIND_REPO_SYNCNOTES
+
+questions:
+  # ---------------------------------------------------------------- StockGuard
+  - id: v3-sg-instance-header
+    repo: stockguard
+    kind: code
+    tr: Bir isteği uygulamanın hangi kopyasının karşıladığı istemciye nasıl bildiriliyor?
+    en: How does a client learn which copy of the application answered its request?
+    expected: A filter sets the X-StockGuard-Instance response header to the instance id on every response.
+    gold:
+      - path: src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java
+        start_line: 19
+        end_line: 19
+        anchor: "X-StockGuard-Instance"
+      - path: src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java
+        start_line: 30
+        end_line: 30
+        anchor: "response.setHeader(HEADER, instanceId)"
+
+  - id: v3-sg-audit-page-size
+    repo: stockguard
+    kind: code
+    tr: Denetim kayıtları listelenirken bir sayfada en fazla kaç kayıt istenebilir?
+    en: How many audit records can be requested per page at most?
+    expected: At most 100 per page, through a validation limit on size, which defaults to 20.
+    gold:
+      - path: src/main/java/com/stockguard/audit/AuditController.java
+        start_line: 33
+        end_line: 33
+        anchor: "@Max(100) int size"
+
+  - id: v3-sg-movement-types
+    repo: stockguard
+    kind: code
+    tr: Stok hareketi kayıtlarında hangi hareket türleri bulunuyor?
+    en: Which types of stock movement are recorded?
+    expected: STOCK_IN, RESERVED, CONFIRMED, CANCEL_RELEASED and EXPIRY_RELEASED.
+    gold:
+      - path: src/main/java/com/stockguard/inventory/MovementType.java
+        start_line: 3
+        end_line: 9
+        anchor: "CANCEL_RELEASED"
+
+  - id: v3-sg-username-lowercase
+    repo: stockguard
+    kind: sql
+    tr: Kullanıcı adlarının küçük harfle saklanması veritabanında nasıl zorunlu kılınıyor?
+    en: How does the database force usernames to be stored in lower case?
+    expected: A CHECK constraint requires username to equal lower(username).
+    gold:
+      - path: src/main/resources/db/migration/V1__users.sql
+        start_line: 9
+        end_line: 9
+        anchor: "ck_app_users_username_lowercase"
+
+  - id: v3-sg-request-fingerprint
+    repo: stockguard
+    kind: code
+    tr: Aynı anahtarla gelen iki rezervasyon isteğinin gerçekten aynı istek olduğu neye bakılarak anlaşılıyor?
+    en: How does the system tell whether two reservation requests with the same key are really the same request?
+    expected: It compares a SHA-256 fingerprint of the parsed product id, quantity and TTL, so whitespace or JSON key order cannot make equal requests differ.
+    gold:
+      - path: src/main/java/com/stockguard/reservation/CreateReservationCommand.java
+        start_line: 12
+        end_line: 21
+        anchor: "MessageDigest.getInstance(\"SHA-256\")"
+
+  - id: v3-sg-no-setters
+    repo: stockguard
+    kind: code
+    tr: Stok sayaçları neden Java nesnesi üzerinden değiştirilmiyor?
+    en: Why are stock counters not changed through the Java object?
+    expected: Writing a counter back from a Java copy is the classic lost update, so the entity is immutable and counters change only through conditional statements in the repository.
+    gold:
+      - path: src/main/java/com/stockguard/inventory/StockLevel.java
+        start_line: 11
+        end_line: 15
+        anchor: "classic lost update"
+
+  # ---------------------------------------------------------------- SyncNotes
+  - id: v3-sn-register-password
+    repo: syncnotes
+    kind: code
+    tr: Kayıt olurken şifre en az ve en fazla kaç karakter olabilir?
+    en: What are the minimum and maximum password lengths when registering?
+    expected: At least 8 and at most 128 characters.
+    gold:
+      - path: apps/api/src/auth/dto.ts
+        start_line: 19
+        end_line: 22
+        anchor: "@MinLength(8"
+
+  - id: v3-sn-who-can-edit
+    repo: syncnotes
+    kind: code
+    tr: Bir notu hangi roller düzenleyebilir?
+    en: Which roles can edit a note?
+    expected: Owners and editors. canEdit requires at least EDITOR in the ranking VIEWER, EDITOR, OWNER.
+    gold:
+      - path: packages/shared/src/roles.ts
+        start_line: 8
+        end_line: 12
+        anchor: "EDITOR: 2"
+      - path: packages/shared/src/roles.ts
+        start_line: 20
+        end_line: 22
+        anchor: "hasRole(role, 'EDITOR')"
+
+  - id: v3-sn-share-ownership
+    repo: syncnotes
+    kind: code
+    tr: Bir not paylaşılırken sahipliği de başkasına verilebilir mi?
+    en: Can ownership of a note be given to someone else when sharing it?
+    expected: No. Sharing can only grant EDITOR or VIEWER, and ownership is never transferable through invites.
+    gold:
+      - path: packages/shared/src/roles.ts
+        start_line: 4
+        end_line: 5
+        anchor: "Ownership is never transferable via invites"
+
+  - id: v3-sn-role-cache-ttl
+    repo: syncnotes
+    kind: code
+    tr: Ortak düzenleme sunucusu önbellekteki rolü ne kadar sonra veritabanından yeniden okuyor?
+    en: After how long does the collaboration server read a cached role from the database again?
+    expected: After 5000 ms by default, set by PERMISSION_CACHE_TTL_MS.
+    gold:
+      - path: apps/collab/src/config.ts
+        start_line: 11
+        end_line: 12
+        anchor: "PERMISSION_CACHE_TTL_MS"
+
+  - id: v3-sn-redis-access-events
+    repo: syncnotes
+    kind: code
+    tr: Redis kapalıyken bir notun üyeliğini değiştiren istek başarısız oluyor mu?
+    en: Does a request that changes a note's members fail while Redis is down?
+    expected: No. The publish is dropped after a short timeout, the HTTP request still succeeds, and the collaboration server falls back to its TTL-bounded permission check.
+    gold:
+      - path: apps/api/src/redis/access-events.publisher.ts
+        start_line: 13
+        end_line: 15
+        anchor: "latency optimisation"
+
+  - id: v3-sn-user-delete-sql
+    repo: syncnotes
+    kind: sql
+    tr: Bir kullanıcı silinince davet ettiği üyelik kayıtlarına ne oluyor?
+    en: What happens to the memberships a user invited when that user is deleted?
+    expected: They stay, and their invited_by_id becomes null through ON DELETE SET NULL.
+    gold:
+      - path: packages/db/prisma/migrations/20261104110838_init/migration.sql
+        start_line: 129
+        end_line: 129
+        anchor: "note_members_invited_by_id_fkey"
+
+unanswerable:
+  # Next to a real feature, so vocabulary alone will not refuse it.
+  - id: v3-sg-neg-extend-reservation
+    repo: stockguard
+    tr: Süresi dolmak üzere olan bir rezervasyon nasıl uzatılıyor?
+    en: How is a reservation that is about to expire extended?
+    absent_terms: [extendReservation, renewReservation, extendTtl, renewal, prolong]
+
+  - id: v3-sg-neg-low-stock-alert
+    repo: stockguard
+    tr: Stok azaldığında yöneticiye nasıl uyarı gönderiliyor?
+    en: How is the admin alerted when stock runs low?
+    absent_terms: [lowStock, low_stock, stockAlert, sendAlert, notifyAdmin]
+
+  - id: v3-sg-neg-barcode
+    repo: stockguard
+    tr: Ürünler barkodla nasıl taranıyor?
+    en: How are products scanned by barcode?
+    absent_terms: [barcode, barcodes, scanner]
+
+  - id: v3-sn-neg-trash
+    repo: syncnotes
+    tr: Çöp kutusuna atılan notlar nasıl geri getiriliyor?
+    en: How are notes in the trash restored?
+    absent_terms: [trash, deletedAt, deleted_at, softDelete, recycle]
+
+  - id: v3-sn-neg-mention
+    repo: syncnotes
+    tr: Notta @ ile bahsedilen kişiye nasıl haber veriliyor?
+    en: How is someone notified when they are @-mentioned in a note?
+    absent_terms: [mention, mentions, mentioned]
+
+  - id: v3-sn-neg-sunset-theme
+    repo: syncnotes
+    tr: Karanlık tema gün batımında otomatik olarak nasıl açılıyor?
+    en: How does the dark theme turn on automatically at sunset?
+    absent_terms: [sunset, sunrise, geolocation]
