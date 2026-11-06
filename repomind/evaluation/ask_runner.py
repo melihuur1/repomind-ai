@@ -116,16 +116,19 @@ def _row(identifier: str, repo: str, language: str, result: AskResult, seconds: 
         ],
         "passages": [
             {
-                "id": p.id,
-                "path": p.path,
-                "start_line": p.start_line,
-                "end_line": p.end_line,
-                "shared_terms": list(p.shared_terms),
-                "chosen": any(c.source_id == p.id for c in result.citations),
-                "text": p.text,
+                "id": source.passage.id,
+                "path": source.passage.path,
+                "start_line": source.passage.start_line,
+                "end_line": source.passage.end_line,
+                "shared_terms": list(source.passage.shared_terms),
+                "chosen": any(c.source_id == source.passage.id for c in result.citations),
+                "exists_in_git": source.exists_in_git,
+                "answer_check": source.answer_check.value,
+                "text": source.passage.text,
             }
-            for p in result.passages
+            for source in result.sources()
         ],
+        "review_candidates": [p.id for p in result.review_candidates],
         "rejected": result.rejected,
         "warnings": result.warnings,
         "input_tokens": result.input_tokens,
@@ -157,6 +160,7 @@ def _answerable_row(qa: QAEngine, question: Question, language: str, verifier: C
     row["references_shown"] = len(result.passages)
     row["references_recheck_valid"] = sum(verifier.check(p.path, p.start_line, p.end_line).valid for p in result.passages)
     row["cites_gold"] = any(touches(c, span) for c in result.citations for span in question.accepted)
+    row["review_candidate_is_gold"] = any(touches(p, span) for p in result.review_candidates for span in question.accepted)
     row["gold_in_context"] = any(touches(p, span) for p in result.passages for span in question.accepted)
     row["gold_in_search"] = any(overlaps(hit.chunk, span) for hit in result.hits for span in question.accepted)
     anchors = [_squeezed(span.anchor) for span in question.accepted]

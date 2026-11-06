@@ -4,13 +4,17 @@ from __future__ import annotations
 
 import json
 import re
+from contextlib import nullcontext
+from types import SimpleNamespace
 
 import pytest
 
+from repomind import cli
 from repomind.errors import RepoMindError
+from repomind.evaluation.ask_runner import _row
 from repomind.indexing import index_repository
 from repomind.qa import engine as engine_module
-from repomind.qa.engine import QAEngine, assemble_answer
+from repomind.qa.engine import AnswerCheck, QAEngine, assemble_answer
 from repomind.qa.llm import LLMConfig, LLMResponse, load_llm_config, validate_config
 from repomind.qa.passages import (
     MAX_PASSAGE_LINES,
@@ -469,6 +473,7 @@ class TestEngine:
         assert result.answer == ""
         assert result.citations == []
         assert result.passages, "the closest lines stay available, and are not an answer"
+        assert result.review_candidates == [], "the model pointed at nothing"
 
     def test_lines_mentioning_too_little_stop_before_any_model_call(self, store, search):
         client = FakeClient(FIRST)
@@ -477,6 +482,7 @@ class TestEngine:
         assert client.calls == []
         assert any("too little" in warning for warning in result.warnings)
         assert result.passages, "the closest lines stay available, and are not an answer"
+        assert result.review_candidates == [], "the model was not asked"
 
     def test_the_same_rule_refuses_without_an_llm(self, store, search):
         result = QAEngine(store, search, None, None).ask("How is a refund applied to an order?", ["shop"])
@@ -493,6 +499,87 @@ class TestEngine:
         assert result.citations == []
         assert result.note == ""
         assert any("too little" in rejection for rejection in result.rejected)
+
+    @staticmethod
+    def _choose(*suffixes):
+        def choose(user):
+            ids = dict(re.findall(r'id="(P\d+)" path="([^"]+)"', user))
+            chosen = [next(i for i, path in ids.items() if path.endswith(suffix)) for suffix in suffixes]
+            return json.dumps({"chosen": chosen, "note": "It charges the order."})
+
+        return choose
+
+    def test_a_choice_the_rule_turned_down_can_be_reviewed_but_does_not_change_the_refusal(self, store, search):
+        client = FakeClient(self._choose("payment.ts"))
+        result = QAEngine(store, search, LOCAL, client).ask("cancel order payment", ["shop"])
+        assert result.status == "insufficient"
+        assert (result.answer, result.note, result.evidence, result.citations) == ("", "", [], [])
+        assert [p.path for p in result.review_candidates] == ["src/payment.ts"]
+
+    def test_existing_in_git_and_answering_the_question_are_separate_checks(self, store, search):
+        client = FakeClient(self._choose("payment.ts"))
+        result = QAEngine(store, search, LOCAL, client).ask("cancel order payment", ["shop"])
+        checks = {source.passage.path: source for source in result.sources()}
+        turned_down = checks["src/payment.ts"]
+        assert turned_down.exists_in_git is True
+        assert turned_down.answer_check is AnswerCheck.FAILED
+        assert {s.answer_check for path, s in checks.items() if path != "src/payment.ts"} <= {AnswerCheck.NOT_MADE}
+        assert all(s.exists_in_git for s in checks.values())
+
+    def test_when_one_of_two_choices_passes_only_that_one_is_the_answer(self, store, search):
+        client = FakeClient(self._choose("OrderService.java", "payment.ts"))
+        result = QAEngine(store, search, LOCAL, client).ask("cancel order payment", ["shop"])
+        assert result.status == "answered"
+        assert [c.path.split("/")[-1] for c in result.citations] == ["OrderService.java"]
+        assert [p.path for p in result.review_candidates] == ["src/payment.ts"]
+        assert "charge(id, -1)" not in result.answer
+        assert result.note == "", "the note was written about both choices"
+        answer_checks = {s.passage.path.split("/")[-1]: s.answer_check for s in result.sources()}
+        assert answer_checks["OrderService.java"] is AnswerCheck.PASSED
+        assert answer_checks["payment.ts"] is AnswerCheck.FAILED
+
+    def test_only_lines_matching_git_can_become_a_review_candidate(self, store, search, monkeypatch):
+        def nothing_matches(self, passages, result):
+            return []
+
+        monkeypatch.setattr(QAEngine, "_verified_passages", nothing_matches)
+        client = FakeClient(self._choose("payment.ts"))
+        result = QAEngine(store, search, LOCAL, client).ask("cancel order payment", ["shop"])
+        assert result.review_candidates == []
+        assert client.calls == []
+
+    @pytest.mark.parametrize(
+        ("question", "heading"),
+        [("cancel order payment", "Source to review"), ("Sipariş ödemesi cancel order payment nasıl?", "İncelenebilecek kaynak adayı")],
+    )
+    def test_the_cli_shows_a_candidate_apart_and_still_says_i_do_not_know(self, store, search, monkeypatch, capsys, question, heading):
+        client = FakeClient(self._choose("payment.ts"))
+        result = QAEngine(store, search, LOCAL, client).ask("cancel order payment", ["shop"])
+        result.question = question
+        monkeypatch.setattr(cli, "_store", lambda settings: nullcontext(store))
+        monkeypatch.setattr(cli, "_qa_engine", lambda *a: SimpleNamespace(ask=lambda *_: result))
+        assert cli.command_ask(SimpleNamespace(question=question, repo=["shop"]), None) == 0
+        output = capsys.readouterr().out
+        candidate = result.review_candidates[0]
+        assert "I do not know" in output
+        assert heading in output
+        assert f"src/payment.ts:{candidate.start_line}-{candidate.end_line}" in output
+        assert candidate.text.split("\n")[0].strip() in output
+        assert output.count(f"src/payment.ts:{candidate.start_line}-{candidate.end_line}") == 1
+        assert output.index(heading) < output.index("src/payment.ts")
+        assert "It charges the order" not in output, "the model's note about a turned-down choice is never shown"
+
+    def test_an_evaluation_row_keeps_a_candidate_out_of_the_citations(self, store, search):
+        client = FakeClient(self._choose("payment.ts"))
+        result = QAEngine(store, search, LOCAL, client).ask("cancel order payment", ["shop"])
+        row = _row("q", "shop", "en", result, 1.0)
+        assert row["status"] == "insufficient"
+        assert row["citations"] == []
+        assert row["review_candidates"] == [result.review_candidates[0].id]
+        by_path = {p["path"]: p for p in row["passages"]}
+        assert by_path["src/payment.ts"]["answer_check"] == "failed"
+        assert by_path["src/payment.ts"]["exists_in_git"] is True
+        assert by_path["src/payment.ts"]["chosen"] is False
 
     def test_no_lines_about_the_question_stops_before_any_model_call(self, store, search, monkeypatch):
         monkeypatch.setattr(engine_module, "select_passages", lambda *args, **kwargs: [])

@@ -240,11 +240,35 @@ _STATUS_MESSAGES = {
 }
 
 
+_REVIEW_HEADINGS = {
+    "tr": (
+        "İncelenebilecek kaynak adayı: model bu satırları seçti, ancak kanıt kuralı kabul etmedi.\n"
+        "Satırlar bu commit'te gerçekten var, ama soruyu cevapladıkları doğrulanmadı. Bu bir cevap değildir."
+    ),
+    "en": (
+        "Source to review: the model chose these lines, but the evidence rule did not accept them.\n"
+        "They do exist at this commit, but nothing confirms that they answer the question. This is not an answer."
+    ),
+}
+
+
 def _print_passage(passage) -> None:
     chunk = passage.chunk
     _emit(f"{chunk.path}:{passage.start_line}-{passage.end_line}  ({chunk.repo}@{chunk.commit_sha[:12]})")
     for line in passage.text.split("\n"):
         _emit(f"    | {safe_text(line)}")
+
+
+def _print_review_candidates(result) -> None:
+    from repomind.search.translation import looks_turkish
+
+    if not result.review_candidates:
+        return
+    _emit("")
+    _emit(_REVIEW_HEADINGS["tr" if looks_turkish(result.question) else "en"])
+    for passage in result.review_candidates:
+        _emit("")
+        _print_passage(passage)
 
 
 def command_ask(args: argparse.Namespace, settings: Settings) -> int:
@@ -267,16 +291,20 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
             _emit(f"The model's sentence was left out: {safe_text(result.note_problem)}")
         _emit("")
         _emit("Each line above is checked against Git. That they answer the question is the model's judgement, and a citation alone does not prove an answer.")
+        _print_review_candidates(result)
     else:
         _emit(_STATUS_MESSAGES[result.status])
-        if result.passages:
+        _print_review_candidates(result)
+        under_review = {passage.id for passage in result.review_candidates}
+        closest = [passage for passage in result.passages if passage.id not in under_review]
+        if closest:
             if result.status != "no_llm":
                 _emit("")
                 _emit("Closest lines found, which are not an answer:")
-            for passage in result.passages:
+            for passage in closest:
                 _emit("")
                 _print_passage(passage)
-        elif result.hits:
+        elif result.hits and not result.review_candidates:
             _emit("")
             _emit("Closest code found, which is not an answer:")
             print_hits(result.hits, preview_lines=0)

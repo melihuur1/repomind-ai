@@ -110,7 +110,7 @@ Semantic search is an exact cosine scan. At about 1,200 chunks it is fast enough
 
 **Turkish queries** (`search/translation.py`). Code is in English, so a Turkish question shares few terms with it. A pinned local Opus-MT model (CTranslate2, CPU, about 0.1 s) adds an English version of the query. The translation is sometimes wrong, so it is added to the original rather than replacing it. If the model cannot load, search continues with a warning.
 
-**Turkish software words** (`search/glossary.py`). A translator picks one sense of a word, and "yenileme anahtarı" came back as "update key". A small hand-written glossary keeps every sense, and only those the repository's code contains are used. `ask` gives the best chunks for those words seats after the others, up to 5. This needs no model, and reading the extra chunks adds about 0.3 seconds per question.
+**Turkish software words** (`search/glossary.py`). A translator picks one sense of a word, and "yenileme anahtarı" came back as "update key". A small hand-written glossary keeps every sense, and only those the repository's code contains are used. `ask` gives the best chunks for those words seats after the others, up to 5. This needs no model.
 
 These ideas were tested and rejected, and their code removed:
 
@@ -119,6 +119,7 @@ These ideas were tested and rejected, and their code removed:
 - Cross-encoder reranking gave no clear gain across both question sets and took about 21 seconds per query with the only candidate worth considering. See [evaluation.md](evaluation.md#reranker).
 - Symbol names, file paths, callers and callees as an extra ranked list made results worse or no better on the first question set, so they were never run on the second.
 - A separate index of single lines, and one chunk per YAML key, each found some short lines and lost as many other questions. See [evaluation.md](evaluation.md#measured-and-left-out).
+- Giving the glossary's terms to the model's translation prompt improved the wording but not what search found. More unanswerable questions got past the evidence rule, and some replies repeated the instruction instead of translating. See [evaluation.md](evaluation.md#the-full-translation-comparison).
 
 ## Answering
 
@@ -131,7 +132,18 @@ These ideas were tested and rejected, and their code removed:
 5. Refuse if no passage mentions enough of the question.
 6. Without an LLM, stop and list the passages, labelled as not being an AI answer.
 7. Enforce the budget, and send the passages to the model in one request.
-8. Show the lines it chose, or say "I do not know".
+8. Show the lines it chose, or say "I do not know". Lines it chose that the evidence rule turned down are shown apart, as a source to review.
+
+### Two checks that must not be confused
+
+Each source in `AskResult.sources()` carries both of them:
+
+- **`exists_in_git`.** These are the lines the file holds at the indexed commit. Nothing that fails this is ever shown or offered to the model.
+- **`answer_check`.** Whether the lines were checked against the question: `passed` means the model chose them and they passed the evidence rule, `failed` means the model chose them and they did not, and `not_made` means they are the closest lines and nothing judged them.
+
+The first does not imply the second, and `passed` is a check, not a proof. In [a trial](evaluation.md#two-short-trials), all 15 lines 7B chose were real, and 7 of them answered the question.
+
+**A source to review** (`AskResult.review_candidates`, "İncelenebilecek kaynak adayı" for a Turkish question) is a choice the rule turned down. The reader gets its path, lines and code, and is told that nothing confirms it answers the question. It does not change the status, the answer or the citations, so "I do not know" stays "I do not know", and the model's note about it is never shown. There can be none when the rule refuses before the model is asked. The closest lines are listed then, as before.
 
 ### Real lines, not sentences
 

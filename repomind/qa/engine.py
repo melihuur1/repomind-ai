@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
+from enum import Enum
 
 from repomind.errors import RepoMindError
 from repomind.evaluation.citations import CitationVerifier
@@ -39,14 +40,40 @@ class Evidence:
     citation: VerifiedCitation
 
 
+class AnswerCheck(str, Enum):
+    """How far lines were checked against the question, which is a separate matter from existing in Git."""
+
+    NOT_MADE = "not_made"  # The closest lines found. Nothing judged them.
+    PASSED = "passed"  # The model chose them and they passed the evidence rule. A check, not a proof.
+    FAILED = "failed"  # The model chose them and they did not pass, so they are only something to review.
+
+
+@dataclass(frozen=True)
+class Source:
+    """Code shown to a reader, with two checks that must not be confused.
+
+    ``exists_in_git`` says these lines are what the file holds at the indexed commit. That does not
+    make them an answer: real lines can be about something else. ``answer_check`` is about that.
+    """
+
+    passage: Passage
+    exists_in_git: bool
+    answer_check: AnswerCheck
+
+
 @dataclass
 class AskResult:
-    """``passages`` are the closest lines found. Only ``evidence`` was chosen as an answer."""
+    """``passages`` are the closest lines found. Only ``evidence`` was chosen as an answer.
+
+    ``review_candidates`` were chosen by the model and turned down by the evidence rule. They are
+    something a reader can look at. They never affect the status, the answer or the citations.
+    """
 
     status: str  # answered | insufficient | invalid_response | no_llm | no_results
     question: str
     answer: str = ""
     evidence: list[Evidence] = field(default_factory=list)
+    review_candidates: list[Passage] = field(default_factory=list)
     note: str = ""
     note_problem: str | None = None
     passages: list[Passage] = field(default_factory=list)
@@ -66,6 +93,18 @@ class AskResult:
     @property
     def citations(self) -> list[VerifiedCitation]:
         return [item.citation for item in self.evidence]
+
+    def sources(self) -> list[Source]:
+        """Everything shown to a reader, with both checks. Only lines matching Git ever reach ``passages``."""
+        passed = {item.passage.id for item in self.evidence}
+        failed = {passage.id for passage in self.review_candidates}
+
+        def check(passage: Passage) -> AnswerCheck:
+            if passage.id in passed:
+                return AnswerCheck.PASSED
+            return AnswerCheck.FAILED if passage.id in failed else AnswerCheck.NOT_MADE
+
+        return [Source(passage, True, check(passage)) for passage in self.passages]
 
 
 def assemble_answer(evidence: list[Evidence], note: str = "") -> str:
@@ -238,6 +277,8 @@ class QAEngine:
         prompt = build_selection_prompt(question, offered, nonce, english)
         reply = self._call(prompt, self.config.max_output_tokens, result)
         selection = verify_selection(reply, offered, question)
+        # Without the model's note, which is the least trustworthy thing about a choice the rule turned down.
+        result.review_candidates = [passage for passage in selection.chosen if not is_evidence(passage, wording)]
         if selection.outcome == "invalid":
             result.status = "invalid_response"
             result.rejected.append(selection.reason)

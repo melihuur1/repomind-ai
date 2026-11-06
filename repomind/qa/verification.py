@@ -38,6 +38,8 @@ _FOREIGN_SCRIPT = re.compile(r"[Ѐ-ӿ぀-ヿ㐀-鿿가-힯]")
 
 @dataclass(frozen=True)
 class VerifiedCitation:
+    """Verified means these lines exist at this commit, and nothing more."""
+
     source_id: str
     repo: str
     commit_sha: str
