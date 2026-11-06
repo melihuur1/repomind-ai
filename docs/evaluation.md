@@ -14,9 +14,9 @@ The goal is to reach the right code reliably, explain it correctly, and know how
 | Are AI answers reliable? | **Not proven.** On a new set of 16 answerable questions, `qwen2.5:7b` found the right source for 6, against a target of at least 8, and showed a wrong one for 3, against at most 2. |
 | Does it refuse what it cannot answer? | **With 7B, so far yes:** 8 of 8 on the new set, and 28 or 29 of 30 on the earlier ones. It also refuses some answerable questions. |
 | Did the search changes measured on the fourth set help? | **Not clearly.** They helped on the earlier sets they were tuned on, but on the new set the right lines reached the model no more often. |
-| Did the search work after that help? | **On the questions it was tuned on, yes:** the right code reached the passages for 68 of 85 questions, up from 61, with no more unanswerable questions let through. It has had no independent test. See [the details](#search-work-after-the-fourth-set). |
+| Did the search work after that help? | **On the questions it was tuned on, yes:** the right code reached the passages for 65 to 68 of 85 questions, depending on the run of the translations, up from 61, with no more unanswerable questions let through. It has had no independent test. See [the details](#search-work-after-the-fourth-set). |
 | Should the evidence rule be loosened? | **Not on this evidence.** A flexible rule added 4 correct sources and 3 wrong ones on 21 selected questions, which misses the bar set in advance. See [the trials](#two-short-trials). |
-| Does giving the model glossary terms help translation? | **The wording, yes; search, hardly.** It fixed 12 of 20 known errors and broke 2, but gold reached the passages for only 1 more of the 20. It is not adopted. |
+| Does giving the model glossary terms help translation? | **The wording, somewhat; finding sources, no.** On all 123 questions gold in the passages did not change, and unanswerable questions refused before the model fell from 26 to 21. It is not adopted. See [the comparison](#the-full-translation-comparison). |
 | Is `qwen2.5:7b` better than 3B? | **On the pilot, clearly.** They were not compared on the new set. Its older run on the second question set is `incomplete — interrupted due to memory pressure`. |
 
 ## Phase 2
@@ -359,7 +359,7 @@ Improved stays in place because it showed fewer wrong sources and no loss, not b
 | Mean lines shown | 21.1 | 21.4 |
 | Peak memory of the process | 1,109 MB | 1,109 MB |
 
-The extra 0.3 seconds is embedding the windows of the extra chunks. Peak memory is set by loading the models, so these changes do not move it.
+**The time and the "after" figure are not stable.** Later runs of the same code took a median of 0.65 seconds, so the extra 0.3 seconds cannot be told from noise. With a fresh run of the same translation prompt, gold in the passages was [65, and not 68](#the-full-translation-comparison). Peak memory is set by loading the models, so these changes do not move it.
 
 | Gold code in the passages | Questions | Before | After |
 | --- | --- | --- | --- |
@@ -487,9 +487,57 @@ It fixed 12 errors and broke 2, and 4 stayed wrong. "Yenileme anahtarı" became 
 
 **A single run of translation is noisy.** At temperature 0, 6 of the 20 original translations differed from the stored ones, and 4 of those passed checks they had failed before.
 
+### The full translation comparison
+
+The owner then approved one comparison on all the questions, [fixed in advance](../eval/TRIALS.md#trial-2-the-full-comparison). Both prompts translated 85 answerable and 38 unanswerable questions once, in one session, and search ran with no model. No question was answered.
+
+| 85 answerable, 38 unanswerable | Current prompt | With glossary terms | Bar |
+| --- | --- | --- | --- |
+| Gold code in the candidates | 77 | 76 | |
+| Gold code in the passages | 65 | 65 | at least +3: **not met** |
+| Gold anchor in the passages | 56 | 56 | |
+| Gold code passing the strict rule | 54 | 56 | at least +3: **not met** |
+| Answerable refused before the model | 8 | 4 | |
+| Unanswerable refused before the model | 26 | **21** | at most -2: **not met** |
+| Median seconds per translation | 1.72 | 1.64 | |
+| Mean input tokens per translation | 68 | 121 | |
+| Median seconds of search, with no model | 0.65 | 0.65 | |
+| Peak memory of search | 1,109 MB | 1,109 MB | |
+
+**It missed all three parts of the bar, so the current prompt stays.**
+
+**The wording did improve, though less than step 1 suggested.** The two prompts wrote different wordings for 99 of the 123 questions. Graded without labels, by one reviewer:
+
+| 99 questions with different wordings | |
+| --- | --- |
+| Both good | 56 |
+| Only the glossary prompt good | **21** |
+| Only the current prompt good | **13** |
+| Both bad | 9 |
+
+On the 20 known errors, it fixed 12 and broke none, and 6 stayed wrong in both.
+
+**It also added a new kind of failure.** 6 of its 123 replies are not translations: 5 repeat the instruction it was given, and 1 answers the question with an invented statement. The current prompt had none. The glossary prompt lost 4 of 26 technical names in its reply, against 0, though 3 of those are in replies that repeat the instruction. The code adds the names back.
+
+**Regressions.** Better wordings moved questions in both directions:
+
+| Stage | Gained | Lost |
+| --- | --- | --- |
+| Candidates | 0 | 1: `v2-sg-two-instances` |
+| Passages | 4 | 4: `sn-presence`, `v3-sn-user-delete-sql`, `v4-sg-reservation-states`, `v4-sg-login-response` |
+| Passing the strict rule | 7 | 5: `v2-sg-lock-timeout-config`, `v2-sn-collab-instances`, `v3-sn-user-delete-sql`, `v4-sg-reservation-states`, `v4-sg-login-response` |
+
+**Why unanswerable refusals fell.** The rule counts words shared with the translation, so a wording that uses the repository's words passes more often, whether or not the feature exists. `v2-sg-neg-transfer`, `v2-sn-neg-tags`, `v2-sn-neg-comments`, `v3-sg-neg-low-stock-alert`, `v4-sg-neg-wishlist` and `v4-sg-neg-reduce-quantity` would no longer be refused before the model, and `v4-sn-neg-pin` newly would. Answerable questions refused before the model halved for the same reason.
+
+**How much is noise.** With the same prompt, this run against the stored translations differed for 20 of 123 questions, and moved gold in the passages from 68 to 65, anchors from 58 to 56, and evidence from 56 to 54. A difference of 2 or 3 of 85 between two runs therefore proves nothing, in this comparison or in earlier ones.
+
+### A choice the strict rule turns down
+
+The strict rule stays, and a choice it turns down is now shown apart as a [source to review](architecture.md#two-checks-that-must-not-be-confused). In the trial above, the rule turned down 13 of the model's 15 choices: 7 correct, 2 partly correct, 3 wrong, and 1 on an unanswerable question. Only 6 of those 13 would appear this way, and those 6 were 5 correct and 1 partly correct, in a sample picked because the rule drops right lines there. For the other 7 the rule refused before the model was asked, so there is no choice to show, and the closest lines are listed as before. Whether showing them helps a reader has not been measured.
+
 ### Cost
 
-Both trials took about 5 minutes, with no memory stop. 7B took a median of 4.1 seconds per choice. The lowest available RAM was 11.6 GB, free commit 18.0 GB, VRAM 2,812 MiB, and Python 1,039 MB. Glossary terms added about 54 input tokens per translation.
+The first two trials took about 5 minutes, and the full comparison about 7.5, with no memory stop. 7B took a median of 4.1 seconds per choice. The lowest available RAM was 11.6 GB, free commit 18.0 GB, and VRAM at most 2,812 MiB. Python reached 1,039 MB in the evidence trial, and search 1,109 MB.
 
 ### Also found, and not changed
 
@@ -711,7 +759,7 @@ Stored results are in [`eval/results/`](../eval/results):
 | `v2-ask-phase1-3b.json`, `v2-ask-phase2-3b.json`, `v2-grades-3b-tr.json` | 3B answers on the second set and their grades |
 | `v3-old-3b-tr.json`, `v3-nollm-*.json`, `v3-new-3b-*.json`, `v3-new-7b-tr.json`, `v3-grades-*.json` | The pilot and its grades |
 | `v4-baseline-7b-tr.json`, `v4-improved-7b-tr.json`, `v4-grades-7b-tr.json` | The fourth question set and its grades |
-| `dev-phase5-*.json`, `resources/stats-dev-phase5-trials.csv` | The two short trials on questions already read, not independent |
+| `dev-phase5-*.json`, `resources/stats-dev-phase5-*.csv` | The short trials and the full translation comparison, on questions already read, not independent |
 | `dev-phase4-*.json` | Search before and after the latest work, with no model, on questions already read, not independent |
 | `dev-phase3-*.json`, `dev-improved-7b-v3.json` | Tuning runs for the search changes measured on the fourth set, not independent |
 | `dev-selector-3b-v2.json` | The new pipeline on the second set, before the evidence rule, not independent |

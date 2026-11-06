@@ -1,0 +1,497 @@
+{
+ "T001": {
+  "question": "v2-sg-auth-error-format",
+  "A": "hints",
+  "B": "original"
+ },
+ "T002": {
+  "question": "sn-new-pdf",
+  "A": "original",
+  "B": "hints"
+ },
+ "T003": {
+  "question": "v3-sn-neg-trash",
+  "A": "hints",
+  "B": "original"
+ },
+ "T004": {
+  "question": "v4-sg-neg-wishlist",
+  "A": "original",
+  "B": "hints"
+ },
+ "T005": {
+  "question": "sg-first-admin",
+  "A": "original",
+  "B": "hints"
+ },
+ "T006": {
+  "question": "v4-sg-consistency-endpoint",
+  "A": "hints",
+  "B": "original"
+ },
+ "T007": {
+  "question": "v4-sn-neg-pin",
+  "A": "original",
+  "B": "hints"
+ },
+ "T008": {
+  "question": "v2-sn-neg-comments",
+  "A": "original",
+  "B": "hints"
+ },
+ "T009": {
+  "question": "v2-sg-reservation-defaults",
+  "A": "hints",
+  "B": "original"
+ },
+ "T010": {
+  "question": "sg-stock-consistency",
+  "A": "hints",
+  "B": "original"
+ },
+ "T011": {
+  "question": "sg-password",
+  "A": "hints",
+  "B": "original"
+ },
+ "T012": {
+  "question": "sn-version-restore",
+  "A": "original",
+  "B": "hints"
+ },
+ "T013": {
+  "question": "sn-user-permissions",
+  "A": "original",
+  "B": "hints"
+ },
+ "T014": {
+  "question": "sg-stale-version",
+  "A": "original",
+  "B": "hints"
+ },
+ "T015": {
+  "question": "v2-sn-cookie-flags",
+  "A": "hints",
+  "B": "original"
+ },
+ "T016": {
+  "question": "sg-user-permissions",
+  "A": "hints",
+  "B": "original"
+ },
+ "T017": {
+  "question": "v2-sn-note-search",
+  "A": "original",
+  "B": "hints"
+ },
+ "T018": {
+  "question": "v2-sg-sweep-index",
+  "A": "hints",
+  "B": "original"
+ },
+ "T019": {
+  "question": "v3-sg-audit-page-size",
+  "A": "hints",
+  "B": "original"
+ },
+ "T020": {
+  "question": "v4-sn-ticket-not-access-token",
+  "A": "original",
+  "B": "hints"
+ },
+ "T021": {
+  "question": "sn-password",
+  "A": "hints",
+  "B": "original"
+ },
+ "T022": {
+  "question": "v4-sg-db-port",
+  "A": "hints",
+  "B": "original"
+ },
+ "T023": {
+  "question": "v2-sg-add-stock-limits",
+  "A": "hints",
+  "B": "original"
+ },
+ "T024": {
+  "question": "v2-sg-neg-backorder",
+  "A": "hints",
+  "B": "original"
+ },
+ "T025": {
+  "question": "v2-sg-append-only",
+  "A": "original",
+  "B": "hints"
+ },
+ "T026": {
+  "question": "v2-sn-neg-tags",
+  "A": "original",
+  "B": "hints"
+ },
+ "T027": {
+  "question": "v3-sn-user-delete-sql",
+  "A": "original",
+  "B": "hints"
+ },
+ "T028": {
+  "question": "sn-revocation",
+  "A": "original",
+  "B": "hints"
+ },
+ "T029": {
+  "question": "v2-sg-lock-timeout-config",
+  "A": "hints",
+  "B": "original"
+ },
+ "T030": {
+  "question": "sg-audit",
+  "A": "hints",
+  "B": "original"
+ },
+ "T031": {
+  "question": "v2-sg-negative-stock-db",
+  "A": "hints",
+  "B": "original"
+ },
+ "T032": {
+  "question": "sn-redis-outage",
+  "A": "hints",
+  "B": "original"
+ },
+ "T033": {
+  "question": "v4-sn-neg-spellcheck",
+  "A": "original",
+  "B": "hints"
+ },
+ "T034": {
+  "question": "sn-realtime",
+  "A": "hints",
+  "B": "original"
+ },
+ "T035": {
+  "question": "sn-new-elasticsearch",
+  "A": "hints",
+  "B": "original"
+ },
+ "T036": {
+  "question": "v2-sn-collab-instances",
+  "A": "hints",
+  "B": "original"
+ },
+ "T037": {
+  "question": "sg-simulation-race",
+  "A": "original",
+  "B": "hints"
+ },
+ "T038": {
+  "question": "v3-sg-no-setters",
+  "A": "original",
+  "B": "hints"
+ },
+ "T039": {
+  "question": "v4-sg-username-format",
+  "A": "original",
+  "B": "hints"
+ },
+ "T040": {
+  "question": "v2-sn-title-merge",
+  "A": "original",
+  "B": "hints"
+ },
+ "T041": {
+  "question": "sg-invariants",
+  "A": "hints",
+  "B": "original"
+ },
+ "T042": {
+  "question": "v4-sg-login-response",
+  "A": "original",
+  "B": "hints"
+ },
+ "T043": {
+  "question": "v2-sg-neg-transfer",
+  "A": "original",
+  "B": "hints"
+ },
+ "T044": {
+  "question": "v2-sn-health-redis",
+  "A": "hints",
+  "B": "original"
+ },
+ "T045": {
+  "question": "sg-oversell",
+  "A": "hints",
+  "B": "original"
+ },
+ "T046": {
+  "question": "v2-sn-cursor-color",
+  "A": "hints",
+  "B": "original"
+ },
+ "T047": {
+  "question": "v4-sg-neg-csv",
+  "A": "original",
+  "B": "hints"
+ },
+ "T048": {
+  "question": "v2-sn-env-validation",
+  "A": "hints",
+  "B": "original"
+ },
+ "T049": {
+  "question": "sn-auto-version",
+  "A": "original",
+  "B": "hints"
+ },
+ "T050": {
+  "question": "v2-sg-username-race",
+  "A": "original",
+  "B": "hints"
+ },
+ "T051": {
+  "question": "v3-sg-request-fingerprint",
+  "A": "original",
+  "B": "hints"
+ },
+ "T052": {
+  "question": "v4-sg-neg-sms",
+  "A": "original",
+  "B": "hints"
+ },
+ "T053": {
+  "question": "v2-sg-neg-mongodb",
+  "A": "hints",
+  "B": "original"
+ },
+ "T054": {
+  "question": "v3-sg-instance-header",
+  "A": "original",
+  "B": "hints"
+ },
+ "T055": {
+  "question": "v4-sn-neg-view-log",
+  "A": "original",
+  "B": "hints"
+ },
+ "T056": {
+  "question": "v2-sn-account-lock",
+  "A": "original",
+  "B": "hints"
+ },
+ "T057": {
+  "question": "v4-sn-refresh-token-storage",
+  "A": "original",
+  "B": "hints"
+ },
+ "T058": {
+  "question": "v3-sn-register-password",
+  "A": "original",
+  "B": "hints"
+ },
+ "T059": {
+  "question": "v2-sn-neg-public-link",
+  "A": "original",
+  "B": "hints"
+ },
+ "T060": {
+  "question": "sn-viewer-readonly",
+  "A": "hints",
+  "B": "original"
+ },
+ "T061": {
+  "question": "v3-sg-neg-barcode",
+  "A": "hints",
+  "B": "original"
+ },
+ "T062": {
+  "question": "v2-sg-settled-immutable",
+  "A": "original",
+  "B": "hints"
+ },
+ "T063": {
+  "question": "v2-sn-neg-ldap",
+  "A": "original",
+  "B": "hints"
+ },
+ "T064": {
+  "question": "v4-sn-guard-order",
+  "A": "hints",
+  "B": "original"
+ },
+ "T065": {
+  "question": "sg-idempotency",
+  "A": "hints",
+  "B": "original"
+ },
+ "T066": {
+  "question": "v3-sg-neg-low-stock-alert",
+  "A": "hints",
+  "B": "original"
+ },
+ "T067": {
+  "question": "sn-session-refresh",
+  "A": "original",
+  "B": "hints"
+ },
+ "T068": {
+  "question": "v3-sg-username-lowercase",
+  "A": "original",
+  "B": "hints"
+ },
+ "T069": {
+  "question": "v3-sg-movement-types",
+  "A": "hints",
+  "B": "original"
+ },
+ "T070": {
+  "question": "v4-sg-audit-null-actor",
+  "A": "original",
+  "B": "hints"
+ },
+ "T071": {
+  "question": "sg-reservation-cancel",
+  "A": "original",
+  "B": "hints"
+ },
+ "T072": {
+  "question": "v2-sn-theme-flash",
+  "A": "original",
+  "B": "hints"
+ },
+ "T073": {
+  "question": "sn-ticket",
+  "A": "hints",
+  "B": "original"
+ },
+ "T074": {
+  "question": "v4-sg-reservation-states",
+  "A": "hints",
+  "B": "original"
+ },
+ "T075": {
+  "question": "sg-neg-email",
+  "A": "hints",
+  "B": "original"
+ },
+ "T076": {
+  "question": "v3-sn-share-ownership",
+  "A": "original",
+  "B": "hints"
+ },
+ "T077": {
+  "question": "sn-offline",
+  "A": "original",
+  "B": "hints"
+ },
+ "T078": {
+  "question": "v2-sg-error-status-map",
+  "A": "original",
+  "B": "hints"
+ },
+ "T079": {
+  "question": "sn-refresh-reuse",
+  "A": "hints",
+  "B": "original"
+ },
+ "T080": {
+  "question": "v2-sg-why-separate-stock",
+  "A": "hints",
+  "B": "original"
+ },
+ "T081": {
+  "question": "v4-sn-unknown-fields",
+  "A": "original",
+  "B": "hints"
+ },
+ "T082": {
+  "question": "v2-sn-logout-access-token",
+  "A": "original",
+  "B": "hints"
+ },
+ "T083": {
+  "question": "v4-sn-revoked-close-code",
+  "A": "original",
+  "B": "hints"
+ },
+ "T084": {
+  "question": "v4-sg-neg-reduce-quantity",
+  "A": "hints",
+  "B": "original"
+ },
+ "T085": {
+  "question": "sg-expiry",
+  "A": "hints",
+  "B": "original"
+ },
+ "T086": {
+  "question": "v4-sn-postgres-port",
+  "A": "hints",
+  "B": "original"
+ },
+ "T087": {
+  "question": "v3-sn-role-cache-ttl",
+  "A": "hints",
+  "B": "original"
+ },
+ "T088": {
+  "question": "sg-retry",
+  "A": "hints",
+  "B": "original"
+ },
+ "T089": {
+  "question": "v4-sn-offline-message",
+  "A": "original",
+  "B": "hints"
+ },
+ "T090": {
+  "question": "sn-presence",
+  "A": "original",
+  "B": "hints"
+ },
+ "T091": {
+  "question": "sn-neg-s3",
+  "A": "hints",
+  "B": "original"
+ },
+ "T092": {
+  "question": "v2-sg-two-instances",
+  "A": "original",
+  "B": "hints"
+ },
+ "T093": {
+  "question": "v4-sg-token-ttl",
+  "A": "hints",
+  "B": "original"
+ },
+ "T094": {
+  "question": "sn-lost-updates",
+  "A": "original",
+  "B": "hints"
+ },
+ "T095": {
+  "question": "sg-db-connection-error",
+  "A": "original",
+  "B": "hints"
+ },
+ "T096": {
+  "question": "v2-sg-neg-password-reset",
+  "A": "hints",
+  "B": "original"
+ },
+ "T097": {
+  "question": "v2-sn-folder-delete",
+  "A": "hints",
+  "B": "original"
+ },
+ "T098": {
+  "question": "v4-sg-register-role",
+  "A": "hints",
+  "B": "original"
+ },
+ "T099": {
+  "question": "v3-sn-redis-access-events",
+  "A": "hints",
+  "B": "original"
+ }
+}

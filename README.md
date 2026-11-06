@@ -55,7 +55,9 @@ No configuration passed. `qwen2.5:7b` missed the bar by one question and did muc
 
 **This did not pass, and the search changes showed no clear gain.** The system now rarely invents an answer and shows only real lines, but it finds the right source for fewer than half of the questions. The pilot had looked better than this. Search is the largest loss, on short configuration lines and through translation errors. The same developer wrote these questions, and 24 are too few to prove anything in general. Details are in the [full evaluation](docs/evaluation.md#fourth-question-set).
 
-Search was then worked on further, with no model, on these same questions and the earlier ones: the right code reaches the 5 passages for 68 of 85 Turkish questions, up from 61, and a named term such as `token-ttl` is shown for 277 of 288 lookups, up from 261. No more unanswerable questions get through, at about 0.3 seconds more per question. These questions had already been read, so this is not an independent result, and it has not yet been measured on answers. See [the details](docs/evaluation.md#search-work-after-the-fourth-set).
+Search was then worked on further, with no model, on these same questions and the earlier ones: the right code reaches the 5 passages for 65 to 68 of 85 Turkish questions, depending on the run of the translations, up from 61, and a named term such as `token-ttl` is shown for 277 of 288 lookups, up from 261. No more unanswerable questions get through. These questions had already been read, so this is not an independent result, and it has not yet been measured on answers. See [the details](docs/evaluation.md#search-work-after-the-fourth-set).
+
+A line existing in Git does not mean it answers the question, and the code keeps these two checks apart. When the model chooses lines that the evidence rule turns down, the answer stays "I do not know", and the lines are shown separately as a source to review, with their path, line numbers and code. See [how this works](docs/architecture.md#two-checks-that-must-not-be-confused).
 
 ## How it works
 
