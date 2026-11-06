@@ -29,7 +29,7 @@ if set(grades.values()) - ALLOWED:
 if output.exists():
     sys.exit(f"Refusing to overwrite {output}")
 KIND: dict = {}
-for dataset in ("questions_v2.yaml", "questions_v3.yaml"):
+for dataset in ("questions_v2.yaml", "questions_v3.yaml", "questions_v4.yaml"):
     raw = yaml.safe_load((ROOT / "eval" / dataset).read_bytes())
     KIND.update({q["id"]: q["kind"] for q in raw["questions"]})
 

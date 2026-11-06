@@ -14,15 +14,15 @@ sys.path.insert(0, str(ROOT))
 sys.stdout.reconfigure(encoding="utf-8")
 
 from repomind.evaluation.citations import CitationVerifier  # noqa: E402
-from repomind.evaluation.dataset import V3_DATASET_PATH, load_dataset  # noqa: E402
+from repomind.evaluation.dataset import V3_DATASET_PATH, V4_DATASET_PATH, load_dataset  # noqa: E402
 from repomind.evaluation.metrics import touches  # noqa: E402
 from repomind.ingest.git_source import GitRepository  # noqa: E402
 
 RESULTS = ROOT / "eval" / "results"
 UNITS = {"KiB": 1 / 1024 / 1024, "MiB": 1 / 1024, "GiB": 1.0, "B": 1 / 1024**3}
-dataset = load_dataset(V3_DATASET_PATH)
-gold = {q.id: q.gold for q in dataset.questions}
-verifiers = {name: CitationVerifier(GitRepository(pin.local_path), pin.commit) for name, pin in dataset.repositories.items()}
+datasets = [load_dataset(path) for path in (V3_DATASET_PATH, V4_DATASET_PATH)]
+gold = {q.id: q.accepted for dataset in datasets for q in dataset.questions}
+verifiers = {name: CitationVerifier(GitRepository(pin.local_path), pin.commit) for name, pin in datasets[0].repositories.items()}
 
 
 class Span:
@@ -97,11 +97,15 @@ def report(label: str, name: str) -> None:
         print(f"    seconds: mean {sum(everything) / len(everything):.1f}, answerable {sum(r['seconds'] for r in answerable) / len(answerable):.1f}, negatives {sum(r['seconds'] for r in negatives) / len(negatives):.1f}, max {max(everything)}")
         print(f"    tokens in/out {sum(r['input_tokens'] or 0 for r in rows)}/{sum(r['output_tokens'] or 0 for r in rows)}")
         if "new" in label and language == "tr":
+            # The same proportions on any set size, rounded towards the stricter side.
+            most_wrong = len(answerable) // 6
+            least_refused = -(-5 * len(negatives) // 6)
+            least_correct = -(-len(answerable) // 2)
             checks = {
-                "wrong source at most 2": len(wrong) <= 2,
-                "unanswerable refused at least 5": len(refused) >= 5,
+                f"wrong source at most {most_wrong}": len(wrong) <= most_wrong,
+                f"unanswerable refused at least {least_refused}": len(refused) >= least_refused,
                 "no invalid reference": not invalid,
-                "correct source at least 6": len(correct) >= 6,
+                f"correct source at least {least_correct}": len(correct) >= least_correct,
             }
             print("    BAR: " + "; ".join(f"{name}: {'met' if met else 'NOT met'}" for name, met in checks.items()))
             print("    BAR " + ("PASSED" if all(checks.values()) else "NOT PASSED"))

@@ -1,0 +1,306 @@
+# RepoMind evaluation set, version 4. See eval/PILOT_V4.md for how it is scored.
+#
+# Written before the search changes it measures, from code regions that no earlier question asked about.
+# Nothing has been searched on it at the time of this commit, and it is meant to be run once.
+#   * Java, TypeScript, SQL and YAML, with values, mechanisms and "why" questions.
+#   * "gold" spans are the main source. "acceptable" spans are other places that also answer the
+#     question, listed in advance, because the last pilot showed correct answers counted as wrong sources.
+#   * Spans and absent terms are verified at the pinned commits by tests/test_gold_labels.py.
+#   * The same developer wrote this set and the system it measures, so it is not fully independent.
+#   * Nothing here is changed because of a result. A failed question stays and gets reported.
+
+version: 4
+
+corrections: []
+
+repositories:
+  stockguard:
+    commit: b6698d81475232f2b8ca95af45336fae5665cd81
+    url: https://github.com/melihuur1/stockguard
+    path_env: REPOMIND_REPO_STOCKGUARD
+  syncnotes:
+    commit: bb217cddc89088f27b68715cf9585e94ce2fe3a6
+    url: https://github.com/melihuur1/syncnotes
+    path_env: REPOMIND_REPO_SYNCNOTES
+
+questions:
+  # ---------------------------------------------------------------- StockGuard
+  - id: v4-sg-token-ttl
+    repo: stockguard
+    kind: yaml
+    tr: Giriş yaptıktan sonra alınan erişim anahtarı ne kadar süre geçerli?
+    en: How long is the access token valid after logging in?
+    expected: 60 minutes, set by token-ttl under stockguard.security.
+    gold:
+      - path: src/main/resources/application.yml
+        start_line: 57
+        end_line: 57
+        anchor: "token-ttl: 60m"
+
+  - id: v4-sg-db-port
+    repo: stockguard
+    kind: yaml
+    tr: Docker ile çalışırken veritabanına başka bir bilgisayardan bağlanılabilir mi?
+    en: When running with Docker, can the database be reached from another computer?
+    expected: No. Its port is bound to 127.0.0.1 only, on host port 5442 by default.
+    gold:
+      - path: compose.yaml
+        start_line: 39
+        end_line: 39
+        anchor: "127.0.0.1:${STOCKGUARD_DB_HOST_PORT:-5442}:5432"
+    acceptable:
+      - path: compose.yaml
+        start_line: 2
+        end_line: 2
+        anchor: "All ports are bound to localhost only"
+
+  - id: v4-sg-reservation-states
+    repo: stockguard
+    kind: sql
+    tr: Bir rezervasyon hangi durumlarda bulunabilir?
+    en: Which states can a reservation be in?
+    expected: PENDING, CONFIRMED, CANCELLED and EXPIRED.
+    gold:
+      - path: src/main/resources/db/migration/V3__reservations.sql
+        start_line: 16
+        end_line: 16
+        anchor: "ck_reservations_status"
+    acceptable:
+      - path: src/main/java/com/stockguard/reservation/ReservationStatus.java
+        start_line: 5
+        end_line: 8
+        anchor: "CANCELLED"
+
+  - id: v4-sg-audit-null-actor
+    repo: stockguard
+    kind: sql
+    tr: Denetim kaydında işlemi yapan kişi boşsa bu ne anlama geliyor?
+    en: What does it mean when an audit record has no actor?
+    expected: The system itself did it, for example the expiry sweeper.
+    gold:
+      - path: src/main/resources/db/migration/V4__ledger_and_audit.sql
+        start_line: 30
+        end_line: 31
+        anchor: "NULL actor means the system itself"
+
+  - id: v4-sg-username-format
+    repo: stockguard
+    kind: code
+    tr: Kayıt olurken kullanıcı adı hangi kurallara uymalı?
+    en: What rules must a username follow when registering?
+    expected: 3 to 64 letters, digits, dots, underscores or hyphens, starting with a letter or digit.
+    gold:
+      - path: src/main/java/com/stockguard/user/AuthController.java
+        start_line: 46
+        end_line: 50
+        anchor: "must be 3-64 letters"
+
+  - id: v4-sg-login-response
+    repo: stockguard
+    kind: code
+    tr: Başarılı girişten sonra istemciye neler dönüyor?
+    en: What does the client get back after a successful login?
+    expected: An access token, the token type Bearer and the expiry in seconds.
+    gold:
+      - path: src/main/java/com/stockguard/user/AuthController.java
+        start_line: 42
+        end_line: 42
+        anchor: "\"Bearer\""
+      - path: src/main/java/com/stockguard/user/AuthController.java
+        start_line: 57
+        end_line: 57
+        anchor: "TokenResponse(String accessToken"
+
+  - id: v4-sg-consistency-endpoint
+    repo: stockguard
+    kind: code
+    tr: Yönetici stok tutarlılığını hangi adresten kontrol edebilir?
+    en: At which address can an admin check stock consistency?
+    expected: GET /api/v1/admin/consistency, with an optional productId.
+    gold:
+      - path: src/main/java/com/stockguard/inventory/ConsistencyController.java
+        start_line: 13
+        end_line: 13
+        anchor: "/api/v1/admin/consistency"
+      - path: src/main/java/com/stockguard/inventory/ConsistencyController.java
+        start_line: 23
+        end_line: 26
+        anchor: "consistency.check(productId)"
+
+  - id: v4-sg-register-role
+    repo: stockguard
+    kind: code
+    tr: Yeni kaydolan bir kullanıcıya hangi rol veriliyor?
+    en: Which role does a newly registered user get?
+    expected: USER.
+    gold:
+      - path: src/main/java/com/stockguard/user/AuthController.java
+        start_line: 33
+        end_line: 33
+        anchor: "with the USER role"
+    acceptable:
+      - path: src/main/java/com/stockguard/user/AuthService.java
+        start_line: 52
+        end_line: 52
+        anchor: "Role.USER"
+
+  # ---------------------------------------------------------------- SyncNotes
+  - id: v4-sn-refresh-token-storage
+    repo: syncnotes
+    kind: code
+    tr: Yenileme anahtarı veritabanında açık metin olarak mı saklanıyor?
+    en: Is the refresh token stored in the database as plain text?
+    expected: No. Only its SHA-256 hash is stored.
+    gold:
+      - path: apps/api/src/auth/token.service.ts
+        start_line: 31
+        end_line: 31
+        anchor: "only its SHA-256 hash is persisted"
+      - path: apps/api/src/auth/token.service.ts
+        start_line: 35
+        end_line: 35
+        anchor: "hash: sha256(token)"
+
+  - id: v4-sn-guard-order
+    repo: syncnotes
+    kind: code
+    tr: Bir istek güvenlik kontrollerinden hangi sırayla geçiyor?
+    en: In what order does a request pass the security checks?
+    expected: Rate limiting first, then authentication, then CSRF.
+    gold:
+      - path: apps/api/src/app.module.ts
+        start_line: 46
+        end_line: 49
+        anchor: "rate limit → authenticate → CSRF"
+
+  - id: v4-sn-unknown-fields
+    repo: syncnotes
+    kind: code
+    tr: API, tanımlı olmayan alanlar içeren bir isteği nasıl karşılıyor?
+    en: How does the API treat a request with fields that are not defined?
+    expected: It rejects it, because the validation pipe uses whitelist and forbidNonWhitelisted.
+    gold:
+      - path: apps/api/src/app.setup.ts
+        start_line: 26
+        end_line: 31
+        anchor: "forbidNonWhitelisted: true"
+
+  - id: v4-sn-offline-message
+    repo: syncnotes
+    kind: code
+    tr: Kullanıcı çevrimdışıyken düzenleme yaparsa arayüz ona ne söylüyor?
+    en: What does the interface tell a user who edits while offline?
+    expected: They can keep editing. Changes are saved on the device and sync on reconnecting.
+    gold:
+      - path: apps/web/src/collab/connection.ts
+        start_line: 34
+        end_line: 41
+        anchor: "saved on this device"
+
+  - id: v4-sn-revoked-close-code
+    repo: syncnotes
+    kind: code
+    tr: Erişimi kaldırılan kullanıcının WebSocket bağlantısı hangi kodla kapatılıyor?
+    en: With which code is the WebSocket of a user whose access was revoked closed?
+    expected: 4403, with the reason access-revoked.
+    gold:
+      - path: packages/shared/src/collab.ts
+        start_line: 27
+        end_line: 27
+        anchor: "accessRevoked: { code: 4403"
+
+  - id: v4-sn-ticket-not-access-token
+    repo: syncnotes
+    kind: code
+    tr: Ortak düzenleme bileti neden API erişim anahtarı yerine kullanılamıyor?
+    en: Why can a collaboration ticket not be used as an API access token?
+    expected: The ticket has its own aud claim, and tickets and access tokens use different keys.
+    gold:
+      - path: packages/shared/src/collab.ts
+        start_line: 3
+        end_line: 4
+        anchor: "can never be replayed as an API access token"
+    acceptable:
+      - path: apps/api/src/app.module.ts
+        start_line: 21
+        end_line: 21
+        anchor: "access tokens vs. collab tickets use different keys"
+
+  - id: v4-sn-folder-name-unique
+    repo: syncnotes
+    kind: sql
+    tr: Bir kullanıcı aynı adla iki klasör oluşturabilir mi?
+    en: Can a user create two folders with the same name?
+    expected: No. A unique index on owner and name prevents it, and the API answers with a conflict.
+    gold:
+      - path: packages/db/prisma/migrations/20261104110838_init/migration.sql
+        start_line: 102
+        end_line: 102
+        anchor: "folders_owner_id_name_key"
+    acceptable:
+      - path: apps/api/src/folders/folders.service.ts
+        start_line: 34
+        end_line: 35
+        anchor: "A folder with this name already exists"
+
+  - id: v4-sn-postgres-port
+    repo: syncnotes
+    kind: yaml
+    tr: Uygulama Docker ile çalışırken PostgreSQL'e bilgisayardan hangi porttan bağlanılır?
+    en: When the application runs with Docker, on which port can PostgreSQL be reached from the computer?
+    expected: 5433, mapped to 5432 inside the container.
+    gold:
+      - path: docker-compose.yml
+        start_line: 32
+        end_line: 32
+        anchor: "'5433:5432'"
+
+unanswerable:
+  - id: v4-sg-neg-wishlist
+    repo: stockguard
+    tr: Kullanıcılar ürünleri favori listesine nasıl ekliyor?
+    en: How do users add products to a wishlist?
+    absent_terms: [wishlist, favorite, favourite, favorites]
+
+  # Next to real features, so vocabulary alone will not refuse these.
+  - id: v4-sg-neg-reduce-quantity
+    repo: stockguard
+    tr: Mevcut bir rezervasyonun miktarı sonradan nasıl azaltılıyor?
+    en: How is the quantity of an existing reservation reduced later?
+    absent_terms: [reduceQuantity, decreaseQuantity, changeQuantity, updateQuantity, partialCancel]
+
+  - id: v4-sg-neg-sms
+    repo: stockguard
+    tr: Yönetici girişinde SMS ile doğrulama nasıl yapılıyor?
+    en: How is SMS verification done at admin login?
+    absent_terms: [sms, otp, totp]
+
+  - id: v4-sg-neg-csv
+    repo: stockguard
+    tr: Denetim kayıtları CSV dosyası olarak nasıl indiriliyor?
+    en: How are audit records downloaded as a CSV file?
+    absent_terms: [csv]
+
+  - id: v4-sn-neg-template
+    repo: syncnotes
+    tr: Yeni not oluştururken hazır şablon nasıl seçiliyor?
+    en: How is a ready-made template chosen when creating a note?
+    absent_terms: [noteTemplate, templateId, templates]
+
+  - id: v4-sn-neg-pin
+    repo: syncnotes
+    tr: Notlar listenin en üstüne nasıl sabitleniyor?
+    en: How are notes pinned to the top of the list?
+    absent_terms: [pinned, pinNote, isPinned]
+
+  - id: v4-sn-neg-view-log
+    repo: syncnotes
+    tr: Bir notu kimin ne zaman görüntülediği nereye kaydediliyor?
+    en: Where is it recorded who viewed a note and when?
+    absent_terms: [viewedAt, lastViewedAt, viewLog, accessLog]
+
+  - id: v4-sn-neg-spellcheck
+    repo: syncnotes
+    tr: Editörde yazım denetimi nasıl çalışıyor?
+    en: How does spell checking work in the editor?
+    absent_terms: [spellcheck, spellchecker, languagetool]

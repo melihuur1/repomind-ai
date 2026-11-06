@@ -156,10 +156,10 @@ def _answerable_row(qa: QAEngine, question: Question, language: str, verifier: C
     # Everything shown is rechecked, including closest lines listed on a refusal.
     row["references_shown"] = len(result.passages)
     row["references_recheck_valid"] = sum(verifier.check(p.path, p.start_line, p.end_line).valid for p in result.passages)
-    row["cites_gold"] = any(touches(c, span) for c in result.citations for span in question.gold)
-    row["gold_in_context"] = any(touches(p, span) for p in result.passages for span in question.gold)
-    row["gold_in_search"] = any(overlaps(hit.chunk, span) for hit in result.hits for span in question.gold)
-    anchors = [_squeezed(span.anchor) for span in question.gold]
+    row["cites_gold"] = any(touches(c, span) for c in result.citations for span in question.accepted)
+    row["gold_in_context"] = any(touches(p, span) for p in result.passages for span in question.accepted)
+    row["gold_in_search"] = any(overlaps(hit.chunk, span) for hit in result.hits for span in question.accepted)
+    anchors = [_squeezed(span.anchor) for span in question.accepted]
     chosen_lines = _squeezed("\n".join(item.passage.text for item in result.evidence))
     offered_lines = _squeezed("\n".join(p.text for p in result.passages))
     row["anchor_in_chosen"] = any(anchor in chosen_lines for anchor in anchors)

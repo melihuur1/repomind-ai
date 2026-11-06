@@ -9,6 +9,7 @@ import pytest
 from repomind.evaluation.dataset import (
     V2_DATASET_PATH,
     V3_DATASET_PATH,
+    V4_DATASET_PATH,
     load_dataset,
     load_holdout_unanswerable,
     split_of,
@@ -19,8 +20,15 @@ from repomind.ingest.git_source import GitRepository
 DATASET = load_dataset()
 DATASET_V2 = load_dataset(V2_DATASET_PATH)
 DATASET_V3 = load_dataset(V3_DATASET_PATH)
-ALL_QUESTIONS = DATASET.questions + DATASET_V2.questions + DATASET_V3.questions
-ALL_UNANSWERABLE = DATASET.unanswerable + load_holdout_unanswerable() + DATASET_V2.unanswerable + DATASET_V3.unanswerable
+DATASET_V4 = load_dataset(V4_DATASET_PATH)
+ALL_QUESTIONS = DATASET.questions + DATASET_V2.questions + DATASET_V3.questions + DATASET_V4.questions
+ALL_UNANSWERABLE = (
+    DATASET.unanswerable
+    + load_holdout_unanswerable()
+    + DATASET_V2.unanswerable
+    + DATASET_V3.unanswerable
+    + DATASET_V4.unanswerable
+)
 
 
 def _repository(name: str) -> GitRepository:
@@ -70,10 +78,24 @@ def test_pilot_set_has_the_agreed_size_and_uses_no_earlier_gold_file():
     assert not earlier & {s.path for q in DATASET_V3.questions for s in q.gold}
 
 
+def test_fourth_set_covers_every_kind_and_asks_nothing_asked_before():
+    assert len(DATASET_V4.questions) == 16
+    assert len(DATASET_V4.unanswerable) == 8
+    assert {q.repo for q in DATASET_V4.questions} == {"stockguard", "syncnotes"}
+    assert {q.kind for q in DATASET_V4.questions} == {"code", "sql", "yaml"}
+    assert any(q.acceptable for q in DATASET_V4.questions)
+    assert all(q.expected for q in DATASET_V4.questions)
+    earlier = DATASET.questions + DATASET_V2.questions + DATASET_V3.questions
+    asked = {q.tr for q in earlier} | {q.en for q in earlier}
+    assert not asked & ({q.tr for q in DATASET_V4.questions} | {q.en for q in DATASET_V4.questions})
+    spans = {(s.path, s.start_line, s.end_line) for q in earlier for s in q.gold}
+    assert not spans & {(s.path, s.start_line, s.end_line) for q in DATASET_V4.questions for s in q.accepted}
+
+
 @pytest.mark.gold
 @pytest.mark.parametrize(
     "question,span",
-    [(q, s) for q in ALL_QUESTIONS for s in q.gold],
+    [(q, s) for q in ALL_QUESTIONS for s in q.accepted],
     ids=lambda value: getattr(value, "id", None) or f"{getattr(value, 'path', '')}:{getattr(value, 'start_line', '')}",
 )
 def test_gold_span_exists_and_contains_its_anchor(question, span):
@@ -91,7 +113,7 @@ def test_gold_span_exists_and_contains_its_anchor(question, span):
 @pytest.mark.gold
 @pytest.mark.parametrize("question", ALL_QUESTIONS, ids=lambda q: q.id)
 def test_gold_files_are_indexable(question):
-    for span in question.gold:
+    for span in question.accepted:
         assert classify_path(span.path).included, f"{span.path} can never be retrieved"
 
 

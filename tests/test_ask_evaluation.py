@@ -134,6 +134,26 @@ def test_a_sample_is_not_reported_as_a_complete_run(store, sample_repo, fake_emb
     assert results["run"]["stopped_because"] is None
 
 
+@pytest.mark.db
+def test_an_acceptable_span_counts_as_the_right_source(store, sample_repo, fake_embedder):
+    index_repository(store, str(sample_repo), fake_embedder, name="shop")
+    commit = git(sample_repo, "rev-parse", "HEAD")
+    elsewhere = GoldSpan("src/payment.ts", 1, 1, "charge")
+    order = GoldSpan("src/main/java/shop/OrderService.java", 5, 10, "cancelOrder")
+    dataset = Dataset(
+        repositories={"shop": RepositoryPin("shop", commit, "", "UNUSED")},
+        questions=(Question("q1", "shop", "cancelOrder release", "cancelOrder release", (elsewhere,), acceptable=(order,)),),
+        unanswerable=(),
+        sha256="x",
+    )
+    qa = QAEngine(store, SearchEngine(store, fake_embedder), LOCAL, FakeClient(only_about_order_service))
+
+    row = run_ask_evaluation(qa, dataset, ("en",))["answerable"][0]
+
+    assert row["cites_gold"] is True
+    assert row["anchor_in_chosen"] is True
+
+
 def test_a_torn_last_line_only_costs_the_question_it_belonged_to(tmp_path):
     path = tmp_path / "run.checkpoint.jsonl"
     identity = {"model": "m"}

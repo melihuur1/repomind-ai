@@ -15,6 +15,7 @@ DEFAULT_DATASET_PATH = PROJECT_ROOT / "eval" / "questions.yaml"
 HOLDOUT_UNANSWERABLE_PATH = PROJECT_ROOT / "eval" / "unanswerable_holdout.yaml"
 V2_DATASET_PATH = PROJECT_ROOT / "eval" / "questions_v2.yaml"
 V3_DATASET_PATH = PROJECT_ROOT / "eval" / "questions_v3.yaml"
+V4_DATASET_PATH = PROJECT_ROOT / "eval" / "questions_v4.yaml"
 
 # One question in three is available for tuning; the rest stay held out.
 DEV_SHARE = 3
@@ -37,9 +38,16 @@ class Question:
     gold: tuple[GoldSpan, ...]
     kind: str = "code"
     expected: str = ""
+    # Other places that also answer the question, listed in advance. They count as a correct
+    # source for an answer, and are not part of what Recall@5 requires search to find.
+    acceptable: tuple[GoldSpan, ...] = ()
 
     def text(self, language: str) -> str:
         return self.tr if language == "tr" else self.en
+
+    @property
+    def accepted(self) -> tuple[GoldSpan, ...]:
+        return self.gold + self.acceptable
 
 
 @dataclass(frozen=True)
@@ -127,6 +135,7 @@ def load_dataset(path: Path | str = DEFAULT_DATASET_PATH) -> Dataset:
             gold=tuple(GoldSpan(**span) for span in entry["gold"]),
             kind=entry.get("kind", "code"),
             expected=entry.get("expected", ""),
+            acceptable=tuple(GoldSpan(**span) for span in entry.get("acceptable", ())),
         )
         for entry in raw["questions"]
     )
