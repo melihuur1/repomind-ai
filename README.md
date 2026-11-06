@@ -41,7 +41,19 @@ Of the 10 unanswerable questions, the first phase refused 4 and that version 6. 
 | Fully correct answers, of 12 | 1 | 3 | 6 | |
 | Mean seconds per question | 54 | 14 | 6 | |
 
-**No configuration passed.** `qwen2.5:7b` missed the bar by one question, and it did much better than `qwen2.5:3b` here: it chose the right lines every time they were offered, and it declined when they were not. All of its failures came before the model, in search or passage selection. These are the same 18 questions used before, so this is a comparison and not an independent test, and it cannot prove reliability. The 7B column ran partly on a GPU, and the others on a CPU. Details are in the [full evaluation](docs/evaluation.md#pilot-answers-made-of-real-lines).
+No configuration passed. `qwen2.5:7b` missed the bar by one question and did much better than `qwen2.5:3b`, but these questions had been used before, and the 7B column ran partly on a GPU. So `qwen2.5:7b` became the default, search was tuned on the earlier sets, and a new set of 24 questions, fixed before those changes, measured the result once:
+
+| New set, Turkish, `qwen2.5:7b` | Before the search changes | After | Target |
+| --- | --- | --- | --- |
+| Correct source, of 16 | 6 | 6 | at least 8 |
+| Wrong source, of 16 | 5 | 3 | at most 2 |
+| No answer, of 16 | 5 | 7 | |
+| Unanswerable refused, of 8 | 8 | 8 | at least 7 |
+| Invalid file or line references | 0 | 0 | 0 |
+| Fully correct answers, of 16 | 4 | 4 | |
+| Mean seconds per question | 6.0 | 5.7 | |
+
+**This did not pass, and the search changes showed no clear gain.** The system now rarely invents an answer and shows only real lines, but it finds the right source for fewer than half of the questions. The pilot had looked better than this. Search is the largest loss, on short configuration lines and through translation errors. The same developer wrote these questions, and 24 are too few to prove anything in general. Details are in the [full evaluation](docs/evaluation.md#fourth-question-set).
 
 ## How it works
 
@@ -140,8 +152,8 @@ The full method, every stage of the investigation and the rejected ideas are in 
 
 ## Known limitations
 
-- **AI answers are not proven reliable.** The best result so far is `qwen2.5:7b` on the pilot: the right source for 7 of 12 questions, and 6 of 6 unanswerable ones refused. It missed the target, on only 18 questions, and has had no independent test.
-- **The right lines often never reach the model.** For 5 of those 12 questions, search or passage selection lost them.
+- **AI answers are not proven reliable.** On the newest question set, `qwen2.5:7b` found the right source for 6 of 16 questions and showed a wrong one for 3. It refused 8 of 8 unanswerable ones.
+- **The right lines often never reach the model.** For 9 of those 16 questions, search or passage selection lost them.
 - **`qwen2.5:3b` does not decline.** Asked to choose lines or none, it chose every time, so with that model all refusals come from mechanical rules.
 - **A verified line is not a proven answer.** Lines are checked against Git. Whether they answer the question is not checked.
 - The plan for improving answers is in [docs/answer-plan.md](docs/answer-plan.md).

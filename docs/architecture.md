@@ -134,7 +134,9 @@ These ideas were tested and rejected, and their code removed:
 
 A source existing does not mean it supports a claim. Two earlier designs failed on this. Given 8 sources at once, the small model stitched them into plausible stories. Given one source per request and asked to quote its proof, it still wrote false sentences next to real quotes, and none of 26 answers was fully correct.
 
-So the model no longer writes the answer. `repomind/qa/passages.py` cuts the retrieved chunks into 3-line windows and ranks them by three lists through RRF: shared terms, weighing rare ones more; the local embedding model; and the rank search gave the chunk, because a window cannot see what search weighed. Neighbouring windows merge up to 5 lines, and no line is shown twice. This takes under a second and needs no LLM. All these settings were chosen on the two earlier question sets.
+So the model no longer writes the answer. `repomind/qa/passages.py` cuts the retrieved chunks into 3-line windows and ranks them by three lists through RRF: shared terms, weighing rare ones more; the local embedding model; and the rank search gave the chunk, because a window cannot see what search weighed. Each window is embedded with its path and symbol, because 3 lines alone say little. Neighbouring windows merge up to 5 lines, no line is shown twice, and one file can fill at most 3 of the 5 passages. This takes under a second and needs no LLM. All these settings were chosen on earlier question sets.
+
+Before that, search takes 12 chunks. A Turkish question is searched in the model's translation and in the local translator's, so that one wrong translation cannot decide alone, and file paths, symbol names and acronyms are kept through translation. Limits per chunk, removing near-duplicate windows, and adding path terms to the ranking were measured and left out, because they did not help. On a new question set these changes showed no clear gain over 8 chunks and one translation. See [evaluation.md](evaluation.md#fourth-question-set).
 
 The model then gets one request: which passages answer the question, at most two, or none? It replies with ids, and the lines shown come from the backend, so it cannot change a value, a file or a line number. It may add one sentence, which is shown apart and labelled "Model's reading, not verified".
 
@@ -178,7 +180,7 @@ Repository content is untrusted: a comment can address the model directly. The d
 
 | Limit | Default |
 | --- | --- |
-| Chunks taken from search per question | 8 |
+| Chunks taken from search per question | 12 |
 | Passages offered per question | 5, of at most 5 lines |
 | Estimated input tokens per request | 4000 |
 | Output tokens per request | 250 |
@@ -205,7 +207,7 @@ Free memory here means the smaller of free physical memory and free commit space
 ## Known limitations
 
 - **A verified line is not a proven answer.** The lines are real, and choosing them is still a judgement. In the pilot, the model chose lines that do not touch the gold span for 7 of 12 Turkish questions. See [evaluation.md](evaluation.md#pilot-answers-made-of-real-lines).
-- **The right lines often never reach the model.** In the pilot, search missed them for 3 of 12 Turkish questions, and passage selection for 3 more. The model then chooses among what it was given instead of declining.
+- **The right lines often never reach the model.** On the fourth question set, search missed them for 5 of 16 Turkish questions, and passage selection for 4 more. Short configuration lines and translation errors are the main causes.
 - **The refusal rules look at words, not meaning.** They miss questions whose words appear in nearby code. Features next to existing code are the hard case: "how are notes in the trash restored?" passes because notes and deletion both exist. They also refuse some answerable questions.
 - **Declining depends on the model.** `qwen2.5:3b` never chose "none" in the pilot, in 13 requests. `qwen2.5:7b` did so in 5 of 16, every time the right lines were absent.
 - **Recall@5 is good on the second set and moderate on the first**, 0.67 to 0.83 against 0.50 to 0.58. See [evaluation.md](evaluation.md).
@@ -215,4 +217,4 @@ Free memory here means the smaller of free physical memory and free commit space
 - **Secret detection is pattern based.** It catches known token formats and literal credential keys, not every hardcoded password.
 - **Only the latest indexed commit is kept per repository.**
 - **The keyword index is rebuilt in memory per process.**
-- **The evaluation has 69 answerable questions on two repositories**, labelled and graded by one reviewer, so intervals are wide and results may not generalize.
+- **The evaluation has 85 answerable questions on two repositories**, labelled and graded by one reviewer, so intervals are wide and results may not generalize.

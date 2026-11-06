@@ -94,13 +94,9 @@ The pilot met one target of four. It also changed what the plan assumed:
 - **Adding the search rank as a third list, and letting neighbouring windows merge,** took the first set from 12 to 17 of 31 in Turkish. The analysis above predates both.
 - **Expecting the model to say "none" was wrong for 3B.** It never did, so refusals now rest on a mechanical rule.
 
-`qwen2.5:7b` then ran on the same 18 questions, with no tuning. It missed the bar by one wrong source. It chose correctly all 7 times the right lines were offered, and all 5 of its failures came before the model. These are proposals, none of them approved or built:
+`qwen2.5:7b` then ran on the same 18 questions, with no tuning. It missed the bar by one wrong source. It became the default, search and passage selection were tuned on the three earlier sets, and a [fourth question set](evaluation.md#fourth-question-set) measured the result once. **That also missed the bar:** 6 correct sources of 16 and 3 wrong ones, and the search changes showed no clear gain over the baseline.
 
-1. Make `qwen2.5:7b` the default model.
-2. Improve what reaches the model, tuning only on the two earlier question sets: keep one chunk's windows from filling all 5 passages, and look at how translation errors affect search.
-3. Measure on a new question set, written before the run, whose gold spans allow reasonable alternative sources.
-
-Any change tuned on the pilot's questions needs a new set to measure it.
+The largest remaining loss is search on short configuration lines, and translation errors. Any further tuning needs a new question set, because all four have been read.
 
 ## Trying 7B safely
 

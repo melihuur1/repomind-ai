@@ -1,0 +1,162 @@
+[
+ {
+  "run": "v4-baseline-7b-tr.json",
+  "question": "v4-sg-audit-null-actor",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "correct",
+  "answer": "src/main/resources/db/migration/V4__ledger_and_audit.sql:27-31\nCREATE TABLE audit_events (\n    id          BIGINT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n    event_type  VARCHAR(40)  NOT NULL,\n    -- NULL actor means the system itself, for example the expiry sweeper.\n    actor_id    UUID         REFERENCES app_users (id),\n\nModel's reading, not verified: `actor_id` NULL demek sistemin kendisi tarafından yapılan işlem olabilir."
+ },
+ {
+  "run": "v4-baseline-7b-tr.json",
+  "question": "v4-sg-consistency-endpoint",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "src/main/java/com/stockguard/inventory/ConsistencyController.java:24-28\n    @Operation(operationId = \"checkConsistency\", summary = \"Recompute stock invariants from the raw tables (admin)\")\n    public ConsistencyReport check(@RequestParam(required = false) UUID productId) {\n        return consistency.check(productId);\n    }\n}\n\nModel's reading, not verified: `check` metodu admin tarafından stok tutarlılığını kontrol eder."
+ },
+ {
+  "run": "v4-baseline-7b-tr.json",
+  "question": "v4-sg-login-response",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "src/main/java/com/stockguard/user/AuthController.java:38-42\n    @PostMapping(\"/login\")\n    @Operation(operationId = \"login\", summary = \"Exchange credentials for a bearer token\")\n    public TokenResponse login(@Valid @RequestBody LoginRequest request) {\n        IssuedToken token = auth.login(request.username(), request.password());\n        return new TokenResponse(token.value(), \"Bearer\", token.expiresInSeconds());\n\nModel's reading, not verified: `AuthController.login` işlemi başarılı olduğunda bir `TokenResponse` nesnesi döndürür."
+ },
+ {
+  "run": "v4-baseline-7b-tr.json",
+  "question": "v4-sg-register-role",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "src/main/java/com/stockguard/user/AuthService.java:47-51\n    /** Self-registration can only ever create the USER role. */\n    @Transactional\n    public RegisteredUser register(String username, String rawPassword) {\n        requireBcryptCompatible(rawPassword);\n        String normalized = normalize(username);\n\nsrc/main/java/com/stockguard/user/AuthService.java:52-52\n        UUID id = insert(normalized, rawPassword, Role.USER)\n\nModel's reading, not verified: `AuthService.register` metodunun sonunda kullanıcının `Role.USER` rolü verilmekta."
+ },
+ {
+  "run": "v4-baseline-7b-tr.json",
+  "question": "v4-sg-reservation-states",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "wrong",
+  "answer": "src/main/resources/db/migration/V3__reservations.sql:29-33\n    IF OLD.status <> 'PENDING' THEN\n        RAISE EXCEPTION 'reservation % is already % and cannot change', OLD.id, OLD.status\n            USING ERRCODE = 'check_violation', CONSTRAINT = 'tg_reservations_terminal_state';\n    END IF;\n    IF (NEW.product_id, NEW.user_id, NEW.quantity) IS DISTINCT FROM (OLD.product_id, OLD.user_id, OLD.quantity) THEN\n\nModel's reading, not verified: `reservations_guard_update` işlevi bir rezervasyonun durumu 'PENDING' olmaksızın değişmesine veya ürün, kullanıcının ve miktarın değiştirilmesine engel oluyor."
+ },
+ {
+  "run": "v4-baseline-7b-tr.json",
+  "question": "v4-sg-token-ttl",
+  "language": "tr",
+  "kind": "yaml",
+  "grade": "wrong",
+  "answer": "src/main/java/com/stockguard/user/AuthController.java:57-58\n    public record TokenResponse(String accessToken, String tokenType, long expiresInSeconds) {\n    }"
+ },
+ {
+  "run": "v4-baseline-7b-tr.json",
+  "question": "v4-sn-folder-name-unique",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "correct",
+  "answer": "packages/db/prisma/migrations/20261104110838_init/migration.sql:101-102\n-- CreateIndex\nCREATE UNIQUE INDEX \"folders_owner_id_name_key\" ON \"folders\"(\"owner_id\", \"name\");\n\nModel's reading, not verified: `folders_owner_id_name_key` unique index shows that a user cannot create two folders with the same name."
+ },
+ {
+  "run": "v4-baseline-7b-tr.json",
+  "question": "v4-sn-offline-message",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "apps/web/src/pages/auth-pages.tsx:16-20\n  {\n    icon: WifiOff,\n    title: 'Works offline',\n    text: 'Keep writing without a connection; changes merge when you are back.',\n  },\n\nModel's reading, not verified: `Works offline` ifadesi kullanıcı çevrimdışı olduğunda arayüz ne söylerini gösteriyor."
+ },
+ {
+  "run": "v4-baseline-7b-tr.json",
+  "question": "v4-sn-refresh-token-storage",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "apps/collab/src/extensions/persistence.ts:63-67\n        // Copy into a plain ArrayBuffer-backed array (what Prisma's Bytes type expects).\n        const state = new Uint8Array(Y.encodeStateAsUpdate(document));\n        const plainText = extractPlainText(document);\n        const now = new Date();\n        await tx.note.update({\n\nModel's reading, not verified: `PersistenceExtension.onStoreDocument` işlevinde `Y.encodeStateAsUpdate(document)` fonksiyonu kullanılarak bir dize dönüştürülüyor ve `Uint8Array` içinde saklanıyor, bu da plain text olarak saklandığına işaret ediyor."
+ },
+ {
+  "run": "v4-baseline-7b-tr.json",
+  "question": "v4-sn-revoked-close-code",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "apps/api/src/notes/members.service.ts:93-97\n    if (existing.role === 'OWNER') throw new BadRequestException('The owner cannot be removed');\n\n    await this.prisma.db.noteMember.delete({ where: { noteId_userId: { noteId, userId } } });\n    // Open WebSocket sessions of this user are closed by every collaboration server.\n    await this.events.publish({ type: 'member.removed', noteId, userId });\n\nModel's reading, not verified: `MembersService.remove` adlı fonksiyon, erişimi kaldırılan kullanıcının WebSocket bağlantısını kapatır."
+ },
+ {
+  "run": "v4-baseline-7b-tr.json",
+  "question": "v4-sn-ticket-not-access-token",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "packages/shared/src/collab.ts:3-5\n/** `aud` claim of collaboration tickets — a ticket can never be replayed as an API access token. */\nexport const COLLAB_TICKET_AUDIENCE = 'syncnotes-collab';\nexport const COLLAB_TICKET_ISSUER = 'syncnotes-api';\n\nModel's reading, not verified: `syncnotes-collab` bileti API erişim anahtarı olarak yeniden kullanılamaz."
+ },
+ {
+  "run": "v4-improved-7b-tr.json",
+  "question": "v4-sg-audit-null-actor",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "correct",
+  "answer": "src/main/resources/db/migration/V4__ledger_and_audit.sql:27-31\nCREATE TABLE audit_events (\n    id          BIGINT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n    event_type  VARCHAR(40)  NOT NULL,\n    -- NULL actor means the system itself, for example the expiry sweeper.\n    actor_id    UUID         REFERENCES app_users (id),\n\nModel's reading, not verified: `actor_id` NULL demek sistemin kendisi tarafından yapılan işlemi belirtir."
+ },
+ {
+  "run": "v4-improved-7b-tr.json",
+  "question": "v4-sg-consistency-endpoint",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "src/main/java/com/stockguard/inventory/ConsistencyController.java:22-26\n\n    @GetMapping\n    @Operation(operationId = \"checkConsistency\", summary = \"Recompute stock invariants from the raw tables (admin)\")\n    public ConsistencyReport check(@RequestParam(required = false) UUID productId) {\n        return consistency.check(productId);\n\nModel's reading, not verified: `check` methodu stok tutarlılığını kontrol eder ve bu işlem bir yöneticinin gerçekleştirebileceği bir API operasyonudur."
+ },
+ {
+  "run": "v4-improved-7b-tr.json",
+  "question": "v4-sg-login-response",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "src/main/java/com/stockguard/user/AuthController.java:38-42\n    @PostMapping(\"/login\")\n    @Operation(operationId = \"login\", summary = \"Exchange credentials for a bearer token\")\n    public TokenResponse login(@Valid @RequestBody LoginRequest request) {\n        IssuedToken token = auth.login(request.username(), request.password());\n        return new TokenResponse(token.value(), \"Bearer\", token.expiresInSeconds());\n\nModel's reading, not verified: `AuthController.login` method returns a `TokenResponse` after a successful login."
+ },
+ {
+  "run": "v4-improved-7b-tr.json",
+  "question": "v4-sg-register-role",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "src/main/java/com/stockguard/user/AuthService.java:47-49\n    /** Self-registration can only ever create the USER role. */\n    @Transactional\n    public RegisteredUser register(String username, String rawPassword) {\n\nsrc/main/java/com/stockguard/user/AuthController.java:31-35\n    @PostMapping(\"/register\")\n    @ResponseStatus(HttpStatus.CREATED)\n    @Operation(operationId = \"register\", summary = \"Register a new user with the USER role\")\n    public RegisteredUser register(@Valid @RequestBody RegisterRequest request) {\n        return auth.register(request.username(), request.password());\n\nModel's reading, not verified: `AuthService.register` metodunun yorumu, sadece USER rolü verileceği belirtiliyor. Ayrıca `AuthController.register` metodu yeni bir kullanıcıyı kaydetmek ve USER rolü vermek için kullanılıyor."
+ },
+ {
+  "run": "v4-improved-7b-tr.json",
+  "question": "v4-sg-token-ttl",
+  "language": "tr",
+  "kind": "yaml",
+  "grade": "wrong",
+  "answer": "src/main/java/com/stockguard/user/AuthController.java:57-58\n    public record TokenResponse(String accessToken, String tokenType, long expiresInSeconds) {\n    }\n\nModel's reading, not verified: `expiresInSeconds` belirten değişken, erişim tokeninin geçerlilik süresini saniyeler cinsinden veriyor."
+ },
+ {
+  "run": "v4-improved-7b-tr.json",
+  "question": "v4-sn-folder-name-unique",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "partial",
+  "answer": "apps/api/src/folders/folders.controller.ts:24-28\n\n  @Post()\n  create(@CurrentUser() user: AuthUser, @Body() dto: FolderNameDto): Promise<FolderDto> {\n    return this.folders.create(user.id, dto.name);\n  }\n\nModel's reading, not verified: `FoldersController.create` fonksiyonu klasör adını alır, bu da aynı adla birden fazla klasör oluşturmanın olası olmadığını gösterir."
+ },
+ {
+  "run": "v4-improved-7b-tr.json",
+  "question": "v4-sn-refresh-token-storage",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "packages/db/prisma/migrations/20261104110838_init/migration.sql:49-53\n    \"id\" UUID NOT NULL,\n    \"title\" TEXT NOT NULL DEFAULT 'Untitled',\n    \"excerpt\" TEXT NOT NULL DEFAULT '',\n    \"plain_text\" TEXT NOT NULL DEFAULT '',\n    \"ydoc_state\" BYTEA,\n\nModel's reading, not verified: `ydoc_state` sütunu BYTEA türünde olduğu gösteriyor ki, bu anahtarın şifreli olarak saklandığına dair bir ipucu var."
+ },
+ {
+  "run": "v4-improved-7b-tr.json",
+  "question": "v4-sn-revoked-close-code",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "packages/shared/src/collab.ts:25-29\n/** WebSocket close / stateless codes the collaboration server uses. */\nexport const COLLAB_CLOSE = {\n  accessRevoked: { code: 4403, reason: 'access-revoked' },\n  noteDeleted: { code: 4404, reason: 'note-deleted' },\n} as const;\n\nModel's reading, not verified: `COLLAB_CLOSE.accessRevoked` kodu erişimi kaldırılan kullanıcının WebSocket bağlantısını kapatır."
+ },
+ {
+  "run": "v4-improved-7b-tr.json",
+  "question": "v4-sn-ticket-not-access-token",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "packages/shared/src/collab.ts:3-5\n/** `aud` claim of collaboration tickets — a ticket can never be replayed as an API access token. */\nexport const COLLAB_TICKET_AUDIENCE = 'syncnotes-collab';\nexport const COLLAB_TICKET_ISSUER = 'syncnotes-api';\n\nModel's reading, not verified: `syncnotes-collab` bileti API erişim anahtarı olarak yeniden kullanılamaz."
+ }
+]

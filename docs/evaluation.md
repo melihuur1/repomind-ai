@@ -11,9 +11,10 @@ The goal is to reach the right code reliably, explain it correctly, and know how
 | Is a reranker worth keeping? | **No.** No clear gain across both question sets, at about 1,000 times the latency. |
 | Is hybrid search better? | **Not demonstrably.** Most differences are within noise. |
 | Are citations real? | **Yes.** Every search result and every citation shown with an answer matches Git at the indexed commit. |
-| Are AI answers reliable? | **Not proven.** No configuration passed the pilot. `qwen2.5:7b` came closest: the right source for 7 of 12 questions, and 3 wrong sources against a target of at most 2. |
-| Does it refuse what it cannot answer? | **On this pilot, with 7B, yes:** 6 of 6, with no false refusal when the right lines were offered. With 3B, 4 of 6, and only through mechanical rules. |
-| Is `qwen2.5:7b` better? | **Here, clearly better than 3B, on 18 questions already used.** It has no independent test. Its older run on the second question set is `incomplete — interrupted due to memory pressure`. |
+| Are AI answers reliable? | **Not proven.** On a new set of 16 answerable questions, `qwen2.5:7b` found the right source for 6, against a target of at least 8, and showed a wrong one for 3, against at most 2. |
+| Does it refuse what it cannot answer? | **With 7B, so far yes:** 8 of 8 on the new set, and 28 or 29 of 30 on the earlier ones. It also refuses some answerable questions. |
+| Did the latest search changes help? | **Not clearly.** They helped on the earlier sets they were tuned on, but on the new set the right lines reached the model no more often. |
+| Is `qwen2.5:7b` better than 3B? | **On the pilot, clearly.** They were not compared on the new set. Its older run on the second question set is `incomplete — interrupted due to memory pressure`. |
 
 ## Phase 2
 
@@ -295,6 +296,48 @@ The 3B CPU column covers the pilot's 18 questions, and the GPU columns one quest
 - The blind grading hides labels but not the visible difference in format.
 - Python memory for the no-LLM runs comes from an earlier measurement, not from these runs.
 
+## Fourth question set
+
+**24 questions, written by the same developer who built the system and graded by one reviewer, cannot prove general reliability.** This is still the most honest result so far: [the questions](../eval/questions_v4.yaml) and [the rules](../eval/PILOT_V4.md) were committed before the search changes, no setting was tuned on them, and each configuration ran once. They cover Java, TypeScript, SQL and YAML, and list acceptable alternative sources in advance.
+
+Baseline is the pipeline that ran the pilot, at tag `phase3-baseline`. Improved adds 12 chunks instead of 8, a second translator's wording, windows embedded with their path and symbol, at most 3 passages per file, and technical terms kept through translation. Both use `qwen2.5:7b`, partly on the GPU, in Turkish.
+
+| 16 answerable, 8 unanswerable | Baseline | Improved | Target |
+| --- | --- | --- | --- |
+| Correct source | 6 | **6** | at least 8: **not met** |
+| Wrong source | 5 | **3** | at most 2: **not met** |
+| No answer | 5 | 7 | |
+| Unanswerable refused | 8 | **8** | at least 7: **met** |
+| Invalid references | 0 of 110 | **0 of 110** | 0: **met** |
+| Correct, partly correct, wrong | 4, 3, 4 | 4, 3, 2 | |
+| Gold anchor in the lines shown | 6 | 6 | |
+| Mean seconds per question | 6.0 | 5.7 | |
+| Lowest available RAM | 12.33 GB | 12.04 GB | |
+| Lowest free commit space | 20.09 GB | 19.87 GB | |
+| VRAM, peak | 2,810 MiB | 2,808 MiB | |
+| Python, peak | 898 MB | 1,035 MB | |
+
+Where each answerable question ended:
+
+| Stage | Baseline | Improved |
+| --- | --- | --- |
+| Search missed the gold code | 6 | 5 |
+| In the chunks, not in the passages | 2 | 4 |
+| Offered, and the model chose other lines | 1 | 0 |
+| Offered, and the evidence rule dropped its choice | 1 | 1 |
+| Offered, and chosen correctly | 6 | 6 |
+
+**Neither configuration passed, and the latest search changes did not show a clear gain.**
+
+- **The gain did not carry over.** On the three earlier sets, which they were tuned on, the changes took the gold code in the passages from 50 of 69 questions to 54. Here it went from 8 of 16 to 7. Most of that gain was probably fitting those questions.
+- **What changed is small.** Improved traded 2 wrong sources for "I do not know". It gained one question and lost another, so correct sources stay at 6. On 16 questions none of this can be told from chance. A 95% interval for 6 of 16 runs from about 19% to 61%.
+- **The pilot flattered source finding.** 7B found the right source for 7 of 12 there, and 6 of 16 here. These are different questions, so it may partly be a harder set.
+- **Refusing and valid references held up:** 8 of 8 refused and no invalid reference, in both configurations.
+- **The largest loss is still search:** 5 or 6 of 16. Short configuration lines are hard to find, and translation still changes meanings: "yenileme anahtarı" became "update key", "sırayla" became "queue", and "stok" became "package repository".
+- **The model rarely loses what it is given:** with 7B it chose correctly 6 of the 7 or 8 times the right lines were offered. This did not hold as well on the second set, where it gave no answer for 4 to 6 of about 30 such questions.
+
+Improved stays in place because it showed fewer wrong sources and no loss, not because it is shown to be better. These questions have now been read, so any further tuning on them needs a new set.
+
 # Phase 1
 
 The rest of this document is the phase 1 evaluation, kept as the baseline. Its statements about what was planned next, such as a reranker being the most promising step, describe what was known at that time.
@@ -509,6 +552,8 @@ Stored results are in [`eval/results/`](../eval/results):
 | `v2-retrieval-reranker-bge.json`, `reranker-dev/` | The reranker on both sets |
 | `v2-ask-phase1-3b.json`, `v2-ask-phase2-3b.json`, `v2-grades-3b-tr.json` | 3B answers on the second set and their grades |
 | `v3-old-3b-tr.json`, `v3-nollm-*.json`, `v3-new-3b-*.json`, `v3-new-7b-tr.json`, `v3-grades-*.json` | The pilot and its grades |
+| `v4-baseline-7b-tr.json`, `v4-improved-7b-tr.json`, `v4-grades-7b-tr.json` | The fourth question set and its grades |
+| `dev-phase3-*.json`, `dev-improved-7b-v3.json` | Tuning runs for the latest search changes on earlier sets, not independent |
 | `dev-selector-3b-v2.json` | The new pipeline on the second set, before the evidence rule, not independent |
 | `v2-ask-phase2-7b.status.json` | The interrupted 7B run, which saved no answers |
 | `dev-phase2-7b-tr.json`, `prompt-lab/` | Development runs on the first set, not independent |
