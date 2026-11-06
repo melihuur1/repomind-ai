@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -27,6 +28,38 @@ def _emit(text: str = "") -> None:
 
 def _progress(done: int, total: int) -> None:
     print(f"\r  embedding {done}/{total}", end="" if done < total else "\n", file=sys.stderr, flush=True)
+
+
+def _question_progress(done: int, total: int) -> None:
+    print(f"\r  question {done}/{total}", end="" if done < total else "\n", file=sys.stderr, flush=True)
+
+
+def _output_path(name: str) -> Path:
+    output = Path(name)
+    return output if output.is_absolute() else PROJECT_ROOT / output
+
+
+def _check_can_write(output: Path, overwrite: bool) -> None:
+    """A finished result is evidence, so replacing one has to be asked for. An unfinished one may be continued."""
+    if overwrite or not output.exists():
+        return
+    try:
+        complete = json.loads(output.read_text(encoding="utf-8")).get("run", {}).get("complete", True)
+    except (OSError, ValueError, AttributeError):
+        complete = True
+    if complete:
+        raise RepoMindError(
+            f"{output} already holds a finished result, and it will not be replaced.",
+            hint="Choose another --output, or pass --overwrite if replacing it is really intended.",
+        )
+
+
+def _write_json(output: Path, results: dict) -> None:
+    """Goes through a temporary file, so that a crash cannot leave half a result under the real name."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+    temporary = output.with_name(output.name + ".tmp")
+    temporary.write_text(json.dumps(results, indent=1, ensure_ascii=False), encoding="utf-8")
+    os.replace(temporary, output)
 
 
 def _store(settings: Settings):
@@ -134,24 +167,10 @@ def _translator(settings: Settings, args: argparse.Namespace):
     return LocalTurkishTranslator(settings.models_dir)
 
 
-def _reranker(settings: Settings, args: argparse.Namespace, modes):
-    if "reranked" not in modes:
-        return None
-    from repomind.search.rerank import CrossEncoderReranker
-
-    return CrossEncoderReranker(args.reranker or settings.rerank_model, settings.models_dir)
-
-
 def command_search(args: argparse.Namespace, settings: Settings) -> int:
     embedder = None if args.mode == "keyword" else _embedder(settings, args.model)
     with _store(settings) as store:
-        engine = SearchEngine(
-            store,
-            embedder,
-            SearchConfig(include_tests=args.include_tests),
-            _translator(settings, args),
-            _reranker(settings, args, (args.mode,)),
-        )
+        engine = SearchEngine(store, embedder, SearchConfig(include_tests=args.include_tests), _translator(settings, args))
         result = engine.search(args.query, args.mode, args.repo, args.limit)
         for warning in result.warnings:
             _emit(f"warning: {warning}")
@@ -168,12 +187,15 @@ def command_evaluate(args: argparse.Namespace, settings: Settings) -> int:
     from repomind.evaluation.dataset import load_dataset
     from repomind.evaluation.runner import format_summary, run_evaluation
 
+    output = _output_path(args.output) if args.output else None
+    if output:
+        _check_can_write(output, args.overwrite)
     dataset = load_dataset(args.dataset)
     modes = tuple(args.modes)
-    embedder = _embedder(settings, args.model) if set(modes) & {"semantic", "hybrid", "reranked"} else None
-    config = SearchConfig(include_tests=args.include_tests, rrf_k=args.rrf_k, rerank_blend=args.rerank_blend)
+    embedder = _embedder(settings, args.model) if set(modes) & {"semantic", "hybrid"} else None
+    config = SearchConfig(include_tests=args.include_tests, rrf_k=args.rrf_k)
     with _store(settings) as store:
-        engine = SearchEngine(store, embedder, config, _translator(settings, args), _reranker(settings, args, modes))
+        engine = SearchEngine(store, embedder, config, _translator(settings, args))
         results = run_evaluation(engine, store, dataset, modes=modes, languages=tuple(args.languages))
     _emit(format_summary(results, args.split))
     comparisons = {k: v for k, v in results["comparisons"].items() if k.startswith(f"{args.split}/")}
@@ -183,12 +205,8 @@ def command_evaluate(args: argparse.Namespace, settings: Settings) -> int:
         for name, value in comparisons.items():
             verdict = "difference" if value["significant"] else "no clear difference"
             _emit(f"  {name:<52} {value['mean_difference']:+.3f} [{value['ci95'][0]:+.3f}, {value['ci95'][1]:+.3f}]  {verdict}")
-    if args.output:
-        output = Path(args.output)
-        if not output.is_absolute():
-            output = PROJECT_ROOT / output
-        output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(json.dumps(results, indent=1, ensure_ascii=False), encoding="utf-8")
+    if output:
+        _write_json(output, results)
         _emit(f"\nFull results: {output}")
     invalid = sum(
         s["citations_checked"] - s["citations_valid"]
@@ -261,8 +279,21 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
     return 0
 
 
+def _memory_guard(minimum_gb: float):
+    """Stops a run between questions, while it can still save its work and leave the machine usable."""
+    from repomind.evaluation.memory import available_memory_gb
+
+    def should_stop() -> str | None:
+        free = available_memory_gb()
+        if free is not None and free < minimum_gb:
+            return f"free memory is {free:.1f} GB, below the limit of {minimum_gb:.1f} GB"
+        return None
+
+    return should_stop
+
+
 def command_evaluate_ask(args: argparse.Namespace, settings: Settings) -> int:
-    from repomind.evaluation.ask_runner import run_ask_evaluation
+    from repomind.evaluation.ask_runner import Checkpoint, run_ask_evaluation, run_identity
     from repomind.evaluation.dataset import DEFAULT_DATASET_PATH, load_dataset, load_holdout_unanswerable
     from repomind.qa.llm import load_llm_config
 
@@ -271,22 +302,38 @@ def command_evaluate_ask(args: argparse.Namespace, settings: Settings) -> int:
             "No LLM is configured, so there are no answers to evaluate.",
             hint="Set REPOMIND_LLM_BASE_URL and REPOMIND_LLM_MODEL (see README).",
         )
+    output = _output_path(args.output)
+    _check_can_write(output, args.overwrite)
+    checkpoint_path = output.with_name(output.name + ".checkpoint.jsonl")
+    if args.overwrite:
+        checkpoint_path.unlink(missing_ok=True)
     dataset = load_dataset(Path(args.dataset) if args.dataset else DEFAULT_DATASET_PATH)
     # The old negatives held back from phase 1 belong only with the set they were written for.
     holdout = () if args.dataset else load_holdout_unanswerable()
+    should_stop = _memory_guard(args.min_free_memory_gb)
+    # Before any model is loaded, because loading is when memory runs out fastest.
+    reason = should_stop()
+    if reason:
+        raise RepoMindError(f"Not starting: {reason}.", hint="Close other programs, or set --min-free-memory-gb.")
     with _store(settings) as store:
         qa = _qa_engine(store, settings, args)
-        results = run_ask_evaluation(qa, dataset, tuple(args.languages), _progress, holdout)
+        checkpoint = Checkpoint(checkpoint_path, run_identity(qa, dataset))
+        results = run_ask_evaluation(
+            qa, dataset, tuple(args.languages), _question_progress, holdout, checkpoint, args.limit, should_stop
+        )
+    run = results["run"]
     _emit(f"model {results['model']} at {results['base_url']}")
+    _emit(f"  {'status':<32} {run['status']}")
+    _emit(f"  {'questions':<32} {run['questions_done']} done of {run['questions_planned']} in the set")
     for name, value in results["summary"].items():
         _emit(f"  {name:<32} {value}")
-    if args.output:
-        output = Path(args.output)
-        if not output.is_absolute():
-            output = PROJECT_ROOT / output
-        output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(json.dumps(results, indent=1, ensure_ascii=False), encoding="utf-8")
-        _emit(f"\nFull results: {output}")
+    _write_json(output, results)
+    _emit(f"\nFull results: {output}")
+    if run["complete"]:
+        checkpoint_path.unlink(missing_ok=True)
+    elif run["stopped_because"]:
+        _emit(f"Stopped early. Answers so far are in {checkpoint_path}. Run the same command again to continue.")
+        return 1
     return 0
 
 
@@ -318,7 +365,6 @@ def build_parser() -> argparse.ArgumentParser:
     search.add_argument("-k", "--limit", type=int, default=5)
     search.add_argument("--explain", action="store_true", help="show why each result was ranked")
     search.add_argument("--model", help="embedding model")
-    search.add_argument("--reranker", help="cross-encoder model for --mode reranked")
     search.add_argument(
         "--include-tests",
         action=argparse.BooleanOptionalAction,
@@ -342,9 +388,8 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--rrf-k", type=int, default=60)
     evaluate.add_argument("--include-tests", action=argparse.BooleanOptionalAction, default=None)
     evaluate.add_argument("--translate", action=argparse.BooleanOptionalAction, default=True)
-    evaluate.add_argument("--reranker", help="cross-encoder model for the reranked method")
-    evaluate.add_argument("--rerank-blend", choices=["pure", "rrf"], default="pure")
     evaluate.add_argument("--output", help="write full per-question results to this JSON file")
+    evaluate.add_argument("--overwrite", action="store_true", help="allow replacing a finished result")
     evaluate.set_defaults(handler=command_evaluate)
 
     ask = commands.add_parser("ask", help="answer a question with verified citations")
@@ -359,7 +404,17 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate_ask.add_argument("--languages", nargs="+", choices=["tr", "en"], default=["tr"])
     evaluate_ask.add_argument("--model", help="embedding model")
     evaluate_ask.add_argument("--translate", action=argparse.BooleanOptionalAction, default=True)
-    evaluate_ask.add_argument("--output", help="write answers and details to this JSON file")
+    evaluate_ask.add_argument(
+        "--output", required=True, help="write answers to this JSON file; each question is also saved next to it as it finishes"
+    )
+    evaluate_ask.add_argument("--overwrite", action="store_true", help="start again from nothing, replacing a finished result")
+    evaluate_ask.add_argument("--limit", type=int, help="answer only this many questions, evenly spaced across the set")
+    evaluate_ask.add_argument(
+        "--min-free-memory-gb",
+        type=float,
+        default=3.0,
+        help="do not start, and stop between questions, when less than this much memory is free (default: 3, 0 turns it off)",
+    )
     evaluate_ask.set_defaults(handler=command_evaluate_ask)
 
     return parser

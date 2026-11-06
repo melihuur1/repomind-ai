@@ -29,6 +29,13 @@ services:
     environment:
       # Ollama's small default context silently cuts long prompts, which would hide sources.
       OLLAMA_CONTEXT_LENGTH: "8192"
+      # Keep the machine usable. RepoMind sends one request at a time, but Ollama's defaults
+      # kept two models in memory together and reserved twice the context (--parallel 2).
+      OLLAMA_MAX_LOADED_MODELS: "1"
+      OLLAMA_NUM_PARALLEL: "1"
+      OLLAMA_KEEP_ALIVE: "2m"
+    # A model too big for this limit fails inside this container instead of squeezing other programs.
+    mem_limit: 8g
     ports:
       - "127.0.0.1:${REPOMIND_OLLAMA_PORT:-11535}:11434"
     volumes:

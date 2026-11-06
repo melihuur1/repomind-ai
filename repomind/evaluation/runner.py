@@ -161,16 +161,16 @@ def run_evaluation(
         return sorted(selected, key=lambda r: r["question"])
 
     comparisons: dict = {}
-    for reference in (m for m in ("hybrid", "reranked") if m in modes):
+    if "hybrid" in modes:
         for split in ("all", "test"):
             for language in languages:
-                for other in modes[: modes.index(reference)]:
+                for other in (m for m in modes if m != "hybrid"):
                     for metric in ("recall_at_5", "reciprocal_rank"):
                         ci = paired_difference_ci(
-                            [r[metric] for r in paired_rows(reference, language, split)],
+                            [r[metric] for r in paired_rows("hybrid", language, split)],
                             [r[metric] for r in paired_rows(other, language, split)],
                         )
-                        comparisons[f"{split}/{language}/{reference}-minus-{other}/{metric}"] = {
+                        comparisons[f"{split}/{language}/hybrid-minus-{other}/{metric}"] = {
                             "mean_difference": round(ci.mean, 4),
                             "ci95": [round(ci.low, 4), round(ci.high, 4)],
                             "significant": not (ci.low <= 0.0 <= ci.high),
@@ -182,7 +182,6 @@ def run_evaluation(
         "repositories": {name: pin.commit for name, pin in dataset.repositories.items()},
         "embedding_model": engine.embedder.model_name if engine.embedder else None,
         "query_translation": engine.translator is not None,
-        "reranker": engine.reranker.model_name if engine.reranker else None,
         "config": asdict(config) if is_dataclass(config) else {},
         "summaries": summaries,
         "comparisons": comparisons,
