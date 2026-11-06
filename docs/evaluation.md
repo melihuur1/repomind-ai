@@ -244,7 +244,7 @@ Also measured: an integration test indexes a comment ordering the model to reply
 | Mean lines shown as an answer | 7.6 | 6.3 | 4.8 | |
 | Mean seconds per question | 53.9 | 14.3 | 6.2 | |
 | Input and output tokens | 81,343 and 8,809 | 13,696 and 859 | 16,358 and 910 | |
-| Lowest available RAM | 10.4 GB or above | 10.8 GB | 10.94 GB | |
+| Lowest available RAM | 10.6 GB | 10.8 GB | 10.94 GB | |
 | Lowest free commit space | 4.3 GB | 4.5 GB | 20.07 GB, with the larger pagefile | |
 
 **The bar was missed by one question, so this did not pass.** Grading could not be fully blind: the reviewer had already graded 3B's answers and recognised them. Their grades did not change.
