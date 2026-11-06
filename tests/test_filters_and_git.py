@@ -53,6 +53,8 @@ def test_excluded_paths(path, reason):
         ("scripts/run.mjs", "javascript"),
         ("src/SecretRotationService.java", "java"),
         ("src/environment.ts", "typescript"),
+        ("src/config/env.ts", "typescript"),
+        ("src/config/env.spec.ts", "typescript"),
     ],
 )
 def test_included_paths(path, language):

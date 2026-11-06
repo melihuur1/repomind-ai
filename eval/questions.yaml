@@ -1,0 +1,531 @@
+# RepoMind evaluation set.
+#
+# Rules this file follows (see docs/evaluation.md):
+#   * Written from reading the source, before any search code existed. The commit
+#     history proves the order: this file predates the first retrieval module.
+#   * Questions and gold labels are not changed to improve a score. A label may
+#     only change if it is factually wrong about the code, and such a change is
+#     recorded in the "corrections" list below together with its reason.
+#   * Every gold span carries an anchor: text that must occur inside those lines
+#     at the pinned commit. tests/test_gold_labels.py enforces this.
+#   * Every "unanswerable" question lists terms proven absent from the indexed
+#     source at the pinned commit, so "the code does not do this" is a fact.
+#   * The dev/test split is derived from a hash of the id, not chosen by hand.
+
+version: 1
+
+corrections: []
+
+repositories:
+  stockguard:
+    commit: b6698d81475232f2b8ca95af45336fae5665cd81
+    url: https://github.com/melihuur1/stockguard
+    path_env: REPOMIND_REPO_STOCKGUARD
+  syncnotes:
+    commit: bb217cddc89088f27b68715cf9585e94ce2fe3a6
+    url: https://github.com/melihuur1/syncnotes
+    path_env: REPOMIND_REPO_SYNCNOTES
+
+questions:
+  # ---------------------------------------------------------------- StockGuard
+  - id: sg-stock-consistency
+    repo: stockguard
+    tr: StockGuard stok tutarlılığını nasıl sağlıyor?
+    en: How does StockGuard keep stock counters consistent?
+    gold:
+      - path: src/main/java/com/stockguard/inventory/StockLevelRepository.java
+        start_line: 50
+        end_line: 61
+        anchor: "AND available_quantity >= :quantity"
+      - path: src/main/java/com/stockguard/inventory/StockLedger.java
+        start_line: 10
+        end_line: 17
+        anchor: "The single gateway for changing stock"
+
+  - id: sg-reservation-cancel
+    repo: stockguard
+    tr: Rezervasyon iptali nerede yönetiliyor?
+    en: Where is reservation cancellation handled?
+    gold:
+      - path: src/main/java/com/stockguard/reservation/ReservationTransactions.java
+        start_line: 92
+        end_line: 100
+        anchor: "MovementType.CANCEL_RELEASED"
+      - path: src/main/java/com/stockguard/reservation/ReservationService.java
+        start_line: 42
+        end_line: 45
+        anchor: "transactions.cancel(actor, id)"
+      - path: src/main/java/com/stockguard/reservation/ReservationController.java
+        start_line: 92
+        end_line: 97
+        anchor: 'operationId = "cancelReservation"'
+
+  - id: sg-db-connection-error
+    repo: stockguard
+    tr: PostgreSQL bağlantı hatası nasıl ele alınıyor?
+    en: How is a lost PostgreSQL connection handled?
+    gold:
+      - path: src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java
+        start_line: 54
+        end_line: 69
+        anchor: "Transient database failure"
+      - path: src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java
+        start_line: 71
+        end_line: 80
+        anchor: "isLostConnection(ex) ? handleTransient(ex)"
+      - path: src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java
+        start_line: 82
+        end_line: 95
+        anchor: 'state.startsWith("08")'
+
+  - id: sg-user-permissions
+    repo: stockguard
+    tr: Kullanıcı yetkileri nerede kontrol ediliyor?
+    en: Where are user permissions checked?
+    gold:
+      - path: src/main/java/com/stockguard/security/SecurityConfig.java
+        start_line: 49
+        end_line: 64
+        anchor: 'hasRole("ADMIN")'
+      - path: src/main/java/com/stockguard/security/Actor.java
+        start_line: 14
+        end_line: 20
+        anchor: "canAccessResourceOf"
+      - path: src/main/java/com/stockguard/reservation/ReservationTransactions.java
+        start_line: 102
+        end_line: 107
+        anchor: "loadVisible"
+
+  - id: sg-oversell
+    repo: stockguard
+    tr: Aynı anda gelen isteklerde fazla satış nasıl önleniyor?
+    en: How is overselling prevented under concurrent requests?
+    gold:
+      - path: src/main/java/com/stockguard/inventory/StockLevelRepository.java
+        start_line: 50
+        end_line: 61
+        anchor: "The anti-overselling statement"
+      - path: src/main/java/com/stockguard/inventory/StockLedger.java
+        start_line: 39
+        end_line: 45
+        anchor: "tryReserve"
+
+  - id: sg-idempotency
+    repo: stockguard
+    tr: Idempotency-Key ile tekrar eden rezervasyon istekleri nasıl ele alınıyor?
+    en: How are duplicate reservation requests handled with an Idempotency-Key?
+    gold:
+      - path: src/main/java/com/stockguard/reservation/ReservationRepository.java
+        start_line: 29
+        end_line: 52
+        anchor: "ON CONFLICT (user_id, idempotency_key) DO NOTHING"
+      - path: src/main/java/com/stockguard/reservation/ReservationTransactions.java
+        start_line: 72
+        end_line: 80
+        anchor: "IDEMPOTENCY_KEY_REUSED"
+
+  - id: sg-expiry
+    repo: stockguard
+    tr: Süresi dolan rezervasyonlar nasıl temizleniyor?
+    en: How are expired reservations cleaned up?
+    gold:
+      - path: src/main/java/com/stockguard/reservation/ReservationExpiryService.java
+        start_line: 27
+        end_line: 47
+        anchor: "expireDueBatch"
+      - path: src/main/java/com/stockguard/reservation/ReservationRepository.java
+        start_line: 70
+        end_line: 90
+        anchor: "FOR UPDATE SKIP LOCKED"
+      - path: src/main/java/com/stockguard/reservation/ReservationExpiryJob.java
+        start_line: 27
+        end_line: 38
+        anchor: "@Scheduled"
+
+  - id: sg-retry
+    repo: stockguard
+    tr: Deadlock veya kilit zaman aşımında işlem nasıl yeniden deneniyor?
+    en: How are operations retried after a deadlock or lock timeout?
+    gold:
+      - path: src/main/java/com/stockguard/reservation/ReservationService.java
+        start_line: 16
+        end_line: 45
+        anchor: "@Retryable"
+      - path: src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java
+        start_line: 54
+        end_line: 69
+        anchor: "only after the bounded server-side retry gave up"
+
+  - id: sg-lock-order
+    repo: stockguard
+    tr: Deadlock oluşmaması için kilitler hangi sırayla alınıyor?
+    en: In which order are locks taken to avoid deadlocks?
+    gold:
+      - path: src/main/java/com/stockguard/reservation/ReservationTransactions.java
+        start_line: 17
+        end_line: 24
+        anchor: "same lock order"
+      - path: src/main/java/com/stockguard/reservation/ReservationExpiryService.java
+        start_line: 27
+        end_line: 37
+        anchor: "releasing in a fixed product order"
+
+  - id: sg-jwt
+    repo: stockguard
+    tr: JWT token nasıl üretiliyor ve imzalanıyor?
+    en: How are JWT tokens issued and signed?
+    gold:
+      - path: src/main/java/com/stockguard/security/JwtTokenService.java
+        start_line: 29
+        end_line: 43
+        anchor: "JwtClaimsSet.builder()"
+      - path: src/main/java/com/stockguard/security/SecurityConfig.java
+        start_line: 84
+        end_line: 101
+        anchor: "MacAlgorithm.HS256"
+
+  - id: sg-password
+    repo: stockguard
+    tr: Şifreler nasıl hashleniyor ve neden 72 bayt sınırı var?
+    en: How are passwords hashed and why is there a 72 byte limit?
+    gold:
+      - path: src/main/java/com/stockguard/security/SecurityConfig.java
+        start_line: 103
+        end_line: 106
+        anchor: "new BCryptPasswordEncoder()"
+      - path: src/main/java/com/stockguard/user/AuthService.java
+        start_line: 25
+        end_line: 26
+        anchor: "BCRYPT_MAX_BYTES"
+      - path: src/main/java/com/stockguard/user/AuthService.java
+        start_line: 85
+        end_line: 89
+        anchor: "requireBcryptCompatible"
+
+  - id: sg-audit
+    repo: stockguard
+    tr: Denetim kayıtları iş işlemiyle aynı transaction içinde nasıl yazılıyor?
+    en: How are audit events written in the same transaction as the business change?
+    gold:
+      - path: src/main/java/com/stockguard/audit/AuditTrail.java
+        start_line: 14
+        end_line: 19
+        anchor: "MANDATORY propagation makes the event part of the business transaction"
+      - path: src/main/java/com/stockguard/audit/AuditTrail.java
+        start_line: 31
+        end_line: 35
+        anchor: "Propagation.MANDATORY"
+
+  - id: sg-stale-version
+    repo: stockguard
+    tr: Ürün güncellemelerinde eski sürüme dayanan değişiklikler nasıl reddediliyor?
+    en: How are product edits based on a stale version rejected?
+    gold:
+      - path: src/main/java/com/stockguard/catalog/ProductService.java
+        start_line: 38
+        end_line: 54
+        anchor: "ErrorCode.STALE_VERSION"
+      - path: src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java
+        start_line: 49
+        end_line: 52
+        anchor: "handleOptimisticLock"
+
+  - id: sg-invariants
+    repo: stockguard
+    tr: Stok değişmezleri yazma kodundan bağımsız olarak nasıl doğrulanıyor?
+    en: How are stock invariants verified independently of the write path?
+    gold:
+      - path: src/main/java/com/stockguard/inventory/ConsistencyService.java
+        start_line: 11
+        end_line: 24
+        anchor: "Recomputes the invariants from the raw tables"
+      - path: src/main/java/com/stockguard/inventory/ConsistencyService.java
+        start_line: 102
+        end_line: 118
+        anchor: "Isolation.REPEATABLE_READ"
+
+  - id: sg-simulation-race
+    repo: stockguard
+    tr: Eşzamanlılık simülasyonu tüm istekleri aynı anda nasıl başlatıyor?
+    en: How does the concurrency simulation release all requests at the same time?
+    gold:
+      - path: src/main/java/com/stockguard/simulation/SimulationService.java
+        start_line: 118
+        end_line: 145
+        anchor: "CountDownLatch gate"
+
+  - id: sg-first-admin
+    repo: stockguard
+    tr: İlk yönetici hesabı nasıl oluşturuluyor?
+    en: How is the first administrator account created?
+    gold:
+      - path: src/main/java/com/stockguard/user/AdminSeeder.java
+        start_line: 11
+        end_line: 33
+        anchor: "Creates the first administrator"
+      - path: src/main/java/com/stockguard/user/AuthService.java
+        start_line: 57
+        end_line: 62
+        anchor: "seedAdmin"
+
+  # ----------------------------------------------------------------- SyncNotes
+  - id: sn-realtime
+    repo: syncnotes
+    tr: SyncNotes gerçek zamanlı düzenlemeyi nasıl yapıyor?
+    en: How does SyncNotes implement real-time collaborative editing?
+    gold:
+      - path: apps/collab/src/server.ts
+        start_line: 33
+        end_line: 101
+        anchor: "new Server({"
+      - path: apps/web/src/collab/use-collaboration.ts
+        start_line: 141
+        end_line: 177
+        anchor: "new HocuspocusProvider({"
+
+  - id: sn-user-permissions
+    repo: syncnotes
+    tr: Kullanıcı yetkileri nerede kontrol ediliyor?
+    en: Where are user permissions checked?
+    gold:
+      - path: apps/api/src/common/note-access/note-access.service.ts
+        start_line: 25
+        end_line: 37
+        anchor: "async require(userId"
+      - path: apps/api/src/common/note-access/note-role.guard.ts
+        start_line: 16
+        end_line: 27
+        anchor: "this.access.require"
+      - path: apps/collab/src/extensions/access-control.ts
+        start_line: 149
+        end_line: 162
+        anchor: "async beforeHandleMessage"
+
+  - id: sn-revocation
+    repo: syncnotes
+    tr: Açık WebSocket oturumunda bir üyenin erişimi kaldırılınca ne oluyor?
+    en: What happens to an open WebSocket session when a member's access is revoked?
+    gold:
+      - path: apps/collab/src/extensions/access-control.ts
+        start_line: 173
+        end_line: 184
+        anchor: "case 'member.removed'"
+      - path: apps/collab/src/extensions/access-control.ts
+        start_line: 80
+        end_line: 122
+        anchor: "async sweep()"
+      - path: apps/api/src/notes/members.service.ts
+        start_line: 91
+        end_line: 98
+        anchor: "type: 'member.removed'"
+
+  - id: sn-lost-updates
+    repo: syncnotes
+    tr: İki sunucu aynı notu kaydederken güncellemelerin kaybolması nasıl önleniyor?
+    en: How are lost updates prevented when two server instances store the same note?
+    gold:
+      - path: apps/collab/src/extensions/persistence.ts
+        start_line: 20
+        end_line: 30
+        anchor: "Merge-on-write"
+      - path: apps/collab/src/extensions/persistence.ts
+        start_line: 53
+        end_line: 61
+        anchor: "FOR UPDATE"
+
+  - id: sn-redis-outage
+    repo: syncnotes
+    tr: Redis kesildiğinde işbirliği sunucusu nasıl çalışmaya devam ediyor?
+    en: How does the collaboration server keep working during a Redis outage?
+    gold:
+      - path: apps/collab/src/extensions/resilient-redis.ts
+        start_line: 32
+        end_line: 45
+        anchor: "hardened so that a Redis outage degrades"
+      - path: apps/collab/src/extensions/degraded-reconciler.ts
+        start_line: 19
+        end_line: 32
+        anchor: "Pulls document state through Postgres"
+
+  - id: sn-offline
+    repo: syncnotes
+    tr: Çevrimdışı düzenlemeler nerede saklanıyor?
+    en: Where are offline edits stored?
+    gold:
+      - path: apps/web/src/collab/use-collaboration.ts
+        start_line: 102
+        end_line: 107
+        anchor: "new IndexeddbPersistence(localReplicaName"
+      - path: apps/web/src/lib/offline-store.ts
+        start_line: 3
+        end_line: 9
+        anchor: "localReplicaName"
+
+  - id: sn-ticket
+    repo: syncnotes
+    tr: WebSocket bağlantısı için kimlik doğrulama bileti nasıl üretiliyor ve doğrulanıyor?
+    en: How is the WebSocket authentication ticket issued and verified?
+    gold:
+      - path: apps/api/src/notes/collab-ticket.service.ts
+        start_line: 13
+        end_line: 44
+        anchor: "Issues the short-lived, single-document ticket"
+      - path: apps/collab/src/ticket.ts
+        start_line: 10
+        end_line: 40
+        anchor: "jwt.verify(token, secret"
+      - path: apps/collab/src/extensions/access-control.ts
+        start_line: 124
+        end_line: 147
+        anchor: "verifyTicket(token"
+
+  - id: sn-refresh-reuse
+    repo: syncnotes
+    tr: Refresh token'ın yeniden kullanılması nasıl tespit ediliyor?
+    en: How is refresh token reuse detected?
+    gold:
+      - path: apps/api/src/auth/auth.service.ts
+        start_line: 116
+        end_line: 157
+        anchor: "Refresh token reuse detected"
+
+  - id: sn-csrf
+    repo: syncnotes
+    tr: CSRF koruması nasıl uygulanıyor?
+    en: How is CSRF protection implemented?
+    gold:
+      - path: apps/api/src/common/guards/csrf.guard.ts
+        start_line: 8
+        end_line: 12
+        anchor: "timingSafeEqual(Buffer"
+      - path: apps/api/src/common/guards/csrf.guard.ts
+        start_line: 14
+        end_line: 32
+        anchor: "Double-submit-cookie"
+
+  - id: sn-password
+    repo: syncnotes
+    tr: Şifreler nasıl hashleniyor ve girişte kullanıcı tahmini nasıl önleniyor?
+    en: How are passwords hashed and how is user enumeration prevented at login?
+    gold:
+      - path: apps/api/src/auth/password.service.ts
+        start_line: 4
+        end_line: 12
+        anchor: "argon2.argon2id"
+      - path: apps/api/src/auth/password.service.ts
+        start_line: 33
+        end_line: 37
+        anchor: "verifyDummy"
+      - path: apps/api/src/auth/auth.service.ts
+        start_line: 88
+        end_line: 92
+        anchor: "this.passwords.verifyDummy"
+
+  - id: sn-version-restore
+    repo: syncnotes
+    tr: Bir not eski sürümüne nasıl geri döndürülüyor?
+    en: How is a note restored to an earlier version?
+    gold:
+      - path: apps/collab/src/versions.ts
+        start_line: 46
+        end_line: 64
+        anchor: "async restore("
+      - path: apps/collab/src/ydoc.ts
+        start_line: 67
+        end_line: 94
+        anchor: "applyContentReplacement"
+
+  - id: sn-auto-version
+    repo: syncnotes
+    tr: Otomatik sürümler ne zaman oluşturuluyor ve eskileri nasıl temizleniyor?
+    en: When are automatic version snapshots created and how are old ones pruned?
+    gold:
+      - path: apps/collab/src/extensions/persistence.ts
+        start_line: 103
+        end_line: 127
+        anchor: "maybeAutoVersion"
+      - path: apps/collab/src/versions.ts
+        start_line: 66
+        end_line: 76
+        anchor: "pruneAuto"
+
+  - id: sn-presence
+    repo: syncnotes
+    tr: Notta bulunan diğer kullanıcılar nasıl gösteriliyor?
+    en: How are the other users currently in a note shown?
+    gold:
+      - path: apps/web/src/collab/presence.tsx
+        start_line: 11
+        end_line: 34
+        anchor: "usePresence"
+      - path: apps/web/src/collab/presence.tsx
+        start_line: 36
+        end_line: 56
+        anchor: "PresenceAvatars"
+
+  - id: sn-viewer-readonly
+    repo: syncnotes
+    tr: Görüntüleyici rolündeki bir kullanıcının düzenleme yapması nasıl engelleniyor?
+    en: How are viewers prevented from editing a note?
+    gold:
+      - path: apps/collab/src/extensions/access-control.ts
+        start_line: 124
+        end_line: 147
+        anchor: "connectionConfig.readOnly = !canEdit(role)"
+      - path: apps/collab/src/extensions/access-control.ts
+        start_line: 209
+        end_line: 217
+        anchor: "connection.readOnly = readOnly"
+
+  - id: sn-session-refresh
+    repo: syncnotes
+    tr: Frontend süresi dolan oturumu nasıl yeniliyor?
+    en: How does the frontend refresh an expired session?
+    gold:
+      - path: apps/web/src/lib/api.ts
+        start_line: 55
+        end_line: 63
+        anchor: "refreshSession"
+      - path: apps/web/src/lib/api.ts
+        start_line: 87
+        end_line: 90
+        anchor: "retryOn401"
+
+# The repository does not do these things. Retrieval metrics do not apply; the
+# correct behaviour of `ask` is to say that the sources are insufficient.
+unanswerable:
+  - id: sg-neg-kafka
+    repo: stockguard
+    tr: StockGuard Kafka mesajlarını nasıl tüketiyor?
+    en: How does StockGuard consume Kafka messages?
+    absent_terms: [kafka]
+
+  - id: sg-neg-stripe
+    repo: stockguard
+    tr: StockGuard'da Stripe ile ödeme alma akışı nasıl çalışıyor?
+    en: How does the Stripe payment flow work in StockGuard?
+    absent_terms: [stripe, payment]
+
+  - id: sg-neg-email
+    repo: stockguard
+    tr: Rezervasyon onay e-postası nasıl gönderiliyor?
+    en: How are reservation confirmation emails sent?
+    absent_terms: [email, smtp, javamail, mailsender]
+
+  - id: sn-neg-graphql
+    repo: syncnotes
+    tr: SyncNotes'ta GraphQL şeması nerede tanımlı?
+    en: Where is the GraphQL schema defined in SyncNotes?
+    absent_terms: [graphql]
+
+  - id: sn-neg-2fa
+    repo: syncnotes
+    tr: İki faktörlü doğrulama nasıl çalışıyor?
+    en: How does two-factor authentication work?
+    absent_terms: [totp, two-factor, twofactor, 2fa, otp]
+
+  - id: sn-neg-s3
+    repo: syncnotes
+    tr: Not ekleri S3'e nasıl yükleniyor?
+    en: How are note attachments uploaded to S3?
+    absent_terms: [s3, multer, attachment, attachments]

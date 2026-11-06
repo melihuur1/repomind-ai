@@ -83,7 +83,8 @@ def classify_path(path: str, size: int = 0) -> PathDecision:
     name = pure.name.lower()
     language = LANGUAGE_BY_EXTENSION.get(pure.suffix.lower())
     name_parts = name.split(".")
-    if name_parts[0] in SENSITIVE_FILE_STEMS or "env" in name_parts[:-1]:
+    # "prod.env.js" holds values; "env.ts" is usually the schema that validates them.
+    if name_parts[0] in SENSITIVE_FILE_STEMS or "env" in name_parts[1:-1]:
         return PathDecision(None, "sensitive_name")
     if language is None:
         return PathDecision(None, "unsupported_language")
