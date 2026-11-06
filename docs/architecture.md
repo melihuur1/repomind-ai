@@ -221,9 +221,10 @@ Free memory here means the smaller of free physical memory and free commit space
 
 ## Known limitations
 
-- **A verified line is not a proven answer.** The lines are real, and choosing them is still a judgement. In the pilot, the model chose lines that do not touch the gold span for 7 of 12 Turkish questions. See [evaluation.md](evaluation.md#pilot-answers-made-of-real-lines).
-- **The right lines often never reach the model.** On the fourth question set, when it was measured, search missed them for 5 of 16 Turkish questions, and passage selection for 4 more. After later work on questions already read, they still miss 17 of 85. A short line that a question describes without naming, such as `token-ttl`, is still hard to find.
-- **The evidence rule drops some right answers.** It asks for 2 words shared with the question, which a short line often does not have. For 12 of 85 questions it would drop the right lines if the model chose them.
+- **A verified line is not a proven answer.** The lines are real, and choosing them is still a judgement. On the [final question set](evaluation.md#fifth-question-set), 4 of 16 answers did not touch the expected source, and 2 of 8 unanswerable questions got an answer.
+- **The right lines often never reach the model.** On that set, search missed them for 3 of 16 Turkish questions, and passage selection for 3 more. A short line that a question describes without naming, such as `token-ttl`, is still hard to find.
+- **The evidence rule counts words, not meaning.** It asks for 2 words shared with the question, which a short line often does not have. For 12 of 85 questions already read it would drop the right lines if the model chose them, although it wrongly rejected none on the final set.
+- **The model's notes can be false.** They are labelled as unverified. The code catches invented names and numbers, and not a false statement made with real ones.
 - **The refusal rules look at words, not meaning.** They miss questions whose words appear in nearby code. Features next to existing code are the hard case: "how are notes in the trash restored?" passes because notes and deletion both exist. They also refuse some answerable questions.
 - **Declining depends on the model.** `qwen2.5:3b` never chose "none" in the pilot, in 13 requests. `qwen2.5:7b` did so in 5 of 16, every time the right lines were absent.
 - **Recall@5 is good on the second set and moderate on the first**, 0.67 to 0.83 against 0.50 to 0.58. See [evaluation.md](evaluation.md).

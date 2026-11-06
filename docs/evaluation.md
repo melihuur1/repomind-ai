@@ -11,8 +11,8 @@ The goal is to reach the right code reliably, explain it correctly, and know how
 | Is a reranker worth keeping? | **No.** No clear gain across both question sets, at about 1,000 times the latency. |
 | Is hybrid search better? | **Not demonstrably.** Most differences are within noise. |
 | Are citations real? | **Yes.** Every search result and every citation shown with an answer matches Git at the indexed commit. |
-| Are AI answers reliable? | **Not proven.** On a new set of 16 answerable questions, `qwen2.5:7b` found the right source for 6, against a target of at least 8, and showed a wrong one for 3, against at most 2. |
-| Does it refuse what it cannot answer? | **With 7B, so far yes:** 8 of 8 on the new set, and 28 or 29 of 30 on the earlier ones. It also refuses some answerable questions. |
+| Are AI answers reliable? | **No.** On the newest set of 16 answerable questions, `qwen2.5:7b` found the right source for 8, which meets its target, and showed a wrong one for 4, against at most 2. See [the fifth question set](#fifth-question-set). |
+| Does it refuse what it cannot answer? | **Usually, not always:** 6 of 8 on the newest set, and 8 of 8 on the set before it. Features next to existing code are the hard case. It also refuses some answerable questions. |
 | Did the search changes measured on the fourth set help? | **Not clearly.** They helped on the earlier sets they were tuned on, but on the new set the right lines reached the model no more often. |
 | Did the search work after that help? | **On the questions it was tuned on, yes:** the right code reached the passages for 65 to 68 of 85 questions, depending on the run of the translations, up from 61, with no more unanswerable questions let through. It has had no independent test. See [the details](#search-work-after-the-fourth-set). |
 | Should the evidence rule be loosened? | **Not on this evidence.** A flexible rule added 4 correct sources and 3 wrong ones on 21 selected questions, which misses the bar set in advance. See [the trials](#two-short-trials). |
@@ -544,6 +544,102 @@ The first two trials took about 5 minutes, and the full comparison about 7.5, wi
 - The check on notes treats `15m` as no number at all, so a true note saying 15 minutes was dropped. The lines were still shown.
 - The glossary reads `NOT` in `RESERVATION_NOT_FOUND` as the Turkish word "not", meaning note.
 
+## Fifth question set
+
+**It did not pass.** This is the final measurement of the engine, run once, with the system fixed at tag `v5-evaluated` and [the questions and bar](../eval/PILOT_V5.md) committed before any run. No setting was tuned on these questions. **The same developer wrote them and the system, and one reviewer graded the answers, so this is not an independent external test.** 24 questions cannot prove general reliability.
+
+| 16 answerable, 8 unanswerable, Turkish, `qwen2.5:7b` | Result | Target |
+| --- | --- | --- |
+| Correct source | **8** | at least 8: met |
+| Wrong source | **4** | at most 2: **not met** |
+| No answer, an unnecessary refusal | 4 | |
+| Answer rate on answerable questions | 75% | |
+| Unanswerable refused | **6** | at least 7: **not met** |
+| Invalid file or line references | **0 of 120** | 0: met |
+
+95% intervals on sets this small are wide: about 28% to 72% for 8 of 16, 10% to 50% for 4 of 16, and 41% to 93% for 6 of 8.
+
+### Lines that exist, and lines that answer
+
+All 120 references match Git. That says only that the lines exist. Whether they answer the question was graded separately, without labels:
+
+| Answers shown | Count | Questions |
+| --- | --- | --- |
+| Correct | 9 | `v5-sg-api-language`, `v5-sg-jwt-secret-length`, `v5-sg-page-envelope`, `v5-sg-simulation-default`, `v5-sn-email-unique`, `v5-sn-logout-expired`, `v5-sn-nonmember-status`, `v5-sn-version-kinds`, `v5-sn-version-list-limit` |
+| Partly correct | 1 | `v5-sg-sku-locked` |
+| Wrong | 2 | `v5-sg-movements-order`, `v5-sn-log-format` |
+| Not answered | 4 | `v5-sg-root-redirect`, `v5-sg-zero-quantity`, `v5-sn-migrate-first`, `v5-sn-version-viewer` |
+| On an unanswerable question, claiming the feature | 1 | `v5-sg-neg-category` |
+| On an unanswerable question, true statements about nearby code | 1 | `v5-sg-neg-price` |
+
+**Two of the 4 wrong sources are better than the label says, and the labels stay.** `v5-sn-version-kinds` chose `apps/collab/src/versions.ts:7`, which does answer the question, but that line was not listed as an acceptable source in advance. `v5-sg-sku-locked` chose the unique constraint, and its note wrongly reasoned that unique means unchangeable, reaching the right conclusion for a false reason.
+
+### Where each answerable question ended
+
+| Stage | Count | Questions |
+| --- | --- | --- |
+| Search missed the gold code | 3 | `v5-sg-zero-quantity`, `v5-sn-version-viewer`, `v5-sn-migrate-first` |
+| Window selection lost it | 3 | `v5-sg-sku-locked`, `v5-sg-root-redirect`, `v5-sn-version-kinds` |
+| Offered, and the model chose other lines | 2 | `v5-sg-movements-order`, `v5-sn-log-format` |
+| Offered, and the model declined | 0 | |
+| Offered, and the evidence rule refused or dropped it | 0 | |
+| Offered, and chosen correctly | 8 | |
+
+**The evidence rule wrongly rejected nothing here.** All 4 unnecessary refusals are questions whose right lines were not offered. The model declined 2, the rule refused 1 before the model, and the rule dropped the model's choice on 1. This differs from the older sets, where it would drop the right lines for 12 of 85, a figure from questions the rule's weakness was studied on.
+
+**When the right lines were offered, the model chose them 8 times of 10.** When they were not, it answered from other lines on 2 of 6 questions.
+
+### Unanswerable questions
+
+The model declined 5, and a rule refused 1 before the model. The other 2 reached an answer, because their lines passed the evidence rule and the model chose them. `v5-sg-neg-category` claimed that a service filters products, from a SQL `FILTER` clause. `v5-sg-neg-price` chose an update method while its own note said the lines do not show how a price changes. Refusing all 8 on the fourth set did not hold here.
+
+### Sources to review
+
+There were 2, and neither touches the right lines. `v5-sn-version-kinds` kept one beside its answer, showing the `kind` column, which partly answers. `v5-sn-migrate-first` had one showing database volumes, which does not answer. The earlier 5 correct of 6 came from a sample picked for the rule dropping right lines, and it did not repeat. On this set the label did its job, because neither was presented as an answer, but they helped no one.
+
+### Compared with the fourth set
+
+| | Fourth set | Fifth set |
+| --- | --- | --- |
+| Correct source, of 16 | 6 | 8 |
+| Wrong source, of 16 | 3 | 4 |
+| No answer, of 16 | 7 | 4 |
+| Unanswerable refused, of 8 | 8 | 6 |
+| Invalid references | 0 | 0 |
+| Graded correct, partly, wrong | 4, 3, 2 | 9, 1, 2 |
+
+These are different questions, and the fifth set may simply be easier, with more single facts and more named terms. On this size the differences cannot be told from chance. What can be said is that the system answered more often and refused less often, and that wrong sources did not fall.
+
+### Time and resources
+
+| | |
+| --- | --- |
+| Whole run | about 2.5 minutes, with no memory stop |
+| Mean seconds per question | 6.6: 7.6 answerable, 4.7 unanswerable, at most 13.0 |
+| Tokens | 22,125 in, 1,173 out |
+| Lowest available RAM | 12.37 GB |
+| Lowest free commit | 19.54 GB |
+| `vmmemWSL`, peak working set, private | 6.78 GB, 10.29 GB |
+| Container, peak | 0.92 GiB |
+| VRAM, peak | 2,810 MiB |
+| GPU, peak | 91%, with the model split 46% CPU and 54% GPU |
+| Python, peak | 1,051 MB |
+
+### Known problems, left as they are
+
+Nothing was changed because of this result, and no further tuning follows from it. These are the known problems as the engine goes into the product phase:
+
+1. **AI answers are not reliable.** No configuration has passed its bar on any question set, so a chosen line must be read, not trusted.
+2. **Real lines can be about something else.** Every reference is real, and in this run 4 of 16 did not touch the expected source.
+3. **The model's notes can be false.** One claimed a feature that does not exist, and another reasoned wrongly from a constraint. They are labelled as unverified, and the code does not catch a false statement made with real names.
+4. **Unanswerable questions next to existing code can get an answer.** 2 of 8 here.
+5. **Search and window selection lose the right code.** 6 of 16 here. A short line that a question describes without naming, such as `token-ttl`, is hard to find.
+6. **Translation changes meanings, and does not repeat.** Here the Turkish word "not" became "pull request comment". `v5-sg-zero-quantity` became "database amount", and there the question shares the blame, because it was written without a comma after "Veritabanı". It stays as written. At temperature 0, 20 of 123 translations still differed between runs, so a difference of 2 or 3 of 85 between two runs means nothing.
+7. **The evidence rule counts words, not meaning.** It does not separate right from wrong, and it rejected right lines on older questions.
+8. **Sources to review are often not useful.** They exist so that a reader can look, and they are not answers.
+9. **Small defects found and left:** the note check treats `15m` as no number, and the glossary reads `NOT` in an identifier as the Turkish word for note.
+10. **The evaluation is small,** covers two repositories, and was written and graded by one person.
+
 # Phase 1
 
 The rest of this document is the phase 1 evaluation, kept as the baseline. Its statements about what was planned next, such as a reranker being the most promising step, describe what was known at that time.
@@ -759,6 +855,7 @@ Stored results are in [`eval/results/`](../eval/results):
 | `v2-ask-phase1-3b.json`, `v2-ask-phase2-3b.json`, `v2-grades-3b-tr.json` | 3B answers on the second set and their grades |
 | `v3-old-3b-tr.json`, `v3-nollm-*.json`, `v3-new-3b-*.json`, `v3-new-7b-tr.json`, `v3-grades-*.json` | The pilot and its grades |
 | `v4-baseline-7b-tr.json`, `v4-improved-7b-tr.json`, `v4-grades-7b-tr.json` | The fourth question set and its grades |
+| `v5-7b-tr.json`, `v5-grades-7b-tr.json`, `v5-review-grades*.json`, `resources/stats-v5-7b-tr.csv` | The fifth question set, its grades and its memory samples |
 | `dev-phase5-*.json`, `resources/stats-dev-phase5-*.csv` | The short trials and the full translation comparison, on questions already read, not independent |
 | `dev-phase4-*.json` | Search before and after the latest work, with no model, on questions already read, not independent |
 | `dev-phase3-*.json`, `dev-improved-7b-v3.json` | Tuning runs for the search changes measured on the fourth set, not independent |

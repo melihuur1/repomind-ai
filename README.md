@@ -2,11 +2,25 @@
 
 **Intelligent GitHub repository analyzer.** Ask where and how something is done in a codebase, and get the code that answers it, with file and line citations verified against the exact Git commit.
 
-> **Status: second phase.** This is the retrieval and answering engine with a command line interface. It is measured on real repositories, and the results below are reported as they are, including where they are weak. **Search works and is useful. AI answers are not reliable yet.** There is no web application yet, by design.
+> **Status: the engine is finished and measured, and the product phase is next.** This is the retrieval and answering engine with a command line interface. It is measured on real repositories, and the results below are reported as they are, including where they are weak. **Search works and is useful. AI answers are not reliable, and every line must be read.** The web application is [planned](docs/product-plan.md), and not built yet.
 
 ## Results
 
-Measured on two real projects: [StockGuard](https://github.com/melihuur1/stockguard) (Java) and [SyncNotes](https://github.com/melihuur1/syncnotes) (TypeScript). The numbers below come from a second question set of 26 answerable and 10 unanswerable questions, written and committed before it was first run, and not used for any tuning.
+**The final measurement did not pass.** A last set of 24 questions, committed before any run and run once on the fixed system, gave:
+
+| Final set, Turkish, `qwen2.5:7b` | Result | Target |
+| --- | --- | --- |
+| Correct source, of 16 | 8 | at least 8 |
+| Wrong source, of 16 | **4** | at most 2 |
+| No answer, of 16 | 4 | |
+| Unanswerable refused, of 8 | **6** | at least 7 |
+| Invalid file or line references | 0 of 120 | 0 |
+| Graded correct, partly correct, wrong | 9, 1, 2 | |
+| Mean seconds per question | 6.6 | |
+
+Every line shown exists in Git, and that does not mean it answers the question. The same developer wrote these questions and the system, and one reviewer graded the answers, so this is not an independent external test. See [the details and the known problems](docs/evaluation.md#fifth-question-set).
+
+The rest of this section is how the project got there. Measured on two real projects: [StockGuard](https://github.com/melihuur1/stockguard) (Java) and [SyncNotes](https://github.com/melihuur1/syncnotes) (TypeScript). The numbers below come from a second question set of 26 answerable and 10 unanswerable questions, written and committed before it was first run, and not used for any tuning.
 
 Hybrid search, first phase against current:
 
@@ -156,13 +170,14 @@ The full method, every stage of the investigation and the rejected ideas are in 
 
 ## Known limitations
 
-- **AI answers are not proven reliable.** On the newest question set, `qwen2.5:7b` found the right source for 6 of 16 questions and showed a wrong one for 3. It refused 8 of 8 unanswerable ones.
-- **The right lines often never reach the model.** For 9 of those 16 questions, search or passage selection lost them. Later search work reduced this on questions already read, and it has had no independent test.
+- **AI answers are not reliable.** On the final question set, `qwen2.5:7b` found the right source for 8 of 16 questions and showed a wrong one for 4. It refused 6 of 8 unanswerable ones. No configuration has passed its bar on any set.
+- **The right lines often never reach the model.** For 6 of those 16 questions, search or passage selection lost them.
+- **The model's notes can be false.** They are labelled as unverified, and one on the final set claimed a feature that does not exist.
 - **`qwen2.5:3b` does not decline.** Asked to choose lines or none, it chose every time, so with that model all refusals come from mechanical rules.
 - **A verified line is not a proven answer.** Lines are checked against Git. Whether they answer the question is not checked.
 - The plan for improving answers is in [docs/answer-plan.md](docs/answer-plan.md).
 - Turkish retrieval is weaker than English (Hit@5 0.692 against 0.846) and depends on an imperfect translation, which on the pilot still changed some questions' meaning.
-- Answers took about 6 seconds per question with 7B partly on an RTX 3050, and about 14 with 3B on an 8-core CPU.
+- Answers took about 7 seconds per question with 7B partly on an RTX 3050, and about 14 with 3B on an 8-core CPU.
 - The evaluation is small, covers two repositories and was labelled and graded by one reviewer. The gold labels are not exhaustive, so some reasonable results count as misses.
 - Secret detection recognizes known token formats and literal credential keys, not every hardcoded password.
 

@@ -1,0 +1,114 @@
+[
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sg-api-language",
+  "language": "tr",
+  "kind": "yaml",
+  "grade": "correct",
+  "answer": "src/main/resources/application.yml:26-29\n  web:\n    # One language for the whole API, whatever the client's Accept-Language says.\n    locale: en\n    locale-resolver: fixed\n\nModel's reading, not verified: `spring.web.locale` ayarlı olarak `en` olarak belirlendi ve `locale-resolver` de sabit olarak yapılandırıldı.`"
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sg-jwt-secret-length",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "src/main/java/com/stockguard/common/config/StockGuardProperties.java:21-25\n    public record Security(\n            @NotBlank @Size(min = 32, message = \"must be at least 32 characters for HS256\") String jwtSecret,\n            @NotNull Duration tokenTtl,\n            @Valid @NotNull Admin admin) {\n    }\n\nModel's reading, not verified: `StockGuardProperties.Security.jwtSecret` minimum 32 karakter olmalıdır."
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sg-movements-order",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "src/main/resources/db/migration/V4__ledger_and_audit.sql:1-5\n-- Append-only ledger of every stock change. Each row is inserted while the stock row lock is held, so\n-- per product the identity order equals the commit order and the *_after columns form a verifiable chain.\nCREATE TABLE stock_movements (\n    id              BIGINT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n    product_id      UUID         NOT NULL REFERENCES products (id),\n\nModel's reading, not verified: Tablo `stock_movements` her ürün için kimlik sırası ile kaydedilen hareketleri saklar ve bu sıraya bağlı olarak veriler getirilir."
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sg-neg-category",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "fabricated",
+  "answer": "src/main/java/com/stockguard/inventory/ConsistencyService.java:83-87\n                      JOIN stock_levels s ON s.product_id = r.product_id\n                      CROSS JOIN LATERAL (\n                           SELECT COUNT(*) FILTER (WHERE m.type = 'RESERVED') AS reserved,\n                                  COUNT(*) FILTER (WHERE m.type = 'CONFIRMED') AS confirmed,\n                                  COUNT(*) FILTER (WHERE m.type = 'CANCEL_RELEASED') AS cancelled,\n\nModel's reading, not verified: `ConsistencyService` adlı servis, ürünleri farklı stok durumlarına göre filtreliyor."
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sg-neg-price",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "harmless",
+  "answer": "src/main/java/com/stockguard/catalog/ProductController.java:57-61\n    @PutMapping(\"/{id}\")\n    @Operation(operationId = \"updateProduct\", summary = \"Update a product (admin). Fails with 409 if someone else changed it first.\")\n    public ProductResponse update(\n            @PathVariable UUID id, @Valid @RequestBody UpdateProductRequest request, @AuthenticationPrincipal Jwt jwt) {\n        Product product = products.update(id, request.name(), request.description(), request.version(), Actor.from(jwt).userId());\n\nModel's reading, not verified: `ProductController.update` metodu ürün bilgilerini günceller, ancak fiyatın nasıl güncellendiği hakkında bilgi vermez."
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sg-page-envelope",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "src/main/java/com/stockguard/common/web/PageResponse.java:7-11\n/** Stable pagination envelope, so the API contract does not depend on Spring Data's internal Page format. */\npublic record PageResponse<T>(List<T> items, int page, int size, long totalElements, int totalPages) {\n\n    public static <E, T> PageResponse<T> of(Page<E> page, Function<E, T> mapper) {\n        return new PageResponse<>(\n\nModel's reading, not verified: `Stable pagination envelope, so the API contract does not depend on Spring Data's internal Page format.` bu satır gösterir ki Spring'in kendi sayfa biçimi doğrudan dönmez, yerine daha istikrarlı bir paket kullanılarak API sözleşmesi Spring Data'nın iç çubukları bağımlılığını ortadan kaldırır."
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sg-simulation-default",
+  "language": "tr",
+  "kind": "yaml",
+  "grade": "correct",
+  "answer": "src/main/resources/application.yml:67-70\n  simulation:\n    enabled: ${STOCKGUARD_SIMULATION_ENABLED:false}\n    # Comma separated base URLs. Empty means \"this instance only\".\n    targets: ${STOCKGUARD_SIMULATION_TARGETS:}\n\nModel's reading, not verified: `stockguard.simulation.enabled: ${STOCKGUARD_SIMULATION_ENABLED:false}` varsayilan olarak devre dışı kalır."
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sg-sku-locked",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "src/main/resources/db/migration/V2__catalog_and_stock.sql:7-11\n    version     BIGINT       NOT NULL,\n    created_at  TIMESTAMPTZ  NOT NULL,\n    updated_at  TIMESTAMPTZ  NOT NULL,\n\n    CONSTRAINT uq_products_sku UNIQUE (sku)\n\nModel's reading, not verified: `uq_products_sku UNIQUE (sku)` ifadesiSKU kodun benzersiz olduğunu gösterir ve dolayısıyla değiştirilemeyeceğini ima eder."
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sn-email-unique",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "correct",
+  "answer": "apps/api/src/auth/auth.service.ts:75-79\n      // Unique violation from a concurrent registration with the same e-mail.\n      if ((err as { code?: string }).code === 'P2002') {\n        throw new ConflictException('An account with this e-mail already exists');\n      }\n      throw err;\n\nModel's reading, not verified: `AuthService.register` kontrol eder ve aynı e-posta adresiyle daha önce bir hesap oluşturulmuş olup olmadığını."
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sn-log-format",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "apps/collab/src/server.ts:112-116\n    async listen() {\n      await server.listen(config.COLLAB_PORT);\n      const port = server.address.port;\n      logger.info('collaboration server listening', { port });\n      return port;\n\nModel's reading, not verified: `logger.info('collaboration server listening', { port });` ile sunucunun dinlemesini kaydeder."
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sn-logout-expired",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "apps/api/src/auth/auth.controller.ts:87-90\n  /** Public so that a user with an expired access token can still log out cleanly. */\n  @Public()\n  @Post('logout')\n  @HttpCode(204)\n\nModel's reading, not verified: `Public` olarak tanımlanmış olması, süresi dolmuş erişim anahtarıyla da çıkış yapılabilmesini gösterir."
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sn-nonmember-status",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "apps/api/src/common/note-access/note-access.service.ts:25-29\n  /**\n   * Returns the caller's role or throws:\n   * - 404 when the caller is not a member (do not reveal that the note exists)\n   * - 403 when the caller is a member without the required role\n   */\n\nModel's reading, not verified: `NoteAccessService` hata durumunu 404 döndürürken, kullanıcı bir notun üyesi değilse."
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sn-version-kinds",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "correct",
+  "answer": "apps/collab/src/versions.ts:7-7\nexport type VersionKind = 'MANUAL' | 'AUTO' | 'RESTORE';"
+ },
+ {
+  "run": "v5-7b-tr.json",
+  "question": "v5-sn-version-list-limit",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "apps/api/src/notes/versions.service.ts:15-19\n  async list(noteId: string): Promise<VersionSummaryDto[]> {\n    const versions = await this.prisma.db.noteVersion.findMany({\n      where: { noteId },\n      orderBy: { createdAt: 'desc' },\n      take: 100,\n\nModel's reading, not verified: `take: 100` limitlerini kullanarak en fazla 100 sürüm listelenir."
+ }
+]

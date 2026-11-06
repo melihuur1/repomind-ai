@@ -1,5 +1,7 @@
 # Rules for the fifth question set
 
+**Result: it did not pass.** See [the results](../docs/evaluation.md#fifth-question-set). The rest of this page is as committed before the run.
+
 These rules were committed with [`questions_v5.yaml`](questions_v5.yaml), before any search or model run on those questions.
 
 **24 questions, written by the same developer who built the system and graded by one reviewer, are not an independent external test.** They were written from code regions no earlier gold span covers, and no setting was tuned on them, so this is the fairest measure available here. It cannot prove general reliability.

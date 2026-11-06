@@ -98,7 +98,9 @@ The pilot met one target of four. It also changed what the plan assumed:
 
 [Later search work](evaluation.md#search-work-after-the-fourth-set), with no model, took the right code reaching the passages from 61 to between 65 and 68 of 85 questions already read. That is not independent. Any claim about it needs a new question set, because all four have been read.
 
-[Short trials](evaluation.md#two-short-trials) then tested the evidence rule and glossary terms in the translation prompt. Neither passed its bar, so the strict rule and the current prompt stay, and a choice the rule turns down is shown apart as a source to review. The next step is the owner's decision. A fifth question set has not been written.
+[Short trials](evaluation.md#two-short-trials) then tested the evidence rule and glossary terms in the translation prompt. Neither passed its bar, so the strict rule and the current prompt stay, and a choice the rule turns down is shown apart as a source to review. 
+
+The [fifth question set](evaluation.md#fifth-question-set) then measured the fixed system once, and it did not pass: 8 correct sources of 16, 4 wrong, and 6 of 8 unanswerable questions refused. **This plan stops here.** No further question set, model comparison or threshold tuning follows from it, and the next phase is the [product](product-plan.md).
 
 ## Trying 7B safely
 
