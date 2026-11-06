@@ -30,10 +30,9 @@ flowchart LR
     DB --> S2
 
     subgraph Ask["python -m repomind ask"]
-        RRF --> P[One source per request, as untrusted data]
-        P --> L[Optional LLM: statement and quote]
-        L --> V[Backend finds the quote, checks Git]
-        V --> A[Answer assembled without the model, or I do not know]
+        RRF --> P[Best 5 short passages, no LLM, checked against Git]
+        P --> L[Optional LLM chooses passages, or none]
+        L --> A[The chosen lines, a labelled note, or I do not know]
     end
 ```
 
@@ -125,21 +124,23 @@ These ideas were tested and rejected, and their code removed:
 1. Translate a Turkish question to English with the same model. This wording is better than the local translator's, at about 2.5 seconds, so only `ask` uses it. `search` keeps working without any LLM.
 2. Retrieve up to 8 chunks with hybrid search.
 3. Refuse if the question is about something the code never mentions.
-4. Without a configured LLM, stop and return the sources, labelled as not being an AI answer.
-5. Send each source to the model in its own request, and enforce the budget before each one.
-6. Verify each reply and assemble what survives.
+4. Narrow the chunks to at most 5 short passages with no LLM, and compare each with Git.
+5. Refuse if no passage mentions enough of the question.
+6. Without an LLM, stop and list the passages, labelled as not being an AI answer.
+7. Enforce the budget, and send the passages to the model in one request.
+8. Show the lines it chose, or say "I do not know".
 
-### One source at a time
+### Real lines, not sentences
 
-Asked about 8 sources at once, the small model stitched them into plausible stories: every source was real, none supported the claim. The difference between a source existing and an answer being supported by it is the main problem of this layer.
+A source existing does not mean it supports a claim. Two earlier designs failed on this. Given 8 sources at once, the small model stitched them into plausible stories. Given one source per request and asked to quote its proof, it still wrote false sentences next to real quotes, and none of 26 answers was fully correct.
 
-Each request now holds one source, and the model returns `{"relevant", "statement", "quote"}`: whether this code carries out any step of what is asked, what it does, and the lines that prove it. Reading one source at a time removes the chance to combine them. The cost is about 3 times the input tokens and twice the time per question.
+So the model no longer writes the answer. `repomind/qa/passages.py` cuts the retrieved chunks into 3-line windows and ranks them by three lists through RRF: shared terms, weighing rare ones more; the local embedding model; and the rank search gave the chunk, because a window cannot see what search weighed. Neighbouring windows merge up to 5 lines, and no line is shown twice. This takes under a second and needs no LLM. All these settings were chosen on the two earlier question sets.
 
-The answer is the verified statements joined together, with no further model call, so it cannot add anything that was not checked. If none survives, the answer is "I do not know" with the closest code. If only one survives, a warning says the answer may be incomplete.
+The model then gets one request: which passages answer the question, at most two, or none? It replies with ids, and the lines shown come from the backend, so it cannot change a value, a file or a line number. It may add one sentence, which is shown apart and labelled "Model's reading, not verified".
 
 ### Refusing without a model
 
-The first run with a real model answered 5 of 6 unanswerable questions by inventing something, such as a `schema.graphql` file that does not exist. Saying "I do not know" therefore cannot be left to a small model.
+A model cannot be relied on to refuse. The first run answered 5 of 6 unanswerable questions by inventing something, such as a `schema.graphql` file that does not exist. In the pilot, `qwen2.5:3b` was asked 13 times to choose lines or none, and never chose none, even with an example of doing so in its prompt.
 
 Retrieval similarity does not help: on the measured questions, unanswerable ones scored as high as answerable ones (cosine 0.82 to 0.87 against 0.80 to 0.89). Vocabulary does differ, so `repomind/qa/sufficiency.py` refuses before any model call when either of these holds:
 
@@ -148,17 +149,19 @@ Retrieval similarity does not help: on the measured questions, unanswerable ones
 
 Words of a translated question only produce a warning. A translation's wording says little about the code, and this rule refused 3 answerable Turkish questions while catching only 2 negatives. Questions refused this way cost nothing. The check cannot catch a question whose every word happens to appear in the code.
 
-### Evidence verification
+A second rule looks at the lines themselves: a passage counts as evidence only if it shares at least two terms with the question. One shared word is what nearby code looks like. On an earlier question set it took unanswerable questions refused from 3 of 10 to 7 of 10, while answers from gold fell from 15 to 13. It is a blunt rule. In the pilot it also refused one answerable question, and it let through two unanswerable ones whose words appear in nearby code.
 
-`repomind/qa/verification.py` checks each reply before it can reach the user:
+Thresholds on similarity, or on the share of question terms, do not work: on the second question set, unanswerable questions scored as high as answerable ones.
 
-- The quote has to occur in the source. The search ignores whitespace, allows `...` between exact parts, allows lines given out of order, and accepts a near match only for a single passage at 90% similarity, so that `value_12` can never pass for `value_16`.
-- Line numbers come from where the backend found the quote. The model does not supply them. The quote's lines are compared with the blob in Git at the indexed commit, so a tampered database row fails too.
-- The text shown is the source's, never the model's copy.
-- A quote has to be long enough to prove something (at least 15 characters) and short enough to point at the proof (at most 15 lines).
-- A statement is discarded if it names something that is in neither the source nor the question, or drifts into a script that is in neither, such as Chinese in an answer to a Turkish question.
+### Verification
 
-**What this does not prove.** Verification shows that a quote exists at the commit and that the statement names nothing the model cannot have read. It does not show that the statement describes the quote correctly. The `ask` command says so under every answer. This is the largest remaining gap; see [limitations](#known-limitations).
+`repomind/qa/verification.py` and `QAEngine` check everything before it can reach the user:
+
+- Each passage's lines are compared with the blob in Git at the indexed commit before the model sees them, so a tampered database row is never shown.
+- A reply can only choose passages by the ids it was offered. Anything else in it is ignored, and a reply that chooses nothing offered counts as invalid.
+- A note is left out, and the lines stay, if it names something that is in neither the chosen lines nor the question, gives a number they do not contain, drifts into a script that is in neither, or is too long to be one sentence.
+
+**What this does not prove.** Verification shows that the lines exist at the commit, and that a note names nothing the lines do not contain. It does not show that the lines answer the question, or that a note made of real names is true. A citation alone does not prove an answer, and `ask` says so under every answer. See [limitations](#known-limitations).
 
 ### Prompt injection
 
@@ -166,17 +169,17 @@ Repository content is untrusted: a comment can address the model directly. The d
 
 1. Sources are wrapped in tags with a random per-request nonce, so code cannot close the data block.
 2. Paths and symbols, which the repository also controls, are reduced to safe characters.
-3. The system prompt declares the source to be data.
-4. The model has no tools, so an injection can at worst distort the answer text.
-5. A source is read alone, so a hostile comment cannot influence what the model says about other sources.
-6. Every statement needs a quote that exists in Git, whatever the model was persuaded to say.
-7. Repository content and model output have terminal control characters removed before printing.
+3. The system prompt declares the passages to be data.
+4. The model has no tools, and it can only point at offered passages by id. An injection cannot add a line or a location to the answer. At worst it can change which lines are chosen, or distort a note that is already labelled as unverified.
+5. A hostile comment is the repository's own text, so it can appear among the lines shown. It is displayed as code, never as the model's words.
+6. Repository content and model output have terminal control characters removed before printing.
 
 ### Cost and data limits
 
 | Limit | Default |
 | --- | --- |
-| Chunks read per question | 8 |
+| Chunks taken from search per question | 8 |
+| Passages offered per question | 5, of at most 5 lines |
 | Estimated input tokens per request | 4000 |
 | Output tokens per request | 250 |
 | Total spend | $0 unless prices and a budget are set |
@@ -200,9 +203,10 @@ Free memory here means the smaller of free physical memory and free commit space
 
 ## Known limitations
 
-- **A verified quote does not make a statement true.** The model can quote real code and describe it wrongly. In the second evaluation, 5 wrong answers had read the right code and made a statement about it. See [evaluation.md](evaluation.md#phase-2-answers).
-- **The refusal check is vocabulary based.** It misses questions whose words all appear in the code. Features next to existing code are the hard case: "how are invitation emails sent?" passes because invitations and emails both exist.
-- **Answers are joined, not judged as a whole.** Nothing compares the statements with each other or with the question once they have passed, so an off-topic but true statement stays in the answer.
+- **A verified line is not a proven answer.** The lines are real, and choosing them is still a judgement. In the pilot, the model chose lines that do not touch the gold span for 7 of 12 Turkish questions. See [evaluation.md](evaluation.md#pilot-answers-made-of-real-lines).
+- **The right lines often never reach the model.** In the pilot, search missed them for 3 of 12 Turkish questions, and passage selection for 3 more. The model then chooses among what it was given instead of declining.
+- **The refusal rules look at words, not meaning.** They miss questions whose words appear in nearby code. Features next to existing code are the hard case: "how are notes in the trash restored?" passes because notes and deletion both exist. They also refuse some answerable questions.
+- **A small model does not decline.** `qwen2.5:3b` never chose "none" in the pilot.
 - **Recall@5 is good on the second set and moderate on the first**, 0.67 to 0.83 against 0.50 to 0.58. See [evaluation.md](evaluation.md).
 - **Turkish depends on an imperfect translator**, and detection relies on Turkish letters or common function words, so a bare `stok rezervasyon` is not translated.
 - **Adding SQL and YAML cost some Turkish ranking on code questions**, because the new chunks compete with code.
@@ -210,4 +214,4 @@ Free memory here means the smaller of free physical memory and free commit space
 - **Secret detection is pattern based.** It catches known token formats and literal credential keys, not every hardcoded password.
 - **Only the latest indexed commit is kept per repository.**
 - **The keyword index is rebuilt in memory per process.**
-- **The evaluation has 57 answerable questions on two repositories**, labelled and graded by one reviewer, so intervals are wide and results may not generalize.
+- **The evaluation has 69 answerable questions on two repositories**, labelled and graded by one reviewer, so intervals are wide and results may not generalize.

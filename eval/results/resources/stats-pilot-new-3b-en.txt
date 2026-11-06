@@ -1,0 +1,11 @@
+108.6MiB / 8GiB 0.00% | python 87MB | free 12,9GB commit 6,7GB
+2.378GiB / 8GiB 796.70% | python 840MB | free 10,9GB commit 4,5GB
+2.385GiB / 8GiB 797.62% | python 863MB | free 10,9GB commit 4,6GB
+2.387GiB / 8GiB 800.62% | python 865MB | free 10,8GB commit 4,6GB
+2.391GiB / 8GiB 773.31% | python 866MB | free 10,9GB commit 4,6GB
+2.392GiB / 8GiB 798.61% | python 869MB | free 10,9GB commit 4,6GB
+2.396GiB / 8GiB 800.07% | python 869MB | free 10,8GB commit 4,6GB
+2.397GiB / 8GiB 794.68% | python 870MB | free 10,8GB commit 4,5GB
+2.398GiB / 8GiB 801.60% | python 872MB | free 10,8GB commit 4,6GB
+2.399GiB / 8GiB 798.13% | python 874MB | free 10,8GB commit 4,6GB
+2.403GiB / 8GiB 796.45% | python 875MB | free 10,8GB commit 4,6GB

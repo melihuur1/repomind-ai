@@ -28,8 +28,10 @@ if set(grades.values()) - ALLOWED:
     sys.exit(f"Unknown grades: {set(grades.values()) - ALLOWED}")
 if output.exists():
     sys.exit(f"Refusing to overwrite {output}")
-raw = yaml.safe_load((ROOT / "eval" / "questions_v2.yaml").read_bytes())
-KIND = {q["id"]: q["kind"] for q in raw["questions"]}
+KIND: dict = {}
+for dataset in ("questions_v2.yaml", "questions_v3.yaml"):
+    raw = yaml.safe_load((ROOT / "eval" / dataset).read_bytes())
+    KIND.update({q["id"]: q["kind"] for q in raw["questions"]})
 
 unknown = {item["config"] for item in key} - set(runs)
 if unknown:

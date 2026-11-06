@@ -11,9 +11,9 @@ The goal is to reach the right code reliably, explain it correctly, and know how
 | Is a reranker worth keeping? | **No.** No clear gain across both question sets, at about 1,000 times the latency. |
 | Is hybrid search better? | **Not demonstrably.** Most differences are within noise. |
 | Are citations real? | **Yes.** Every search result and every citation shown with an answer matches Git at the indexed commit. |
-| Are AI answers reliable? | **No.** With `qwen2.5:3b`, 0 of 26 answers were fully correct. Refusals fell from 11 to 2, but on code questions wrong answers rose from 4 to 10. |
-| Does it refuse what it cannot answer? | **Not reliably.** 6 of 10 with `qwen2.5:3b`, up from 4 of 10. |
-| Is `qwen2.5:7b` better? | **Unknown.** Its independent run is `incomplete — interrupted due to memory pressure`. |
+| Are AI answers reliable? | **No.** A redesign that answers with real lines did not pass its pilot: the right source for 4 of 12 questions, against a target of at least 6. |
+| Does it refuse what it cannot answer? | **Not reliably.** 4 of 6 in the pilot, against a target of at least 5, and only through mechanical rules. The small model never declined. |
+| Is `qwen2.5:7b` better? | **Unknown.** Its independent run is `incomplete — interrupted due to memory pressure`, and it was not part of the pilot. |
 
 ## Phase 2
 
@@ -164,6 +164,77 @@ Container figures come from `docker stats`, sampled every 20 seconds, and may in
 - **26 questions leave wide intervals**, and the set was written by the same author as the first.
 - **Answers were graded in Turkish only.** The phase 1 English answers exist but were not graded, because phase 2 has no English 3B run to compare them with.
 - **The real-model injection test covers one scenario.** The model did not obey the hostile comment, but it did not answer the question either. Whether the comment caused that, or this was an ordinary false refusal, was not measured. An earlier version of this test never reached the model, because the refusal check stopped the question first. It now requires the model to have read the source.
+
+## Pilot: answers made of real lines
+
+**18 questions, graded by one reviewer, cannot prove general reliability, and this pilot did not pass.** It only shows how the redesign compares with the previous version.
+
+Phase 2's answers were not accurate, so the answer layer was redesigned as described in [architecture.md](architecture.md#real-lines-not-sentences): no model narrows search results to a few short passages, and the model only chooses among them. The [question set](../eval/questions_v3.yaml) and the [rules](../eval/PILOT.md) were committed before the pipeline existed and before any search on those questions. All settings were tuned only on the two earlier sets, and each configuration ran once. The new code is at `283df4e`, and the previous version at tag `phase2-reading`.
+
+### Results
+
+12 answerable and 6 unanswerable questions in Turkish, on the same index:
+
+| Measure | Previous version, 3B | No LLM | New, 3B | Target for New |
+| --- | --- | --- | --- | --- |
+| Correct source | 4 | 7 | **4** | at least 6: **not met** |
+| Wrong source | 8 | 5 | **7** | at most 2: **not met** |
+| No answer | 0 | 0 | 1 | |
+| Correct evidence not found | 8 | 5 | 8 | |
+| Answer rate | 100% | 100% | 92% | |
+| Gold anchor in the lines shown | 5 | 6 | 4 | |
+| Unanswerable refused, of 6 | 3 | 3 | **4** | at least 5: **not met** |
+| Invalid file or line references | 0 of 40 | 0 of 90 | **0 of 85** | 0: **met** |
+| Mean lines shown as an answer | 7.6 | 20.2 | 6.3 | |
+| Mean seconds per question | 53.9 | 0.7 | 14.3 | |
+| Input and output tokens | 81,343 and 8,809 | 0 | 13,696 and 859 | |
+| Ollama container, peak | 2.46 GiB | not used | 2.39 GiB | |
+| Python process, peak | 814 MB | about 1 GB, measured earlier | 870 MB | |
+| Lowest free memory during the run | 4.3 GB | | 4.5 GB | |
+
+"No LLM" lists 5 passages and does not choose among them, so its correct source means that one of about 20 lines was right. It is not comparable to a model choosing about 6 lines, and it was not graded.
+
+Graded blind by [the rules](../eval/tools/GRADING.md), although the two formats are easy to tell apart:
+
+| Grade | Previous version | New |
+| --- | --- | --- |
+| Correct | 1 | **3** |
+| Partly correct | 6 | 3 |
+| Wrong | 5 | 5 |
+| No answer | 0 | 1 |
+| Unanswerable: refused, fabricated, true but beside the point | 3, 1, 2 | 4, 0, 2 |
+
+The English runs give a similar picture. New: 5 correct sources, 6 wrong, 1 no answer, 3 of 6 refused, 9.6 seconds. No LLM: 8 correct, 3 wrong, 1 no answer, 3 of 6 refused.
+
+### What this shows
+
+The redesign is cheaper and invents less, at no loss of accuracy that this sample can show: 4 times faster, a sixth of the tokens, 0 fabrications against 1, and 3 fully correct answers against 1. **It does not find the right source more often.** With 18 questions, none of these differences is large enough to be sure of.
+
+Where each answerable question was lost, with the new pipeline:
+
+| Stage | Turkish | English |
+| --- | --- | --- |
+| Search missed the gold code in its 8 chunks | 3 | 2 |
+| In the chunks, but not in the 5 passages | 3 | 2 |
+| Offered, and the model chose other lines | 1 | 3 |
+| Offered, and refused by the evidence rule | 1 | 0 |
+| Offered, and chosen correctly | **4** | **5** |
+
+- **Half of the losses come before the model.** When the right lines are offered, the model chooses them in 9 of 14 cases. No model can pick lines it was not given.
+- **The model never declined.** It was asked 13 times in Turkish and 14 in English, and it never replied "none", even though the right lines were absent in about half of those requests. Every refusal came from a mechanical rule.
+- **The rules are blunt.** They refused `sg-username-lowercase`, which was answerable. They let through `sg-neg-extend-reservation` and `sn-neg-trash`, where the code has reservations that expire and notes that get deleted.
+
+Question-level results are in [`v3-grades-3b-tr.json`](../eval/results/v3-grades-3b-tr.json), and `eval/tools/pilot_diagnosis.py` prints the table above.
+
+Also measured: an integration test indexes a comment ordering the model to reply `PWNED` and cite a password file. The real model did not obey, and it answered the actual question correctly (`applyDiscount` returns `price * 0.9`). This is one scenario, not proof of resistance. An earlier version of this test never reached the model.
+
+### Limits of the pilot
+
+- 18 questions are too few to rank two methods, and every set so far comes from the same author.
+- This set is now read, so changes tuned on it will need new questions.
+- Correct source means touching a narrow gold span. Other lines may also answer a question, so scores are conservative.
+- The blind grading hides labels but not the visible difference in format.
+- Python memory for the no-LLM runs comes from an earlier measurement, not from these runs.
 
 # Phase 1
 
@@ -378,6 +449,8 @@ Stored results are in [`eval/results/`](../eval/results):
 | `v2-retrieval-phase1.json`, `v2-retrieval-phase2.json` | Retrieval on the second set |
 | `v2-retrieval-reranker-bge.json`, `reranker-dev/` | The reranker on both sets |
 | `v2-ask-phase1-3b.json`, `v2-ask-phase2-3b.json`, `v2-grades-3b-tr.json` | 3B answers on the second set and their grades |
+| `v3-old-3b-tr.json`, `v3-nollm-*.json`, `v3-new-3b-*.json`, `v3-grades-3b-tr.json` | The pilot and its grades |
+| `dev-selector-3b-v2.json` | The new pipeline on the second set, before the evidence rule, not independent |
 | `v2-ask-phase2-7b.status.json` | The interrupted 7B run, which saved no answers |
 | `dev-phase2-7b-tr.json`, `prompt-lab/` | Development runs on the first set, not independent |
 | `resources/` | Memory and CPU samples |

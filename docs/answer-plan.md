@@ -1,6 +1,8 @@
 # Plan for the answer layer
 
-**Status: proposal. Nothing here is built yet.** With `qwen2.5:3b`, none of 26 answers was fully correct. This plan uses stored results and one short probe with no LLM ([`replay_evidence.py`](../eval/tools/replay_evidence.py), [`passage_probe.py`](../eval/tools/passage_probe.py)). Both question sets had already been read, so these numbers guide the design and do not measure it.
+**Status: steps 1 and 2 are built, and step 3's pilot ran on `qwen2.5:3b` and did not pass.** See [the results](evaluation.md#pilot-answers-made-of-real-lines) and [what comes next](#after-the-pilot).
+
+The analysis below came first, and is kept as written. With `qwen2.5:3b`, none of 26 answers was fully correct. It uses stored results and one short probe with no LLM ([`replay_evidence.py`](../eval/tools/replay_evidence.py), [`passage_probe.py`](../eval/tools/passage_probe.py), which has since been changed to use the built selection). Both question sets had already been read, so these numbers guide the design and do not measure it.
 
 ## What the measurements say
 
@@ -83,6 +85,22 @@ This removes a prompt rule and 7 of 8 requests rather than adding anything. The 
    - If neither passes, ship `ask` as "show me the lines" with no model sentence, and consider a stronger API model with the owner's approval.
 
 A later option, only if step 3 shows values being missed: index configuration keys, validation annotations and SQL constraints as structured facts.
+
+## After the pilot
+
+The pilot met one target of four. It also changed what the plan assumed:
+
+- **Passages are longer than planned:** about 20 lines in total, not 15. On the earlier sets, this reached noticeably more of the gold.
+- **Adding the search rank as a third list made the biggest single difference** on the first set, from 12 to 17 of 31 in Turkish. The analysis above predates it.
+- **Expecting the model to say "none" was wrong for 3B.** It never did, so refusals now rest on a mechanical rule.
+
+Half of the losses come before the model, and these are proposals, none of them approved or built:
+
+1. Try `qwen2.5:7b` on the same 18 questions, before any tuning, so that the comparison stays like for like. It needs the owner's approval and 12 GB of free memory.
+2. Keep one chunk's windows from filling all 5 passages, because 3 of 12 Turkish questions had the gold code in the chunks but not in the passages.
+3. If no local model passes, `ask` should show the lines with no model sentence, and a stronger API model can be considered with the owner's approval.
+
+Any change tuned on the pilot's questions then needs a new set to measure it.
 
 ## Trying 7B safely
 

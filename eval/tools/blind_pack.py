@@ -18,9 +18,12 @@ SEED = 20261106
 work = Path(sys.argv[1])
 language = sys.argv[2]
 runs = dict(argument.split("=", 1) for argument in sys.argv[3:])
-raw = yaml.safe_load((ROOT / "eval" / "questions_v2.yaml").read_bytes())
-questions = {q["id"]: q for q in raw["questions"]}
-negatives = {q["id"]: q for q in raw["unanswerable"]}
+questions: dict = {}
+negatives: dict = {}
+for name in ("questions_v2.yaml", "questions_v3.yaml"):
+    raw = yaml.safe_load((ROOT / "eval" / name).read_bytes())
+    questions.update({q["id"]: q for q in raw["questions"]})
+    negatives.update({q["id"]: q for q in raw["unanswerable"]})
 
 
 def shown(row: dict) -> str:

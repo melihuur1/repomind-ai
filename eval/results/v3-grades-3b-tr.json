@@ -1,0 +1,226 @@
+[
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sg-audit-page-size",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "src/main/java/com/stockguard/common/web/PageResponse.java:7-11\n/** Stable pagination envelope, so the API contract does not depend on Spring Data's internal Page format. */\npublic record PageResponse<T>(List<T> items, int page, int size, long totalElements, int totalPages) {\n\n    public static <E, T> PageResponse<T> of(Page<E> page, Function<E, T> mapper) {\n        return new PageResponse<>(\n\nModel's reading, not verified: `PageResponse.of` returns a PageResponse with totalElements and totalPages."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sg-instance-header",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java:14-18\n/** Tells clients which instance answered, which is how multi-instance tests prove requests were spread. */\n@Component\n@Order(Ordered.HIGHEST_PRECEDENCE)\npublic class InstanceHeaderFilter extends OncePerRequestFilter {\n\n\nModel's reading, not verified: InstanceHeaderFilter sınıfı, istemcilerin hangi sürümüne ait uygulama tarafından işlendiğini bildirir."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sg-movement-types",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "src/main/java/com/stockguard/inventory/StockLedger.java:33-37\n        Optional<StockCounts> after = levels.addAvailable(productId, quantity);\n        after.ifPresent(counts -> movements.save(new StockMovement(\n                productId, null, actorId, MovementType.STOCK_IN, quantity, 0, counts, note)));\n        return after;\n    }\n\nsrc/main/java/com/stockguard/inventory/InventoryService.java:48-52\n    @Transactional\n    public StockCounts addStock(UUID productId, int quantity, UUID actorId, String note) {\n        StockCounts after = ledger.receive(productId, quantity, actorId, note).orElseThrow(() -> notFound(productId));\n        audit.record(AuditEventType.STOCK_RECEIVED, actorId, \"PRODUCT\", productId, Map.of(\"quantity\", quantity));\n        return after;\n\nModel's reading, not verified: P3 shows StockLedger.receive and P4 shows InventoryService.addStock."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sg-neg-extend-reservation",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "harmless",
+  "answer": "src/main/java/com/stockguard/reservation/ReservationRepository.java:78-82\n                SELECT id FROM reservations\n                 WHERE status = 'PENDING' AND expires_at <= now()\n                 ORDER BY expires_at\n                 LIMIT :limit\n                 FOR UPDATE SKIP LOCKED\n\nModel's reading, not verified: expireDue SELECT id FROM reservations WHERE status = 'PENDING' AND expires_at <= now() ORDER BY expires_at LIMIT :limit FOR UPDATE SKIP LOCKED"
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sg-no-setters",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "src/main/java/com/stockguard/inventory/StockLevel.java:11-15\n/**\n * Read model of the stock counters. {@code @Immutable} and the absence of setters are deliberate: a counter\n * written back from a Java copy is the classic lost update, so the counters only ever change through the\n * conditional statements in {@link StockLevelRepository}.\n */\n\nModel's reading, not verified: `StockLevel` nesnesi değiştirilmiyor çünkü değişiklikleri yalnızca `StockLevelRepository` içindeki koşullu ifadelerle değiştirmek gerekli."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sg-request-fingerprint",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "src/main/java/com/stockguard/reservation/ReservationController.java:43-47\n    @PostMapping\n    @Operation(operationId = \"createReservation\", summary = \"Hold stock for a limited time\", description = \"\"\"\n            Retrying with the same `Idempotency-Key` and the same body returns the original reservation instead \\\n            of creating another one. A failed attempt holds nothing and does not use up the key.\"\"\")\n    @ApiResponse(responseCode = \"201\", description = \"Reservation created\")\n\nsrc/main/java/com/stockguard/reservation/ReservationController.java:51-55\n    @ApiResponse(responseCode = \"409\", description = \"INSUFFICIENT_STOCK\")\n    @ApiResponse(responseCode = \"422\", description = \"IDEMPOTENCY_KEY_REUSED with a different request\")\n    @ApiResponse(responseCode = \"503\", description = \"Temporary lock contention: safe to retry with the same key\")\n    public ResponseEntity<ReservationResponse> create(\n            @Parameter(description = \"Unique per logical operation, for example a UUID\")\n\nModel's reading, not verified: P1 ve P5 passagelarında aynı anahtarla gelen iki rezervasyon isteği için uygulanacak kararın belirlenmesi gösterilmektedir."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-neg-trash",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "harmless",
+  "answer": "apps/api/src/notes/notes.controller.ts:74-78\n  @Delete(':noteId')\n  @RequireNoteRole('OWNER')\n  @HttpCode(204)\n  remove(@Param('noteId') noteId: string): Promise<void> {\n    return this.notes.remove(noteId);\n\nModel's reading, not verified: The passage shows a method to remove notes."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-redis-access-events",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "apps/api/src/redis/access-events.publisher.ts:9-11\n/**\n * Publishes membership changes so every collaboration-server instance can enforce them on\n * already-open WebSocket sessions.\n\napps/api/src/notes/members.service.ts:70-74\n  async updateRole(noteId: string, userId: string, role: AssignableRole): Promise<MemberDto> {\n    const existing = await this.findMembership(noteId, userId);\n    if (existing.role === 'OWNER')\n      throw new BadRequestException(\"The owner's role cannot be changed\");\n\n\nModel's reading, not verified: Two passages show how membership changes are published to collaboration-server instances and a service that updates member roles."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-register-password",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "apps/api/src/auth/dto.ts:18-22\n\n  @IsString()\n  @MinLength(8, { message: 'password must be at least 8 characters' })\n  @MaxLength(128)\n  password!: string;\n\nModel's reading, not verified: `@MinLength(8, { message: 'password must be at least 8 characters' })` ve `@MaxLength(128)` ayıktır."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-role-cache-ttl",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "apps/collab/src/config.ts:9-13\n  /** Unique per instance; shows up in logs and the health endpoint. */\n  INSTANCE_NAME: z.string().default(`collab-${process.pid}`),\n  /** Max age of a cached role before it is re-read from Postgres. */\n  PERMISSION_CACHE_TTL_MS: z.coerce.number().int().positive().default(5000),\n  /** Every open connection is re-authorised this often — also connections that never send. */\n\napps/collab/src/permissions.ts:46-50\n      })\n      .catch((err: unknown) => {\n        if (cached) return cached.role; // DB blip: keep last known permission\n        throw err;\n      })"
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-share-ownership",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "apps/api/src/notes/notes.service.ts:56-60\n    if (query.scope === 'owned') where.role = 'OWNER';\n    if (query.scope === 'shared') where.role = { not: 'OWNER' };\n    if (query.folderId === 'none') where.folderId = null;\n    else if (query.folderId) where.folderId = query.folderId;\n\n\nModel's reading, not verified: `NotesService.list` checks if a query scope is 'shared' and sets `where.role = { not: 'OWNER' }`."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-user-delete-sql",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "wrong",
+  "answer": "apps/api/src/notes/notes.controller.ts:135-139\n\n  @Delete(':userId')\n  @RequireNoteRole('OWNER')\n  @HttpCode(204)\n  remove(@Param('noteId') noteId: string, @Param('userId') userId: string): Promise<void> {\n\nModel's reading, not verified: The passage shows a method to delete a user (`remove` method) and its role ('OWNER')."
+ },
+ {
+  "run": "v3-new-3b-tr.json",
+  "question": "v3-sn-who-can-edit",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "apps/api/src/common/decorators.ts:10-14\n/**\n * Require the caller to hold at least `role` on the note identified by the `:noteId` route param.\n * Non-members get 404 (existence is not leaked), insufficient roles get 403.\n */\nexport const RequireNoteRole = (role: NoteRole) => SetMetadata(NOTE_ROLE_KEY, role);\n\npackages/shared/src/roles.ts:8-10\nconst ROLE_RANK: Record<NoteRole, number> = {\n  VIEWER: 1,\n  EDITOR: 2,\n\nModel's reading, not verified: RequireNoteRole requires at least a role to create a note."
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sg-audit-page-size",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Bu kod parçası `ReservationService.list` metodunu tanımlıyor ve bu metot, kullanıcının rollerine göre tüm veya sadece kendisinin oluşturduğu kuryeleri listeleme işlemi yapıyor.\n    code: PageRequest request = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, \"createdAt\"));\nBu Java koddan billik, `list` metodu, bir sayfada en fazla 100 kayıt isteyebilir.\n    code: @RequestParam(defaultValue = \"20\") @Min(1) @Max(100) int size,\nBu kod parçası bir sayfada en fazla 100 kayıt isteyebilir.\n    code: @RequestParam(defaultValue = \"20\") @Min(1) @Max(100) int size)"
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sg-instance-header",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Bu kod parçası `ReservationService.list` metodunun nasıl bir istekin hangi kullanıcının veya rollerinin olduğunu belirttiğini gösterir.\n    code: @Transactional(readOnly = true) public Page<Reservation> list(Actor actor, int page, int size)\nBu kod, `ProductService.update` metodunun içinde gelen `expectedVersion` parametresini kullanarak hangi sürümdeki uygulamayı belirtir ve bu sürümleme ile güncellenen ürünün güncel sürümünü kontrol eder.\n    code: if (product.getVersion() != expectedVersion) {\nBu filtre sınıfı, istemciye hangi sürümü tarafından talep edildiğini belirtmek için 'X-StockGuard-Instance' başlığı gönderir.\n    code: response.setHeader(HEADER, instanceId);"
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sg-movement-types",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Bu kod parçası `InventoryService.addStock` metodunu kullanır ve yeni stok eklentisini kaydetmek için `ledger.receive` yöntemini çağırır.\n    code: ledger.receive(productId, quantity, actorId, note).orElseThrow(() -> notFound(productId));\nBu sınıf MovementResponse, stok hareketi türlerini (MovementType) içerir ve `InventoryController.MovementResponse.from` metodu yeni bir MovementResponse nesnesi oluşturur.\n    code: `MovementType type, UUID reservationId, UUID actorId, int deltaTotal, int deltaAvailable, int deltaReserved, int totalAfter, int availableAfter, int reservedAfter, String note, Instant createdAt)\nBu Java kodu `StockLedger.receive` metodunu çağırır ve ürünün stokta olan miktarını artırmak için bir işlem kaydı oluşturur.\n    code: movements.save(new StockMovement(productId, null, actorId, MovementType.STOCK_IN, quantity, 0, counts, note));\nBu kod parçası `StockLedger` sınıfının `tryReserve` yöntemi ile bir ürünün stokta kalmamış olan bir adet sayısını tahsis etme işlemi gerçekleştirir ve bu işlemi kaydetmek için `movements.save` yöntemini kullanır.\n    code: movements.save(new StockMovement(productId, reservationId, actorId, MovementType.RESERVED, -quantity, quantity, counts, null));"
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sg-neg-extend-reservation",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "fabricated",
+  "answer": "Bu kod, `expireDue` metodunu kullanarak süresi dolmuş olan bir rezervasyonun süresini uzatır.\n    code: WITH due AS ( SELECT id FROM reservations WHERE status = 'PENDING' AND expires_at <= now() ORDER BY expires_at LIMIT :limit FOR UPDATE SKIP LOCKED ) UPDATE reservations r SET status = 'EXPIRED', settled_at = now() FROM due WHERE r.id = due.id RETURNING r.id AS \"id\", r.product_id AS \"productId\", r.user_id AS \"userId\", r.quantity AS \"quantity\"\nBu kod, bir rezervasyonun süresinin dolduğunu belirten `expireDueBatch` metodunu kullanır ve bu metot, belirlenen batchın ürünlerini kullanım dışı hale getirmek için `ledger.releaseReserved` fonksiyonunu çağırır.\n    code: ledger.releaseReserved( reservation.getProductId(), reservation.getQuantity(), reservation.getId(), null, MovementType.EXPIRY_RELEASED);"
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sg-no-setters",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Bu Java sınıfı, `removeReserved` metodunu kullanarak stok düzeylerini güncellemek için SQL sorgusu oluşturur ve bu işlem, belirli bir ürünün adetini ve kapasiteyi günceller.\n    code: UPDATE stock_levels SET total_quantity = total_quantity - :quantity, reserved_quantity = reserved_quantity - :quantity, updated_at = now() WHERE product_id = :productId AND reserved_quantity >= :quantity RETURNING total_quantity AS \"total\", available_quantity AS \"available\", reserved_quantity AS \"reserved\""
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sg-request-fingerprint",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Bu kod parçası `Idempotency-Key`'nin aynı olduğunu kontrol ederek iki benzersiz istek arasındaki farkı belirler.\n    code: @Parameter(description = \"Unique per logical operation, for example a UUID\") @RequestHeader(\"Idempotency-Key\") @Pattern(regexp = \"^[A-Za-z0-9_:.\\-]{1,128}$\", message = \"must be 1-128 letters, digits, '_', '-', ':' or '.'\") String idempotencyKey\nBu kod parçası `ReservationTransactions.replay` metodunda iki rezervasyon isteği aynı olup olmadığını belirlemek için idempotens anahtarlarını ve istek hash'lerini karşılaştırır.\n    code: if (!original.getRequestHash().equals(fingerprint)) {\nBu sorgu, `idempotency_key` ve `user_id` anahtarlarının aynı olduğundan emin olmak için PostgreSQL tarafından uygulanmış idempotans garantisini kontrol eder.\n    code: `CONSTRAINT uq_reservations_user_idempotency_key UNIQUE (user_id, idempotency_key),`"
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sg-username-lowercase",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "partial",
+  "answer": "Bu sorgu, `username` sütunu için bir NOT NULL kısıtlaması ve küçük harfle eşleşen `username = lower(username)` koşulu ile kullanıcı adının küçük harflerle saklanması gerekmektedir.\n    code: `CONSTRAINT ck_app_users_username_lowercase CHECK (username = lower(username))`\nBu kod, `AppUserRepository` sınıfının `insertIfAbsent` yöntemi ile kullanıcı adı alanını zorunlu kılan bir işlem gerçekleştirir.\n    code: @Modifying @Query(nativeQuery = true, value = \"\" INSERT INTO app_users (id, username, password_hash, role, created_at) VALUES (:id, :username, :passwordHash, :role, now()) ON CONFLICT (username) DO NOTHING\"\")\nBu kod, `app_users` tablosunda kullanıcı adı alanını zorunlu kılan bir INSERT sorgusunu içerir ve bu sorguda aynı kullanıcı adı için girdi eklenemez.\n    code: jdbc.sql(\"INSERT INTO app_users (id, username, password_hash, role, created_at) SELECT CAST(md5(:prefix || n) AS uuid), :prefix || lpad(CAST(n AS text), 4, '0'), '!', 'USER', now() FROM generate_series(1, :count) AS n ON CONFLICT (username) DO NOTHING\").param(\"prefix\", SIMULATED_USERS_PREFIX).param(\"count\", count).update();\nBu kod, `AuthService.register` metodunda kullanıcı adı küçük harflerle saklanmasını sağlar.\n    code: String normalized = normalize(username);"
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sn-neg-sunset-theme",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "harmless",
+  "answer": "Bu kod ThemeProvider kullanarak bir thema seçeneği sağlar ve sistem tarafından belirlenen kararına göre arka planda karanlık veya ışık renklerini değiştirir.\n    code: `document.documentElement.classList.toggle('dark', resolved === 'dark');`"
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sn-neg-trash",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "harmless",
+  "answer": "Bu kod parçası `NotesController.remove` metodu ile notları silmektedir ve bu metod `notes.remove(noteId)` çağrısında notun ID'sini kullanarak silmesine izin verir.\n    code: @Delete(':noteId') @RequireNoteRole('OWNER') @HttpCode(204) remove(@Param('noteId') noteId: string): Promise<void> { return this.notes.remove(noteId); }\nBu kod, `NotesController.leave` metodu ile notları kullanıcının belirlediği rolüne göre kuyruğa atıyor.\n    code: @Post(':noteId/leave') @RequireNoteRole('VIEWER') @HttpCode(204) leave( @CurrentUser() user: AuthUser, @Param('noteId') noteId: string, @CurrentNoteRole() role: NoteRole, ) {\nBu kod `VersionService.restore` adında bir fonksiyonu içerir ve bu fonksiyon veri sürümünü live belgede geri yükler.\n    code: await this.createSnapshot(noteId, document, { kind: 'RESTORE', label: `Before restoring \"${name}\"`, userId, });"
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sn-redis-access-events",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Bu kod bloğu Redis sunucusunun durumunu kontrol eder ve uygun durumlarda notların üyeliğini değiştirir. Eğer Redis running değilse, bu işlem başarısız olabilir.\n    code: if (this.options.isRedisHealthy() ? 'anti-entropy' : 'degraded')"
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sn-register-password",
+  "language": "tr",
+  "kind": "code",
+  "grade": "correct",
+  "answer": "Bu kod bloğu kaydolma sayfasında şifre uzunluğu kontrolünü gerçekleştirir ve kullanıcıdan girdi alır.\n    code: if (password.length < 8) {\nRegisterDto sınıfının `password` özelliği, en az 8 karakter ve en fazla 128 karakter uzunluğunda olmalıdır.\n    code: @MinLength(8, { message: 'password must be at least 8 characters' }), @MaxLength(128),\nSource code defines a `LoginDto` class with a `password` property that has a maximum length of 128 characters.\n    code: @MaxLength(128) password!: string;"
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sn-role-cache-ttl",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Bu kod parçası, `collabEnvSchema` nesnesindeki `PERMISSION_CACHE_TTL_MS` değeri belirler ve bu değer, veritabanından rolü yeniden okuma için kullanılır.\n    code: PERMISSION_CACHE_TTL_MS: z.coerce.number().int().positive().default(5000),\nBu kod, `PermissionService.getRole` metodunun bir kullanıcıdan ve bir nottan gelen userId ve noteId değerleri için rolü alır. Eğer cache'de cached.role varsa ve bu değerin kilitlenme süresi içindeyse, cache'den rolü döndürür.\n    code: const cached = this.cache.get(key); if (!options.fresh && cached && this.now() - cached.fetchedAt < this.ttlMs) return cached.role;\nThe `handleStateless` function checks if the role has changed and reloads the replica from the database when necessary.\n    code: `void rebuildReplica(message.role);`"
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sn-share-ownership",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Kaynak kodda not paylaşımı sırasında sahipliği başka birine verilebilir olduğunu gösteren bir index bulunmaktadır.\n    code: CREATE UNIQUE INDEX \"note_members_one_owner_per_note\" ON \"note_members\" (\"note_id\") WHERE \"role\" = 'OWNER';"
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sn-user-delete-sql",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "wrong",
+  "answer": "Bu kod, bir kullanıcıyı silindikten sonra onun davet ettiği üyelik kayıtlarını yönetmektedir.\n    code: `this.prisma.db.noteMember.create({ noteId, userId: user.id, role, invitedById: inviterId, })`\nThe `invite` function from `useMemberMutations(noteId)` is used to send an invitation email when a user shares a note.\n    code: invite.mutate({ email: email.trim(), role: inviteRole, }, { onSuccess: () => setEmail(''), });\nBu kontrolçü sınıfın `remove` yöntemi, kullanıcının davet ettiği üyelik kayıtlarını silmeyi sağlar.\n    code: `members.remove(noteId, userId);`\nBu kod, bir kullanıcının silinmesi durumunda, üyelik kayıtlarına yapılan davetlerin nasıl etkilenip etkilemediğini belirtmektedir.\n    code: // Open WebSocket sessions of this user are closed by every collaboration server."
+ },
+ {
+  "run": "v3-old-3b-tr.json",
+  "question": "v3-sn-who-can-edit",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Decorator `CurrentNoteRole` dalam decorator dosyasında tanımlanmıştır ve bir talepın içeriğini kontrol ederken, kullanıcının şu anda düzenlediği notun rollerini belirtir.\n    code: `ctx.switchToHttp().getRequest<AuthenticatedRequest>().noteRole`\nDecorator `RequireNoteRole` is defined in `common/decorators.ts`, which restricts access to notes based on roles.\n    code: `export const RequireNoteRole = (role: NoteRole) => SetMetadata(NOTE_ROLE_KEY, role);`\nBu notu oluşturan rolleri belirlemek için `note_members` tablosuna bakılabilir.\n    code: `CREATE TABLE `note_members` (`note_id` UUID NOT NULL, `user_id` UUID NOT NULL, `role` \"NoteRole\" NOT NULL, `folder_id` UUID, `invited_by_id` UUID, `created_at` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, `updated_at` TIMESTAMP(3) NOT NULL)\nBu kod, bir notun hangi roller tarafından oluşturulabileceğini listeler.\n    code: `const members = await this.prisma.db.noteMember.findMany({ where: { noteId }, include: { user: { select: { id: true, email: true, name: true } } }, orderBy: { createdAt: 'asc' }, });`"
+ }
+]
