@@ -1,0 +1,4180 @@
+{
+ "dataset_sha256": "0f5c03a4285eed71ba746516cfb7e95f10799deb2669ceee83ef77ccfdb6ae2d",
+ "repositories": {
+  "stockguard": "b6698d81475232f2b8ca95af45336fae5665cd81",
+  "syncnotes": "bb217cddc89088f27b68715cf9585e94ce2fe3a6"
+ },
+ "embedding_model": "intfloat/multilingual-e5-small",
+ "query_translation": true,
+ "reranker": "jinaai/jina-reranker-v1-turbo-en",
+ "config": {
+  "rrf_k": 60,
+  "candidates": 50,
+  "include_tests": null,
+  "rerank_blend": "rrf",
+  "bm25": {
+   "k1": 1.2,
+   "b": 0.75,
+   "symbol_weight": 3.0,
+   "path_weight": 1.5
+  }
+ },
+ "summaries": {
+  "all": {
+   "tr": {
+    "reranked": {
+     "questions": 31,
+     "latency_ms_median": 2147.0,
+     "latency_ms_p95": 2797.2,
+     "recall_at_5": {
+      "mean": 0.457,
+      "ci95": [
+       0.3226,
+       0.5914
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.6774,
+      "ci95": [
+       0.5161,
+       0.8387
+      ]
+     },
+     "mrr": {
+      "mean": 0.5707,
+      "ci95": [
+       0.4211,
+       0.7128
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.6022,
+      "ci95": [
+       0.457,
+       0.7366
+      ]
+     },
+     "citations_checked": 155,
+     "citations_valid": 155,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 155
+    }
+   },
+   "en": {
+    "reranked": {
+     "questions": 31,
+     "latency_ms_median": 2114.8,
+     "latency_ms_p95": 2601.9,
+     "recall_at_5": {
+      "mean": 0.5645,
+      "ci95": [
+       0.4247,
+       0.6989
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.7419,
+      "ci95": [
+       0.5806,
+       0.9032
+      ]
+     },
+     "mrr": {
+      "mean": 0.6591,
+      "ci95": [
+       0.5125,
+       0.802
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.6828,
+      "ci95": [
+       0.5323,
+       0.8226
+      ]
+     },
+     "citations_checked": 155,
+     "citations_valid": 155,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 155
+    }
+   },
+   "both": {
+    "reranked": {
+     "questions": 62,
+     "latency_ms_median": 2139.4,
+     "latency_ms_p95": 2601.9,
+     "recall_at_5": {
+      "mean": 0.5108,
+      "ci95": [
+       0.414,
+       0.6048
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.7097,
+      "ci95": [
+       0.5968,
+       0.8226
+      ]
+     },
+     "mrr": {
+      "mean": 0.6149,
+      "ci95": [
+       0.5077,
+       0.7148
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.6425,
+      "ci95": [
+       0.5376,
+       0.7392
+      ]
+     },
+     "citations_checked": 310,
+     "citations_valid": 310,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 310
+    }
+   }
+  },
+  "dev": {
+   "tr": {
+    "reranked": {
+     "questions": 11,
+     "latency_ms_median": 2066.0,
+     "latency_ms_p95": 2577.8,
+     "recall_at_5": {
+      "mean": 0.4697,
+      "ci95": [
+       0.2576,
+       0.697
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.7273,
+      "ci95": [
+       0.4545,
+       1.0
+      ]
+     },
+     "mrr": {
+      "mean": 0.5467,
+      "ci95": [
+       0.3228,
+       0.7751
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.5909,
+      "ci95": [
+       0.3636,
+       0.8182
+      ]
+     },
+     "citations_checked": 55,
+     "citations_valid": 55,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 55
+    }
+   },
+   "en": {
+    "reranked": {
+     "questions": 11,
+     "latency_ms_median": 2268.4,
+     "latency_ms_p95": 2601.9,
+     "recall_at_5": {
+      "mean": 0.5758,
+      "ci95": [
+       0.3333,
+       0.803
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.7273,
+      "ci95": [
+       0.4545,
+       1.0
+      ]
+     },
+     "mrr": {
+      "mean": 0.685,
+      "ci95": [
+       0.4224,
+       0.9192
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.6364,
+      "ci95": [
+       0.3636,
+       0.8636
+      ]
+     },
+     "citations_checked": 55,
+     "citations_valid": 55,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 55
+    }
+   },
+   "both": {
+    "reranked": {
+     "questions": 22,
+     "latency_ms_median": 2137.0,
+     "latency_ms_p95": 2577.8,
+     "recall_at_5": {
+      "mean": 0.5227,
+      "ci95": [
+       0.3561,
+       0.6894
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.7273,
+      "ci95": [
+       0.5455,
+       0.9091
+      ]
+     },
+     "mrr": {
+      "mean": 0.6159,
+      "ci95": [
+       0.4431,
+       0.7816
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.6136,
+      "ci95": [
+       0.4318,
+       0.7955
+      ]
+     },
+     "citations_checked": 110,
+     "citations_valid": 110,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 110
+    }
+   }
+  },
+  "test": {
+   "tr": {
+    "reranked": {
+     "questions": 20,
+     "latency_ms_median": 2194.4,
+     "latency_ms_p95": 2896.5,
+     "recall_at_5": {
+      "mean": 0.45,
+      "ci95": [
+       0.2833,
+       0.6167
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.65,
+      "ci95": [
+       0.45,
+       0.85
+      ]
+     },
+     "mrr": {
+      "mean": 0.5838,
+      "ci95": [
+       0.3983,
+       0.7726
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.6083,
+      "ci95": [
+       0.4417,
+       0.775
+      ]
+     },
+     "citations_checked": 100,
+     "citations_valid": 100,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 100
+    }
+   },
+   "en": {
+    "reranked": {
+     "questions": 20,
+     "latency_ms_median": 2114.8,
+     "latency_ms_p95": 2642.7,
+     "recall_at_5": {
+      "mean": 0.5583,
+      "ci95": [
+       0.3833,
+       0.725
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.75,
+      "ci95": [
+       0.55,
+       0.9
+      ]
+     },
+     "mrr": {
+      "mean": 0.6449,
+      "ci95": [
+       0.4626,
+       0.8179
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.7083,
+      "ci95": [
+       0.5333,
+       0.875
+      ]
+     },
+     "citations_checked": 100,
+     "citations_valid": 100,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 100
+    }
+   },
+   "both": {
+    "reranked": {
+     "questions": 40,
+     "latency_ms_median": 2147.0,
+     "latency_ms_p95": 2797.2,
+     "recall_at_5": {
+      "mean": 0.5042,
+      "ci95": [
+       0.3833,
+       0.6208
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.7,
+      "ci95": [
+       0.55,
+       0.8256
+      ]
+     },
+     "mrr": {
+      "mean": 0.6144,
+      "ci95": [
+       0.4842,
+       0.7446
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.6583,
+      "ci95": [
+       0.5333,
+       0.7792
+      ]
+     },
+     "citations_checked": 200,
+     "citations_valid": 200,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 200
+    }
+   }
+  }
+ },
+ "comparisons": {},
+ "per_question": [
+  {
+   "question": "sg-stock-consistency",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1963.3,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.1111111111111111,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61": null,
+    "src/main/java/com/stockguard/inventory/StockLedger.java:10-17": 9
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/application.yml",
+     "start_line": 4,
+     "end_line": 14,
+     "kind": "config",
+     "symbol": "spring.datasource",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 60,
+     "end_line": 64,
+     "kind": "method",
+     "symbol": "StockLedger.reservedUnitsMissing",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 24,
+     "end_line": 44,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 64,
+     "end_line": 65,
+     "kind": "method",
+     "symbol": "StockMovement.StockMovement",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/config/StockGuardProperties.java",
+     "start_line": 13,
+     "end_line": 39,
+     "kind": "record",
+     "symbol": "StockGuardProperties",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-stock-consistency",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1697.4,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.09090909090909091,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61": null,
+    "src/main/java/com/stockguard/inventory/StockLedger.java:10-17": 11
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 11,
+     "end_line": 22,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 202,
+     "end_line": 233,
+     "kind": "method",
+     "symbol": "SimulationService.report",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 96,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 55,
+     "end_line": 65,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyController.java",
+     "start_line": 12,
+     "end_line": 28,
+     "kind": "class",
+     "symbol": "ConsistencyController",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-reservation-cancel",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1479.4,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.3333333333333333,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:92-100": 4,
+    "src/main/java/com/stockguard/reservation/ReservationService.java:42-45": 3,
+    "src/main/java/com/stockguard/reservation/ReservationController.java:92-97": 5
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 96,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationStatus.java",
+     "start_line": 3,
+     "end_line": 9,
+     "kind": "enum",
+     "symbol": "ReservationStatus",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 42,
+     "end_line": 45,
+     "kind": "method",
+     "symbol": "ReservationService.cancel",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 92,
+     "end_line": 100,
+     "kind": "method",
+     "symbol": "ReservationTransactions.cancel",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 92,
+     "end_line": 97,
+     "kind": "method",
+     "symbol": "ReservationController.cancel",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-reservation-cancel",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1498.5,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:92-100": 2,
+    "src/main/java/com/stockguard/reservation/ReservationService.java:42-45": 4,
+    "src/main/java/com/stockguard/reservation/ReservationController.java:92-97": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 92,
+     "end_line": 97,
+     "kind": "method",
+     "symbol": "ReservationController.cancel",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 92,
+     "end_line": 100,
+     "kind": "method",
+     "symbol": "ReservationTransactions.cancel",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 96,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 42,
+     "end_line": 45,
+     "kind": "method",
+     "symbol": "ReservationService.cancel",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationStatus.java",
+     "start_line": 3,
+     "end_line": 9,
+     "kind": "enum",
+     "symbol": "ReservationStatus",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-db-connection-error",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1840.2,
+   "split": "dev",
+   "recall_at_5": 0.3333333333333333,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:54-69": 23,
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:71-80": 19,
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:82-95": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 82,
+     "end_line": 95,
+     "kind": "method",
+     "symbol": "GlobalExceptionHandler.isLostConnection",
+     "is_test": false
+    },
+    {
+     "path": "compose.yaml",
+     "start_line": 32,
+     "end_line": 33,
+     "kind": "config",
+     "symbol": "services.postgres",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/application.yml",
+     "start_line": 4,
+     "end_line": 14,
+     "kind": "config",
+     "symbol": "spring.datasource",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 25,
+     "kind": "class_header",
+     "symbol": "ReservationService",
+     "is_test": false
+    },
+    {
+     "path": "compose.yaml",
+     "start_line": 5,
+     "end_line": 17,
+     "kind": "config",
+     "symbol": "x-app",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-db-connection-error",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1890.3,
+   "split": "dev",
+   "recall_at_5": 0.6666666666666666,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:54-69": 21,
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:71-80": 4,
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:82-95": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 82,
+     "end_line": 95,
+     "kind": "method",
+     "symbol": "GlobalExceptionHandler.isLostConnection",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 25,
+     "kind": "class_header",
+     "symbol": "ReservationService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/application.yml",
+     "start_line": 4,
+     "end_line": 14,
+     "kind": "config",
+     "symbol": "spring.datasource",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 71,
+     "end_line": 80,
+     "kind": "method",
+     "symbol": "GlobalExceptionHandler.handleJpaSystem",
+     "is_test": false
+    },
+    {
+     "path": "compose.yaml",
+     "start_line": 42,
+     "end_line": 46,
+     "kind": "config",
+     "symbol": "services.postgres.healthcheck",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-user-permissions",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1396.4,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.03125,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/security/SecurityConfig.java:49-64": null,
+    "src/main/java/com/stockguard/security/Actor.java:14-20": 37,
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:102-107": 32
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 27,
+     "end_line": 29,
+     "kind": "method",
+     "symbol": "AuthController.AuthController",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 105,
+     "end_line": 126,
+     "kind": "record",
+     "symbol": "ReservationController.ReservationResponse",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V1__users.sql",
+     "start_line": 1,
+     "end_line": 11,
+     "kind": "table",
+     "symbol": "app_users",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AppUserDetails.java",
+     "start_line": 13,
+     "end_line": 47,
+     "kind": "record",
+     "symbol": "AppUserDetails",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 57,
+     "end_line": 58,
+     "kind": "record",
+     "symbol": "AuthController.TokenResponse",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-user-permissions",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1636.1,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.03333333333333333,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/security/SecurityConfig.java:49-64": null,
+    "src/main/java/com/stockguard/security/Actor.java:14-20": null,
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:102-107": 30
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V1__users.sql",
+     "start_line": 1,
+     "end_line": 11,
+     "kind": "table",
+     "symbol": "app_users",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 34,
+     "end_line": 38,
+     "kind": "method",
+     "symbol": "ProblemAuthErrorHandler.handle",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 95,
+     "end_line": 96,
+     "kind": "record",
+     "symbol": "AuthService.RegisteredUser",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 21,
+     "end_line": 27,
+     "kind": "methods",
+     "symbol": "ReservationRepository",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 1,
+     "end_line": 18,
+     "kind": "table",
+     "symbol": "reservations",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-oversell",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2066.0,
+   "split": "dev",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.07692307692307693,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61": 13,
+    "src/main/java/com/stockguard/inventory/StockLedger.java:39-45": null
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 43,
+     "end_line": 60,
+     "kind": "method",
+     "symbol": "ReservationController.create",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 109,
+     "end_line": 114,
+     "kind": "method",
+     "symbol": "ReservationTransactions.settle",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 99,
+     "end_line": 103,
+     "kind": "record",
+     "symbol": "ReservationController.CreateReservationRequest",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 34,
+     "end_line": 38,
+     "kind": "method",
+     "symbol": "ProblemAuthErrorHandler.handle",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-oversell",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2329.5,
+   "split": "dev",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.1111111111111111,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61": 9,
+    "src/main/java/com/stockguard/inventory/StockLedger.java:39-45": null
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 180,
+     "end_line": 201,
+     "kind": "method",
+     "symbol": "SimulationService.report",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 29,
+     "end_line": 52,
+     "kind": "method",
+     "symbol": "ReservationRepository.insertIfKeyUnused",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 202,
+     "end_line": 233,
+     "kind": "method",
+     "symbol": "SimulationService.report",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 90,
+     "end_line": 107,
+     "kind": "method",
+     "symbol": "SimulationService.run",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-idempotency",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1949.7,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.5,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:29-52": 3,
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:72-80": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 43,
+     "end_line": 60,
+     "kind": "method",
+     "symbol": "ReservationController.create",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 72,
+     "end_line": 80,
+     "kind": "method",
+     "symbol": "ReservationTransactions.replay",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 29,
+     "end_line": 52,
+     "kind": "method",
+     "symbol": "ReservationRepository.insertIfKeyUnused",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 1,
+     "end_line": 18,
+     "kind": "table",
+     "symbol": "reservations",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 61,
+     "end_line": 68,
+     "kind": "method",
+     "symbol": "ReservationController.create",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-idempotency",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1845.2,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:29-52": 1,
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:72-80": 3
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 29,
+     "end_line": 52,
+     "kind": "method",
+     "symbol": "ReservationRepository.insertIfKeyUnused",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 43,
+     "end_line": 60,
+     "kind": "method",
+     "symbol": "ReservationController.create",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 72,
+     "end_line": 80,
+     "kind": "method",
+     "symbol": "ReservationTransactions.replay",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 61,
+     "end_line": 68,
+     "kind": "method",
+     "symbol": "ReservationController.create",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 1,
+     "end_line": 18,
+     "kind": "table",
+     "symbol": "reservations",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-expiry",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1541.5,
+   "split": "test",
+   "recall_at_5": 0.6666666666666666,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 0.6666666666666666,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/reservation/ReservationExpiryService.java:27-47": 3,
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:70-90": 1,
+    "src/main/java/com/stockguard/reservation/ReservationExpiryJob.java:27-38": 6
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 70,
+     "end_line": 90,
+     "kind": "method",
+     "symbol": "ReservationRepository.expireDue",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 96,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48,
+     "kind": "class",
+     "symbol": "ReservationExpiryService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 54,
+     "end_line": 68,
+     "kind": "method",
+     "symbol": "ReservationRepository.settleIfPendingAndInTime",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 116,
+     "end_line": 124,
+     "kind": "method",
+     "symbol": "ReservationTransactions.rejection",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-expiry",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2034.3,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/reservation/ReservationExpiryService.java:27-47": 1,
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:70-90": 2,
+    "src/main/java/com/stockguard/reservation/ReservationExpiryJob.java:27-38": 4
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48,
+     "kind": "class",
+     "symbol": "ReservationExpiryService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 70,
+     "end_line": 90,
+     "kind": "method",
+     "symbol": "ReservationRepository.expireDue",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 96,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryJob.java",
+     "start_line": 12,
+     "end_line": 45,
+     "kind": "class",
+     "symbol": "ReservationExpiryJob",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 116,
+     "end_line": 124,
+     "kind": "method",
+     "symbol": "ReservationTransactions.rejection",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-retry",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2147.0,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/reservation/ReservationService.java:16-45": 1,
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:54-69": 7
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 25,
+     "kind": "class_header",
+     "symbol": "ReservationService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/application.yml",
+     "start_line": 4,
+     "end_line": 14,
+     "kind": "config",
+     "symbol": "spring.datasource",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 17,
+     "end_line": 30,
+     "kind": "class_header",
+     "symbol": "ReservationTransactions",
+     "is_test": false
+    },
+    {
+     "path": "compose.yaml",
+     "start_line": 5,
+     "end_line": 17,
+     "kind": "config",
+     "symbol": "x-app",
+     "is_test": false
+    },
+    {
+     "path": "compose.yaml",
+     "start_line": 42,
+     "end_line": 46,
+     "kind": "config",
+     "symbol": "services.postgres.healthcheck",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-retry",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2097.4,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/reservation/ReservationService.java:16-45": 1,
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:54-69": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 25,
+     "kind": "class_header",
+     "symbol": "ReservationService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 54,
+     "end_line": 69,
+     "kind": "method",
+     "symbol": "GlobalExceptionHandler.handleTransient",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/application.yml",
+     "start_line": 4,
+     "end_line": 14,
+     "kind": "config",
+     "symbol": "spring.datasource",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 42,
+     "end_line": 45,
+     "kind": "method",
+     "symbol": "ReservationService.cancel",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 32,
+     "end_line": 35,
+     "kind": "method",
+     "symbol": "ReservationService.create",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-lock-order",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1998.7,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.5,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:17-24": 2,
+    "src/main/java/com/stockguard/reservation/ReservationExpiryService.java:27-37": 4
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/application.yml",
+     "start_line": 4,
+     "end_line": 14,
+     "kind": "config",
+     "symbol": "spring.datasource",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 17,
+     "end_line": 30,
+     "kind": "class_header",
+     "symbol": "ReservationTransactions",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 1,
+     "end_line": 22,
+     "kind": "table",
+     "symbol": "stock_movements",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48,
+     "kind": "class",
+     "symbol": "ReservationExpiryService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 25,
+     "kind": "class_header",
+     "symbol": "ReservationService",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-lock-order",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1954.6,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:17-24": 1,
+    "src/main/java/com/stockguard/reservation/ReservationExpiryService.java:27-37": 3
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 17,
+     "end_line": 30,
+     "kind": "class_header",
+     "symbol": "ReservationTransactions",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/application.yml",
+     "start_line": 4,
+     "end_line": 14,
+     "kind": "config",
+     "symbol": "spring.datasource",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48,
+     "kind": "class",
+     "symbol": "ReservationExpiryService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 25,
+     "kind": "class_header",
+     "symbol": "ReservationService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 49,
+     "end_line": 52,
+     "kind": "method",
+     "symbol": "GlobalExceptionHandler.handleOptimisticLock",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-jwt",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1903.0,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/security/JwtTokenService.java:29-43": 2,
+    "src/main/java/com/stockguard/security/SecurityConfig.java:84-101": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 89,
+     "end_line": 96,
+     "kind": "method",
+     "symbol": "SecurityConfig.jwtDecoder",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 15,
+     "end_line": 47,
+     "kind": "class",
+     "symbol": "JwtTokenService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 75,
+     "end_line": 82,
+     "kind": "method",
+     "symbol": "SecurityConfig.jwtAuthenticationConverter",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 34,
+     "end_line": 45,
+     "kind": "constructor",
+     "symbol": "AuthService.AuthService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 33,
+     "end_line": 38,
+     "kind": "class_header",
+     "symbol": "SecurityConfig",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-jwt",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2105.2,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/security/JwtTokenService.java:29-43": 1,
+    "src/main/java/com/stockguard/security/SecurityConfig.java:84-101": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 15,
+     "end_line": 47,
+     "kind": "class",
+     "symbol": "JwtTokenService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 89,
+     "end_line": 96,
+     "kind": "method",
+     "symbol": "SecurityConfig.jwtDecoder",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 33,
+     "end_line": 38,
+     "kind": "class_header",
+     "symbol": "SecurityConfig",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 98,
+     "end_line": 101,
+     "kind": "method",
+     "symbol": "SecurityConfig.signingKey",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 75,
+     "end_line": 82,
+     "kind": "method",
+     "symbol": "SecurityConfig.jwtAuthenticationConverter",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-password",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2187.2,
+   "split": "test",
+   "recall_at_5": 0.6666666666666666,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/security/SecurityConfig.java:103-106": 12,
+    "src/main/java/com/stockguard/user/AuthService.java:25-26": 1,
+    "src/main/java/com/stockguard/user/AuthService.java:85-89": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 22,
+     "end_line": 32,
+     "kind": "class_header",
+     "symbol": "AuthService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 85,
+     "end_line": 89,
+     "kind": "method",
+     "symbol": "AuthService.requireBcryptCompatible",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 45,
+     "end_line": 52,
+     "kind": "record",
+     "symbol": "AuthController.RegisterRequest",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 98,
+     "end_line": 101,
+     "kind": "method",
+     "symbol": "SecurityConfig.signingKey",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/CreateReservationCommand.java",
+     "start_line": 9,
+     "end_line": 26,
+     "kind": "record",
+     "symbol": "CreateReservationCommand",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-password",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2048.3,
+   "split": "test",
+   "recall_at_5": 0.6666666666666666,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 0.6666666666666666,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/security/SecurityConfig.java:103-106": 8,
+    "src/main/java/com/stockguard/user/AuthService.java:25-26": 1,
+    "src/main/java/com/stockguard/user/AuthService.java:85-89": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 22,
+     "end_line": 32,
+     "kind": "class_header",
+     "symbol": "AuthService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 85,
+     "end_line": 89,
+     "kind": "method",
+     "symbol": "AuthService.requireBcryptCompatible",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 45,
+     "end_line": 52,
+     "kind": "record",
+     "symbol": "AuthController.RegisterRequest",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 10,
+     "end_line": 26,
+     "kind": "interface",
+     "symbol": "AppUserRepository",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AppUser.java",
+     "start_line": 12,
+     "end_line": 49,
+     "kind": "class",
+     "symbol": "AppUser",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-audit",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2197.3,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.03571428571428571,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/audit/AuditTrail.java:14-19": 28,
+    "src/main/java/com/stockguard/audit/AuditTrail.java:31-35": 28
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 126,
+     "end_line": 127,
+     "kind": "record",
+     "symbol": "ReservationTransactions.CreateOutcome",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 108,
+     "end_line": 116,
+     "kind": "method",
+     "symbol": "SimulationService.run",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 29,
+     "end_line": 36,
+     "kind": "method",
+     "symbol": "ProductService.create",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 10,
+     "end_line": 20,
+     "kind": "class_header",
+     "symbol": "StockLedger",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 57,
+     "end_line": 58,
+     "kind": "record",
+     "symbol": "AuthController.TokenResponse",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-audit",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2087.0,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/audit/AuditTrail.java:14-19": 1,
+    "src/main/java/com/stockguard/audit/AuditTrail.java:31-35": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditTrail.java",
+     "start_line": 14,
+     "end_line": 42,
+     "kind": "class",
+     "symbol": "AuditTrail",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 52,
+     "end_line": 54,
+     "kind": "trigger",
+     "symbol": "tg_audit_events_append_only",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditEvent.java",
+     "start_line": 53,
+     "end_line": 60,
+     "kind": "constructor",
+     "symbol": "AuditEvent.AuditEvent",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 39,
+     "end_line": 39,
+     "kind": "index",
+     "symbol": "ix_audit_events_entity",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 27,
+     "end_line": 37,
+     "kind": "table",
+     "symbol": "audit_events",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-stale-version",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1816.5,
+   "split": "dev",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/catalog/ProductService.java:38-54": 1,
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:49-52": 34
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 38,
+     "end_line": 54,
+     "kind": "method",
+     "symbol": "ProductService.update",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 25,
+     "end_line": 39,
+     "kind": "function",
+     "symbol": "reservations_guard_update",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 57,
+     "end_line": 63,
+     "kind": "method",
+     "symbol": "ProductController.update",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 15,
+     "end_line": 45,
+     "kind": "class_header",
+     "symbol": "Product",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 90,
+     "end_line": 94,
+     "kind": "record",
+     "symbol": "ProductController.UpdateProductRequest",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-stale-version",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1849.6,
+   "split": "dev",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/catalog/ProductService.java:38-54": 1,
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:49-52": 8
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 38,
+     "end_line": 54,
+     "kind": "method",
+     "symbol": "ProductService.update",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 15,
+     "end_line": 45,
+     "kind": "class_header",
+     "symbol": "Product",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 1,
+     "end_line": 12,
+     "kind": "table",
+     "symbol": "products",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 5,
+     "end_line": 32,
+     "kind": "enum",
+     "symbol": "ErrorCode",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-invariants",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1566.2,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:11-24": 1,
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:102-118": null
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 11,
+     "end_line": 22,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 35,
+     "kind": "class_header",
+     "symbol": "StockLevel",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 10,
+     "end_line": 20,
+     "kind": "class_header",
+     "symbol": "StockLedger",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 1,
+     "end_line": 22,
+     "kind": "table",
+     "symbol": "stock_movements",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 96,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-invariants",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1532.8,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:11-24": 1,
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:102-118": null
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 11,
+     "end_line": 22,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+     "start_line": 35,
+     "end_line": 39,
+     "kind": "method",
+     "symbol": "InventoryController.get",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 64,
+     "end_line": 65,
+     "kind": "method",
+     "symbol": "StockMovement.StockMovement",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyController.java",
+     "start_line": 12,
+     "end_line": 28,
+     "kind": "class",
+     "symbol": "ConsistencyController",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+     "start_line": 41,
+     "end_line": 49,
+     "kind": "method",
+     "symbol": "InventoryController.add",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-simulation-race",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2194.4,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.3333333333333333,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/simulation/SimulationService.java:118-145": 3
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 90,
+     "end_line": 107,
+     "kind": "method",
+     "symbol": "SimulationService.run",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 157,
+     "end_line": 169,
+     "kind": "method",
+     "symbol": "SimulationService.reserve",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 118,
+     "end_line": 145,
+     "kind": "method",
+     "symbol": "SimulationService.race",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 147,
+     "end_line": 156,
+     "kind": "method",
+     "symbol": "SimulationService.reserve",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 40,
+     "end_line": 65,
+     "kind": "class_header",
+     "symbol": "SimulationService",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-simulation-race",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2139.4,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.5,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/simulation/SimulationService.java:118-145": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 90,
+     "end_line": 107,
+     "kind": "method",
+     "symbol": "SimulationService.run",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 118,
+     "end_line": 145,
+     "kind": "method",
+     "symbol": "SimulationService.race",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 19,
+     "end_line": 42,
+     "kind": "class",
+     "symbol": "SimulationController",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 180,
+     "end_line": 201,
+     "kind": "method",
+     "symbol": "SimulationService.report",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 157,
+     "end_line": 169,
+     "kind": "method",
+     "symbol": "SimulationService.reserve",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-first-admin",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1604.6,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.5,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/user/AdminSeeder.java:11-33": 2,
+    "src/main/java/com/stockguard/user/AuthService.java:57-62": 13
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V1__users.sql",
+     "start_line": 1,
+     "end_line": 11,
+     "kind": "table",
+     "symbol": "app_users",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AdminSeeder.java",
+     "start_line": 11,
+     "end_line": 33,
+     "kind": "class",
+     "symbol": "AdminSeeder",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 48,
+     "end_line": 50,
+     "kind": "trigger",
+     "symbol": "tg_stock_movements_append_only",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 25,
+     "end_line": 25,
+     "kind": "index",
+     "symbol": "ix_stock_movements_reservation",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 39,
+     "end_line": 39,
+     "kind": "index",
+     "symbol": "ix_audit_events_entity",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sg-first-admin",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1700.7,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/user/AdminSeeder.java:11-33": 1,
+    "src/main/java/com/stockguard/user/AuthService.java:57-62": 17
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/user/AdminSeeder.java",
+     "start_line": 11,
+     "end_line": 33,
+     "kind": "class",
+     "symbol": "AdminSeeder",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 54,
+     "end_line": 61,
+     "kind": "method",
+     "symbol": "ReservationService.list",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V1__users.sql",
+     "start_line": 1,
+     "end_line": 11,
+     "kind": "table",
+     "symbol": "app_users",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditController.java",
+     "start_line": 28,
+     "end_line": 35,
+     "kind": "method",
+     "symbol": "AuditController.search",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 126,
+     "end_line": 127,
+     "kind": "record",
+     "symbol": "ReservationTransactions.CreateOutcome",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-realtime",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2372.7,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.14285714285714285,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "apps/collab/src/server.ts:33-101": null,
+    "apps/web/src/collab/use-collaboration.ts:141-177": 7
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/scripts/screenshots.ts",
+     "start_line": 35,
+     "end_line": 78,
+     "kind": "function",
+     "symbol": "main",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 38,
+     "end_line": 68,
+     "kind": "method",
+     "symbol": "MembersService.invite",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 36,
+     "end_line": 71,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/providers/theme.tsx",
+     "start_line": 12,
+     "end_line": 12,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-realtime",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2212.2,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.3333333333333333,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "apps/collab/src/server.ts:33-101": null,
+    "apps/web/src/collab/use-collaboration.ts:141-177": 3
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 36,
+     "end_line": 71,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 141,
+     "end_line": 177,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 46,
+     "end_line": 60,
+     "kind": "class_header",
+     "symbol": "AccessControlExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/scripts/screenshots.ts",
+     "start_line": 35,
+     "end_line": 78,
+     "kind": "function",
+     "symbol": "main",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-user-permissions",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1832.8,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.02,
+   "file_recall_at_5": 0.3333333333333333,
+   "gold_ranks": {
+    "apps/api/src/common/note-access/note-access.service.ts:25-37": null,
+    "apps/api/src/common/note-access/note-role.guard.ts:16-27": 50,
+    "apps/collab/src/extensions/access-control.ts:149-162": null
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 62,
+     "end_line": 62,
+     "kind": "method",
+     "symbol": "AccessControlExtension.constructor",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 22,
+     "end_line": 22,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 45,
+     "end_line": 56,
+     "kind": "method",
+     "symbol": "AuthController.register",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/components/ui/primitives.tsx",
+     "start_line": 64,
+     "end_line": 66,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 58,
+     "end_line": 70,
+     "kind": "method",
+     "symbol": "AuthController.login",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-user-permissions",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2109.5,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.047619047619047616,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "apps/api/src/common/note-access/note-access.service.ts:25-37": null,
+    "apps/api/src/common/note-access/note-role.guard.ts:16-27": null,
+    "apps/collab/src/extensions/access-control.ts:149-162": 21
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 56,
+     "end_line": 68,
+     "kind": "method",
+     "symbol": "PermissionService.refreshMany",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22,
+     "kind": "class_header",
+     "symbol": "PermissionService",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 30,
+     "end_line": 54,
+     "kind": "method",
+     "symbol": "PermissionService.getRole",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 88,
+     "end_line": 94,
+     "kind": "method",
+     "symbol": "PermissionService.fetch",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 96,
+     "end_line": 98,
+     "kind": "method",
+     "symbol": "PermissionService.key",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-revocation",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2330.5,
+   "split": "dev",
+   "recall_at_5": 0.3333333333333333,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/collab/src/extensions/access-control.ts:173-184": null,
+    "apps/collab/src/extensions/access-control.ts:80-122": 38,
+    "apps/api/src/notes/members.service.ts:91-98": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 91,
+     "end_line": 98,
+     "kind": "method",
+     "symbol": "MembersService.remove",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 9,
+     "end_line": 21,
+     "kind": "class_header",
+     "symbol": "AccessEventsPublisher",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 46,
+     "end_line": 60,
+     "kind": "class_header",
+     "symbol": "AccessControlExtension",
+     "is_test": false
+    },
+    {
+     "path": "packages/shared/src/access-events.ts",
+     "start_line": 3,
+     "end_line": 8,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "packages/shared/src/collab.ts",
+     "start_line": 25,
+     "end_line": 29,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-revocation",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2268.4,
+   "split": "dev",
+   "recall_at_5": 0.6666666666666666,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.3333333333333333,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/collab/src/extensions/access-control.ts:173-184": 10,
+    "apps/collab/src/extensions/access-control.ts:80-122": 5,
+    "apps/api/src/notes/members.service.ts:91-98": 3
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "packages/shared/src/access-events.ts",
+     "start_line": 3,
+     "end_line": 8,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 9,
+     "end_line": 21,
+     "kind": "class_header",
+     "symbol": "AccessEventsPublisher",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 91,
+     "end_line": 98,
+     "kind": "method",
+     "symbol": "MembersService.remove",
+     "is_test": false
+    },
+    {
+     "path": "packages/shared/src/collab.ts",
+     "start_line": 25,
+     "end_line": 29,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 80,
+     "end_line": 113,
+     "kind": "method",
+     "symbol": "AccessControlExtension.sweep",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-lost-updates",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2333.2,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/collab/src/extensions/persistence.ts:20-30": 1,
+    "apps/collab/src/extensions/persistence.ts:53-61": null
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/collab/src/extensions/persistence.ts",
+     "start_line": 20,
+     "end_line": 31,
+     "kind": "class_header",
+     "symbol": "PersistenceExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 28,
+     "end_line": 56,
+     "kind": "function",
+     "symbol": "describeStatus",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 70,
+     "end_line": 89,
+     "kind": "method",
+     "symbol": "MembersService.updateRole",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 34,
+     "end_line": 40,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 46,
+     "end_line": 60,
+     "kind": "class_header",
+     "symbol": "AccessControlExtension",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-lost-updates",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2114.8,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/collab/src/extensions/persistence.ts:20-30": 1,
+    "apps/collab/src/extensions/persistence.ts:53-61": 11
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/collab/src/extensions/persistence.ts",
+     "start_line": 20,
+     "end_line": 31,
+     "kind": "class_header",
+     "symbol": "PersistenceExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 46,
+     "end_line": 60,
+     "kind": "class_header",
+     "symbol": "AccessControlExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 19,
+     "end_line": 37,
+     "kind": "class_header",
+     "symbol": "DegradedReconcilerExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 80,
+     "end_line": 113,
+     "kind": "method",
+     "symbol": "AccessControlExtension.sweep",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/config.ts",
+     "start_line": 22,
+     "end_line": 32,
+     "kind": "variable",
+     "symbol": "collabEnvSchema",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-redis-outage",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2202.8,
+   "split": "dev",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "apps/collab/src/extensions/resilient-redis.ts:32-45": 16,
+    "apps/collab/src/extensions/degraded-reconciler.ts:19-32": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 19,
+     "end_line": 37,
+     "kind": "class_header",
+     "symbol": "DegradedReconcilerExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22,
+     "kind": "class_header",
+     "symbol": "PermissionService",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/health/health.controller.ts",
+     "start_line": 7,
+     "end_line": 34,
+     "kind": "class",
+     "symbol": "HealthController",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 9,
+     "end_line": 21,
+     "kind": "class_header",
+     "symbol": "AccessEventsPublisher",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/server.ts",
+     "start_line": 33,
+     "end_line": 64,
+     "kind": "function",
+     "symbol": "createCollabServer",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-redis-outage",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2601.9,
+   "split": "dev",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.09090909090909091,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "apps/collab/src/extensions/resilient-redis.ts:32-45": 11,
+    "apps/collab/src/extensions/degraded-reconciler.ts:19-32": 43
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 9,
+     "end_line": 21,
+     "kind": "class_header",
+     "symbol": "AccessEventsPublisher",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/server.ts",
+     "start_line": 33,
+     "end_line": 64,
+     "kind": "function",
+     "symbol": "createCollabServer",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/server.ts",
+     "start_line": 104,
+     "end_line": 128,
+     "kind": "function",
+     "symbol": "createCollabServer",
+     "is_test": false
+    },
+    {
+     "path": "packages/shared/src/access-events.ts",
+     "start_line": 3,
+     "end_line": 8,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 32,
+     "end_line": 56,
+     "kind": "method",
+     "symbol": "AccessEventsPublisher.publish",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-offline",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2896.5,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.3333333333333333,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "apps/web/src/collab/use-collaboration.ts:102-107": 3,
+    "apps/web/src/lib/offline-store.ts:3-9": 9
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 179,
+     "end_line": 220,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 10,
+     "end_line": 31,
+     "kind": "variable",
+     "symbol": "FEATURES",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 28,
+     "end_line": 56,
+     "kind": "function",
+     "symbol": "describeStatus",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/main.ts",
+     "start_line": 16,
+     "end_line": 16,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-offline",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2460.5,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/web/src/collab/use-collaboration.ts:102-107": 1,
+    "apps/web/src/lib/offline-store.ts:3-9": 6
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 28,
+     "end_line": 56,
+     "kind": "function",
+     "symbol": "describeStatus",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 10,
+     "end_line": 31,
+     "kind": "variable",
+     "symbol": "FEATURES",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/offline-store.ts",
+     "start_line": 15,
+     "end_line": 32,
+     "kind": "function",
+     "symbol": "clearAllLocalReplicas",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/public/theme-init.js",
+     "start_line": 1,
+     "end_line": 12,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-ticket",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2797.2,
+   "split": "test",
+   "recall_at_5": 0.6666666666666666,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 0.6666666666666666,
+   "gold_ranks": {
+    "apps/api/src/notes/collab-ticket.service.ts:13-44": 8,
+    "apps/collab/src/ticket.ts:10-40": 1,
+    "apps/collab/src/extensions/access-control.ts:124-147": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/collab/src/ticket.ts",
+     "start_line": 10,
+     "end_line": 40,
+     "kind": "function",
+     "symbol": "verifyTicket",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 124,
+     "end_line": 147,
+     "kind": "method",
+     "symbol": "AccessControlExtension.onAuthenticate",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 46,
+     "end_line": 60,
+     "kind": "class_header",
+     "symbol": "AccessControlExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 92,
+     "end_line": 102,
+     "kind": "method",
+     "symbol": "NotesController.ticket",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 91,
+     "end_line": 98,
+     "kind": "method",
+     "symbol": "MembersService.remove",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-ticket",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2428.0,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.3333333333333333,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/notes/collab-ticket.service.ts:13-44": 4,
+    "apps/collab/src/ticket.ts:10-40": 3,
+    "apps/collab/src/extensions/access-control.ts:124-147": 5
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 92,
+     "end_line": 102,
+     "kind": "method",
+     "symbol": "NotesController.ticket",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 46,
+     "end_line": 60,
+     "kind": "class_header",
+     "symbol": "AccessControlExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/ticket.ts",
+     "start_line": 10,
+     "end_line": 40,
+     "kind": "function",
+     "symbol": "verifyTicket",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/collab-ticket.service.ts",
+     "start_line": 13,
+     "end_line": 45,
+     "kind": "class",
+     "symbol": "CollabTicketService",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 124,
+     "end_line": 147,
+     "kind": "method",
+     "symbol": "AccessControlExtension.onAuthenticate",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-refresh-reuse",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2509.0,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/auth/auth.service.ts:116-157": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 116,
+     "end_line": 150,
+     "kind": "method",
+     "symbol": "AuthService.refresh",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 34,
+     "end_line": 40,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/token.service.ts",
+     "start_line": 16,
+     "end_line": 37,
+     "kind": "class",
+     "symbol": "TokenService",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 16,
+     "end_line": 24,
+     "kind": "class_header",
+     "symbol": "JwtAuthGuard",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 151,
+     "end_line": 157,
+     "kind": "method",
+     "symbol": "AuthService.refresh",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-refresh-reuse",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2524.2,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/auth/auth.service.ts:116-157": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 116,
+     "end_line": 150,
+     "kind": "method",
+     "symbol": "AuthService.refresh",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 34,
+     "end_line": 40,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 16,
+     "end_line": 24,
+     "kind": "class_header",
+     "symbol": "JwtAuthGuard",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 151,
+     "end_line": 157,
+     "kind": "method",
+     "symbol": "AuthService.refresh",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 206,
+     "end_line": 228,
+     "kind": "method",
+     "symbol": "AuthService.startSession",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-csrf",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2291.7,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/common/guards/csrf.guard.ts:8-12": 9,
+    "apps/api/src/common/guards/csrf.guard.ts:14-32": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 14,
+     "end_line": 32,
+     "kind": "class",
+     "symbol": "CsrfGuard",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 33,
+     "end_line": 43,
+     "kind": "method",
+     "symbol": "AuthController.csrf",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 6,
+     "end_line": 6,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/cookies.ts",
+     "start_line": 45,
+     "end_line": 48,
+     "kind": "function",
+     "symbol": "setCsrfCookie",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 45,
+     "end_line": 53,
+     "kind": "function",
+     "symbol": "csrfToken",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-csrf",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2183.5,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/common/guards/csrf.guard.ts:8-12": 8,
+    "apps/api/src/common/guards/csrf.guard.ts:14-32": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 14,
+     "end_line": 32,
+     "kind": "class",
+     "symbol": "CsrfGuard",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 33,
+     "end_line": 43,
+     "kind": "method",
+     "symbol": "AuthController.csrf",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 28,
+     "end_line": 32,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 6,
+     "end_line": 6,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 45,
+     "end_line": 53,
+     "kind": "function",
+     "symbol": "csrfToken",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-password",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2137.0,
+   "split": "dev",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.02631578947368421,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "apps/api/src/auth/password.service.ts:4-12": 38,
+    "apps/api/src/auth/password.service.ts:33-37": 38,
+    "apps/api/src/auth/auth.service.ts:88-92": null
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 6,
+     "end_line": 6,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/main.ts",
+     "start_line": 16,
+     "end_line": 16,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "packages/shared/src/api-types.ts",
+     "start_line": 3,
+     "end_line": 3,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 22,
+     "end_line": 22,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 41,
+     "end_line": 61,
+     "kind": "method",
+     "symbol": "FoldersService.rename",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-password",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2436.5,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/auth/password.service.ts:4-12": 1,
+    "apps/api/src/auth/password.service.ts:33-37": 1,
+    "apps/api/src/auth/auth.service.ts:88-92": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/auth/password.service.ts",
+     "start_line": 4,
+     "end_line": 38,
+     "kind": "class",
+     "symbol": "PasswordService",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 84,
+     "end_line": 114,
+     "kind": "method",
+     "symbol": "AuthService.login",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 57,
+     "end_line": 82,
+     "kind": "method",
+     "symbol": "AuthService.register",
+     "is_test": false
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 7,
+     "end_line": 19,
+     "kind": "table",
+     "symbol": "users",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 34,
+     "end_line": 40,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-version-restore",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2172.8,
+   "split": "dev",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.5,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "apps/collab/src/versions.ts:46-64": 2,
+    "apps/collab/src/ydoc.ts:67-94": null
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/notes/versions.service.ts",
+     "start_line": 32,
+     "end_line": 48,
+     "kind": "method",
+     "symbol": "VersionsService.get",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 46,
+     "end_line": 64,
+     "kind": "method",
+     "symbol": "VersionService.restore",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/versions.service.ts",
+     "start_line": 15,
+     "end_line": 30,
+     "kind": "method",
+     "symbol": "VersionsService.list",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/components/history-panel.tsx",
+     "start_line": 56,
+     "end_line": 95,
+     "kind": "function",
+     "symbol": "VersionDialog",
+     "is_test": false
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 134,
+     "end_line": 135,
+     "kind": "table",
+     "symbol": "note_versions",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-version-restore",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2516.1,
+   "split": "dev",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "apps/collab/src/versions.ts:46-64": 1,
+    "apps/collab/src/ydoc.ts:67-94": null
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 46,
+     "end_line": 64,
+     "kind": "method",
+     "symbol": "VersionService.restore",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 111,
+     "end_line": 139,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/components/history-panel.tsx",
+     "start_line": 56,
+     "end_line": 95,
+     "kind": "function",
+     "symbol": "VersionDialog",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/components/history-panel.tsx",
+     "start_line": 194,
+     "end_line": 208,
+     "kind": "function",
+     "symbol": "HistoryPanel",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 95,
+     "end_line": 131,
+     "kind": "function",
+     "symbol": "NoteWorkspace",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-auto-version",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2513.0,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/collab/src/extensions/persistence.ts:103-127": 2,
+    "apps/collab/src/versions.ts:66-76": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 66,
+     "end_line": 76,
+     "kind": "method",
+     "symbol": "VersionService.pruneAuto",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/persistence.ts",
+     "start_line": 103,
+     "end_line": 127,
+     "kind": "method",
+     "symbol": "PersistenceExtension.maybeAutoVersion",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 7,
+     "end_line": 7,
+     "kind": "type",
+     "symbol": "VersionKind",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 24,
+     "end_line": 44,
+     "kind": "method",
+     "symbol": "VersionService.createSnapshot",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/components/history-panel.tsx",
+     "start_line": 56,
+     "end_line": 95,
+     "kind": "function",
+     "symbol": "VersionDialog",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-auto-version",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2642.7,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.16666666666666666,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "apps/collab/src/extensions/persistence.ts:103-127": 7,
+    "apps/collab/src/versions.ts:66-76": 6
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 24,
+     "end_line": 44,
+     "kind": "method",
+     "symbol": "VersionService.createSnapshot",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/versions.service.ts",
+     "start_line": 6,
+     "end_line": 12,
+     "kind": "class_header",
+     "symbol": "VersionsService",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 17,
+     "end_line": 18,
+     "kind": "class_header",
+     "symbol": "VersionService",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/config.ts",
+     "start_line": 3,
+     "end_line": 21,
+     "kind": "variable",
+     "symbol": "collabEnvSchema",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 46,
+     "end_line": 64,
+     "kind": "method",
+     "symbol": "VersionService.restore",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-presence",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 1892.7,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.14285714285714285,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "apps/web/src/collab/presence.tsx:11-34": 7,
+    "apps/web/src/collab/presence.tsx:36-56": 25
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 58,
+     "end_line": 62,
+     "kind": "method",
+     "symbol": "NotesController.get",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 64,
+     "end_line": 72,
+     "kind": "method",
+     "symbol": "NotesController.move",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 53,
+     "end_line": 56,
+     "kind": "method",
+     "symbol": "NotesController.create",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 45,
+     "end_line": 51,
+     "kind": "method",
+     "symbol": "NotesController.list",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 38,
+     "end_line": 68,
+     "kind": "method",
+     "symbol": "MembersService.invite",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-presence",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2238.9,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.14285714285714285,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "apps/web/src/collab/presence.tsx:11-34": 7,
+    "apps/web/src/collab/presence.tsx:36-56": 34
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 53,
+     "end_line": 56,
+     "kind": "method",
+     "symbol": "NotesController.create",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 58,
+     "end_line": 62,
+     "kind": "method",
+     "symbol": "NotesController.get",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 64,
+     "end_line": 72,
+     "kind": "method",
+     "symbol": "NotesController.move",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 45,
+     "end_line": 51,
+     "kind": "method",
+     "symbol": "NotesController.list",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 81,
+     "end_line": 90,
+     "kind": "method",
+     "symbol": "NotesController.leave",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-viewer-readonly",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2577.8,
+   "split": "dev",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.07692307692307693,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "apps/collab/src/extensions/access-control.ts:124-147": null,
+    "apps/collab/src/extensions/access-control.ts:209-217": 13
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "packages/shared/src/roles.ts",
+     "start_line": 4,
+     "end_line": 5,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 33,
+     "end_line": 62,
+     "kind": "function",
+     "symbol": "MemberRow",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 12,
+     "end_line": 12,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 10,
+     "end_line": 31,
+     "kind": "variable",
+     "symbol": "FEATURES",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-viewer-readonly",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2351.8,
+   "split": "dev",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.0,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "apps/collab/src/extensions/access-control.ts:124-147": null,
+    "apps/collab/src/extensions/access-control.ts:209-217": null
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 64,
+     "end_line": 100,
+     "kind": "function",
+     "symbol": "ShareDialog",
+     "is_test": false
+    },
+    {
+     "path": "packages/shared/src/roles.ts",
+     "start_line": 1,
+     "end_line": 1,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 113,
+     "end_line": 144,
+     "kind": "function",
+     "symbol": "useMemberMutations",
+     "is_test": false
+    },
+    {
+     "path": "packages/shared/src/roles.ts",
+     "start_line": 8,
+     "end_line": 12,
+     "kind": "variable",
+     "symbol": "ROLE_RANK",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-session-refresh",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2464.8,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.02631578947368421,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "apps/web/src/lib/api.ts:55-63": null,
+    "apps/web/src/lib/api.ts:87-90": 38
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 87,
+     "end_line": 101,
+     "kind": "method",
+     "symbol": "AuthController.logout",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22,
+     "kind": "class_header",
+     "symbol": "PermissionService",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 206,
+     "end_line": 228,
+     "kind": "method",
+     "symbol": "AuthService.startSession",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 116,
+     "end_line": 150,
+     "kind": "method",
+     "symbol": "AuthService.refresh",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/providers/auth.tsx",
+     "start_line": 27,
+     "end_line": 75,
+     "kind": "function",
+     "symbol": "AuthProvider",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "sn-session-refresh",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 2443.4,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.25,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/web/src/lib/api.ts:55-63": 4,
+    "apps/web/src/lib/api.ts:87-90": 10
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 206,
+     "end_line": 228,
+     "kind": "method",
+     "symbol": "AuthService.startSession",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 87,
+     "end_line": 101,
+     "kind": "method",
+     "symbol": "AuthController.logout",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 116,
+     "end_line": 150,
+     "kind": "method",
+     "symbol": "AuthService.refresh",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 57,
+     "end_line": 63,
+     "kind": "function",
+     "symbol": "refreshSession",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 28,
+     "end_line": 32,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    }
+   ]
+  }
+ ]
+}

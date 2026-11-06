@@ -1,0 +1,1010 @@
+[
+ {
+  "variant": "v4-soft",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+  "lines": "14-27",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "54-68",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-oversell",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+  "lines": "50-61",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, stok miktarı yetersiz olduğunda fazla satışa engel olur.",
+   "quote": "AND available_quantity >= :quantity"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "29-52",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "`insertIfKeyUnused` metodu birden fazla isteğin aynı anahtarı kullanmasını önler ve sadece bir işlem gerçekleştirir.",
+   "quote": "ON CONFLICT (user_id, idempotency_key) DO NOTHING"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "apps/web/src/collab/connection.ts",
+  "lines": "28-56",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+  "lines": "1-6",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "İki sunucu aynı notu kaydederken güncellemelerin kaybolmasını önler.",
+   "quote": "-- Enforced by the database (partial unique index) rather than only by application code,\n-- so a race between two concurrent \"share\" requests can never produce two owners."
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-lost-updates",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/persistence.ts",
+  "lines": "20-31",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "docker-compose.yml",
+  "lines": "1-1",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "apps/collab/src/server.ts",
+  "lines": "33-64",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "apps/api/src/redis/access-events.publisher.ts",
+  "lines": "9-21",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-redis-outage",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/resilient-redis.ts",
+  "lines": "32-52",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Redis hizmeti kesildiğinde, doküman yüklemeleri Redis'e bağlı olmaksızın devam eder ve yeniden bağlandığında açık dokümanlar eksik güncellemleri paylaşırlar.",
+   "quote": "Document loads never block on Redis: while it is unavailable, the subscription is deferred."
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-redis-outage",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+  "lines": "19-37",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "packages/shared/src/access-events.ts",
+  "lines": "3-8",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "apps/web/src/collab/use-collaboration.ts",
+  "lines": "98-109",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "apps/web/src/components/share-dialog.tsx",
+  "lines": "33-62",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "packages/shared/src/roles.ts",
+  "lines": "20-22",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-viewer-readonly",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "209-217",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+  "lines": "42-45",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "92-97",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+  "lines": "79-96",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "116-124",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationStatus.java",
+  "lines": "3-9",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "92-100",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Rezervasyon iptali işlemi `ledger.releaseReserved` metodu aracılığıyla ürün stoklarına geri eklenir.",
+   "quote": "ledger.releaseReserved(current.getProductId(), current.getQuantity(), id, actor.userId(), MovementType.CANCEL_RELEASED);"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-ticket",
+  "label": "gold",
+  "path": "apps/collab/src/ticket.ts",
+  "lines": "10-40",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "46-60",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "`AccessControlExtension` WebSocket bağlantısının kimlik doğrulama bileti oluşturup doğrulanmasını sağlar.",
+   "quote": "- handshake: verifies the API-issued ticket, then reads the role from Postgres"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "apps/api/src/notes/notes.controller.ts",
+  "lines": "92-102",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "packages/shared/src/collab.ts",
+  "lines": "7-15",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-ticket",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "124-147",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "`verifyTicket` fonksiyonu token ve belgenin adı kullanılarak kimlik doğrulama biletini oluşturur ve doğrular.",
+   "quote": "claims = verifyTicket(token, this.options.ticketSecret, documentName);"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/resources/application.yml",
+  "lines": "4-14",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-lock-order",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "17-30",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "`ReservationTransactions` sınıfındaki metotlar, rezervasyon satırı önce ve stok satırı sonra kilitlenme sırasıyla alır.",
+   "quote": "Every method is one all-or-nothing unit and uses the same lock order, reservation row first and stock row second,"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+  "lines": "1-22",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+  "lines": "16-25",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-lock-order",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+  "lines": "14-48",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "`ReservationExpiryService.expireDueBatch` metodunun içindeki `ledger.releaseReserved` çağrısı, ürün sırasına bağlı olarak kilitlenme riskini azaltır.",
+   "quote": "@Transactional\npublic int expireDueBatch(int batchSize) {\n    List<ExpiredReservation> expired = reservations.expireDue(batchSize).stream()\n            .sorted(Comparator.comparing(ExpiredReservation::getProductId))\n            .toList();\n    for (ExpiredReservation reservation : expired) {\n        ledger.releaseReserved(reservation.getProductId(), reservation.getQuantity(), reservation.getId(), null, MovementType.EXPIRY_RELEASED);\n"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "89-96",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+  "lines": "15-47",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "`JwtTokenService` sınıfı bir JWT token oluşturur ve imzalar.",
+   "quote": "public IssuedToken issue(UUID userId, String username, Role role) {"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "75-82",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/resources/application.yml",
+  "lines": "54-60",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "84-87",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/user/AuthService.java",
+  "lines": "34-45",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-csrf",
+  "label": "gold",
+  "path": "apps/api/src/common/guards/csrf.guard.ts",
+  "lines": "14-32",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "`CsrfGuard` sınıfı her durum değişkeni isteğinde CSRF korumasını uygular.",
+   "quote": "<code>if (context.getType() !== 'http') return true;<br>if (SAFE_METHODS.has(req.method.toUpperCase())) return true;</code>"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/api/src/auth/auth.controller.ts",
+  "lines": "33-43",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/api/src/common/cookies.ts",
+  "lines": "45-48",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/web/src/lib/api.ts",
+  "lines": "28-32",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-csrf",
+  "label": "gold",
+  "path": "apps/api/src/common/guards/csrf.guard.ts",
+  "lines": "8-12",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "`csrfTokensMatch` fonksiyonu cookie ve header'daki CSRF token değerlerinin uyumunu kontrol eder.",
+   "quote": "return timingSafeEqual(Buffer.from(cookieValue), Buffer.from(headerValue));"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-revocation",
+  "label": "gold",
+  "path": "apps/api/src/notes/members.service.ts",
+  "lines": "91-98",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Üyeyi silerken, üyenin sahip olduğu açık WebSocket oturumları her bir işbirlik sunucusu tarafından kapatılır.",
+   "quote": "// Open WebSocket sessions of this user are closed by every collaboration server."
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "apps/api/src/redis/access-events.publisher.ts",
+  "lines": "9-21",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "packages/shared/src/access-events.ts",
+  "lines": "3-8",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "46-60",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "`AccessControlExtension` üyelik durumlarını gerçek zamanlı olarak takip eder ve üyenin erişimi kaldırıldığında bağlantının kapanmasını veya oku-sadece durumunu değiştirir.",
+   "quote": "- membership events from the API are applied to live connections immediately:<br>  removed → document connection closed; role changed → read-only flag flipped in place"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "43-60",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Aynı `Idempotency-Key` ve aynı body ile tekrarlanan istekler orijinal rezervasyonu yerine yeni bir rezervasyon oluşturmaz.",
+   "quote": "Retrying with the same `Idempotency-Key` and the same body returns the original reservation instead of creating another one."
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-idempotency",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "72-80",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Idempotency-Key'li tekrar eden rezervasyon istekleri, farklı bir talep ile kullanıldığında hata fırlatır.",
+   "quote": "if (!original.getRequestHash().equals(fingerprint)) {\n    throw new ApiException(ErrorCode.IDEMPOTENCY_KEY_REUSED,\n            \"This Idempotency-Key was already used with a different request.\");\n}"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V3__reservations.sql",
+  "lines": "1-18",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-idempotency",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "29-52",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "`insertIfKeyUnused` metodu idempotency key ile tekrar eden rezervasyon isteklerini kontrol eder ve benzersiz bir rezervasyon eklemeyi sağlar.",
+   "quote": "ON CONFLICT (user_id, idempotency_key) DO NOTHING"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "61-68",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "`ReservationController.create` metodunun tekrar edilen istekler için nasıl yanıt verdiğini belirtiyor.",
+   "quote": "if (outcome.replayed()) {\n    return ResponseEntity.ok().header(REPLAY_HEADER, \"true\").body(body);\n}"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-version-restore",
+  "label": "gold",
+  "path": "apps/collab/src/versions.ts",
+  "lines": "46-64",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+  "lines": "134-135",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+  "lines": "75-87",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "apps/api/src/notes/versions.service.ts",
+  "lines": "32-48",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "85-90",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "39-41",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "105-126",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "apps/web/scripts/screenshots.ts",
+  "lines": "35-78",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+  "lines": "1-6",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "apps/web/src/pages/auth-pages.tsx",
+  "lines": "198-242",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/Reservation.java",
+  "lines": "54-91",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "61-87",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "105-126",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "47-48",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+  "lines": "43-46",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "50-54",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/src/pages/dashboard-page.tsx",
+  "lines": "146-178",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/scripts/screenshots.ts",
+  "lines": "109-128",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/src/pages/dashboard-page.tsx",
+  "lines": "180-199",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "",
+   "quote": ""
+  }
+ }
+]

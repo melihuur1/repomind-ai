@@ -1,0 +1,3477 @@
+[
+ {
+  "id": "sg-stock-consistency",
+  "answerable": true,
+  "status": "insufficient",
+  "seconds": 75.7,
+  "gold_read": false,
+  "cites_gold": false,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/common/config/StockGuardProperties.java",
+    "lines": "13-39",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+    "lines": "32-43",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "67-88",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+    "lines": "84-87",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+    "lines": "89-96",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/common/config/OpenApiConfig.java",
+    "lines": "11-34",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/user/AdminSeeder.java",
+    "lines": "11-33",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+    "lines": "98-101",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: ensure, accuracy."
+  ],
+  "tokens": [
+   4364,
+   134
+  ]
+ },
+ {
+  "id": "sg-reservation-cancel",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 81.2,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "Rezervasyon iptal işlemi `ReservationController.cancel` metoduyla yönetiliyor. [S2]\nRezervasyon iptal işlemi `cancel` metodunda yönetiliyor. [S7]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+    "lines": "42-45",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "92-97",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Rezervasyon iptal işlemi `ReservationController.cancel` metoduyla yönetiliyor.",
+    "quote": "@PostMapping(\"/{id}/cancel\")\n    @Operation(operationId = \"cancelReservation\", summary = \"Cancel a reservation: the held units become available again\")",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "39-41",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+    "lines": "79-96",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+    "lines": "116-124",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "105-126",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+    "lines": "92-100",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Rezervasyon iptal işlemi `cancel` metodunda yönetiliyor.",
+    "quote": "@Transactional\ncancel(Actor actor, UUID id) {",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "30-37",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4309,
+   218
+  ]
+ },
+ {
+  "id": "sg-db-connection-error",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 72.1,
+  "gold_read": true,
+  "cites_gold": true,
+  "answer": "Bu metod PostgreSQL hatalarını kontrol eder ve bağlantının kaybolup kaybolduğunu belirler. [S5]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/resources/application.yml",
+    "lines": "4-14",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "compose.yaml",
+    "lines": "38-41",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+    "lines": "16-25",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "compose.yaml",
+    "lines": "1-3",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+    "lines": "82-95",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Bu metod PostgreSQL hatalarını kontrol eder ve bağlantının kaybolup kaybolduğunu belirler.",
+    "quote": "if (cause instanceof SQLException sql) {\n    String state = sql.getSQLState();\n    boolean lost = state == null\n            ? POOL_CONNECTION_CLOSED.equals(sql.getMessage())\n            : state.startsWith(\"08\") || SERVER_GOING_AWAY.contains(state);\n    if (lost) {\n        return true;\n    }\n}",
+    "gold": true
+   },
+   {
+    "path": "compose.yaml",
+    "lines": "32-33",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "compose.yaml",
+    "lines": "42-46",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "compose.yaml",
+    "lines": "34-37",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Only one source supports this answer, so it may be incomplete."
+  ],
+  "tokens": [
+   3930,
+   233
+  ]
+ },
+ {
+  "id": "sg-user-permissions",
+  "answerable": true,
+  "status": "insufficient",
+  "seconds": 60.2,
+  "gold_read": false,
+  "cites_gold": false,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/user/AuthService.java",
+    "lines": "34-45",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+    "lines": "54-61",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/db/migration/V1__users.sql",
+    "lines": "1-11",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/user/Role.java",
+    "lines": "3-6",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+    "lines": "108-113",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/user/AuthService.java",
+    "lines": "95-96",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+    "lines": "21-27",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+    "lines": "10-26",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   3980,
+   133
+  ]
+ },
+ {
+  "id": "sg-oversell",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 110.5,
+  "gold_read": false,
+  "cites_gold": false,
+  "answer": "Bu kod parçası birden fazla isteğin aynı anahtarı kullanmamasını sağlar ve böylece stokta aşırı satışları önler. [S2]\nBaşarısız satış sayısı hesaplanırken, stok yetersizliği kodu olan istekler filtreleniyor. [S3]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "90-107",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+    "lines": "29-52",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Bu kod parçası birden fazla isteğin aynı anahtarı kullanmamasını sağlar ve böylece stokta aşırı satışları önler.",
+    "quote": "ON CONFLICT (user_id, idempotency_key) DO NOTHING",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "180-201",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Başarısız satış sayısı hesaplanırken, stok yetersizliği kodu olan istekler filtreleniyor.",
+    "quote": ".filter(result -> result.status() == 409 && \"INSUFFICIENT_STOCK\".equals(result.code()))",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+    "lines": "54-69",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+    "lines": "115-124",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+    "lines": "71-80",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+    "lines": "97-107",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "202-233",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: excess, sales, prevention."
+  ],
+  "tokens": [
+   5120,
+   239
+  ]
+ },
+ {
+  "id": "sg-idempotency",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 113.1,
+  "gold_read": true,
+  "cites_gold": true,
+  "answer": "Idempotency-Key ile tekrar eden rezervasyon isteklerinin kontrolü yapılır ve farklı bir taleple kullanıldığında hata fırlatılır. [S2]\nIdempotency-Key kullanarak tekrar eden rezervasyon istekleri, PostgreSQL'un çakışan anahtarları engellediği ve başka bir işlem bunu eklediğinde sadece bir kez eklendiği garantili olmasına dayanır. [S3]\nIdempotency-Key kullanılarak tekrar eden rezervasyon isteklerinin yeniden başlatılmasını kontrol ediyor. [S5]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "43-60",
+    "outcome": "unsupported",
+    "reason": "the quote is too short to prove anything",
+    "statement": "`Idempotency-Key` kullanılarak tekrar eden rezervasyon istekleri eski rezervasyonu yerine yeniden döndürülür.",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+    "lines": "72-80",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Idempotency-Key ile tekrar eden rezervasyon isteklerinin kontrolü yapılır ve farklı bir taleple kullanıldığında hata fırlatılır.",
+    "quote": "if (!original.getRequestHash().equals(fingerprint)) {\n    throw new ApiException(ErrorCode.IDEMPOTENCY_KEY_REUSED,\n            \"This Idempotency-Key was already used with a different request.\");\n}",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+    "lines": "29-52",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Idempotency-Key kullanarak tekrar eden rezervasyon istekleri, PostgreSQL'un çakışan anahtarları engellediği ve başka bir işlem bunu eklediğinde sadece bir kez eklendiği garantili olmasına dayanır.",
+    "quote": "ON CONFLICT (user_id, idempotency_key) DO NOTHING",
+    "gold": true
+   },
+   {
+    "path": "src/main/resources/db/migration/V3__reservations.sql",
+    "lines": "1-18",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "61-68",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Idempotency-Key kullanılarak tekrar eden rezervasyon isteklerinin yeniden başlatılmasını kontrol ediyor.",
+    "quote": "if (outcome.replayed()) {",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+    "lines": "21-27",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "30-37",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+    "lines": "54-69",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4887,
+   378
+  ]
+ },
+ {
+  "id": "sg-expiry",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 98.2,
+  "gold_read": true,
+  "cites_gold": true,
+  "answer": "Günlük rezervasyonları iptal eder ve durumu 'EXPIRED' olarak değiştirir. [S1]\nGünlük olarak çalışan `ReservationExpiryJob` sınıfı süresi dolan rezervasyonları temizler. [S6]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+    "lines": "70-90",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Günlük rezervasyonları iptal eder ve durumu 'EXPIRED' olarak değiştirir.",
+    "quote": "UPDATE reservations r\n               SET status = 'EXPIRED', settled_at = now()\n              FROM due\n             WHERE r.id = due.id",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+    "lines": "14-48",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+    "lines": "116-124",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+    "lines": "79-96",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/db/migration/V3__reservations.sql",
+    "lines": "20-21",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationExpiryJob.java",
+    "lines": "12-45",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Günlük olarak çalışan `ReservationExpiryJob` sınıfı süresi dolan rezervasyonları temizler.",
+    "quote": "sweep() { ... expired = expiry.expireDueBatch(batchSize); ... }",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "105-126",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+    "lines": "92-100",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: cleaned."
+  ],
+  "tokens": [
+   4823,
+   236
+  ]
+ },
+ {
+  "id": "sg-retry",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 93.5,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "Deadlock veya kilit zaman aşımında PostgreSQL otomatik olarak işlemi iptal eder ve yeni bir işlem denemesi için dışındaki bir sınırlama bulunur. [S1]\n`ReservationService.create` metodunun başarısız olma durumunda yeniden deneme yapar. [S7]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+    "lines": "16-25",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Deadlock veya kilit zaman aşımında PostgreSQL otomatik olarak işlemi iptal eder ve yeni bir işlem denemesi için dışındaki bir sınırlama bulunur.",
+    "quote": "PostgreSQL aborts the whole transaction when a deadlock or lock timeout hits it, so only a brand new transaction can try again.",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+    "lines": "54-69",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+    "lines": "17-30",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/application.yml",
+    "lines": "4-14",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+    "lines": "49-52",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+    "lines": "14-48",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+    "lines": "32-35",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "`ReservationService.create` metodunun başarısız olma durumunda yeniden deneme yapar.",
+    "quote": "@Retryable(includes = PessimisticLockingFailureException.class, maxRetries = 2, delay = 50, jitter = 25, multiplier = 2)",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+    "lines": "116-124",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4587,
+   263
+  ]
+ },
+ {
+  "id": "sg-lock-order",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 105.7,
+  "gold_read": true,
+  "cites_gold": true,
+  "answer": "Rezervasyon ve stok satırı sırasıyla kilidi alarak deadlock ortadan kaldırılır. [S1]\n`ReservationExpiryService.expireDueBatch` metodunun içinde `ExpiredReservation` nesneleri `getProductId` metoduyla sıralanarak ürünlerin sabit bir sırayla kilitlenmesi sağlanır. [S4]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+    "lines": "17-30",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Rezervasyon ve stok satırı sırasıyla kilidi alarak deadlock ortadan kaldırılır.",
+    "quote": "Every method is one all-or-nothing unit and uses the same lock order, reservation row first and stock row second,",
+    "gold": true
+   },
+   {
+    "path": "src/main/resources/application.yml",
+    "lines": "4-14",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+    "lines": "16-25",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+    "lines": "14-48",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "`ReservationExpiryService.expireDueBatch` metodunun içinde `ExpiredReservation` nesneleri `getProductId` metoduyla sıralanarak ürünlerin sabit bir sırayla kilitlenmesi sağlanır.",
+    "quote": "List<ExpiredReservation> expired = reservations.expireDue(batchSize).stream()\n                .sorted(Comparator.comparing(ExpiredReservation::getProductId))\n                .toList();",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+    "lines": "70-90",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+    "lines": "1-22",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+    "lines": "14-23",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+    "lines": "1-12",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: acquired, avoid."
+  ],
+  "tokens": [
+   4914,
+   275
+  ]
+ },
+ {
+  "id": "sg-jwt",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 90.2,
+  "gold_read": true,
+  "cites_gold": true,
+  "answer": "JWT token'lar `JwtClaimsSet` nesnesini oluşturarak ve `encoder.encode` metodu ile imzalayarak üretiliyor. [S2]\n`SecurityConfig` sınıfı bir `JwtEncoder` bean oluşturur ve bu encoder ile JWT tokenları imzalanan şekilde üretilir. [S3]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+    "lines": "89-96",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+    "lines": "15-47",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "JWT token'lar `JwtClaimsSet` nesnesini oluşturarak ve `encoder.encode` metodu ile imzalayarak üretiliyor.",
+    "quote": "JwtClaimsSet claims = JwtClaimsSet.builder()\n                .issuer(ISSUER)\n                .subject(userId.toString())\n                .issuedAt(now)\n                .expiresAt(expiresAt)\n                .claim(\"username\", username)\n                .claim(ROLE_CLAIM, role.name())\n                .build();\n        String value = encoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+    "lines": "84-87",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "`SecurityConfig` sınıfı bir `JwtEncoder` bean oluşturur ve bu encoder ile JWT tokenları imzalanan şekilde üretilir.",
+    "quote": "return new NimbusJwtEncoder(new ImmutableSecret<>(signingKey(properties)));",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+    "lines": "75-82",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/application.yml",
+    "lines": "54-60",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/user/AuthService.java",
+    "lines": "34-45",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/security/Actor.java",
+    "lines": "7-21",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/common/config/OpenApiConfig.java",
+    "lines": "11-34",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4266,
+   302
+  ]
+ },
+ {
+  "id": "sg-password",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 102.6,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "`AuthService` sınıfında BCrypt'ın sadece ilk 72 baytı işleme alacağı belirtiliyor. [S1]\nMetod şifre uzunluğunu kontrol eder ve 72 bayttan daha uzun şifreler reddedilir. [S2]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/user/AuthService.java",
+    "lines": "22-32",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "`AuthService` sınıfında BCrypt'ın sadece ilk 72 baytı işleme alacağı belirtiliyor.",
+    "quote": "/** BCrypt only considers the first 72 bytes, so longer passwords would be silently weakened. */",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/user/AuthService.java",
+    "lines": "85-89",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Metod şifre uzunluğunu kontrol eder ve 72 bayttan daha uzun şifreler reddedilir.",
+    "quote": "throw new ApiException(ErrorCode.VALIDATION_FAILED, \"Password must not exceed 72 bytes.\");",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/user/AuthController.java",
+    "lines": "45-52",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+    "lines": "70-90",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/CreateReservationCommand.java",
+    "lines": "9-26",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/user/AuthController.java",
+    "lines": "54-55",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/application.yml",
+    "lines": "4-14",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "244-263",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4738,
+   244
+  ]
+ },
+ {
+  "id": "sg-audit",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 93.3,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "AuditTrail sınıfının `record` metodunun `@Transactional(propagation = Propagation.MANDATORY)` kullanılarak iş işlemi ile aynı transaction içinde yazıldığı belirtiliyor. [S1]\nDepo değişiklikleri ve ledger kayıtları aynı işlem içinde tutulur. [S8]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/audit/AuditTrail.java",
+    "lines": "14-42",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "AuditTrail sınıfının `record` metodunun `@Transactional(propagation = Propagation.MANDATORY)` kullanılarak iş işlemi ile aynı transaction içinde yazıldığı belirtiliyor.",
+    "quote": "@Transactional(propagation = Propagation.MANDATORY)\npublic void record(AuditEventType type, UUID actorId, String entityType, UUID entityId, Map<String, ?> details) {",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+    "lines": "32-43",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+    "lines": "17-30",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+    "lines": "14-23",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+    "lines": "29-52",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+    "lines": "39-39",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+    "lines": "52-54",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+    "lines": "10-20",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Depo değişiklikleri ve ledger kayıtları aynı işlem içinde tutulur.",
+    "quote": "Callers own the transaction, so the change, the ledger line and the caller's own writes commit or roll back as one unit.",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4582,
+   262
+  ]
+ },
+ {
+  "id": "sg-stale-version",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 101.1,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "Bu kod, rezervasyonun durumu değişiklikten sonra artık değiştirilemeyeceğini ve aynı zamanda rezervasyonun ürün, kullanıcı veya miktarını değiştiremiyor olduğunu kontrol eder. [S1]\nEski sürüme dayanan değişiklikler reddedilir, çünkü `expectedVersion` parametresi ile girilen sürümle mevcut sürüm arasında eşleşme yoksa hata fırlatılır. [S2]\nÜrün güncellemelerinde eski sürüme dayalı değişiklikler reddedilir ve yeni değerleri görünen bir kişi tarafından tekrar yapılmalıdır. [S7]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/resources/db/migration/V3__reservations.sql",
+    "lines": "25-39",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Bu kod, rezervasyonun durumu değişiklikten sonra artık değiştirilemeyeceğini ve aynı zamanda rezervasyonun ürün, kullanıcı veya miktarını değiştiremiyor olduğunu kontrol eder.",
+    "quote": "-- Last line of defence for the state machine: a settled reservation can never change again,",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+    "lines": "38-54",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Eski sürüme dayanan değişiklikler reddedilir, çünkü `expectedVersion` parametresi ile girilen sürümle mevcut sürüm arasında eşleşme yoksa hata fırlatılır.",
+    "quote": "@param expectedVersion the version the editor was looking at. Checking it here rejects edits based on old data;",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+    "lines": "96-121",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+    "lines": "90-94",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+    "lines": "116-124",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+    "lines": "57-63",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/catalog/Product.java",
+    "lines": "15-45",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Ürün güncellemelerinde eski sürüme dayalı değişiklikler reddedilir ve yeni değerleri görünen bir kişi tarafından tekrar yapılmalıdır.",
+    "quote": "A conflicting edit should fail and be redone by a person who sees the new values, rather than block or overwrite.",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+    "lines": "63-74",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4671,
+   333
+  ]
+ },
+ {
+  "id": "sg-invariants",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 91.8,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "ConsistencyService sınıfı stok değişmezliğini doğrulamak için temel tabloların değerlerini yeniden hesaplar. [S1]\nStockLevel sınıfı IMMUTABLE olarak işaretlendi ve set metodları yoktur. Bu, stok sayısının Java kopyasından geri yazıldığında kaybedilme güncelleme olmasına dayanır ve sadece StockLevelRepository'deki koşullu ifadeler aracılığıyla değiştirilebilir. [S2]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+    "lines": "11-22",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "ConsistencyService sınıfı stok değişmezliğini doğrulamak için temel tabloların değerlerini yeniden hesaplar.",
+    "quote": "@Service\npublic class ConsistencyService {",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+    "lines": "11-35",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "StockLevel sınıfı IMMUTABLE olarak işaretlendi ve set metodları yoktur. Bu, stok sayısının Java kopyasından geri yazıldığında kaybedilme güncelleme olmasına dayanır ve sadece StockLevelRepository'deki koşullu ifadeler aracılığıyla değiştirilebilir.",
+    "quote": "@Immutable\n\tpublic class StockLevel {",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+    "lines": "5-32",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+    "lines": "64-65",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+    "lines": "73-74",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+    "lines": "14-23",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+    "lines": "1-22",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+    "lines": "158-160",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: constants."
+  ],
+  "tokens": [
+   4534,
+   262
+  ]
+ },
+ {
+  "id": "sg-simulation-race",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 103.3,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "Tüm istekleri aynı anda başlatan `race` metodunu kullanarak eşzamanlılık simülasyonu başlatılıyor. [S1]\nTüm istekler bir kapının arkasında bekler ve aynı anda serbest kalarak talepler asıl çakışmaları gerçekleştirmeleri sağlar. [S4]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "90-107",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Tüm istekleri aynı anda başlatan `race` metodunu kullanarak eşzamanlılık simülasyonu başlatılıyor.",
+    "quote": "List<RequestResult> results = race(concurrentRequests, index -> {",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "157-169",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "108-116",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "118-145",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Tüm istekler bir kapının arkasında bekler ve aynı anda serbest kalarak talepler asıl çakışmaları gerçekleştirmeleri sağlar.",
+    "quote": "CountDownLatch ready = new CountDownLatch(count);\nCountDownLatch gate = new CountDownLatch(1);",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "147-156",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "281-303",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "202-233",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "40-65",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4987,
+   241
+  ]
+ },
+ {
+  "id": "sg-first-admin",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 73.6,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "Bu kod ilk yönetici hesabını oluşturur ve bunu `auth.seedAdmin` yöntemini kullanarak yapan bir kontrol yapar. [S1]\n`AuthService.seedAdmin` metodunun amacının ilk yönetici hesabını oluşturmak ve rolleri atamaktır. [S3]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/user/AdminSeeder.java",
+    "lines": "11-33",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Bu kod ilk yönetici hesabını oluşturur ve bunu `auth.seedAdmin` yöntemini kullanarak yapan bir kontrol yapar.",
+    "quote": "auth.seedAdmin(admin.username(), admin.password());",
+    "gold": true
+   },
+   {
+    "path": "src/main/resources/db/migration/V1__users.sql",
+    "lines": "1-11",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/user/AuthService.java",
+    "lines": "57-62",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "`AuthService.seedAdmin` metodunun amacının ilk yönetici hesabını oluşturmak ve rolleri atamaktır.",
+    "quote": "@Transactional\npublic void seedAdmin(String username, String rawPassword) {",
+    "gold": true
+   },
+   {
+    "path": "src/main/java/com/stockguard/user/Role.java",
+    "lines": "3-6",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+    "lines": "10-26",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/application.yml",
+    "lines": "54-60",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/db/migration/V3__reservations.sql",
+    "lines": "22-22",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+    "lines": "1-12",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4081,
+   210
+  ]
+ },
+ {
+  "id": "sn-realtime",
+  "answerable": true,
+  "status": "insufficient",
+  "seconds": 114.8,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/web/src/collab/use-collaboration.ts",
+    "lines": "98-109",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/collab/use-collaboration.ts",
+    "lines": "36-71",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/collab/connection.ts",
+    "lines": "28-56",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/note-page.tsx",
+    "lines": "95-131",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/collab/use-collaboration.ts",
+    "lines": "141-177",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": true
+   },
+   {
+    "path": "apps/web/src/pages/dashboard-page.tsx",
+    "lines": "123-138",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/scripts/screenshots.ts",
+    "lines": "35-78",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/access-control.ts",
+    "lines": "209-217",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: perform."
+  ],
+  "tokens": [
+   5489,
+   135
+  ]
+ },
+ {
+  "id": "sn-user-permissions",
+  "answerable": true,
+  "status": "insufficient",
+  "seconds": 67.2,
+  "gold_read": false,
+  "cites_gold": false,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/collab/src/permissions.ts",
+    "lines": "9-22",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/access-control.ts",
+    "lines": "38-44",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/providers/auth.tsx",
+    "lines": "90-95",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.controller.ts",
+    "lines": "103-106",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "84-114",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/permissions.ts",
+    "lines": "96-98",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/permissions.ts",
+    "lines": "88-94",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/access-control.ts",
+    "lines": "114-122",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4126,
+   133
+  ]
+ },
+ {
+  "id": "sn-revocation",
+  "answerable": true,
+  "status": "insufficient",
+  "seconds": 99.2,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/api/src/notes/members.service.ts",
+    "lines": "91-98",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": true
+   },
+   {
+    "path": "packages/shared/src/access-events.ts",
+    "lines": "3-8",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/access-control.ts",
+    "lines": "46-60",
+    "outcome": "unsupported",
+    "reason": "the quote does not occur in the source",
+    "statement": "Üye erişimi kaldırıldığında, Hocuspocus client-side'da sync updates'ı server-side'da düşürerek oku sadece bağlantısı kurulur.",
+    "quote": "- membership events from the API are applied to live connections immediately: removed \\u015e\\u00f6 document connection closed; role changed \\u00d6 read-only flag flipped in place",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/redis/access-events.publisher.ts",
+    "lines": "9-21",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "packages/shared/src/collab.ts",
+    "lines": "25-29",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.controller.ts",
+    "lines": "87-101",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+    "lines": "32-72",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/collab/use-collaboration.ts",
+    "lines": "36-71",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4883,
+   225
+  ]
+ },
+ {
+  "id": "sn-lost-updates",
+  "answerable": true,
+  "status": "insufficient",
+  "seconds": 76.1,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/collab/src/extensions/access-control.ts",
+    "lines": "46-60",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+    "lines": "1-6",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/collab/connection.ts",
+    "lines": "28-56",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/persistence.ts",
+    "lines": "20-31",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": true
+   },
+   {
+    "path": "apps/web/src/lib/offline-store.ts",
+    "lines": "3-9",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "docker-compose.yml",
+    "lines": "1-1",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "34-40",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/permissions.ts",
+    "lines": "9-22",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4468,
+   141
+  ]
+ },
+ {
+  "id": "sn-redis-outage",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 106.0,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "Redis hizmeti kesildiğinde, doküman yüklemeleri Redis'e bağlı olmaksızın devam eder ve bağlantıyı yeniden sağladığında her açık dokümanın durum vektörünü tekrar duyurmasıyla sistem hafifçe bozulur. [S4]\nRedis hizmeti yeniden başlatıldığında veya bağlantı kaybolduğunda, uygulama degradeli bir modda devam eder veya yeniden başlar. [S6]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/collab/src/extensions/resilient-redis.ts",
+    "lines": "165-168",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/resilient-redis.ts",
+    "lines": "90-107",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/resilient-redis.ts",
+    "lines": "54-75",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/resilient-redis.ts",
+    "lines": "32-52",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Redis hizmeti kesildiğinde, doküman yüklemeleri Redis'e bağlı olmaksızın devam eder ve bağlantıyı yeniden sağladığında her açık dokümanın durum vektörünü tekrar duyurmasıyla sistem hafifçe bozulur.",
+    "quote": "Document loads never block on Redis: while it is unavailable, the subscription is deferred.",
+    "gold": true
+   },
+   {
+    "path": "apps/collab/src/extensions/resilient-redis.ts",
+    "lines": "128-134",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/resilient-redis.ts",
+    "lines": "136-163",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Redis hizmeti yeniden başlatıldığında veya bağlantı kaybolduğunda, uygulama degradeli bir modda devam eder veya yeniden başlar.",
+    "quote": "this.log.warn('redis connection lost: entering degraded mode');",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/resilient-redis.ts",
+    "lines": "109-118",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/server.ts",
+    "lines": "33-64",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: cluster, operate."
+  ],
+  "tokens": [
+   4915,
+   273
+  ]
+ },
+ {
+  "id": "sn-offline",
+  "answerable": true,
+  "status": "insufficient",
+  "seconds": 87.7,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/web/public/theme-init.js",
+    "lines": "1-12",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/versions-handler.ts",
+    "lines": "35-56",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/collab/connection.ts",
+    "lines": "28-56",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/note-page.tsx",
+    "lines": "44-56",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/ydoc.ts",
+    "lines": "67-94",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/lib/offline-store.ts",
+    "lines": "3-9",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": true
+   },
+   {
+    "path": "apps/web/src/collab/use-collaboration.ts",
+    "lines": "98-109",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": true
+   },
+   {
+    "path": "apps/collab/src/context.ts",
+    "lines": "16-28",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4725,
+   133
+  ]
+ },
+ {
+  "id": "sn-ticket",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 117.8,
+  "gold_read": true,
+  "cites_gold": true,
+  "answer": "WebSocket bağlantısı için kimlik doğrulama bileti doğrulanırken kullanılır ve rolü PostgreSQL'den okunur. [S1]\nKimlik doğrulama bileti doğrulanır ve roller belirlenir. [S4]\nKimlik doğrulama biletinin oluşturulması ve geçerliliği CollabTicketService sınıfının issue metodunda gerçekleştirilir. [S5]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/collab/src/extensions/access-control.ts",
+    "lines": "46-60",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "WebSocket bağlantısı için kimlik doğrulama bileti doğrulanırken kullanılır ve rolü PostgreSQL'den okunur.",
+    "quote": "- handshake: verifies the API-issued ticket, then reads the role from Postgres",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/notes/notes.controller.ts",
+    "lines": "92-102",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/ticket.ts",
+    "lines": "10-40",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": true
+   },
+   {
+    "path": "apps/collab/src/extensions/access-control.ts",
+    "lines": "124-147",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Kimlik doğrulama bileti doğrulanır ve roller belirlenir.",
+    "quote": "claims = verifyTicket(token, this.options.ticketSecret, documentName);",
+    "gold": true
+   },
+   {
+    "path": "apps/api/src/notes/collab-ticket.service.ts",
+    "lines": "13-45",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Kimlik doğrulama biletinin oluşturulması ve geçerliliği CollabTicketService sınıfının issue metodunda gerçekleştirilir.",
+    "quote": "async issue(user: { id: string; name: string }, noteId: string, role: NoteRole): Promise<CollabTicketDto> {",
+    "gold": true
+   },
+   {
+    "path": "apps/web/src/collab/use-collaboration.ts",
+    "lines": "141-177",
+    "outcome": "unsupported",
+    "reason": "the quote is too long to point at the proof",
+    "statement": "Kimlik doğrulama bileti generation ve doğrulanma WebSocket bağlantısı için kullanımda HocuspocusProvider'ın `token` fonksiyonu içinde gerçekleşiyor.",
+    "quote": "token: async () => {\n  try {\n    const ticket = await api.notes.collabTicket(noteId);\n    ... \n    return ticket.token;\n  } catch (err) { ... }",
+    "gold": false
+   },
+   {
+    "path": "packages/shared/src/collab.ts",
+    "lines": "7-15",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "packages/shared/src/access-events.ts",
+    "lines": "3-8",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   5037,
+   364
+  ]
+ },
+ {
+  "id": "sn-refresh-reuse",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 87.4,
+  "gold_read": true,
+  "cites_gold": true,
+  "answer": "Eğer refresh token zaten dönüştürüldü ise ve bu dönüştürme zamanından belirli bir süre geçmediyse, yeniden kullanılma tespit edilir ve token ailesi iptal edilir. [S1]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "116-150",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Eğer refresh token zaten dönüştürüldü ise ve bu dönüştürme zamanından belirli bir süre geçmediyse, yeniden kullanılma tespit edilir ve token ailesi iptal edilir.",
+    "quote": "if (session.rotatedAt) {\n  if (Date.now() - session.rotatedAt.getTime() < REFRESH_REUSE_GRACE_MS) {\n    throw new UnauthorizedException('Refresh token already rotated');\n  }",
+    "gold": true
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "34-40",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "151-157",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": true
+   },
+   {
+    "path": "apps/api/src/auth/token.service.ts",
+    "lines": "16-37",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.controller.ts",
+    "lines": "72-85",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "19-22",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "206-228",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "159-170",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Only one source supports this answer, so it may be incomplete."
+  ],
+  "tokens": [
+   4523,
+   238
+  ]
+ },
+ {
+  "id": "sn-csrf",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 71.5,
+  "gold_read": true,
+  "cites_gold": true,
+  "answer": "CSRF koruması her durum değiştiren istek için çift gönderme cookie kullanarak uygulanır. Cookie ile üstbilgi arasında eşleşme yoksa istek reddedilir. [S1]\nCSRF koruması, cookie ve header'daki token değerlerinin eşleşmesini kontrol ederek uygulanır. [S7]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/api/src/common/guards/csrf.guard.ts",
+    "lines": "14-32",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "CSRF koruması her durum değiştiren istek için çift gönderme cookie kullanarak uygulanır. Cookie ile üstbilgi arasında eşleşme yoksa istek reddedilir.",
+    "quote": "if (!csrfTokensMatch(cookie, req.header(CSRF_HEADER))) { throw new ForbiddenException('Invalid or missing CSRF token'); }",
+    "gold": true
+   },
+   {
+    "path": "apps/api/src/auth/auth.controller.ts",
+    "lines": "33-43",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/lib/api.ts",
+    "lines": "28-32",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/common/cookies.ts",
+    "lines": "45-48",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/common/guards/csrf.guard.ts",
+    "lines": "6-6",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/lib/api.ts",
+    "lines": "45-53",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/common/guards/csrf.guard.ts",
+    "lines": "8-12",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "CSRF koruması, cookie ve header'daki token değerlerinin eşleşmesini kontrol ederek uygulanır.",
+    "quote": "return timingSafeEqual(Buffer.from(cookieValue), Buffer.from(headerValue));",
+    "gold": true
+   },
+   {
+    "path": "apps/web/src/lib/api.ts",
+    "lines": "44-44",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   3881,
+   242
+  ]
+ },
+ {
+  "id": "sn-password",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 108.5,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "Şifreler Argon2id algoritması ile hashleniyor ve girişte kullanıcı tahmini önlenmek için sabit bir süre kullanılıyor. [S1]\nŞifreler doğrulama sırasında hashlenen şifreye karşılaştırılır ve kullanıcı tahmini girişlerden kaçınmak için başarısız giriş denemesi sayısına göre hesap kilidi açılabilir. [S2]\n`sha256` fonksiyonu şifrelerin hashlenmesini sağlar. [S3]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/api/src/auth/password.service.ts",
+    "lines": "4-38",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Şifreler Argon2id algoritması ile hashleniyor ve girişte kullanıcı tahmini önlenmek için sabit bir süre kullanılıyor.",
+    "quote": "private dummyHash = ''; async onModuleInit(): Promise<void> { this.dummyHash = await this.hash('timing-equalisation-dummy-password'); }",
+    "gold": true
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "84-114",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Şifreler doğrulama sırasında hashlenen şifreye karşılaştırılır ve kullanıcı tahmini girişlerden kaçınmak için başarısız giriş denemesi sayısına göre hesap kilidi açılabilir.",
+    "quote": "const valid = await this.passwords.verify(user.passwordHash, dto.password); if (!valid) { await this.registerFailedAttempt(user.id); throw new UnauthorizedException(INVALID_CREDENTIALS); }",
+    "gold": true
+   },
+   {
+    "path": "apps/api/src/auth/token.service.ts",
+    "lines": "7-9",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "`sha256` fonksiyonu şifrelerin hashlenmesini sağlar.",
+    "quote": "return createHash('sha256').update(value).digest('hex');",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "34-40",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/auth-pages.tsx",
+    "lines": "171-196",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/auth-pages.tsx",
+    "lines": "105-127",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/auth-pages.tsx",
+    "lines": "198-242",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+    "lines": "7-19",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: guessing."
+  ],
+  "tokens": [
+   4900,
+   331
+  ]
+ },
+ {
+  "id": "sn-version-restore",
+  "answerable": true,
+  "status": "insufficient",
+  "seconds": 76.8,
+  "gold_read": true,
+  "cites_gold": false,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/collab/src/versions.ts",
+    "lines": "46-64",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": true
+   },
+   {
+    "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+    "lines": "75-87",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/components/history-panel.tsx",
+    "lines": "56-95",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+    "lines": "134-135",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/versions.ts",
+    "lines": "9-9",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "packages/shared/src/collab.ts",
+    "lines": "35-42",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/versions-handler.ts",
+    "lines": "90-105",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+    "lines": "137-138",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: revert, repository."
+  ],
+  "tokens": [
+   4471,
+   139
+  ]
+ },
+ {
+  "id": "sn-auto-version",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 118.0,
+  "gold_read": true,
+  "cites_gold": true,
+  "answer": "Eski otomatik versiyonlar silinirken `pruneAuto` metodunda belirtilen eski versiyonlar silinir. [S2]\nOtomatik sürümler belirli aralıklarla oluşturulur ve son sürümlere göre eski sürümler silinir. [S5]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/collab/src/config.ts",
+    "lines": "3-21",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/versions.ts",
+    "lines": "66-76",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Eski otomatik versiyonlar silinirken `pruneAuto` metodunda belirtilen eski versiyonlar silinir.",
+    "quote": "await db.noteVersion.deleteMany({ where: { id: { in: stale.map((v) => v.id) } } });",
+    "gold": true
+   },
+   {
+    "path": "apps/web/src/components/history-panel.tsx",
+    "lines": "156-192",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/components/history-panel.tsx",
+    "lines": "56-95",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/persistence.ts",
+    "lines": "103-127",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Otomatik sürümler belirli aralıklarla oluşturulur ve son sürümlere göre eski sürümler silinir.",
+    "quote": "if (Date.now() - since < interval) return;\nawait this.options.versions.createSnapshot(noteId, document, { kind: 'AUTO', userId }, tx);",
+    "gold": true
+   },
+   {
+    "path": "apps/collab/src/versions.ts",
+    "lines": "46-64",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/server.ts",
+    "lines": "33-64",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/versions.ts",
+    "lines": "7-7",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: older."
+  ],
+  "tokens": [
+   5359,
+   269
+  ]
+ },
+ {
+  "id": "sn-presence",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 98.7,
+  "gold_read": true,
+  "cites_gold": true,
+  "answer": "Giriş yapmamış diğer kullanıcılar, `awareness.getStates()` metodunu kullanarak belgede bulunan ve kendi kimliği ile eşleşen veya `selfId` ile eşleşen kullanıcıları hariç tutularak gösterilir. [S1]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/web/src/collab/presence.tsx",
+    "lines": "11-34",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Giriş yapmamış diğer kullanıcılar, `awareness.getStates()` metodunu kullanarak belgede bulunan ve kendi kimliği ile eşleşen veya `selfId` ile eşleşen kullanıcıları hariç tutularak gösterilir.",
+    "quote": "awareness.getStates().forEach((state, clientId) => {\n  const user = state.user as PresentUser | undefined;\n  if (!user?.id || clientId === awareness.clientID || user.id === selfId) return;\n  byId.set(user.id, user);\n});",
+    "gold": true
+   },
+   {
+    "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+    "lines": "62-73",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/lib/offline-store.ts",
+    "lines": "3-9",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/notes/notes.service.ts",
+    "lines": "93-100",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+    "lines": "7-19",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/common/note-access/note-access.service.ts",
+    "lines": "11-38",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.controller.ts",
+    "lines": "87-101",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/notes/notes.service.ts",
+    "lines": "54-78",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Only one source supports this answer, so it may be incomplete."
+  ],
+  "tokens": [
+   4744,
+   251
+  ]
+ },
+ {
+  "id": "sn-viewer-readonly",
+  "answerable": true,
+  "status": "answered",
+  "seconds": 87.5,
+  "gold_read": false,
+  "cites_gold": false,
+  "answer": "Görüntüleyici roldeki kullanıcılar düzenleme yapamaz çünkü `canEdit(roleRef.current) ?` false döndürdüğü takdirde, `IndexeddbPersistence` null olur. [S2]",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/web/src/components/share-dialog.tsx",
+    "lines": "33-62",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/collab/use-collaboration.ts",
+    "lines": "98-109",
+    "outcome": "supported",
+    "reason": null,
+    "statement": "Görüntüleyici roldeki kullanıcılar düzenleme yapamaz çünkü `canEdit(roleRef.current) ?` false döndürdüğü takdirde, `IndexeddbPersistence` null olur.",
+    "quote": "const persistence = canEdit(roleRef.current) ? new IndexeddbPersistence(localReplicaName(user.id, noteId), doc) : null;",
+    "gold": false
+   },
+   {
+    "path": "packages/shared/src/roles.ts",
+    "lines": "20-22",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "packages/shared/src/roles.ts",
+    "lines": "4-5",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/notes/members.service.ts",
+    "lines": "12-12",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/auth-pages.tsx",
+    "lines": "10-31",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/components/share-dialog.tsx",
+    "lines": "64-100",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/hooks/queries.ts",
+    "lines": "113-144",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Only one source supports this answer, so it may be incomplete."
+  ],
+  "tokens": [
+   4540,
+   213
+  ]
+ },
+ {
+  "id": "sn-session-refresh",
+  "answerable": true,
+  "status": "insufficient",
+  "seconds": 100.1,
+  "gold_read": false,
+  "cites_gold": false,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/collab/src/extensions/resilient-redis.ts",
+    "lines": "14-14",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/collab/use-collaboration.ts",
+    "lines": "111-139",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "116-150",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/collab/use-collaboration.ts",
+    "lines": "73-96",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/collab/use-collaboration.ts",
+    "lines": "179-220",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "206-228",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/access-control.ts",
+    "lines": "46-60",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/collab/src/extensions/resilient-redis.ts",
+    "lines": "32-52",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: hit, frontend."
+  ],
+  "tokens": [
+   5132,
+   139
+  ]
+ },
+ {
+  "id": "sg-neg-kafka",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 3.2,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [],
+  "warnings": [
+   "Not found anywhere in the indexed code: Kafka, consuming."
+  ],
+  "tokens": [
+   60,
+   14
+  ]
+ },
+ {
+  "id": "sg-neg-stripe",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 2.2,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [],
+  "warnings": [
+   "Not found anywhere in the indexed code: Stripe, payment."
+  ],
+  "tokens": [
+   63,
+   18
+  ]
+ },
+ {
+  "id": "sg-neg-email",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 68.9,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "85-90",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "105-126",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "39-41",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+    "lines": "37-40",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "30-37",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+    "lines": "79-96",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "92-97",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "61-68",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: email, sent."
+  ],
+  "tokens": [
+   4276,
+   134
+  ]
+ },
+ {
+  "id": "sn-neg-graphql",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 3.4,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [],
+  "warnings": [
+   "Not found anywhere in the indexed code: GraphQL."
+  ],
+  "tokens": [
+   65,
+   16
+  ]
+ },
+ {
+  "id": "sn-neg-2fa",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 78.0,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "34-40",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/common/auth-user.ts",
+    "lines": "13-17",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/password.service.ts",
+    "lines": "4-38",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/auth-pages.tsx",
+    "lines": "198-242",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/providers/auth.tsx",
+    "lines": "15-15",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/common/guards/csrf.guard.ts",
+    "lines": "8-12",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/common/throttle.ts",
+    "lines": "8-10",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/auth-pages.tsx",
+    "lines": "129-169",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   4472,
+   133
+  ]
+ },
+ {
+  "id": "sn-neg-s3",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 3.4,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [],
+  "warnings": [
+   "Not found anywhere in the indexed code: S3, uploaded."
+  ],
+  "tokens": [
+   61,
+   15
+  ]
+ },
+ {
+  "id": "sg-new-excel",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 2.1,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [],
+  "warnings": [
+   "Not found anywhere in the indexed code: Excel, exported."
+  ],
+  "tokens": [
+   62,
+   16
+  ]
+ },
+ {
+  "id": "sg-new-images",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 55.8,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/catalog/Product.java",
+    "lines": "47-48",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+    "lines": "43-46",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/catalog/Product.java",
+    "lines": "50-54",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+    "lines": "96-121",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+    "lines": "90-94",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+    "lines": "82-88",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+    "lines": "35-41",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+    "lines": "23-27",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [],
+  "tokens": [
+   3804,
+   132
+  ]
+ },
+ {
+  "id": "sg-new-refunds",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 86.9,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "180-201",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+    "lines": "244-263",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/Reservation.java",
+    "lines": "54-91",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+    "lines": "123-124",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+    "lines": "11-22",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+    "lines": "79-96",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/resources/db/migration/V3__reservations.sql",
+    "lines": "23-23",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+    "lines": "105-126",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: refunds, processed."
+  ],
+  "tokens": [
+   4711,
+   132
+  ]
+ },
+ {
+  "id": "sg-new-redis",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 3.7,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [],
+  "warnings": [
+   "Not found anywhere in the indexed code: Redis, cache."
+  ],
+  "tokens": [
+   66,
+   16
+  ]
+ },
+ {
+  "id": "sn-new-elasticsearch",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 2.1,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [],
+  "warnings": [
+   "Not found anywhere in the indexed code: Elasticsearch, Notlar."
+  ],
+  "tokens": [
+   62,
+   16
+  ]
+ },
+ {
+  "id": "sn-new-forgot-password",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 87.6,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "84-114",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+    "lines": "7-19",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/auth-pages.tsx",
+    "lines": "171-196",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "34-40",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/providers/auth.tsx",
+    "lines": "27-75",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/auth-pages.tsx",
+    "lines": "105-127",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/notes/members.service.ts",
+    "lines": "91-98",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/api/src/auth/auth.service.ts",
+    "lines": "206-228",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: reset, forgotten."
+  ],
+  "tokens": [
+   4817,
+   134
+  ]
+ },
+ {
+  "id": "sn-new-push",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 119.1,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [
+   {
+    "path": "apps/web/scripts/screenshots.ts",
+    "lines": "109-128",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/dashboard-page.tsx",
+    "lines": "146-178",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/providers/auth.tsx",
+    "lines": "27-75",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/scripts/screenshots.ts",
+    "lines": "35-78",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/dashboard-page.tsx",
+    "lines": "123-138",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/pages/dashboard-page.tsx",
+    "lines": "180-199",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/collab/connection.ts",
+    "lines": "28-56",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   },
+   {
+    "path": "apps/web/src/lib/api.ts",
+    "lines": "119-150",
+    "outcome": "not_relevant",
+    "reason": null,
+    "statement": "",
+    "quote": "",
+    "gold": false
+   }
+  ],
+  "warnings": [
+   "Not found anywhere in the indexed code: notifications."
+  ],
+  "tokens": [
+   5649,
+   136
+  ]
+ },
+ {
+  "id": "sn-new-pdf",
+  "answerable": false,
+  "status": "insufficient",
+  "seconds": 3.6,
+  "gold_read": null,
+  "cites_gold": null,
+  "answer": "",
+  "expected": "",
+  "readings": [],
+  "warnings": [
+   "Not found anywhere in the indexed code: PDF."
+  ],
+  "tokens": [
+   62,
+   16
+  ]
+ }
+]

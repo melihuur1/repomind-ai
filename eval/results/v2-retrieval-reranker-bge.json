@@ -1,0 +1,3512 @@
+{
+ "dataset_sha256": "f6531022d8c0bd12480974e4ba40bec37a3abc5018e7d45b43db391d4106a827",
+ "repositories": {
+  "stockguard": "b6698d81475232f2b8ca95af45336fae5665cd81",
+  "syncnotes": "bb217cddc89088f27b68715cf9585e94ce2fe3a6"
+ },
+ "embedding_model": "intfloat/multilingual-e5-small",
+ "query_translation": true,
+ "reranker": "BAAI/bge-reranker-v2-m3-int8",
+ "config": {
+  "rrf_k": 60,
+  "candidates": 50,
+  "include_tests": null,
+  "rerank_blend": "pure",
+  "bm25": {
+   "k1": 1.2,
+   "b": 0.75,
+   "symbol_weight": 3.0,
+   "path_weight": 1.5
+  }
+ },
+ "summaries": {
+  "all": {
+   "tr": {
+    "reranked": {
+     "questions": 26,
+     "latency_ms_median": 21622.8,
+     "latency_ms_p95": 24980.4,
+     "recall_at_5": {
+      "mean": 0.75,
+      "ci95": [
+       0.5769,
+       0.9038
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.7692,
+      "ci95": [
+       0.6154,
+       0.9231
+      ]
+     },
+     "mrr": {
+      "mean": 0.7251,
+      "ci95": [
+       0.5717,
+       0.8679
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.8846,
+      "ci95": [
+       0.7692,
+       1.0
+      ]
+     },
+     "citations_checked": 130,
+     "citations_valid": 130,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 130
+    }
+   },
+   "en": {
+    "reranked": {
+     "questions": 26,
+     "latency_ms_median": 21784.6,
+     "latency_ms_p95": 24867.1,
+     "recall_at_5": {
+      "mean": 0.8462,
+      "ci95": [
+       0.7115,
+       0.9615
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.8846,
+      "ci95": [
+       0.7692,
+       1.0
+      ]
+     },
+     "mrr": {
+      "mean": 0.7446,
+      "ci95": [
+       0.5971,
+       0.8801
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.9038,
+      "ci95": [
+       0.7885,
+       1.0
+      ]
+     },
+     "citations_checked": 130,
+     "citations_valid": 130,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 130
+    }
+   },
+   "both": {
+    "reranked": {
+     "questions": 52,
+     "latency_ms_median": 21624.0,
+     "latency_ms_p95": 24980.4,
+     "recall_at_5": {
+      "mean": 0.7981,
+      "ci95": [
+       0.6923,
+       0.8942
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.8269,
+      "ci95": [
+       0.7115,
+       0.9231
+      ]
+     },
+     "mrr": {
+      "mean": 0.7348,
+      "ci95": [
+       0.6282,
+       0.8337
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.8942,
+      "ci95": [
+       0.8077,
+       0.9712
+      ]
+     },
+     "citations_checked": 260,
+     "citations_valid": 260,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 260
+    }
+   }
+  },
+  "dev": {
+   "tr": {
+    "reranked": {
+     "questions": 10,
+     "latency_ms_median": 21616.7,
+     "latency_ms_p95": 26145.1,
+     "recall_at_5": {
+      "mean": 0.75,
+      "ci95": [
+       0.5,
+       1.0
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.8,
+      "ci95": [
+       0.5,
+       1.0
+      ]
+     },
+     "mrr": {
+      "mean": 0.7668,
+      "ci95": [
+       0.522,
+       1.0
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.9,
+      "ci95": [
+       0.7,
+       1.0
+      ]
+     },
+     "citations_checked": 50,
+     "citations_valid": 50,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 50
+    }
+   },
+   "en": {
+    "reranked": {
+     "questions": 10,
+     "latency_ms_median": 21168.5,
+     "latency_ms_p95": 26520.4,
+     "recall_at_5": {
+      "mean": 0.85,
+      "ci95": [
+       0.65,
+       1.0
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.9,
+      "ci95": [
+       0.7,
+       1.0
+      ]
+     },
+     "mrr": {
+      "mean": 0.77,
+      "ci95": [
+       0.5298,
+       1.0
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 1.0,
+      "ci95": [
+       1.0,
+       1.0
+      ]
+     },
+     "citations_checked": 50,
+     "citations_valid": 50,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 50
+    }
+   },
+   "both": {
+    "reranked": {
+     "questions": 20,
+     "latency_ms_median": 21585.5,
+     "latency_ms_p95": 26520.4,
+     "recall_at_5": {
+      "mean": 0.8,
+      "ci95": [
+       0.625,
+       0.95
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.85,
+      "ci95": [
+       0.7,
+       1.0
+      ]
+     },
+     "mrr": {
+      "mean": 0.7684,
+      "ci95": [
+       0.6013,
+       0.925
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.95,
+      "ci95": [
+       0.85,
+       1.0
+      ]
+     },
+     "citations_checked": 100,
+     "citations_valid": 100,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 100
+    }
+   }
+  },
+  "test": {
+   "tr": {
+    "reranked": {
+     "questions": 16,
+     "latency_ms_median": 21667.8,
+     "latency_ms_p95": 24980.4,
+     "recall_at_5": {
+      "mean": 0.75,
+      "ci95": [
+       0.5,
+       0.9375
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.75,
+      "ci95": [
+       0.5,
+       0.9375
+      ]
+     },
+     "mrr": {
+      "mean": 0.699,
+      "ci95": [
+       0.5008,
+       0.8883
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.875,
+      "ci95": [
+       0.6875,
+       1.0
+      ]
+     },
+     "citations_checked": 80,
+     "citations_valid": 80,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 80
+    }
+   },
+   "en": {
+    "reranked": {
+     "questions": 16,
+     "latency_ms_median": 22221.2,
+     "latency_ms_p95": 24321.3,
+     "recall_at_5": {
+      "mean": 0.8438,
+      "ci95": [
+       0.6562,
+       1.0
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.875,
+      "ci95": [
+       0.6875,
+       1.0
+      ]
+     },
+     "mrr": {
+      "mean": 0.7287,
+      "ci95": [
+       0.5424,
+       0.8988
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.8438,
+      "ci95": [
+       0.6562,
+       1.0
+      ]
+     },
+     "citations_checked": 80,
+     "citations_valid": 80,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 80
+    }
+   },
+   "both": {
+    "reranked": {
+     "questions": 32,
+     "latency_ms_median": 21784.6,
+     "latency_ms_p95": 24426.4,
+     "recall_at_5": {
+      "mean": 0.7969,
+      "ci95": [
+       0.6562,
+       0.9219
+      ]
+     },
+     "hit_at_5": {
+      "mean": 0.8125,
+      "ci95": [
+       0.6562,
+       0.9375
+      ]
+     },
+     "mrr": {
+      "mean": 0.7138,
+      "ci95": [
+       0.574,
+       0.8438
+      ]
+     },
+     "file_recall_at_5": {
+      "mean": 0.8594,
+      "ci95": [
+       0.7344,
+       0.9688
+      ]
+     },
+     "citations_checked": 160,
+     "citations_valid": 160,
+     "test_chunks_in_top_5": 0,
+     "results_in_top_5": 160
+    }
+   }
+  }
+ },
+ "comparisons": {},
+ "per_question": [
+  {
+   "question": "v2-sg-negative-stock-db",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "sql",
+   "latency_ms": 19820.6,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.5,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:23-26": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 1,
+     "end_line": 12,
+     "kind": "table",
+     "symbol": "products",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 180,
+     "end_line": 201,
+     "kind": "method",
+     "symbol": "SimulationService.report",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 35,
+     "kind": "class_header",
+     "symbol": "StockLevel",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 281,
+     "end_line": 303,
+     "kind": "record",
+     "symbol": "SimulationService.SimulationReport",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-negative-stock-db",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "sql",
+   "latency_ms": 19019.2,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:23-26": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 1,
+     "end_line": 12,
+     "kind": "table",
+     "symbol": "products",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 180,
+     "end_line": 201,
+     "kind": "method",
+     "symbol": "SimulationService.report",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 281,
+     "end_line": 303,
+     "kind": "record",
+     "symbol": "SimulationService.SimulationReport",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 35,
+     "kind": "class_header",
+     "symbol": "StockLevel",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-settled-immutable",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "sql",
+   "latency_ms": 20768.8,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/db/migration/V3__reservations.sql:25-43": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 25,
+     "end_line": 39,
+     "kind": "function",
+     "symbol": "reservations_guard_update",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/Reservation.java",
+     "start_line": 13,
+     "end_line": 52,
+     "kind": "class_header",
+     "symbol": "Reservation",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48,
+     "kind": "class",
+     "symbol": "ReservationExpiryService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 17,
+     "end_line": 30,
+     "kind": "class_header",
+     "symbol": "ReservationTransactions",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 24,
+     "end_line": 44,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-settled-immutable",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "sql",
+   "latency_ms": 18347.1,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/db/migration/V3__reservations.sql:25-43": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 25,
+     "end_line": 39,
+     "kind": "function",
+     "symbol": "reservations_guard_update",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 1,
+     "end_line": 18,
+     "kind": "table",
+     "symbol": "reservations",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/Reservation.java",
+     "start_line": 13,
+     "end_line": 52,
+     "kind": "class_header",
+     "symbol": "Reservation",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 96,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-append-only",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "sql",
+   "latency_ms": 18890.0,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/db/migration/V4__ledger_and_audit.sql:41-54": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 48,
+     "end_line": 50,
+     "kind": "trigger",
+     "symbol": "tg_stock_movements_append_only",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 1,
+     "end_line": 22,
+     "kind": "table",
+     "symbol": "stock_movements",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 16,
+     "end_line": 62,
+     "kind": "class_header",
+     "symbol": "StockMovement",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48,
+     "kind": "class",
+     "symbol": "ReservationExpiryService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 26,
+     "end_line": 31,
+     "kind": "constructor",
+     "symbol": "InventoryService.InventoryService",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-append-only",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "sql",
+   "latency_ms": 18819.0,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.5,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/db/migration/V4__ledger_and_audit.sql:41-54": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 1,
+     "end_line": 22,
+     "kind": "table",
+     "symbol": "stock_movements",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 48,
+     "end_line": 50,
+     "kind": "trigger",
+     "symbol": "tg_stock_movements_append_only",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 16,
+     "end_line": 62,
+     "kind": "class_header",
+     "symbol": "StockMovement",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48,
+     "kind": "class",
+     "symbol": "ReservationExpiryService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 52,
+     "end_line": 54,
+     "kind": "trigger",
+     "symbol": "tg_audit_events_append_only",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-sweep-index",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "sql",
+   "latency_ms": 20271.1,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/db/migration/V3__reservations.sql:20-21": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 20,
+     "end_line": 21,
+     "kind": "index",
+     "symbol": "ix_reservations_pending_expiry",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 1,
+     "end_line": 18,
+     "kind": "table",
+     "symbol": "reservations",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 96,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 22,
+     "end_line": 22,
+     "kind": "index",
+     "symbol": "ix_reservations_user_created",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48,
+     "kind": "class",
+     "symbol": "ReservationExpiryService",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-sweep-index",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "sql",
+   "latency_ms": 17131.4,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/db/migration/V3__reservations.sql:20-21": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 20,
+     "end_line": 21,
+     "kind": "index",
+     "symbol": "ix_reservations_pending_expiry",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 1,
+     "end_line": 18,
+     "kind": "table",
+     "symbol": "reservations",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 25,
+     "kind": "class_header",
+     "symbol": "ReservationService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 22,
+     "end_line": 22,
+     "kind": "index",
+     "symbol": "ix_reservations_user_created",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 23,
+     "end_line": 23,
+     "kind": "index",
+     "symbol": "ix_reservations_product",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-why-separate-stock",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "sql",
+   "latency_ms": 20623.6,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-16": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 1,
+     "end_line": 12,
+     "kind": "table",
+     "symbol": "products",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 35,
+     "kind": "class_header",
+     "symbol": "StockLevel",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 55,
+     "end_line": 65,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 89,
+     "end_line": 96,
+     "kind": "interface",
+     "symbol": "StockLevelRepository.StockCounts",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-why-separate-stock",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "sql",
+   "latency_ms": 20046.0,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-16": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 1,
+     "end_line": 12,
+     "kind": "table",
+     "symbol": "products",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 35,
+     "kind": "class_header",
+     "symbol": "StockLevel",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 89,
+     "end_line": 96,
+     "kind": "interface",
+     "symbol": "StockLevelRepository.StockCounts",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 55,
+     "end_line": 65,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-lock-timeout-config",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "yaml",
+   "latency_ms": 19323.4,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/application.yml:12-14": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/application.yml",
+     "start_line": 4,
+     "end_line": 14,
+     "kind": "config",
+     "symbol": "spring.datasource",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 14,
+     "end_line": 23,
+     "kind": "class_header",
+     "symbol": "StockLevelRepository",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 25,
+     "kind": "class_header",
+     "symbol": "ReservationService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 1,
+     "end_line": 22,
+     "kind": "table",
+     "symbol": "stock_movements",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-lock-timeout-config",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "yaml",
+   "latency_ms": 22221.2,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/application.yml:12-14": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/application.yml",
+     "start_line": 4,
+     "end_line": 14,
+     "kind": "config",
+     "symbol": "spring.datasource",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 14,
+     "end_line": 23,
+     "kind": "class_header",
+     "symbol": "StockLevelRepository",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 54,
+     "end_line": 68,
+     "kind": "method",
+     "symbol": "ReservationRepository.settleIfPendingAndInTime",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 1,
+     "end_line": 12,
+     "kind": "table",
+     "symbol": "products",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-reservation-defaults",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "yaml",
+   "latency_ms": 22382.2,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/application.yml:61-66": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/application.yml",
+     "start_line": 61,
+     "end_line": 66,
+     "kind": "config",
+     "symbol": "stockguard.reservation",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 15,
+     "end_line": 19,
+     "kind": "class_header",
+     "symbol": "ReservationRepository",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 25,
+     "end_line": 39,
+     "kind": "function",
+     "symbol": "reservations_guard_update",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48,
+     "kind": "class",
+     "symbol": "ReservationExpiryService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryJob.java",
+     "start_line": 12,
+     "end_line": 45,
+     "kind": "class",
+     "symbol": "ReservationExpiryJob",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-reservation-defaults",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "yaml",
+   "latency_ms": 22309.6,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/resources/application.yml:61-66": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/resources/application.yml",
+     "start_line": 61,
+     "end_line": 66,
+     "kind": "config",
+     "symbol": "stockguard.reservation",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryJob.java",
+     "start_line": 12,
+     "end_line": 45,
+     "kind": "class",
+     "symbol": "ReservationExpiryJob",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48,
+     "kind": "class",
+     "symbol": "ReservationExpiryService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 70,
+     "end_line": 90,
+     "kind": "method",
+     "symbol": "ReservationRepository.expireDue",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/CreateReservationCommand.java",
+     "start_line": 9,
+     "end_line": 26,
+     "kind": "record",
+     "symbol": "CreateReservationCommand",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-two-instances",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "yaml",
+   "latency_ms": 20188.7,
+   "split": "dev",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.02564102564102564,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "compose.yaml:48-62": 39
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "compose.yaml",
+     "start_line": 1,
+     "end_line": 3,
+     "kind": "config",
+     "symbol": "name",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 10,
+     "end_line": 26,
+     "kind": "interface",
+     "symbol": "AppUserRepository",
+     "is_test": false
+    },
+    {
+     "path": "compose.yaml",
+     "start_line": 19,
+     "end_line": 28,
+     "kind": "config",
+     "symbol": "x-app-environment",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 29,
+     "end_line": 52,
+     "kind": "method",
+     "symbol": "ReservationRepository.insertIfKeyUnused",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-two-instances",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "yaml",
+   "latency_ms": 19448.8,
+   "split": "dev",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "compose.yaml:48-62": null
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "compose.yaml",
+     "start_line": 1,
+     "end_line": 3,
+     "kind": "config",
+     "symbol": "name",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 29,
+     "end_line": 52,
+     "kind": "method",
+     "symbol": "ReservationRepository.insertIfKeyUnused",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 244,
+     "end_line": 263,
+     "kind": "method",
+     "symbol": "SimulationService.simulatedUsers",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 147,
+     "end_line": 156,
+     "kind": "method",
+     "symbol": "SimulationService.reserve",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-auth-error-format",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 21667.8,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.16666666666666666,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java:27-51": 6
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/ApiException.java",
+     "start_line": 3,
+     "end_line": 19,
+     "kind": "class",
+     "symbol": "ApiException",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 97,
+     "end_line": 107,
+     "kind": "method",
+     "symbol": "GlobalExceptionHandler.handleIntegrity",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 17,
+     "end_line": 21,
+     "kind": "class_header",
+     "symbol": "ProblemAuthErrorHandler",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 180,
+     "end_line": 201,
+     "kind": "method",
+     "symbol": "SimulationService.report",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 5,
+     "end_line": 32,
+     "kind": "enum",
+     "symbol": "ErrorCode",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-auth-error-format",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 24002.3,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.3333333333333333,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java:27-51": 3
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 5,
+     "end_line": 32,
+     "kind": "enum",
+     "symbol": "ErrorCode",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 40,
+     "end_line": 65,
+     "kind": "class_header",
+     "symbol": "SimulationService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 27,
+     "end_line": 32,
+     "kind": "method",
+     "symbol": "ProblemAuthErrorHandler.commence",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 43,
+     "end_line": 60,
+     "kind": "method",
+     "symbol": "ReservationController.create",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 49,
+     "end_line": 67,
+     "kind": "method",
+     "symbol": "SecurityConfig.apiSecurity",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-username-race",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 18993.1,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/user/AppUserRepository.java:14-25": 1,
+    "src/main/java/com/stockguard/user/AuthService.java:47-55": 3
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 10,
+     "end_line": 26,
+     "kind": "interface",
+     "symbol": "AppUserRepository",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 244,
+     "end_line": 263,
+     "kind": "method",
+     "symbol": "SimulationService.simulatedUsers",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 47,
+     "end_line": 55,
+     "kind": "method",
+     "symbol": "AuthService.register",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 29,
+     "end_line": 52,
+     "kind": "method",
+     "symbol": "ReservationRepository.insertIfKeyUnused",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 147,
+     "end_line": 156,
+     "kind": "method",
+     "symbol": "SimulationService.reserve",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-username-race",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 19409.4,
+   "split": "test",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 0.5,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/user/AppUserRepository.java:14-25": 1,
+    "src/main/java/com/stockguard/user/AuthService.java:47-55": 6
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 10,
+     "end_line": 26,
+     "kind": "interface",
+     "symbol": "AppUserRepository",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 244,
+     "end_line": 263,
+     "kind": "method",
+     "symbol": "SimulationService.simulatedUsers",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 29,
+     "end_line": 52,
+     "kind": "method",
+     "symbol": "ReservationRepository.insertIfKeyUnused",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 43,
+     "end_line": 60,
+     "kind": "method",
+     "symbol": "ReservationController.create",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 5,
+     "end_line": 32,
+     "kind": "enum",
+     "symbol": "ErrorCode",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-simulation-limit",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 23797.5,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/simulation/SimulationController.java:37-41": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 19,
+     "end_line": 42,
+     "kind": "class",
+     "symbol": "SimulationController",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 90,
+     "end_line": 107,
+     "kind": "method",
+     "symbol": "SimulationService.run",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 118,
+     "end_line": 145,
+     "kind": "method",
+     "symbol": "SimulationService.race",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 40,
+     "end_line": 65,
+     "kind": "class_header",
+     "symbol": "SimulationService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 10,
+     "end_line": 26,
+     "kind": "interface",
+     "symbol": "AppUserRepository",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-simulation-limit",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 23988.1,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/simulation/SimulationController.java:37-41": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 19,
+     "end_line": 42,
+     "kind": "class",
+     "symbol": "SimulationController",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 90,
+     "end_line": 107,
+     "kind": "method",
+     "symbol": "SimulationService.run",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 118,
+     "end_line": 145,
+     "kind": "method",
+     "symbol": "SimulationService.race",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 40,
+     "end_line": 65,
+     "kind": "class_header",
+     "symbol": "SimulationService",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 180,
+     "end_line": 201,
+     "kind": "method",
+     "symbol": "SimulationService.report",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-error-status-map",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 21622.8,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:5-21": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 5,
+     "end_line": 32,
+     "kind": "enum",
+     "symbol": "ErrorCode",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 180,
+     "end_line": 201,
+     "kind": "method",
+     "symbol": "SimulationService.report",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 43,
+     "end_line": 60,
+     "kind": "method",
+     "symbol": "ReservationController.create",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 54,
+     "end_line": 69,
+     "kind": "method",
+     "symbol": "GlobalExceptionHandler.handleTransient",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 144,
+     "end_line": 156,
+     "kind": "method",
+     "symbol": "GlobalExceptionHandler.handleExceptionInternal",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-error-status-map",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 17356.7,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:5-21": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 5,
+     "end_line": 32,
+     "kind": "enum",
+     "symbol": "ErrorCode",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 54,
+     "end_line": 69,
+     "kind": "method",
+     "symbol": "GlobalExceptionHandler.handleTransient",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 144,
+     "end_line": 156,
+     "kind": "method",
+     "symbol": "GlobalExceptionHandler.handleExceptionInternal",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 126,
+     "end_line": 142,
+     "kind": "method",
+     "symbol": "GlobalExceptionHandler.handleHandlerMethodValidationException",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 115,
+     "end_line": 124,
+     "kind": "method",
+     "symbol": "GlobalExceptionHandler.handleMethodArgumentNotValid",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-add-stock-limits",
+   "repo": "stockguard",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 21615.6,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.07142857142857142,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/inventory/InventoryController.java:60-63": 14
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74,
+     "kind": "method",
+     "symbol": "StockLevelRepository.removeReserved",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 43,
+     "end_line": 60,
+     "kind": "method",
+     "symbol": "ReservationController.create",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/application.yml",
+     "start_line": 4,
+     "end_line": 14,
+     "kind": "config",
+     "symbol": "spring.datasource",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 70,
+     "end_line": 90,
+     "kind": "method",
+     "symbol": "ReservationRepository.expireDue",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/config/OpenApiConfig.java",
+     "start_line": 11,
+     "end_line": 34,
+     "kind": "class",
+     "symbol": "OpenApiConfig",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sg-add-stock-limits",
+   "repo": "stockguard",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 21773.1,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "src/main/java/com/stockguard/inventory/InventoryController.java:60-63": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+     "start_line": 60,
+     "end_line": 63,
+     "kind": "record",
+     "symbol": "InventoryController.AddStockRequest",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 71,
+     "end_line": 80,
+     "kind": "method",
+     "symbol": "ProductController.list",
+     "is_test": false
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "kind": "table",
+     "symbol": "stock_levels",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+     "start_line": 41,
+     "end_line": 49,
+     "kind": "method",
+     "symbol": "InventoryController.add",
+     "is_test": false
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 24,
+     "end_line": 44,
+     "kind": "class_header",
+     "symbol": "ConsistencyService",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-one-owner",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "sql",
+   "latency_ms": 18998.0,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql:1-6": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6,
+     "kind": "index",
+     "symbol": "note_members_one_owner_per_note",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/offline-store.ts",
+     "start_line": 3,
+     "end_line": 9,
+     "kind": "function",
+     "symbol": "localReplicaName",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 38,
+     "end_line": 68,
+     "kind": "method",
+     "symbol": "MembersService.invite",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 54,
+     "end_line": 78,
+     "kind": "method",
+     "symbol": "NotesService.list",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 70,
+     "end_line": 89,
+     "kind": "method",
+     "symbol": "MembersService.updateRole",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-one-owner",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "sql",
+   "latency_ms": 18391.8,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql:1-6": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6,
+     "kind": "index",
+     "symbol": "note_members_one_owner_per_note",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 54,
+     "end_line": 78,
+     "kind": "method",
+     "symbol": "NotesService.list",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 91,
+     "end_line": 98,
+     "kind": "method",
+     "symbol": "MembersService.remove",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 70,
+     "end_line": 89,
+     "kind": "method",
+     "symbol": "MembersService.updateRole",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 38,
+     "end_line": 68,
+     "kind": "method",
+     "symbol": "MembersService.invite",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-collab-instances",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "yaml",
+   "latency_ms": 23827.6,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.06666666666666667,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "docker-compose.yml:78-88": 15
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 9,
+     "end_line": 21,
+     "kind": "class_header",
+     "symbol": "AccessEventsPublisher",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/server.ts",
+     "start_line": 33,
+     "end_line": 64,
+     "kind": "function",
+     "symbol": "createCollabServer",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 3,
+     "end_line": 48,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "packages/shared/src/access-events.ts",
+     "start_line": 3,
+     "end_line": 8,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "docker-compose.yml",
+     "start_line": 42,
+     "end_line": 53,
+     "kind": "config",
+     "symbol": "services.redis",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-collab-instances",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "yaml",
+   "latency_ms": 24321.3,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.02857142857142857,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "docker-compose.yml:78-88": 35
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 3,
+     "end_line": 48,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 9,
+     "end_line": 21,
+     "kind": "class_header",
+     "symbol": "AccessEventsPublisher",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 36,
+     "end_line": 71,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/server.ts",
+     "start_line": 33,
+     "end_line": 64,
+     "kind": "function",
+     "symbol": "createCollabServer",
+     "is_test": false
+    },
+    {
+     "path": "packages/db/src/index.ts",
+     "start_line": 11,
+     "end_line": 21,
+     "kind": "function",
+     "symbol": "createPrismaClient",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-redis-durability",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "yaml",
+   "latency_ms": 22990.1,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "docker-compose.yml:42-53": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "docker-compose.yml",
+     "start_line": 42,
+     "end_line": 53,
+     "kind": "config",
+     "symbol": "services.redis",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/config.ts",
+     "start_line": 3,
+     "end_line": 21,
+     "kind": "variable",
+     "symbol": "collabEnvSchema",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 90,
+     "end_line": 107,
+     "kind": "method",
+     "symbol": "ResilientRedisExtension.afterLoadDocument",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 32,
+     "end_line": 52,
+     "kind": "class_header",
+     "symbol": "ResilientRedisExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/config.ts",
+     "start_line": 22,
+     "end_line": 32,
+     "kind": "variable",
+     "symbol": "collabEnvSchema",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-redis-durability",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "yaml",
+   "latency_ms": 23584.2,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.047619047619047616,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "docker-compose.yml:42-53": 21
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/collab/src/config.ts",
+     "start_line": 3,
+     "end_line": 21,
+     "kind": "variable",
+     "symbol": "collabEnvSchema",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 90,
+     "end_line": 107,
+     "kind": "method",
+     "symbol": "ResilientRedisExtension.afterLoadDocument",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22,
+     "kind": "class_header",
+     "symbol": "PermissionService",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/persistence.ts",
+     "start_line": 20,
+     "end_line": 31,
+     "kind": "class_header",
+     "symbol": "PersistenceExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/server.ts",
+     "start_line": 33,
+     "end_line": 64,
+     "kind": "function",
+     "symbol": "createCollabServer",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-cookie-flags",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 24426.4,
+   "split": "test",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.045454545454545456,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "apps/api/src/common/cookies.ts:9-33": 22
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 116,
+     "end_line": 150,
+     "kind": "method",
+     "symbol": "AuthService.refresh",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 32,
+     "end_line": 72,
+     "kind": "method",
+     "symbol": "JwtAuthGuard.canActivate",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/providers/auth.tsx",
+     "start_line": 27,
+     "end_line": 75,
+     "kind": "function",
+     "symbol": "AuthProvider",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 36,
+     "end_line": 71,
+     "kind": "function",
+     "symbol": "useCollaboration",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/editor/collaborative-editor.tsx",
+     "start_line": 13,
+     "end_line": 62,
+     "kind": "function",
+     "symbol": "CollaborativeEditor",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-cookie-flags",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 23457.8,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.5,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/common/cookies.ts:9-33": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 32,
+     "end_line": 72,
+     "kind": "method",
+     "symbol": "JwtAuthGuard.canActivate",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/cookies.ts",
+     "start_line": 12,
+     "end_line": 14,
+     "kind": "function",
+     "symbol": "base",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 87,
+     "end_line": 101,
+     "kind": "method",
+     "symbol": "AuthController.logout",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 28,
+     "end_line": 32,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/cookies.ts",
+     "start_line": 16,
+     "end_line": 33,
+     "kind": "function",
+     "symbol": "setAuthCookies",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-env-validation",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 21585.5,
+   "split": "dev",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/config/env.ts:7-31": null,
+    "apps/api/src/config/env.ts:37-46": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/config/env.ts",
+     "start_line": 37,
+     "end_line": 46,
+     "kind": "function",
+     "symbol": "parseEnv",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/app.setup.ts",
+     "start_line": 8,
+     "end_line": 35,
+     "kind": "function",
+     "symbol": "configureApp",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 25,
+     "end_line": 30,
+     "kind": "method",
+     "symbol": "JwtAuthGuard.constructor",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/config/config.module.ts",
+     "start_line": 5,
+     "end_line": 24,
+     "kind": "class",
+     "symbol": "AppConfigModule",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/config.ts",
+     "start_line": 3,
+     "end_line": 21,
+     "kind": "variable",
+     "symbol": "collabEnvSchema",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-env-validation",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 21168.5,
+   "split": "dev",
+   "recall_at_5": 0.5,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.5,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/config/env.ts:7-31": null,
+    "apps/api/src/config/env.ts:37-46": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/app.setup.ts",
+     "start_line": 8,
+     "end_line": 35,
+     "kind": "function",
+     "symbol": "configureApp",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/config/env.ts",
+     "start_line": 37,
+     "end_line": 46,
+     "kind": "function",
+     "symbol": "parseEnv",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/config.ts",
+     "start_line": 3,
+     "end_line": 21,
+     "kind": "variable",
+     "symbol": "collabEnvSchema",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 25,
+     "end_line": 30,
+     "kind": "method",
+     "symbol": "JwtAuthGuard.constructor",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/main.ts",
+     "start_line": 8,
+     "end_line": 14,
+     "kind": "function",
+     "symbol": "bootstrap",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-account-lock",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 24980.4,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/auth/auth.service.ts:188-204": 1,
+    "apps/api/src/auth/auth.service.ts:94-99": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 188,
+     "end_line": 204,
+     "kind": "method",
+     "symbol": "AuthService.registerFailedAttempt",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 84,
+     "end_line": 114,
+     "kind": "method",
+     "symbol": "AuthService.login",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/config.ts",
+     "start_line": 3,
+     "end_line": 21,
+     "kind": "variable",
+     "symbol": "collabEnvSchema",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 136,
+     "end_line": 163,
+     "kind": "method",
+     "symbol": "ResilientRedisExtension.onClientStatusChange",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 32,
+     "end_line": 72,
+     "kind": "method",
+     "symbol": "JwtAuthGuard.canActivate",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-account-lock",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 24040.8,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/auth/auth.service.ts:188-204": 2,
+    "apps/api/src/auth/auth.service.ts:94-99": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 84,
+     "end_line": 114,
+     "kind": "method",
+     "symbol": "AuthService.login",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 188,
+     "end_line": 204,
+     "kind": "method",
+     "symbol": "AuthService.registerFailedAttempt",
+     "is_test": false
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 7,
+     "end_line": 19,
+     "kind": "table",
+     "symbol": "users",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 119,
+     "end_line": 150,
+     "kind": "variable",
+     "symbol": "api",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 69,
+     "end_line": 104,
+     "kind": "function",
+     "symbol": "send",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-folder-delete",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 26145.1,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/folders/folders.service.ts:63-67": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 63,
+     "end_line": 67,
+     "kind": "method",
+     "symbol": "FoldersService.remove",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 119,
+     "end_line": 150,
+     "kind": "variable",
+     "symbol": "api",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 28,
+     "end_line": 33,
+     "kind": "class",
+     "symbol": "MoveNoteDto",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 146,
+     "end_line": 178,
+     "kind": "function",
+     "symbol": "DashboardPage",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 173,
+     "end_line": 207,
+     "kind": "method",
+     "symbol": "AccessControlExtension.handleAccessEvent",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-folder-delete",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 26520.4,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/folders/folders.service.ts:63-67": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 63,
+     "end_line": 67,
+     "kind": "method",
+     "symbol": "FoldersService.remove",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 82,
+     "end_line": 122,
+     "kind": "function",
+     "symbol": "NoteCard",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 146,
+     "end_line": 178,
+     "kind": "function",
+     "symbol": "DashboardPage",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 119,
+     "end_line": 150,
+     "kind": "variable",
+     "symbol": "api",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 173,
+     "end_line": 207,
+     "kind": "method",
+     "symbol": "AccessControlExtension.handleAccessEvent",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-note-search",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 18116.7,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.3333333333333333,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/notes/notes.service.ts:61-69": 3
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 200,
+     "end_line": 232,
+     "kind": "function",
+     "symbol": "DashboardPage",
+     "is_test": false
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 8,
+     "end_line": 9,
+     "kind": "index",
+     "symbol": "notes_updated_at_idx",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 54,
+     "end_line": 78,
+     "kind": "method",
+     "symbol": "NotesService.list",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 146,
+     "end_line": 178,
+     "kind": "function",
+     "symbol": "DashboardPage",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 5,
+     "end_line": 20,
+     "kind": "class",
+     "symbol": "ListNotesQueryDto",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-note-search",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 21316.9,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.25,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/notes/notes.service.ts:61-69": 4
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 8,
+     "end_line": 9,
+     "kind": "index",
+     "symbol": "notes_updated_at_idx",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 200,
+     "end_line": 232,
+     "kind": "function",
+     "symbol": "DashboardPage",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 146,
+     "end_line": 178,
+     "kind": "function",
+     "symbol": "DashboardPage",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 54,
+     "end_line": 78,
+     "kind": "method",
+     "symbol": "NotesService.list",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 45,
+     "end_line": 51,
+     "kind": "method",
+     "symbol": "NotesController.list",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-health-redis",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 21811.9,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.5,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/health/health.controller.ts:15-33": 2
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 19,
+     "end_line": 37,
+     "kind": "class_header",
+     "symbol": "DegradedReconcilerExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/health/health.controller.ts",
+     "start_line": 7,
+     "end_line": 34,
+     "kind": "class",
+     "symbol": "HealthController",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 32,
+     "end_line": 52,
+     "kind": "class_header",
+     "symbol": "ResilientRedisExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/health.ts",
+     "start_line": 3,
+     "end_line": 32,
+     "kind": "class",
+     "symbol": "HealthExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 136,
+     "end_line": 163,
+     "kind": "method",
+     "symbol": "ResilientRedisExtension.onClientStatusChange",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-health-redis",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 23806.4,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/health/health.controller.ts:15-33": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/health/health.controller.ts",
+     "start_line": 7,
+     "end_line": 34,
+     "kind": "class",
+     "symbol": "HealthController",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 32,
+     "end_line": 52,
+     "kind": "class_header",
+     "symbol": "ResilientRedisExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/health.ts",
+     "start_line": 3,
+     "end_line": 32,
+     "kind": "class",
+     "symbol": "HealthExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 8,
+     "end_line": 17,
+     "kind": "interface",
+     "symbol": "DegradedReconcilerOptions",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 19,
+     "end_line": 37,
+     "kind": "class_header",
+     "symbol": "DegradedReconcilerExtension",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-logout-access-token",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 21616.7,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/common/guards/jwt-auth.guard.ts:16-22": 2,
+    "apps/api/src/common/guards/jwt-auth.guard.ts:54-63": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 32,
+     "end_line": 72,
+     "kind": "method",
+     "symbol": "JwtAuthGuard.canActivate",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 16,
+     "end_line": 24,
+     "kind": "class_header",
+     "symbol": "JwtAuthGuard",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 87,
+     "end_line": 101,
+     "kind": "method",
+     "symbol": "AuthController.logout",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/collab-ticket.service.ts",
+     "start_line": 13,
+     "end_line": 45,
+     "kind": "class",
+     "symbol": "CollabTicketService",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 69,
+     "end_line": 104,
+     "kind": "function",
+     "symbol": "send",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-logout-access-token",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 24867.1,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/api/src/common/guards/jwt-auth.guard.ts:16-22": 1,
+    "apps/api/src/common/guards/jwt-auth.guard.ts:54-63": 3
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 16,
+     "end_line": 24,
+     "kind": "class_header",
+     "symbol": "JwtAuthGuard",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 87,
+     "end_line": 101,
+     "kind": "method",
+     "symbol": "AuthController.logout",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 32,
+     "end_line": 72,
+     "kind": "method",
+     "symbol": "JwtAuthGuard.canActivate",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/notes/collab-ticket.service.ts",
+     "start_line": 13,
+     "end_line": 45,
+     "kind": "class",
+     "symbol": "CollabTicketService",
+     "is_test": false
+    },
+    {
+     "path": "apps/api/src/auth/token.service.ts",
+     "start_line": 16,
+     "end_line": 37,
+     "kind": "class",
+     "symbol": "TokenService",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-cursor-color",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 22203.0,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/web/src/lib/colors.ts:15-23": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/src/lib/colors.ts",
+     "start_line": 15,
+     "end_line": 23,
+     "kind": "function",
+     "symbol": "colorForUser",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/editor/collaborative-editor.tsx",
+     "start_line": 13,
+     "end_line": 62,
+     "kind": "function",
+     "symbol": "CollaborativeEditor",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/colors.ts",
+     "start_line": 1,
+     "end_line": 13,
+     "kind": "variable",
+     "symbol": "PRESENCE_COLORS",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/components/ui/primitives.tsx",
+     "start_line": 119,
+     "end_line": 146,
+     "kind": "function",
+     "symbol": "Avatar",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 10,
+     "end_line": 31,
+     "kind": "variable",
+     "symbol": "FEATURES",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-cursor-color",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 21784.6,
+   "split": "test",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/web/src/lib/colors.ts:15-23": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/src/lib/colors.ts",
+     "start_line": 15,
+     "end_line": 23,
+     "kind": "function",
+     "symbol": "colorForUser",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/editor/collaborative-editor.tsx",
+     "start_line": 13,
+     "end_line": 62,
+     "kind": "function",
+     "symbol": "CollaborativeEditor",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/colors.ts",
+     "start_line": 1,
+     "end_line": 13,
+     "kind": "variable",
+     "symbol": "PRESENCE_COLORS",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 10,
+     "end_line": 31,
+     "kind": "variable",
+     "symbol": "FEATURES",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/collab/presence.tsx",
+     "start_line": 5,
+     "end_line": 9,
+     "kind": "interface",
+     "symbol": "PresentUser",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-title-merge",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 24565.2,
+   "split": "dev",
+   "recall_at_5": 0.0,
+   "hit_at_5": 0.0,
+   "reciprocal_rank": 0.14285714285714285,
+   "file_recall_at_5": 0.0,
+   "gold_ranks": {
+    "apps/web/src/lib/ytext.ts:3-34": 7
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/src/editor/title-input.tsx",
+     "start_line": 8,
+     "end_line": 45,
+     "kind": "function",
+     "symbol": "TitleInput",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/editor/collaborative-editor.tsx",
+     "start_line": 13,
+     "end_line": 62,
+     "kind": "function",
+     "symbol": "CollaborativeEditor",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/editor/toolbar.tsx",
+     "start_line": 60,
+     "end_line": 104,
+     "kind": "function",
+     "symbol": "Toolbar",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/config.ts",
+     "start_line": 3,
+     "end_line": 21,
+     "kind": "variable",
+     "symbol": "collabEnvSchema",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 95,
+     "end_line": 131,
+     "kind": "function",
+     "symbol": "NoteWorkspace",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-title-merge",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 23733.3,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 0.2,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/web/src/lib/ytext.ts:3-34": 5
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/src/editor/title-input.tsx",
+     "start_line": 8,
+     "end_line": 45,
+     "kind": "function",
+     "symbol": "TitleInput",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/extensions/persistence.ts",
+     "start_line": 20,
+     "end_line": 31,
+     "kind": "class_header",
+     "symbol": "PersistenceExtension",
+     "is_test": false
+    },
+    {
+     "path": "apps/collab/src/ydoc.ts",
+     "start_line": 67,
+     "end_line": 94,
+     "kind": "function",
+     "symbol": "applyContentReplacement",
+     "is_test": false
+    },
+    {
+     "path": "packages/shared/src/collab.ts",
+     "start_line": 17,
+     "end_line": 23,
+     "kind": "variable",
+     "symbol": "YDOC_FIELDS",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/lib/ytext.ts",
+     "start_line": 3,
+     "end_line": 34,
+     "kind": "function",
+     "symbol": "applyTextDiff",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-theme-flash",
+   "repo": "syncnotes",
+   "language": "tr",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 21624.0,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/web/public/theme-init.js:1-12": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/public/theme-init.js",
+     "start_line": 1,
+     "end_line": 12,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 57,
+     "end_line": 93,
+     "kind": "function",
+     "symbol": "NoteWorkspace",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/providers/theme.tsx",
+     "start_line": 34,
+     "end_line": 72,
+     "kind": "function",
+     "symbol": "ThemeProvider",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/app.tsx",
+     "start_line": 52,
+     "end_line": 77,
+     "kind": "function",
+     "symbol": "App",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 83,
+     "end_line": 98,
+     "kind": "function",
+     "symbol": "AuthLayout",
+     "is_test": false
+    }
+   ]
+  },
+  {
+   "question": "v2-sn-theme-flash",
+   "repo": "syncnotes",
+   "language": "en",
+   "mode": "reranked",
+   "kind": "code",
+   "latency_ms": 19930.3,
+   "split": "dev",
+   "recall_at_5": 1.0,
+   "hit_at_5": 1.0,
+   "reciprocal_rank": 1.0,
+   "file_recall_at_5": 1.0,
+   "gold_ranks": {
+    "apps/web/public/theme-init.js:1-12": 1
+   },
+   "citations_checked": 5,
+   "citations_valid": 5,
+   "top_5": [
+    {
+     "path": "apps/web/public/theme-init.js",
+     "start_line": 1,
+     "end_line": 12,
+     "kind": "module",
+     "symbol": null,
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 200,
+     "end_line": 232,
+     "kind": "function",
+     "symbol": "DashboardPage",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/providers/theme.tsx",
+     "start_line": 34,
+     "end_line": 72,
+     "kind": "function",
+     "symbol": "ThemeProvider",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 83,
+     "end_line": 98,
+     "kind": "function",
+     "symbol": "AuthLayout",
+     "is_test": false
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 198,
+     "end_line": 242,
+     "kind": "function",
+     "symbol": "RegisterPage",
+     "is_test": false
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,29 @@
+{
+ "run": "held-out answers, phase 2 pipeline, qwen2.5:7b, Turkish and English",
+ "status": "incomplete — interrupted due to memory pressure",
+ "use_in_comparisons": false,
+ "questions_planned": 72,
+ "questions_reached": 10,
+ "answers_saved": 0,
+ "why_nothing_was_saved": "evaluate-ask wrote its results only at the end of a run at that time. It now saves each question.",
+ "started_local_time": "2026-11-06 16:54",
+ "last_resource_sample_local_time": "2026-11-06 17:11",
+ "stopped_by": "The memory guard of Claude Code, which stops background commands when the machine is critically low on memory. The exact cause of the low memory was not established.",
+ "machine_after_the_stop": {
+  "physical_memory_free_gb": 4.4,
+  "physical_memory_total_gb": 31.3,
+  "commit_free_gb": 2.2,
+  "commit_limit_gb": 45.0,
+  "wsl_virtual_machine_gb": 13.49
+ },
+ "ollama_during_the_run": {
+  "container_memory_peak_gib": 7.66,
+  "container_memory_mean_gib": 7.52,
+  "samples": "resources/stats-phase2-7b.txt",
+  "runner_flags": "--ctx-size 16384 --threads 8 --no-mmap --parallel 2"
+ },
+ "only_complete_7b_measurement": {
+  "file": "dev-phase2-7b-tr.json",
+  "warning": "Old development questions in Turkish only, which the prompt was tuned on. It is not an independent result and must not be compared with held-out numbers."
+ }
+}

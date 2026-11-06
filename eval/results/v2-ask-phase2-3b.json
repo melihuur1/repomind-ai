@@ -1,0 +1,4155 @@
+{
+ "model": "qwen2.5:3b",
+ "base_url": "http://127.0.0.1:11535/v1",
+ "dataset_sha256": "f6531022d8c0bd12480974e4ba40bec37a3abc5018e7d45b43db391d4106a827",
+ "summary": {
+  "answerable_questions": 26,
+  "answered": 24,
+  "answered_citing_gold": 15,
+  "gold_was_in_context": 22,
+  "refused_answerable": 2,
+  "invalid_responses": 0,
+  "unanswerable_questions": 10,
+  "unanswerable_refused": 6,
+  "holdout_unanswerable_questions": 0,
+  "holdout_unanswerable_refused": 0,
+  "citations_shown": 75,
+  "statements_discarded_by_backend": 16,
+  "input_tokens": 155267,
+  "output_tokens": 18489,
+  "cost_usd": 0.0,
+  "max_context_chars": 1636,
+  "mean_seconds": 53.4
+ },
+ "answerable_citations_rechecked_valid": 69,
+ "answerable_citations_shown": 69,
+ "answerable": [
+  {
+   "question": "v2-sg-negative-stock-db",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What restrictions are in place at the database level to prevent counters from going negative?",
+   "answer": "Bu sorgu, stok sayacıların pozitif olmalarını engelliyor ve bu sayacılar için database düzeyindeki kısıtlamaların bir parçasıdır. [S1]\nBu kod parçası, `StockLevelRepository.moveAvailableToReserved` metodunu kullanarak stok katsayısını artırma işlemi gerçekleştirir ve bu işlemin sonuçlarını döndürür. [S3]\nBu Java sınıfı, `StockLevelRepository.removeReserved` yöntemini kullanarak stok düzeylerini güncellemek için bir veritabanı sorgusu içerir ve bu işlem, belirli bir ürünün kalmış adet sayısını azaltır. [S6]\nBu kod parçası, `consistency.check(product.getId())` fonksiyonunun sonucu olan `negativeCounters` değişkenini hesaplar. Bu değişkenin değeri, stok sayacıların eksiye düşmesi durumunu gösterir. [S8]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 23,
+     "end_line": 25
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 59,
+     "end_line": 59
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 66,
+     "end_line": 72
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 198,
+     "end_line": 198
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu sorgu, stok sayacıların pozitif olmalarını engelliyor ve bu sayacılar için database düzeyindeki kısıtlamaların bir parçasıdır.",
+     "quote": "-- The database itself refuses overselling, even if application code is wrong.\nCONSTRAINT ck_stock_available_non_negative CHECK (available_quantity >= 0),\nCONSTRAINT ck_stock_reserved_non_negative  CHECK (reserved_quantity >= 0)"
+    },
+    {
+     "source": "S2",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 1,
+     "end_line": 12,
+     "outcome": "unsupported",
+     "reason": "the quote is too short to prove anything",
+     "statement": "Bu sorgu, stok sayacıları için veritabanı düzeyinde bir engel oluşturur ve onları sıfıra düşmeyi önler.",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 61,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası, `StockLevelRepository.moveAvailableToReserved` metodunu kullanarak stok katsayısını artırma işlemi gerçekleştirir ve bu işlemin sonuçlarını döndürür.",
+     "quote": "\n            RETURNING total_quantity AS \"total\", available_quantity AS \"available\", reserved_quantity AS \"reserved\"\n            "
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 14,
+     "end_line": 23,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 35,
+     "outcome": "unsupported",
+     "reason": "the quote is too short to prove anything",
+     "statement": "Bu sınıfın `StockLevelRepository` üzerinden yapılan değişikliklerle etkileşime girdiğimiz durumlara dayanarak, `reserved_quantity` sütunu negatif olmaya sahip olamamasını sağlar.",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu Java sınıfı, `StockLevelRepository.removeReserved` yöntemini kullanarak stok düzeylerini güncellemek için bir veritabanı sorgusu içerir ve bu işlem, belirli bir ürünün kalmış adet sayısını azaltır.",
+     "quote": "\nUPDATE stock_levels\n   SET total_quantity = total_quantity - :quantity,\n       reserved_quantity = reserved_quantity - :quantity,\n       updated_at = now()\n     WHERE product_id = :productId\n       AND reserved_quantity >= :quantity\n    RETURNING total_quantity AS \"total\", available_quantity AS \"available\", reserved_quantity AS \"reserved\"\n    \n"
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 89,
+     "end_line": 96,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 180,
+     "end_line": 201,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası, `consistency.check(product.getId())` fonksiyonunun sonucu olan `negativeCounters` değişkenini hesaplar. Bu değişkenin değeri, stok sayacıların eksiye düşmesi durumunu gösterir.",
+     "quote": "long negativeCounters = (stock.getAvailable() < 0 ? 1 : 0) + (stock.getReserved() < 0 ? 1 : 0) + (stock.getTotal() < 0 ? 1 : 0);"
+    }
+   ],
+   "rejected": [
+    "S2: the quote is too short to prove anything",
+    "S5: the quote is too short to prove anything"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: restrictions, place, prevent."
+   ],
+   "input_tokens": 4862,
+   "output_tokens": 695,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1636,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 72.4,
+   "citations_recheck_valid": 4,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-settled-immutable",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How is the modification of a finalized reservation prevented in the database?",
+   "answer": "Bu kod, veritabanında `reservations` tablosunun güncellemelerini kontrol eden bir trigge oluşturur ve bu trigge `reservations_guard_update()` fonksiyonunu çağırır. [S4]",
+   "citations": [
+    {
+     "source": "S4",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 41,
+     "end_line": 43
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 30,
+     "end_line": 37,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 96,
+     "outcome": "invalid",
+     "reason": "the model did not return the required JSON",
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 41,
+     "end_line": 43,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, veritabanında `reservations` tablosunun güncellemelerini kontrol eden bir trigge oluşturur ve bu trigge `reservations_guard_update()` fonksiyonunu çağırır.",
+     "quote": "CREATE TRIGGER tg_reservations_guard_update\n    BEFORE UPDATE ON reservations\n    FOR EACH ROW EXECUTE FUNCTION reservations_guard_update();"
+    },
+    {
+     "source": "S5",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 23,
+     "end_line": 23,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 15,
+     "end_line": 19,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 20,
+     "end_line": 21,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 25,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [
+    "S3: the model did not return the required JSON"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: modification, prevented.",
+    "Only one source supports this answer, so it may be incomplete."
+   ],
+   "input_tokens": 4298,
+   "output_tokens": 699,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1505,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 59.2,
+   "citations_recheck_valid": 1,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-append-only",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How can preventive measures be taken to prevent the deletion or update of purchase transactions and audit records in a software repository?",
+   "answer": "Bu kod, `stock_movements` tablosunun güncellemeleri veya silinmelerini önleme için bir trigge oluşturur. [S1]\nBu kod parçası `StockLevelRepository.moveAvailableToReserved` metodunu kullanarak stok kalmalarını tahsis edilen kalmaların üzerinde işlem yapar ve bu işlem sonucunda `total_quantity`, `available` ve `reserved` değerlerinin güncellemeleri yapılır. [S2]\nBu kod, `moveReservedToAvailable` metodunu kullanarak stok düzeylerini güncellemek için Transactional propertisli bir Query oluşturur ve bu işlem, satışı tekrar mümkün hale getirir. [S3]\nBu kod, `audit_events` tablosunun güncellemeleri veya silinmelerini engelleyen bir triggeerin oluşturulmasını sağlar. [S4]\nBu kod, `ProductService.update` metodunun içinde ürün adı ve açıklamasını güncellemek için gerekli olan sürüm kontrolünü gerçekleştirir. [S5]\nBu kod, `StockLevelRepository.removeReserved` metodunu kullanarak stok düzeylerini güncellemek için bir UPDATE sorgusu oluşturur ve bu işlem, stokta saklanan adetin kütüphaneden geri alınmasını sağlar. [S7]\nBu kod, `ReservationRepository.settleIfPendingAndInTime` metodunu kullanarak bir talepın durumu ve tarih bilgilerini güncellemek için tasarlanmış ve bu işlemin tamamlanması veya iptal edilmesi önlenmek üzere yapılmıştır. [S8]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 48,
+     "end_line": 50
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 53,
+     "end_line": 59
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 79,
+     "end_line": 85
+    },
+    {
+     "source": "S4",
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 52,
+     "end_line": 54
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 46,
+     "end_line": 49
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 67,
+     "end_line": 71
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 62,
+     "end_line": 66
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 48,
+     "end_line": 50,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `stock_movements` tablosunun güncellemeleri veya silinmelerini önleme için bir trigge oluşturur.",
+     "quote": "CREATE TRIGGER tg_stock_movements_append_only\n    BEFORE UPDATE OR DELETE ON stock_movements\n    FOR EACH ROW EXECUTE FUNCTION forbid_history_rewrite();"
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 61,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası `StockLevelRepository.moveAvailableToReserved` metodunu kullanarak stok kalmalarını tahsis edilen kalmaların üzerinde işlem yapar ve bu işlem sonucunda `total_quantity`, `available` ve `reserved` değerlerinin güncellemeleri yapılır.",
+     "quote": "\n            UPDATE stock_levels\n               SET available_quantity = available_quantity - :quantity,\n                   reserved_quantity = reserved_quantity + :quantity,\n                   updated_at = now()\n             WHERE product_id = :productId\n               AND available_quantity >= :quantity\n            RETURNING total_quantity AS \"total\", available_quantity AS \"available\", reserved_quantity AS \"reserved\"\n            \n"
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 76,
+     "end_line": 87,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `moveReservedToAvailable` metodunu kullanarak stok düzeylerini güncellemek için Transactional propertisli bir Query oluşturur ve bu işlem, satışı tekrar mümkün hale getirir.",
+     "quote": "\n            UPDATE stock_levels\n               SET available_quantity = available_quantity + :quantity,\n                   reserved_quantity = reserved_quantity - :quantity,\n                   updated_at = now()\n             WHERE product_id = :productId\n               AND reserved_quantity >= :quantity\n            RETURNING total_quantity AS \"total\", available_quantity AS \"available\", reserved_quantity AS \"reserved\"\n            \n"
+    },
+    {
+     "source": "S4",
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 52,
+     "end_line": 54,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `audit_events` tablosunun güncellemeleri veya silinmelerini engelleyen bir triggeerin oluşturulmasını sağlar.",
+     "quote": "CREATE TRIGGER tg_audit_events_append_only\n    BEFORE UPDATE OR DELETE ON audit_events\n    FOR EACH ROW EXECUTE FUNCTION forbid_history_rewrite();"
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 38,
+     "end_line": 54,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `ProductService.update` metodunun içinde ürün adı ve açıklamasını güncellemek için gerekli olan sürüm kontrolünü gerçekleştirir.",
+     "quote": "if (product.getVersion() != expectedVersion) { throw new ApiException(ErrorCode.STALE_VERSION, \"Product is at version \"+ product.getVersion() +\" but the update was based on version \"+ expectedVersion +\".\"); }"
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 14,
+     "end_line": 23,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `StockLevelRepository.removeReserved` metodunu kullanarak stok düzeylerini güncellemek için bir UPDATE sorgusu oluşturur ve bu işlem, stokta saklanan adetin kütüphaneden geri alınmasını sağlar.",
+     "quote": "\n            SET total_quantity = total_quantity - :quantity,\n                reserved_quantity = reserved_quantity - :quantity,\n                updated_at = now()\n              WHERE product_id = :productId\n                AND reserved_quantity >= :quantity"
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 54,
+     "end_line": 68,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `ReservationRepository.settleIfPendingAndInTime` metodunu kullanarak bir talepın durumu ve tarih bilgilerini güncellemek için tasarlanmış ve bu işlemin tamamlanması veya iptal edilmesi önlenmek üzere yapılmıştır.",
+     "quote": "\nUPDATE reservations\n   SET status = :target, settled_at = now()\n WHERE id = :id AND status = 'PENDING' AND expires_at > now()"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: preventive, measures, prevent, purchase, software."
+   ],
+   "input_tokens": 4732,
+   "output_tokens": 906,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1191,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 74.3,
+   "citations_recheck_valid": 7,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-sweep-index",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What index in the database is used for the reservation retrieval process that has been running for a while?",
+   "answer": "Varyantı olan `ix_reservations_pending_expiry` indeksini kullanır ve sadece 'PENDING' durumuna sahip satırları gözden geçirir. [S1]\nVeritabanında `ix_stock_movements_reservation` ismiyle bir indeks bulunuyor ve bu indeks, `reservation_id` sütununa göre stock_movements tablosundaki verileri filtreler. [S4]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 20,
+     "end_line": 20
+    },
+    {
+     "source": "S4",
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 25,
+     "end_line": 25
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 20,
+     "end_line": 21,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Varyantı olan `ix_reservations_pending_expiry` indeksini kullanır ve sadece 'PENDING' durumuna sahip satırları gözden geçirir.",
+     "quote": "-- Partial index: the sweeper only ever looks at PENDING rows, which stay a small part of the table."
+    },
+    {
+     "source": "S2",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 23,
+     "end_line": 23,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 22,
+     "end_line": 22,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 25,
+     "end_line": 25,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Veritabanında `ix_stock_movements_reservation` ismiyle bir indeks bulunuyor ve bu indeks, `reservation_id` sütununa göre stock_movements tablosundaki verileri filtreler.",
+     "quote": "CREATE INDEX ix_stock_movements_reservation ON stock_movements (reservation_id);"
+    },
+    {
+     "source": "S5",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 25,
+     "end_line": 39,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 15,
+     "end_line": 19,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 41,
+     "end_line": 43,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 116,
+     "end_line": 124,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: retrieval, process."
+   ],
+   "input_tokens": 4141,
+   "output_tokens": 502,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1001,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 46.6,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-why-separate-stock",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "Why are counter software repositories kept in a separate place from the products table?",
+   "answer": "Bu kod parçası `StockLevelRepository.removeReserved` metodunu kullanarak ürün tablosundan tutulan stok sayacıları için güncelleme işlemi gerçekleştirir. [S3]\nBu kod parçası, `StockLevelRepository.moveAvailableToReserved` metodunu kullanarak ürün stok düzeylerini kullanılabilir miktari ve saklanan miktari güncellemek için veritabanını günceller. [S6]",
+   "citations": [
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 66,
+     "end_line": 72
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 53,
+     "end_line": 59
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 1,
+     "end_line": 12,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası `StockLevelRepository.removeReserved` metodunu kullanarak ürün tablosundan tutulan stok sayacıları için güncelleme işlemi gerçekleştirir.",
+     "quote": "\nUPDATE stock_levels\n   SET total_quantity = total_quantity - :quantity,\n       reserved_quantity = reserved_quantity - :quantity,\n       updated_at = now()\n     WHERE product_id = :productId\n       AND reserved_quantity >= :quantity\n    RETURNING total_quantity AS \"total\", available_quantity AS \"available\", reserved_quantity AS \"reserved\"\n    \n"
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 35,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 89,
+     "end_line": 96,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 61,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası, `StockLevelRepository.moveAvailableToReserved` metodunu kullanarak ürün stok düzeylerini kullanılabilir miktari ve saklanan miktari güncellemek için veritabanını günceller.",
+     "quote": "\n            UPDATE stock_levels\n               SET available_quantity = available_quantity - :quantity,\n                   reserved_quantity = reserved_quantity + :quantity,\n                   updated_at = now()\n             WHERE product_id = :productId\n               AND available_quantity >= :quantity\n            RETURNING total_quantity AS \"total\", available_quantity AS \"available\", reserved_quantity AS \"reserved\"\n            \n"
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 11,
+     "end_line": 22,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 76,
+     "end_line": 87,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: software, place."
+   ],
+   "input_tokens": 4620,
+   "output_tokens": 720,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 987,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 65.4,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-lock-timeout-config",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "Where is the lock wait timeout set and what is its value?",
+   "answer": "Bu kod parçası overdue olan koltukları alır ve bu işlem için lock bekleme süresini ayarlamakta olduğunu gösterir. [S1]\nBu kaynak, Spring DataSource yapılandırmasında `lock_timeout` ve `idle_in_transaction_session_timeout` değerlerini ayarlamak için SQL komutları içeriyor. [S2]\nBu Java kodu, bir veritabanı tablosunda `status` sütunu 'PENDING' olan kaydın `settled_at` sütununa şu anda tarih ve saat değeri atamasını sağlar. Eğer kaydın `expires_at` zaman aşım süresi geçmişse, kaydı onaylamaz veya iptal etmez. [S3]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 77,
+     "end_line": 83
+    },
+    {
+     "source": "S2",
+     "path": "src/main/resources/application.yml",
+     "start_line": 14,
+     "end_line": 14
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 62,
+     "end_line": 66
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 70,
+     "end_line": 90,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası overdue olan koltukları alır ve bu işlem için lock bekleme süresini ayarlamakta olduğunu gösterir.",
+     "quote": "\nWITH due AS (\n    SELECT id FROM reservations\n     WHERE status = 'PENDING' AND expires_at <= now()\n     ORDER BY expires_at\n     LIMIT :limit\n     FOR UPDATE SKIP LOCKED\n)\n"
+    },
+    {
+     "source": "S2",
+     "path": "src/main/resources/application.yml",
+     "start_line": 4,
+     "end_line": 14,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kaynak, Spring DataSource yapılandırmasında `lock_timeout` ve `idle_in_transaction_session_timeout` değerlerini ayarlamak için SQL komutları içeriyor.",
+     "quote": "\"SET lock_timeout = '3s'; SET idle_in_transaction_session_timeout = '30s'\""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 54,
+     "end_line": 68,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu Java kodu, bir veritabanı tablosunda `status` sütunu 'PENDING' olan kaydın `settled_at` sütununa şu anda tarih ve saat değeri atamasını sağlar. Eğer kaydın `expires_at` zaman aşım süresi geçmişse, kaydı onaylamaz veya iptal etmez.",
+     "quote": "\n            UPDATE reservations\n               SET status = :target, settled_at = now()\n             WHERE id = :id\n               AND status = 'PENDING'\n               AND expires_at > now()"
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 25,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 15,
+     "end_line": 47,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 116,
+     "end_line": 124,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 61,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 4918,
+   "output_tokens": 624,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1322,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 64.7,
+   "citations_recheck_valid": 3,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-reservation-defaults",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How much does a reservation default cost and how often is it scheduled to run?",
+   "answer": "Source code shows that a reservation's default timeout is set to 15 minutes and it has an expiry schedule enabled with a batch size of 100. [S1]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/resources/application.yml",
+     "start_line": 61,
+     "end_line": 66
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/resources/application.yml",
+     "start_line": 61,
+     "end_line": 66,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Source code shows that a reservation's default timeout is set to 15 minutes and it has an expiry schedule enabled with a batch size of 100.",
+     "quote": "reservation:\n  default-ttl: 15m\n  expiry:\n    enabled: true\n    sweep-interval: ${STOCKGUARD_EXPIRY_SWEEP_INTERVAL:5s}\n    batch-size: 100"
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 17,
+     "end_line": 30,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 70,
+     "end_line": 77,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 105,
+     "end_line": 126,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryJob.java",
+     "start_line": 12,
+     "end_line": 45,
+     "outcome": "unsupported",
+     "reason": "the statement drifted into a language that is neither the question's nor the code's",
+     "statement": "Bu kod, bir rezervasyonun süresi dolanması ve bu işlem her ne kadar sık被执行时，这段代码说明了ReservationExpiryJob类中的sweep()方法每${stockguard.reservation.expiry.sweep-interval}秒执行一次。如果到期的预订数量大于0，则记录一条日志消息。",
+     "quote": "\n    @Scheduled(fixedDelayString = \"${stockguard.reservation.expiry.sweep-interval}\")\n    void sweep() {\n        int expired;\n        int total = 0;\n        do {\n            expired = expiry.expireDueBatch(batchSize);\n            total += expired;\n        } while (expired == batchSize);\n        if (total > 0) {\n            log.info(\"Expired {} reservation(s)\", total);\n        }\n    }"
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 39,
+     "end_line": 41,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 15,
+     "end_line": 19,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 32,
+     "end_line": 43,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [
+    "S5: the statement drifted into a language that is neither the question's nor the code's"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: cost, often.",
+    "Only one source supports this answer, so it may be incomplete."
+   ],
+   "input_tokens": 4501,
+   "output_tokens": 513,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1395,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 51.6,
+   "citations_recheck_valid": 1,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-two-instances",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "translated_query": "How do I launch two copies of the application to share the same database?",
+   "answer": "",
+   "citations": [],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 10,
+     "end_line": 26,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/common/config/OpenApiConfig.java",
+     "start_line": 11,
+     "end_line": 34,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 29,
+     "end_line": 52,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 54,
+     "end_line": 69,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 43,
+     "end_line": 60,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 147,
+     "end_line": 156,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "compose.yaml",
+     "start_line": 1,
+     "end_line": 3,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: launch."
+   ],
+   "input_tokens": 5046,
+   "output_tokens": 452,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1634,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 58.9,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-auth-error-format",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How does the client throw an error when a request to create an entry is rejected?",
+   "answer": "Bu kod, `ReservationTransactions.rejection` metodunu kullanarak bir `ApiException` oluşturur ve bu hata, istemciye gönderilecek hata mesajı olarak `ErrorCode.RESERVATION_EXPIRED` veya `ErrorCode.RESERVATION_ALREADY_SETTLED` ile başlatılır. [S1]\nGlobalExceptionHandler.java adlı sınıfın handleIntegrity metodu bir veri uyumsallık ihlali durumunda bir hata oluşturur. [S2]\nBu kodda, `ReservationTransactions.create` methodu, `productId` ürün bulunmadığında bir ApiException oluşturur ve bu hata, istemciden gönderilecektir. [S3]\nBu kod, bir kullanıcıyı giriş yapmamış durumunda oluşturulan bir istemcinin işlemi gerçekleştirmesi izni olmadığını belirtir ve bu durumu 'You do not have permission to perform this action.' şeklinde bir hata mesajıyla gösterir. [S4]\nBu kod, bir kullanıcı giriş yapmamış durumunda istemciye Bearer token gerektiği bilgilendirme mesajı ile yanıt verir. [S6]\nBu kod, `CannotCreateTransactionException` veya `PessimisticLockingFailureException` ve `DataAccessResourceFailureException` türündeki hatalara yakalanın ardından, istemciye bir `ProblemDetail` nesnesi ile başarısız olma durumunu bildiren bir yan hatayı atar. [S7]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 120,
+     "end_line": 122
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 105,
+     "end_line": 105
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 66,
+     "end_line": 67
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 34,
+     "end_line": 38
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 30,
+     "end_line": 31
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 63,
+     "end_line": 65
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 116,
+     "end_line": 124,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `ReservationTransactions.rejection` metodunu kullanarak bir `ApiException` oluşturur ve bu hata, istemciye gönderilecek hata mesajı olarak `ErrorCode.RESERVATION_EXPIRED` veya `ErrorCode.RESERVATION_ALREADY_SETTLED` ile başlatılır.",
+     "quote": "new ApiException(ErrorCode.RESERVATION_EXPIRED, \"This reservation has expired.\");\nnew ApiException(ErrorCode.RESERVATION_ALREADY_SETTLED, \"This reservation is already \\\" + latest.getStatus() + \\\".\")"
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 97,
+     "end_line": 107,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "GlobalExceptionHandler.java adlı sınıfın handleIntegrity metodu bir veri uyumsallık ihlali durumunda bir hata oluşturur.",
+     "quote": "log.error(\"Database rejected a write that should have been impossible\", ex);"
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 45,
+     "end_line": 70,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kodda, `ReservationTransactions.create` methodu, `productId` ürün bulunmadığında bir ApiException oluşturur ve bu hata, istemciden gönderilecektir.",
+     "quote": "// Rolls back the insert above too, so a rejected request does not use up its idempotency key.\nthrow new ApiException(ErrorCode.INSUFFICIENT_STOCK, \"Not enough stock is available for this request.\");"
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 34,
+     "end_line": 38,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, bir kullanıcıyı giriş yapmamış durumunda oluşturulan bir istemcinin işlemi gerçekleştirmesi izni olmadığını belirtir ve bu durumu 'You do not have permission to perform this action.' şeklinde bir hata mesajıyla gösterir.",
+     "quote": "@Override\npublic void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException ex)\nthrows IOException {\nwrite(request, response, ErrorCode.ACCESS_DENIED, \"You do not have permission to perform this action.\");\n}"
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 72,
+     "end_line": 80,
+     "outcome": "unsupported",
+     "reason": "the statement names things that are not in the source: IdempotencyKeyReused",
+     "statement": "Bu kodda, `replay` metodunda bir `ApiException` oluşturulur ve `IdempotencyKeyReused` hata koduyla bir hata mesajı iletilir.",
+     "quote": "throw new ApiException(ErrorCode.IDEMPOTENCY_KEY_REUSED, \"This Idempotency-Key was already used with a different request.\")"
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 27,
+     "end_line": 32,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, bir kullanıcı giriş yapmamış durumunda istemciye Bearer token gerektiği bilgilendirme mesajı ile yanıt verir.",
+     "quote": "response.setHeader(HttpHeaders.WWW_AUTHENTICATE, \"Bearer\"); write(request, response, ErrorCode.UNAUTHENTICATED, \"A valid bearer token is required.\")"
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 54,
+     "end_line": 69,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `CannotCreateTransactionException` veya `PessimisticLockingFailureException` ve `DataAccessResourceFailureException` türündeki hatalara yakalanın ardından, istemciye bir `ProblemDetail` nesnesi ile başarısız olma durumunu bildiren bir yan hatayı atar.",
+     "quote": "log.warn(\"Transient database failure: \\u{2061}\\({ex.getMessage()}\\)\");\nProblemDetail problem = problem(ErrorCode.TEMPORARILY_UNAVAILABLE, \"The operation could not complete right now. Retry shortly.\");"
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 17,
+     "end_line": 21,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [
+    "S5: the statement names things that are not in the source: IdempotencyKeyReused"
+   ],
+   "warnings": [],
+   "input_tokens": 4577,
+   "output_tokens": 819,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1604,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 68.0,
+   "citations_recheck_valid": 6,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-username-race",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What happens if two people sign up for the same username at the same time?",
+   "answer": "Bu kod, aynı anda birden fazla kullanıcı adı oluşturmak için `INSERT INTO` sorgusunu kullanır ve bu sorgunun `ON CONFLICT (username) DO NOTHING` bölümü, aynı kullanıcı adı olan yeni kayıtları engeller. [S3]\nAuthService.login method catches AuthenticationException when authentication fails and throws an ApiException with ErrorCode.INVALID_CREDENTIALS if either the username or password is incorrect. [S4]\nAuthService.register methodunun amacı, belirli bir kullanıcı adı ve şifre ile yeni bir kayıtlı kullanıcının oluşturulmasını içerir. [S5]",
+   "citations": [
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 250,
+     "end_line": 253
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 72,
+     "end_line": 72
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 52,
+     "end_line": 55
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 10,
+     "end_line": 26,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "src/main/resources/db/migration/V1__users.sql",
+     "start_line": 1,
+     "end_line": 11,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 244,
+     "end_line": 263,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, aynı anda birden fazla kullanıcı adı oluşturmak için `INSERT INTO` sorgusunu kullanır ve bu sorgunun `ON CONFLICT (username) DO NOTHING` bölümü, aynı kullanıcı adı olan yeni kayıtları engeller.",
+     "quote": "INSERT INTO app_users (id, username, password_hash, role, created_at)\nSELECT CAST(md5(:prefix || n) AS uuid), :prefix || lpad(CAST(n AS text), 4, '0'), '!', 'USER', now()\nFROM generate_series(1, :count) AS n\nON CONFLICT (username) DO NOTHING"
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 64,
+     "end_line": 74,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "AuthService.login method catches AuthenticationException when authentication fails and throws an ApiException with ErrorCode.INVALID_CREDENTIALS if either the username or password is incorrect.",
+     "quote": "throw new ApiException(ErrorCode.INVALID_CREDENTIALS, \"Invalid username or password.\");"
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 47,
+     "end_line": 55,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "AuthService.register methodunun amacı, belirli bir kullanıcı adı ve şifre ile yeni bir kayıtlı kullanıcının oluşturulmasını içerir.",
+     "quote": "\n        UUID id = insert(normalized, rawPassword, Role.USER)\n                .orElseThrow(() -> new ApiException(ErrorCode.USERNAME_TAKEN, \"This username is already taken.\"));\n    }"
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 91,
+     "end_line": 93,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 15,
+     "end_line": 47,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 54,
+     "end_line": 68,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 4671,
+   "output_tokens": 596,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1324,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 60.7,
+   "citations_recheck_valid": 3,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-simulation-limit",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How many concurrent requests can be sent in a racing simulation software?",
+   "answer": "Bu kod, `race` metodunda belirtilen `count` sayısı eşzamanlı istek gönderimi yapabildiği maksimum sayıyı gösterir. [S2]\nBu kod parçası bir `SimulationController` sınıfının içinde bulunuyor ve bu controller, `/api/v1/simulations/reservations` endpointine yapılan POST isteklerini alır ve `simulation.run()` metodunu çağırır. Bu metod, isteklerin eşzamanlı olarak gönderileceği belirtilen sayıda istekteki ürün adedi ile bir simülasyonu başlatır. [S3]\nBu kod parçası bir `SimulationService.run` metodunun içinde yer alır ve bu metod, `concurrentRequests` değişkenini audit işlemi için gönderilen isteklerin sayısı olarak kullanır. [S6]\nBu kod parçası bir yarış simülasyonu için istek gönderme işlemi hakkında bilgi verir ve en fazla kaç eşzamanlı istekte bulunabilir olduğunu belirtir. [S7]",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 120,
+     "end_line": 120
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 34,
+     "end_line": 34
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 108,
+     "end_line": 114
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 201,
+     "end_line": 201
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 90,
+     "end_line": 107,
+     "outcome": "unsupported",
+     "reason": "the quote is too short to prove anything",
+     "statement": "Bu kod parçası bir yarış simülasyonu çalıştırmak için `SimulationService.run` metodunu tanımlıyor ve bu metodda en fazla kaç eşzamanlı istek gönderilebileceği belirtiliyor.",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 118,
+     "end_line": 145,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `race` metodunda belirtilen `count` sayısı eşzamanlı istek gönderimi yapabildiği maksimum sayıyı gösterir.",
+     "quote": "CountDownLatch ready = new CountDownLatch(count);"
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 19,
+     "end_line": 42,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası bir `SimulationController` sınıfının içinde bulunuyor ve bu controller, `/api/v1/simulations/reservations` endpointine yapılan POST isteklerini alır ve `simulation.run()` metodunu çağırır. Bu metod, isteklerin eşzamanlı olarak gönderileceği belirtilen sayıda istekteki ürün adedi ile bir simülasyonu başlatır.",
+     "quote": "concurrentRequests"
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 202,
+     "end_line": 233,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 281,
+     "end_line": 303,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 108,
+     "end_line": 116,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası bir `SimulationService.run` metodunun içinde yer alır ve bu metod, `concurrentRequests` değişkenini audit işlemi için gönderilen isteklerin sayısı olarak kullanır.",
+     "quote": "`transaction.executeWithoutResult(status -> audit.record(\n\tAuditEventType.SIMULATION_EXECUTED, adminId, \"PRODUCT\", product.getId(), Map.of(\n\t\t\"runId\", runId,\n\t\t\"initialStock\", initialStock,\n\t\t\"concurrentRequests\", concurrentRequests,\n\t\t\"successfulReservations\", report.successfulReservations(),\n\t\t\"dataConsistent\", report.dataConsistent()));`"
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 180,
+     "end_line": 201,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası bir yarış simülasyonu için istek gönderme işlemi hakkında bilgi verir ve en fazla kaç eşzamanlı istekte bulunabilir olduğunu belirtir.",
+     "quote": "long expectedSuccesses = Math.min(initialStock / quantityPerRequest, concurrentRequests);"
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 157,
+     "end_line": 169,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [
+    "S1: the quote is too short to prove anything"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: sent, software."
+   ],
+   "input_tokens": 5162,
+   "output_tokens": 704,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1636,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 72.9,
+   "citations_recheck_valid": 4,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-error-status-map",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "Which HTTP status code does an out of stock error return?",
+   "answer": "GlobalExceptionHandler sınıfındaki `handleExceptionInternal` metodu, hata durumu kodu 400 olan bir hata ile ilişkilendirildiğinde, hata durumu kodunun adını problem detayının `code` özelliğine atar. [S1]\nErrorCode enum içinde 'INSUFFICIENT_STOCK' durumu, stok yetersiz hata için kullanılan HTTP durum kodu olarak belirtilmiştir. [S2]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 151,
+     "end_line": 152
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 16,
+     "end_line": 16
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 144,
+     "end_line": 156,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "GlobalExceptionHandler sınıfındaki `handleExceptionInternal` metodu, hata durumu kodu 400 olan bir hata ile ilişkilendirildiğinde, hata durumu kodunun adını problem detayının `code` özelliğine atar.",
+     "quote": "String code = status.value() == 400 ? ErrorCode.VALIDATION_FAILED.name()\n: resolved != null ? resolved.name() : ErrorCode.INTERNAL_ERROR.name();"
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 5,
+     "end_line": 32,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "ErrorCode enum içinde 'INSUFFICIENT_STOCK' durumu, stok yetersiz hata için kullanılan HTTP durum kodu olarak belirtilmiştir.",
+     "quote": "    INSUFFICIENT_STOCK(HttpStatus.CONFLICT),"
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 115,
+     "end_line": 124,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 27,
+     "end_line": 32,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 56,
+     "end_line": 60,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 68,
+     "end_line": 73,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 171,
+     "end_line": 178,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 116,
+     "end_line": 124,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 4327,
+   "output_tokens": 453,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1164,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 48.2,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-add-stock-limits",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What are the limits for quantity in the deposit shortage request in the repository?",
+   "answer": "Bu kod parçası, depo kalmazlık isteğinde miktar için sınırların nasıl belirlenmesini açıklıyor. [S1]\nBu kod parçası, depodan saklanan mal miktarını çıkarırken, `reserved_quantity` sütunu güncellemek için kullanılır. [S3]\nBu kod parçası `moveReservedToAvailable` metodunu kullanır ve bu metot, depodaki tutulan miktarları satılabilirlik kazançlı hale getirir. [S4]\nBu kod parçası `StockLevelRepository.addAvailable` metodunu kullanır ve bu metottan gelen ürün ID'si ve miktarı güncellemek için SQL sorgusu çalıştırır. [S5]\nBu kod parçası depo kirliliği isteği için miktar alan bir sınıf tanımlar ve bu sınıfın quantity parametresi 1 ile 1_000_000 arasında olmalıdır. [S6]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 53,
+     "end_line": 58
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 67,
+     "end_line": 69
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 79,
+     "end_line": 85
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 41,
+     "end_line": 45
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+     "start_line": 61,
+     "end_line": 61
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 61,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası, depo kalmazlık isteğinde miktar için sınırların nasıl belirlenmesini açıklıyor.",
+     "quote": "UPDATE stock_levels\nSET available_quantity = available_quantity - :quantity,\nreserved_quantity = reserved_quantity + :quantity,\nupdated_at = now()\nWHERE product_id = :productId\nAND available_quantity >= :quantity"
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 70,
+     "end_line": 90,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası, depodan saklanan mal miktarını çıkarırken, `reserved_quantity` sütunu güncellemek için kullanılır.",
+     "quote": "\n            SET total_quantity = total_quantity - :quantity,\n                reserved_quantity = reserved_quantity - :quantity,\n                updated_at = now()\n          "
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 76,
+     "end_line": 87,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası `moveReservedToAvailable` metodunu kullanır ve bu metot, depodaki tutulan miktarları satılabilirlik kazançlı hale getirir.",
+     "quote": "\n            UPDATE stock_levels\n               SET available_quantity = available_quantity + :quantity,\n                   reserved_quantity = reserved_quantity - :quantity,\n                   updated_at = now()\n             WHERE product_id = :productId\n               AND reserved_quantity >= :quantity\n            RETURNING total_quantity AS \"total\", available_quantity AS \"available\", reserved_quantity AS \"reserved\"\n            \n"
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 39,
+     "end_line": 48,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası `StockLevelRepository.addAvailable` metodunu kullanır ve bu metottan gelen ürün ID'si ve miktarı güncellemek için SQL sorgusu çalıştırır.",
+     "quote": "\n            UPDATE stock_levels\n               SET total_quantity = total_quantity + :quantity,\n                   available_quantity = available_quantity + :quantity,\n                   updated_at = now()\n             WHERE product_id = :productId"
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+     "start_line": 60,
+     "end_line": 63,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası depo kirliliği isteği için miktar alan bir sınıf tanımlar ve bu sınıfın quantity parametresi 1 ile 1_000_000 arasında olmalıdır.",
+     "quote": "`@Min(1) @Max(1_000_000) Integer quantity,`"
+    },
+    {
+     "source": "S7",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 1,
+     "end_line": 18,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 29,
+     "end_line": 52,
+     "outcome": "unsupported",
+     "reason": "the quote is too short to prove anything",
+     "statement": "Bu kod parçası, mal girişi isteğindeki miktar için herhangi bir sınırlama veya limit belirtmez.",
+     "quote": ""
+    }
+   ],
+   "rejected": [
+    "S8: the quote is too short to prove anything"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: deposit, shortage."
+   ],
+   "input_tokens": 4965,
+   "output_tokens": 648,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1497,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 67.3,
+   "citations_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-one-owner",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How is a double ownership of a note handled in the database?",
+   "answer": "Bu notun sahibi olma durumu veritabanında bir invariant olarak tanımlanmış ve uygulama kodu tarafından sadece değil, veritabanı da (artial bir benzersiz indeks) tarafından engellenmektedir. [S1]\nBu kod, bir notun iki sahibi olması durumunda, `permissions.invalidate(event.noteId)` çağrısı ile notun izinlerini null yapar ve bu durumu günlükleme yapar. [S3]\nBu kod, bir notun iki sahibi olabileceği durumu veritabanında destekler. `note_members` tablosu, `notes` tablosuna ait `note_id` sütunuyla ilişkilendirilmekte ve bu ilişki silinmeden güncellenir. [S4]\nBu kod parçası bir notun sahibi olma durumu kontrol eder ve `notes.remove` metodunu çağırır. [S7]\nBu kod, bir notun iki sahibi olma durumunu kontrol eder ve bu durumu veritabanında nasıl yönetileceğini açıklar. [S8]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 4,
+     "end_line": 6
+    },
+    {
+     "source": "S3",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 198,
+     "end_line": 198
+    },
+    {
+     "source": "S4",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 123,
+     "end_line": 123
+    },
+    {
+     "source": "S7",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 74,
+     "end_line": 79
+    },
+    {
+     "source": "S8",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 94,
+     "end_line": 97
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu notun sahibi olma durumu veritabanında bir invariant olarak tanımlanmış ve uygulama kodu tarafından sadece değil, veritabanı da (artial bir benzersiz indeks) tarafından engellenmektedir.",
+     "quote": "\nCREATE UNIQUE INDEX \"note_members_one_owner_per_note\"\n  ON \"note_members\" (\n    \"note_id\"\n  )\n  WHERE \"role\" = 'OWNER';\n"
+    },
+    {
+     "source": "S2",
+     "path": "apps/web/src/lib/offline-store.ts",
+     "start_line": 3,
+     "end_line": 9,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 173,
+     "end_line": 207,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, bir notun iki sahibi olması durumunda, `permissions.invalidate(event.noteId)` çağrısı ile notun izinlerini null yapar ve bu durumu günlükleme yapar.",
+     "quote": "permissions.invalidate(event.noteId);"
+    },
+    {
+     "source": "S4",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 122,
+     "end_line": 123,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, bir notun iki sahibi olabileceği durumu veritabanında destekler. `note_members` tablosu, `notes` tablosuna ait `note_id` sütunuyla ilişkilendirilmekte ve bu ilişki silinmeden güncellenir.",
+     "quote": "`ALTER TABLE \"note_members\" ADD CONSTRAINT \"note_members_note_id_fkey\" FOREIGN KEY (\"note_id\") REFERENCES \"notes\"(\"id\") ON DELETE CASCADE ON UPDATE CASCADE;\""
+    },
+    {
+     "source": "S5",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 134,
+     "end_line": 135,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 119,
+     "end_line": 120,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 74,
+     "end_line": 79,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası bir notun sahibi olma durumu kontrol eder ve `notes.remove` metodunu çağırır.",
+     "quote": "@Delete(':noteId')\n@RequireNoteRole('OWNER')\n@HttpCode(204)\nremove(@Param('noteId') noteId: string): Promise<void> { return this.notes.remove(noteId); }"
+    },
+    {
+     "source": "S8",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 93,
+     "end_line": 100,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, bir notun iki sahibi olma durumunu kontrol eder ve bu durumu veritabanında nasıl yönetileceğini açıklar.",
+     "quote": "const membership = await this.prisma.db.noteMember.findUnique({\n      where: { noteId_userId: { noteId, userId } },\n      include: { note: { include: noteInclude } }\n    });"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 4289,
+   "output_tokens": 718,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1480,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 62.1,
+   "citations_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-collab-instances",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "translated_query": "How many copies are working from the collaboration server when the system is opened with Docker?",
+   "answer": "",
+   "citations": [],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "docker-compose.yml",
+     "start_line": 78,
+     "end_line": 82,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "docker-compose.yml",
+     "start_line": 84,
+     "end_line": 88,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "apps/collab/src/server.ts",
+     "start_line": 104,
+     "end_line": 128,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "docker-compose.yml",
+     "start_line": 31,
+     "end_line": 32,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "docker-compose.yml",
+     "start_line": 1,
+     "end_line": 1,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "docker-compose.yml",
+     "start_line": 16,
+     "end_line": 22,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "docker-compose.yml",
+     "start_line": 90,
+     "end_line": 99,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "docker-compose.yml",
+     "start_line": 26,
+     "end_line": 26,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 3881,
+   "output_tokens": 372,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 776,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 37.6,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-redis-durability",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What does Redis save its data to using a certain setting?",
+   "answer": "Volumes ayarında `redisdata:/data` tanımlaması Redis verilerini `/data` dizininde saklar. [S3]",
+   "citations": [
+    {
+     "source": "S3",
+     "path": "docker-compose.yml",
+     "start_line": 47,
+     "end_line": 48
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 120,
+     "end_line": 126,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 32,
+     "end_line": 52,
+     "outcome": "unsupported",
+     "reason": "the quote does not occur in the source",
+     "statement": "Bu kod parçası Redis verilerini PostgreSQL tablosu lock ve CRDT toplama ile birleştirerek kaydediyor.",
+     "quote": "`lockTimeout: 0` ayarı kullanılırsa, Redis kapalı durumunda veri kaydetmeyi iptal eder."
+    },
+    {
+     "source": "S3",
+     "path": "docker-compose.yml",
+     "start_line": 42,
+     "end_line": 53,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Volumes ayarında `redisdata:/data` tanımlaması Redis verilerini `/data` dizininde saklar.",
+     "quote": "volumes:\n  - redisdata:/data"
+    },
+    {
+     "source": "S4",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 90,
+     "end_line": 107,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 128,
+     "end_line": 134,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 26,
+     "end_line": 30,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 85,
+     "end_line": 88,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 109,
+     "end_line": 118,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [
+    "S2: the quote does not occur in the source"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: certain.",
+    "Only one source supports this answer, so it may be incomplete."
+   ],
+   "input_tokens": 4287,
+   "output_tokens": 392,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1276,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 45.7,
+   "citations_recheck_valid": 1,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-cookie-flags",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "Are session cookies sent with which security settings?",
+   "answer": "Bu kod csrfTokensMatch fonksiyonunu tanımlıyor ve bu fonksiyon cookieValue ve headerValue parametrelerini kontrol ediyor. [S7]",
+   "citations": [
+    {
+     "source": "S7",
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 9,
+     "end_line": 9
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 28,
+     "end_line": 32,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 14,
+     "end_line": 32,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "apps/web/public/theme-init.js",
+     "start_line": 1,
+     "end_line": 12,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 171,
+     "end_line": 196,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 105,
+     "end_line": 127,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 21,
+     "end_line": 34,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 8,
+     "end_line": 12,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod csrfTokensMatch fonksiyonunu tanımlıyor ve bu fonksiyon cookieValue ve headerValue parametrelerini kontrol ediyor.",
+     "quote": "`if (typeof cookieValue !== 'string' || typeof headerValue !== 'string') return false;`"
+    },
+    {
+     "source": "S8",
+     "path": "apps/web/src/providers/auth.tsx",
+     "start_line": 27,
+     "end_line": 75,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Only one source supports this answer, so it may be incomplete."
+   ],
+   "input_tokens": 4602,
+   "output_tokens": 429,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1617,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 52.2,
+   "citations_recheck_valid": 1,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-env-validation",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How are configuration values checked while an application is open?",
+   "answer": "Bu kod, Redis bağlantısının sağlıklı olup olmadığını kontrol eder ve bu durumun değişikliklerini kaydeder. [S2]\nBu dosyanın `DegradedReconcilerOptions` türü tanımlaması, uygulamanın açılışında yapılandırma değerlerini doğrulamak için kullanılan sorgu ve kontrol yöntemleri içerir. [S6]",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 137,
+     "end_line": 137
+    },
+    {
+     "source": "S6",
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 11,
+     "end_line": 11
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/collab/src/config.ts",
+     "start_line": 3,
+     "end_line": 21,
+     "outcome": "unsupported",
+     "reason": "the quote is too short to prove anything",
+     "statement": "config.ts dosyasındaki `collabEnvSchema` nesnesi, uygulamanın açılışında yapılandırma değerlerini doğrulamak için zod.js kütüphanesini kullanır.",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 136,
+     "end_line": 163,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, Redis bağlantısının sağlıklı olup olmadığını kontrol eder ve bu durumun değişikliklerini kaydeder.",
+     "quote": "const healthy = this.isHealthy();"
+    },
+    {
+     "source": "S3",
+     "path": "apps/api/src/main.ts",
+     "start_line": 16,
+     "end_line": 16,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 6,
+     "end_line": 6,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 62,
+     "end_line": 62,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 8,
+     "end_line": 17,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu dosyanın `DegradedReconcilerOptions` türü tanımlaması, uygulamanın açılışında yapılandırma değerlerini doğrulamak için kullanılan sorgu ve kontrol yöntemleri içerir.",
+     "quote": "`isRedisHealthy: () => boolean;`"
+    },
+    {
+     "source": "S7",
+     "path": "apps/web/src/providers/theme.tsx",
+     "start_line": 12,
+     "end_line": 12,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "apps/web/src/providers/auth.tsx",
+     "start_line": 17,
+     "end_line": 23,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [
+    "S1: the quote is too short to prove anything"
+   ],
+   "warnings": [],
+   "input_tokens": 4300,
+   "output_tokens": 507,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1446,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 51.0,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-account-lock",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What happens to my account after many incorrect entries?",
+   "answer": "Bu kod, kullanıcı adı ve şifre bilgileri doğrulanırken, kullanıcı hesabının başarısız giriş sayısını sıfırlar ve kilitlenme tarihi null yapar. [S2]\nBu kod, bir kullanıcının giriş denemesi başarısız olursa, kullanıcı hesabını kilitleme işlemi gerçekleştirir ve bu işlem, belirlenen sayıda başarısız girişden sonra gerçekleşir. [S3]\nBu kod, bir Redis baglantısının sağlıklı olup olmadığını kontrol eder ve bu durumda account üzerinde değişiklikler yapar. [S6]\nBu kod bloğu, bir hesapta birden fazla yanlış girişten sonra `this.running = false;` satırıyla işlevsiz modda çalışmayı durdurur ve `return merged;` satırıyla `merged` değişkenini döndürür. Bu, hesabın durumu işlevsiz modda olduğunu belirtir. [S7]",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 108,
+     "end_line": 111
+    },
+    {
+     "source": "S3",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 190,
+     "end_line": 202
+    },
+    {
+     "source": "S6",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 138,
+     "end_line": 138
+    },
+    {
+     "source": "S7",
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 91,
+     "end_line": 91
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 84,
+     "end_line": 114,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, kullanıcı adı ve şifre bilgileri doğrulanırken, kullanıcı hesabının başarısız giriş sayısını sıfırlar ve kilitlenme tarihi null yapar.",
+     "quote": "await this.prisma.db.user.update({ where: { id: user.id }, data: { failedLoginCount: 0, lockedUntil: null } });"
+    },
+    {
+     "source": "S3",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 188,
+     "end_line": 204,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, bir kullanıcının giriş denemesi başarısız olursa, kullanıcı hesabını kilitleme işlemi gerçekleştirir ve bu işlem, belirlenen sayıda başarısız girişden sonra gerçekleşir.",
+     "quote": "\n      data: {\n        failedLoginCount: 0,\n        lockedUntil: new Date(Date.now() + this.config.LOGIN_LOCK_MINUTES * 60_000),\n      },\n    }\n  }\nthis.logger.warn(`Account ${userId} locked after repeated failed logins`);\n"
+    },
+    {
+     "source": "S4",
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 83,
+     "end_line": 86,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 57,
+     "end_line": 82,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 136,
+     "end_line": 163,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, bir Redis baglantısının sağlıklı olup olmadığını kontrol eder ve bu durumda account üzerinde değişiklikler yapar.",
+     "quote": "if (healthy && !this.wasHealthy) {"
+    },
+    {
+     "source": "S7",
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 62,
+     "end_line": 94,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod bloğu, bir hesapta birden fazla yanlış girişten sonra `this.running = false;` satırıyla işlevsiz modda çalışmayı durdurur ve `return merged;` satırıyla `merged` değişkenini döndürür. Bu, hesabın durumu işlevsiz modda olduğunu belirtir.",
+     "quote": "\nthis.running = false;\n"
+    },
+    {
+     "source": "S8",
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 51,
+     "end_line": 61,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: incorrect."
+   ],
+   "input_tokens": 5016,
+   "output_tokens": 628,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1334,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 67.9,
+   "citations_recheck_valid": 4,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-folder-delete",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What happens to notes inside a folder when it is deleted?",
+   "answer": "Klasör içindeki notlar silinirken, `permissions.invalidate(event.noteId)` çağrısıyla notların izni kaldırılır ve bu durumda logger.log('note deleted', { noteId: event.noteId }) şeklinde bir log oluşturulur. [S4]\nKod satırı `this.notes.remove(noteId);` notları silmektedir. [S6]\nKlasör içindeki notlar silinmeden kalmayı seçtiğimiz `ON DELETE SET NULL` durumunda kalıyor. [S8]",
+   "citations": [
+    {
+     "source": "S4",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 198,
+     "end_line": 203
+    },
+    {
+     "source": "S6",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 78,
+     "end_line": 78
+    },
+    {
+     "source": "S8",
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 63,
+     "end_line": 63
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 28,
+     "end_line": 33,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 51,
+     "end_line": 65,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 22,
+     "end_line": 26,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 173,
+     "end_line": 207,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Klasör içindeki notlar silinirken, `permissions.invalidate(event.noteId)` çağrısıyla notların izni kaldırılır ve bu durumda logger.log('note deleted', { noteId: event.noteId }) şeklinde bir log oluşturulur.",
+     "quote": "permissions.invalidate(event.noteId);\nlogger.info('note deleted', { noteId: event.noteId });"
+    },
+    {
+     "source": "S5",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 64,
+     "end_line": 72,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 74,
+     "end_line": 79,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Kod satırı `this.notes.remove(noteId);` notları silmektedir.",
+     "quote": "this.notes.remove(noteId);"
+    },
+    {
+     "source": "S7",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 30,
+     "end_line": 43,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 63,
+     "end_line": 67,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Klasör içindeki notlar silinmeden kalmayı seçtiğimiz `ON DELETE SET NULL` durumunda kalıyor.",
+     "quote": "Notes inside the folder are not deleted — they move back to \"unfiled\" (FK `ON DELETE SET NULL`)."
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 4312,
+   "output_tokens": 424,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1480,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 46.7,
+   "citations_recheck_valid": 3,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-note-search",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What fields are checked when searching for items in a repository?",
+   "answer": "Bu kod, `migration.sql` dosyasındaki `notes_updated_at_idx` oluşturucu çağrısının notlar tablosunun `updated_at` sütunuya göre ters sıralanmış bir indeks oluşturduğunu söylüyor. [S1]\nSource defines a query interface for searching notes with optional parameters such as `scope`, `folderId`, and `q`. [S8]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 8,
+     "end_line": 9
+    },
+    {
+     "source": "S8",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 12,
+     "end_line": 15
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 8,
+     "end_line": 9,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `migration.sql` dosyasındaki `notes_updated_at_idx` oluşturucu çağrısının notlar tablosunun `updated_at` sütunuya göre ters sıralanmış bir indeks oluşturduğunu söylüyor.",
+     "quote": "-- Fast dashboard listing / search on derived text columns.\nCREATE INDEX \"notes_updated_at_idx\" ON \"notes\" (\"updated_at\" DESC);"
+    },
+    {
+     "source": "S2",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 146,
+     "end_line": 178,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "apps/web/src/components/sidebar.tsx",
+     "start_line": 36,
+     "end_line": 52,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 54,
+     "end_line": 78,
+     "outcome": "unsupported",
+     "reason": "the quote is too short to prove anything",
+     "statement": "Bu kod, `userId` parametresiyle belirtilen userId'nin sahip olduğu notlar için `noteMember.findMany` çağrısında `where` koşullarını oluşturur ve bu koşularda `role` ve `folderId` alanlarını kontrol eder.",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 106,
+     "end_line": 111,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 17,
+     "end_line": 19,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 5,
+     "end_line": 20,
+     "outcome": "unsupported",
+     "reason": "the quote does not occur in the source",
+     "statement": "Bu sınıfın `ListNotesQueryDto` adında bir nesnesi, arama yaparken kullanılacak alanları tanımlar ve kontrol eder.",
+     "quote": "`scope?: 'all' | 'owned' | 'shared';`\n`folderId?: string;`\n`q?: string;`"
+    },
+    {
+     "source": "S8",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 11,
+     "end_line": 16,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Source defines a query interface for searching notes with optional parameters such as `scope`, `folderId`, and `q`.",
+     "quote": "\n  scope?: NoteScope;\n  /** folder uuid, or `none` for notes that are not in any folder */\n  folderId?: string;\n  q?: string;"
+    }
+   ],
+   "rejected": [
+    "S4: the quote is too short to prove anything",
+    "S7: the quote does not occur in the source"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: repository."
+   ],
+   "input_tokens": 4538,
+   "output_tokens": 538,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1269,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 56.0,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-health-redis",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What does health check return while Redis is running?",
+   "answer": "HealthExtension sınıfı, Redis hizmetinin durumu kontrol eder ve bu durum JSON olarak döndürülür. [S1]\nRedis bağlantısı sağlanıyorsa ve ping başarılıysa, HealthController 'check' yönteminden 'redis: up' döndürülür. [S2]\nBu kod, Redis bağlantısının sağlandığı durumda `this.isHealthy()` fonksiyonunun döndürdüğü değer, sağlık kontrolüne uygun olup olmadığını belirtir. [S4]\nBu kod parçası `ResilientRedisExtension` adlı sınıfın `isHealthy()` metodu, Redis pub ve sub statuslarının 'ready' olduğunu kontrol eder ve bu durumda sağlık kontrolü döndürür. [S7]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/collab/src/extensions/health.ts",
+     "start_line": 23,
+     "end_line": 23
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/health/health.controller.ts",
+     "start_line": 22,
+     "end_line": 28
+    },
+    {
+     "source": "S4",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 137,
+     "end_line": 137
+    },
+    {
+     "source": "S7",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 78,
+     "end_line": 78
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/collab/src/extensions/health.ts",
+     "start_line": 3,
+     "end_line": 32,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "HealthExtension sınıfı, Redis hizmetinin durumu kontrol eder ve bu durum JSON olarak döndürülür.",
+     "quote": "`redis: redis ? 'up' : 'degraded'`"
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/health/health.controller.ts",
+     "start_line": 7,
+     "end_line": 34,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Redis bağlantısı sağlanıyorsa ve ping başarılıysa, HealthController 'check' yönteminden 'redis: up' döndürülür.",
+     "quote": "const [db, redis] = await Promise.all([\n      this.prisma.db.$queryRaw`SELECT 1`.then(\n        () => true,\n        () => false,\n      ),\n      this.redis.ping(),\n    ]);\n    "
+    },
+    {
+     "source": "S3",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 32,
+     "end_line": 52,
+     "outcome": "unsupported",
+     "reason": "the quote is too short to prove anything",
+     "statement": "ResilientRedisExtension sınıfının `wasHealthy` değişkeni Redis sunucusunun kapalı olduğunda (down durumunda) işaretlenir.",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 136,
+     "end_line": 163,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, Redis bağlantısının sağlandığı durumda `this.isHealthy()` fonksiyonunun döndürdüğü değer, sağlık kontrolüne uygun olup olmadığını belirtir.",
+     "quote": "const healthy = this.isHealthy();"
+    },
+    {
+     "source": "S5",
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 19,
+     "end_line": 37,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 128,
+     "end_line": 134,
+     "outcome": "unsupported",
+     "reason": "the quote does not occur in the source",
+     "statement": "Bu kod, `ResilientRedisExtension.beforeBroadcastStateless` override fonksiyonunun içindeki `this.isHealthy()` metodunu çağırır ve bu metod Redis'nin sağlıklı olup olmadığını kontrol eder.",
+     "quote": "return this.isHealthy() ? super.beforeBroadcastStateless(data) : 0;"
+    },
+    {
+     "source": "S7",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 77,
+     "end_line": 83,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası `ResilientRedisExtension` adlı sınıfın `isHealthy()` metodu, Redis pub ve sub statuslarının 'ready' olduğunu kontrol eder ve bu durumda sağlık kontrolü döndürür.",
+     "quote": "`return this.pub.status === 'ready' && this.sub.status === 'ready';`"
+    },
+    {
+     "source": "S8",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 54,
+     "end_line": 75,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [
+    "S3: the quote is too short to prove anything",
+    "S6: the quote does not occur in the source"
+   ],
+   "warnings": [],
+   "input_tokens": 4985,
+   "output_tokens": 568,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1276,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 64.6,
+   "citations_recheck_valid": 4,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-logout-access-token",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "Access key is not accepted because the time has not expired after the output was made?",
+   "answer": "Bu kod, giriş yapmış bir kullanıcının giriş süresi dolmuş olmasına rağmen çıkış işlemi gerçekleştirebilmesini sağlıyor. [S1]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 96,
+     "end_line": 96
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 87,
+     "end_line": 101,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, giriş yapmış bir kullanıcının giriş süresi dolmuş olmasına rağmen çıkış işlemi gerçekleştirebilmesini sağlıyor.",
+     "quote": "const claims = this.jwt.decode<AccessTokenClaims | null>(access);"
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/auth/token.service.ts",
+     "start_line": 16,
+     "end_line": 37,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 32,
+     "end_line": 72,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 32,
+     "end_line": 56,
+     "outcome": "unsupported",
+     "reason": "the quote is too short to prove anything",
+     "statement": "Bu kod, giriş yapma girişimini Redis'e gönderme işlemi tamamlandığında erişim anahtarı zaman aşım süresine dayanır ve bu nedenle giriş yapma girişiminden önce verilen erişim anahtarının kabul edilmesini engeller.",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 21,
+     "end_line": 34,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "apps/collab/src/access-events.ts",
+     "start_line": 12,
+     "end_line": 20,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 124,
+     "end_line": 147,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [
+    "S4: the quote is too short to prove anything"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: accepted, output, made.",
+    "Only one source supports this answer, so it may be incomplete."
+   ],
+   "input_tokens": 5097,
+   "output_tokens": 555,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1485,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 63.2,
+   "citations_recheck_valid": 1,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-cursor-color",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How do you assign a color to a mouse button in the software repository?",
+   "answer": "Bu kod, `CollaborationCaret.configure` fonksiyonunun içinde kullanılan `user.color` özelliğini kullanarak kullanıcıya özgü bir renk atadığı için, mouse buton rengini belirlemek için kod çalışıyor. [S6]\ncolors.ts dosyasında tanımlanan renkler, kullanıcıya imleç rengini belirlemek için kullanılabilir. [S8]",
+   "citations": [
+    {
+     "source": "S6",
+     "path": "apps/web/src/editor/collaborative-editor.tsx",
+     "start_line": 31,
+     "end_line": 31
+    },
+    {
+     "source": "S8",
+     "path": "apps/web/src/lib/colors.ts",
+     "start_line": 2,
+     "end_line": 13
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/lib/colors.ts",
+     "start_line": 15,
+     "end_line": 23,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "apps/web/src/collab/presence.tsx",
+     "start_line": 5,
+     "end_line": 9,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "apps/web/src/providers/theme.tsx",
+     "start_line": 32,
+     "end_line": 32,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/web/public/theme-init.js",
+     "start_line": 1,
+     "end_line": 12,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "apps/web/src/components/theme-toggle.tsx",
+     "start_line": 5,
+     "end_line": 19,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "apps/web/src/editor/collaborative-editor.tsx",
+     "start_line": 13,
+     "end_line": 62,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `CollaborationCaret.configure` fonksiyonunun içinde kullanılan `user.color` özelliğini kullanarak kullanıcıya özgü bir renk atadığı için, mouse buton rengini belirlemek için kod çalışıyor.",
+     "quote": "`user: { id: user.id, name: user.name, color: colorForUser(user.id) },`"
+    },
+    {
+     "source": "S7",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 66,
+     "end_line": 81,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "apps/web/src/lib/colors.ts",
+     "start_line": 1,
+     "end_line": 13,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "colors.ts dosyasında tanımlanan renkler, kullanıcıya imleç rengini belirlemek için kullanılabilir.",
+     "quote": "\nexport const PRESENCE_COLORS = [\n  '#e5484d',\n  '#f76b15',\n  '#d6a000',\n  '#30a46c',\n  '#12a594',\n  '#0090ff',\n  '#3e63dd',\n  '#8e4ec6',\n  '#d6409f',\n  '#7c66dc',\n] as const;"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: repository."
+   ],
+   "input_tokens": 4429,
+   "output_tokens": 552,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1498,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 54.2,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-title-merge",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "Why are changes made by users editing a title not disappearing?",
+   "answer": "Bu kod bloğu bir metin düzenleyicisindeki kullanıcıların değişikliklerini kaydeder ve bu değişiklikleri silmeyi engeller. [S2]\nBu kaynak, `FEATURES` arrayinde her bir özellik nesnesinin `title` ve `text` alanlarının değiştirilebilir olduğunu gösterir. [S5]\nBu kod parçası, `ACCESS_MESSAGES` dizisinin içindeki değişiklikleri korur ve kullanıcıların düzenlemeleri kaybolmamasını sağlar. [S8]",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 104,
+     "end_line": 106
+    },
+    {
+     "source": "S5",
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 13,
+     "end_line": 14
+    },
+    {
+     "source": "S8",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 17,
+     "end_line": 23
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 95,
+     "end_line": 131,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod bloğu bir metin düzenleyicisindeki kullanıcıların değişikliklerini kaydeder ve bu değişiklikleri silmeyi engeller.",
+     "quote": "`IndexeddbPersistence(localReplicaName(user.id, noteId), doc).sync()`"
+    },
+    {
+     "source": "S3",
+     "path": "apps/web/src/editor/title-input.tsx",
+     "start_line": 47,
+     "end_line": 70,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 19,
+     "end_line": 37,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 10,
+     "end_line": 31,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kaynak, `FEATURES` arrayinde her bir özellik nesnesinin `title` ve `text` alanlarının değiştirilebilir olduğunu gösterir.",
+     "quote": "\n    title: 'Real-time co-editing',\n    text: 'See every cursor and keystroke as it happens — conflict-free.'"
+    },
+    {
+     "source": "S6",
+     "path": "apps/web/src/components/history-panel.tsx",
+     "start_line": 134,
+     "end_line": 154,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "apps/web/src/editor/extensions.ts",
+     "start_line": 7,
+     "end_line": 20,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 17,
+     "end_line": 24,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası, `ACCESS_MESSAGES` dizisinin içindeki değişiklikleri korur ve kullanıcıların düzenlemeleri kaybolmamasını sağlar.",
+     "quote": "`ACCESS_MESSAGES`: { revoked: { title: 'Your access was removed', text: 'The owner removed you from this note. Your local copy has been cleared.' }, deleted: { title: 'This note was deleted', text: 'The owner deleted this note for everyone.' }, denied: { title: 'No access', text: 'You do not have access to this note anymore.' }`"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: made, disappearing."
+   ],
+   "input_tokens": 4818,
+   "output_tokens": 559,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1503,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 61.3,
+   "citations_recheck_valid": 3,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-theme-flash",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How do I prevent a short-term display of the theme from occurring while opening a page?",
+   "answer": "Bu kod, `BrowserRouter` içindeki `AuthProvider` altında `ThemedToaster` komutu ile temayı korurken, `ThemeProvider` içindeki `TooltipProvider` kullanılarak gizli bir zaman aşımı süresi (300 ms) verilir. [S4]",
+   "citations": [
+    {
+     "source": "S4",
+     "path": "apps/web/src/app.tsx",
+     "start_line": 72,
+     "end_line": 72
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/web/public/theme-init.js",
+     "start_line": 1,
+     "end_line": 12,
+     "outcome": "unsupported",
+     "reason": "the quote does not occur in the source",
+     "statement": "Bu kod, bir sayfanın açıldığında yanlış temayı önleme için localStorage'dan temayı okuyarak ve Content-Security-Policy'i kullanarak inline olarak ekrana uygulanan inline skriptleri engellemektedir.",
+     "quote": "\ntry {\n    var stored = localStorage.getItem('syncnotes:theme');\n}\ncatch {}\n"
+    },
+    {
+     "source": "S2",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 133,
+     "end_line": 142,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "apps/web/src/app.tsx",
+     "start_line": 47,
+     "end_line": 50,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/web/src/app.tsx",
+     "start_line": 52,
+     "end_line": 77,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `BrowserRouter` içindeki `AuthProvider` altında `ThemedToaster` komutu ile temayı korurken, `ThemeProvider` içindeki `TooltipProvider` kullanılarak gizli bir zaman aşımı süresi (300 ms) verilir.",
+     "quote": "<ThemedToaster />"
+    },
+    {
+     "source": "S5",
+     "path": "apps/web/src/providers/theme.tsx",
+     "start_line": 12,
+     "end_line": 12,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "apps/web/src/components/theme-toggle.tsx",
+     "start_line": 5,
+     "end_line": 19,
+     "outcome": "unsupported",
+     "reason": "the quote is too short to prove anything",
+     "statement": "Bu kod, `ThemeToggle` bileşeni açılış sırasında temayı değiştirme yetkisini engeliyor.",
+     "quote": "`ThemeToggle`"
+    },
+    {
+     "source": "S7",
+     "path": "apps/web/src/providers/theme.tsx",
+     "start_line": 11,
+     "end_line": 11,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "apps/web/src/providers/theme.tsx",
+     "start_line": 23,
+     "end_line": 30,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [
+    "S1: the quote does not occur in the source",
+    "S6: the quote is too short to prove anything"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: term, occurring.",
+    "Only one source supports this answer, so it may be incomplete."
+   ],
+   "input_tokens": 4124,
+   "output_tokens": 480,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1029,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 45.5,
+   "citations_recheck_valid": 1,
+   "cites_gold": false,
+   "gold_in_context": true
+  }
+ ],
+ "unanswerable": [
+  {
+   "question": "v2-sg-neg-transfer",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How is data transferred from one repository to another?",
+   "answer": "Bu kod, `StockLevelRepository.removeReserved` metodunu kullanarak bir ürünün tutulmuş miktarını kaldırır ve bu işlem, `stock_levels` tablosunda `total_quantity`, `reserved_quantity` sütunlarındaki değerleri günceller. [S4]\nBu kod, `moveReservedToAvailable` metodunun bir ürünün id'si ve tutulmuş miktari belirten parametreleri alır ve bu ürünlerin tutulmuş miktari, kullanılabilecek miktara dönüştürülmesini sağlar. [S6]",
+   "citations": [
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 66,
+     "end_line": 72
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 79,
+     "end_line": 85
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/inventory/StockMovementRepository.java",
+     "start_line": 8,
+     "end_line": 13,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 70,
+     "end_line": 90,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 10,
+     "end_line": 20,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `StockLevelRepository.removeReserved` metodunu kullanarak bir ürünün tutulmuş miktarını kaldırır ve bu işlem, `stock_levels` tablosunda `total_quantity`, `reserved_quantity` sütunlarındaki değerleri günceller.",
+     "quote": "\n            UPDATE stock_levels\n               SET total_quantity = total_quantity - :quantity,\n                   reserved_quantity = reserved_quantity - :quantity,\n                   updated_at = now()\n             WHERE product_id = :productId\n               AND reserved_quantity >= :quantity\n            RETURNING total_quantity AS \"total\", available_quantity AS \"available\", reserved_quantity AS \"reserved\"\n            \n"
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/catalog/ProductRepository.java",
+     "start_line": 6,
+     "end_line": 7,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 76,
+     "end_line": 87,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `moveReservedToAvailable` metodunun bir ürünün id'si ve tutulmuş miktari belirten parametreleri alır ve bu ürünlerin tutulmuş miktari, kullanılabilecek miktara dönüştürülmesini sağlar.",
+     "quote": "\n            UPDATE stock_levels\n               SET available_quantity = available_quantity + :quantity,\n                   reserved_quantity = reserved_quantity - :quantity,\n                   updated_at = now()\n             WHERE product_id = :productId\n               AND reserved_quantity >= :quantity\n            RETURNING total_quantity AS \"total\", available_quantity AS \"available\", reserved_quantity AS \"reserved\"\n            \n"
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 61,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 89,
+     "end_line": 96,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: transferred."
+   ],
+   "input_tokens": 4331,
+   "output_tokens": 682,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1203,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 59.8,
+   "refused": false
+  },
+  {
+   "question": "v2-sg-neg-coupon",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "translated_query": "How do discounts coupons work?",
+   "answer": "",
+   "citations": [],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 116,
+     "end_line": 124,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 45,
+     "end_line": 54,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 55,
+     "end_line": 65,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 70,
+     "end_line": 90,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 5,
+     "end_line": 32,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 96,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 50,
+     "end_line": 54,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 43,
+     "end_line": 46,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: discounts, coupons."
+   ],
+   "input_tokens": 4684,
+   "output_tokens": 317,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1505,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 48.5,
+   "refused": true
+  },
+  {
+   "question": "v2-sg-neg-password-reset",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "translated_query": "How do I change my password?",
+   "answer": "",
+   "citations": [],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 103,
+     "end_line": 106,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 108,
+     "end_line": 113,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 57,
+     "end_line": 62,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 34,
+     "end_line": 45,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 54,
+     "end_line": 55,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 85,
+     "end_line": 89,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 47,
+     "end_line": 55,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/resources/db/migration/V1__users.sql",
+     "start_line": 1,
+     "end_line": 11,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 3888,
+   "output_tokens": 383,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 648,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 39.0,
+   "refused": true
+  },
+  {
+   "question": "v2-sg-neg-backorder",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "translated_query": "How do I get an advance order in stock checkout?",
+   "answer": "",
+   "citations": [],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+     "start_line": 35,
+     "end_line": 39,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 66,
+     "end_line": 78,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 96,
+     "end_line": 121,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+     "start_line": 65,
+     "end_line": 71,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 89,
+     "end_line": 96,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 65,
+     "end_line": 69,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 37,
+     "end_line": 58,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 33,
+     "end_line": 36,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: advance, checkout."
+   ],
+   "input_tokens": 4115,
+   "output_tokens": 365,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1126,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 41.6,
+   "refused": true
+  },
+  {
+   "question": "v2-sg-neg-mongodb",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "translated_query": "How do I set up the StockGuard MongoDB connection?",
+   "answer": "",
+   "citations": [],
+   "readings": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: MongoDB."
+   ],
+   "input_tokens": 61,
+   "output_tokens": 17,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 1.7,
+   "refused": true
+  },
+  {
+   "question": "v2-sn-neg-tags",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How does adding tags to issues work?",
+   "answer": "Bu kod bloğu notları (issues) için etiket eklemek için kullanılır ve bu işlemi gerçekleştirmek için `prisma.note.findMany` çağrısı ile notların bulunmasını sağlar. [S7]",
+   "citations": [
+    {
+     "source": "S7",
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 63,
+     "end_line": 66
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 123,
+     "end_line": 138,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 66,
+     "end_line": 81,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 113,
+     "end_line": 114,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/api/src/notes/collab-ticket.service.ts",
+     "start_line": 13,
+     "end_line": 45,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 95,
+     "end_line": 131,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 10,
+     "end_line": 31,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 62,
+     "end_line": 94,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod bloğu notları (issues) için etiket eklemek için kullanılır ve bu işlemi gerçekleştirmek için `prisma.note.findMany` çağrısı ile notların bulunmasını sağlar.",
+     "quote": "`const rows = await this.options.prisma.note.findMany({ where: { id: { in: names } }, select: { id: true, contentUpdatedAt: true } });`"
+    },
+    {
+     "source": "S8",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 122,
+     "end_line": 123,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: tags.",
+    "Only one source supports this answer, so it may be incomplete."
+   ],
+   "input_tokens": 4943,
+   "output_tokens": 533,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1503,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 61.3,
+   "refused": false
+  },
+  {
+   "question": "v2-sn-neg-comments",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "translated_query": "How does the commenting feature on notes work?",
+   "answer": "",
+   "citations": [],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 133,
+     "end_line": 142,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 64,
+     "end_line": 72,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 81,
+     "end_line": 90,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 51,
+     "end_line": 65,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 11,
+     "end_line": 16,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 122,
+     "end_line": 123,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 74,
+     "end_line": 79,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 22,
+     "end_line": 26,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: commenting."
+   ],
+   "input_tokens": 3953,
+   "output_tokens": 335,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 719,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 37.9,
+   "refused": true
+  },
+  {
+   "question": "v2-sn-neg-public-link",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How is a note shared publicly via a link?",
+   "answer": "Bu kod parçası bir notun herkese açık bağlantıyla paylaşılmasını sağlar. [S1]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 135,
+     "end_line": 142
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 133,
+     "end_line": 142,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod parçası bir notun herkese açık bağlantıyla paylaşılmasını sağlar.",
+     "quote": "\n        onOpenChange={setShareOpen}\n        noteId={note.id}\n        members={note.members}\n        role={collab.role}\n      />\n    </div>\n  );\n}"
+    },
+    {
+     "source": "S2",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 57,
+     "end_line": 93,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 44,
+     "end_line": 56,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 64,
+     "end_line": 100,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 9,
+     "end_line": 9,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 54,
+     "end_line": 78,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S8",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 138,
+     "end_line": 153,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Only one source supports this answer, so it may be incomplete."
+   ],
+   "input_tokens": 4629,
+   "output_tokens": 340,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1543,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 49.1,
+   "refused": false
+  },
+  {
+   "question": "v2-sn-neg-ldap",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "translated_query": "How do I authenticate users using SyncNotes LDAP?",
+   "answer": "",
+   "citations": [],
+   "readings": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: LDAP."
+   ],
+   "input_tokens": 63,
+   "output_tokens": 16,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 1.6,
+   "refused": true
+  },
+  {
+   "question": "v2-sn-neg-invite-mail",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How is an email invitation sent?",
+   "answer": "Bu kod, `MembersService.invite` metodunu kullanarak bir notun üyelerine davet e-postasını gönderir. E-posta adresi (`email`) ve kullanıcı adı (`user.email`) üzerinden üyelerin e-postalarına davet mesajı gönderilir. [S1]\nBu kod, bir notun e-posta ile paylaşımı için kullanılır. [S7]",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 44,
+     "end_line": 47
+    },
+    {
+     "source": "S7",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 84,
+     "end_line": 88
+    }
+   ],
+   "readings": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 38,
+     "end_line": 68,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, `MembersService.invite` metodunu kullanarak bir notun üyelerine davet e-postasını gönderir. E-posta adresi (`email`) ve kullanıcı adı (`user.email`) üzerinden üyelerin e-postalarına davet mesajı gönderilir.",
+     "quote": "`const user = await this.prisma.db.user.findUnique({ where: { email }, select: { id: true, email: true, name: true } });`"
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/auth/dto.ts",
+     "start_line": 8,
+     "end_line": 23,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S3",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 101,
+     "end_line": 136,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S4",
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 198,
+     "end_line": 242,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S5",
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 129,
+     "end_line": 169,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S6",
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 35,
+     "end_line": 46,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    },
+    {
+     "source": "S7",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 64,
+     "end_line": 100,
+     "outcome": "supported",
+     "reason": null,
+     "statement": "Bu kod, bir notun e-posta ile paylaşımı için kullanılır.",
+     "quote": "\nconst submit = (e: FormEvent) => {\n  e.preventDefault();\n  if (!email.trim()) return;\n  invite.mutate({ email: email.trim(), role: inviteRole }, { onSuccess: () => setEmail('') });\n};"
+    },
+    {
+     "source": "S8",
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 171,
+     "end_line": 196,
+     "outcome": "not_relevant",
+     "reason": null,
+     "statement": "",
+     "quote": ""
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 5102,
+   "output_tokens": 448,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1602,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 63.5,
+   "refused": false
+  }
+ ],
+ "holdout_unanswerable": []
+}

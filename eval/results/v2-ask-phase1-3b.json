@@ -1,0 +1,2307 @@
+{
+ "model": "qwen2.5:3b",
+ "base_url": "http://127.0.0.1:11535/v1",
+ "dataset_sha256": "f6531022d8c0bd12480974e4ba40bec37a3abc5018e7d45b43db391d4106a827",
+ "summary": {
+  "answerable_questions": 52,
+  "answered": 35,
+  "answered_citing_gold": 14,
+  "gold_was_in_context": 19,
+  "refused_answerable": 17,
+  "invalid_responses": 0,
+  "unanswerable_questions": 20,
+  "unanswerable_refused": 9,
+  "holdout_unanswerable_questions": 0,
+  "holdout_unanswerable_refused": 0,
+  "citations_shown": 102,
+  "citations_rejected_by_backend": 38,
+  "input_tokens": 112466,
+  "output_tokens": 9718,
+  "cost_usd": 0.0,
+  "max_context_chars": 9692,
+  "mean_seconds": 28.5
+ },
+ "answerable_citations_rechecked_valid": 80,
+ "answerable_citations_shown": 80,
+ "answerable": [
+  {
+   "question": "v2-sg-negative-stock-db",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Stok sayacıların eksiye düşmesini veritabanı seviyesinde engelliyor `StockLevelRepository.removeReserved` metodu [S1]. Bu metod, belirli bir ürünün ve miktarın stok sayacının eksiye düşmesini sağlar. Ancak, `StockLevel.total`, `StockLevel.available`, ve `StockLevel.reserved` alanlarının toplamını günceller ve bu güncellemelerin gerçekleşmesi için gerekli olan row lock'u alır [S1]. Eğer belirtilen miktarın stok sayacının eksiye düşmemesi durumunda, metot sonucu `Optional<StockCounts>` olarak döndürülür. Bu durumda, `total`, `available`, ve `reserved` alanlarının güncel değerlerini döndürebilir [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 61
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 35
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 14,
+     "end_line": 23
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: falling."
+   ],
+   "input_tokens": 2364,
+   "output_tokens": 308,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 8153,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 59.9,
+   "citations_recheck_valid": 4,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-settled-immutable",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Sonuçlanmış bir rezervasyonun sonradan değiştirilmesi veritabanında engellenmek için, `ReservationController.cancel` metodu kullanılarak bu işlem gerçekleştirilmektedir. Bu metod, `ReservationService.cancel` yöntemini çağırarak belirlenen rezervasyonu iptal etmektedir [S6]. Ancak, `ReservationStatus` enum'deki PENDING durumu için geçerli bir işlem olmamaktadır ve bu nedenle, `ReservationTransactions.settle` metodu ile rezervasyonun son durumuna doğru değiştirilmesi engellenmektedir. Bu, `ReservationService.cancel` metodunda belirlenen `target` parametresinin PENDING durumu için geçerli bir işlem olmamasından kaynaklanmaktadır [S5].",
+   "citations": [
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 109,
+     "end_line": 113
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 92,
+     "end_line": 97
+    }
+   ],
+   "rejected": [
+    "S6: lines 92-104 are outside the source range 92-97"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: prevent."
+   ],
+   "input_tokens": 1733,
+   "output_tokens": 247,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5317,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 34.0,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-append-only",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: prevented, deleted."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.1,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-sweep-index",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Rezervasyonların süresi geçen ones için veritabanında kullanılan indeks, `ReservationRepository.ExpiredReservation` interface'deki `getProductId`, `getUserId`, ve `quantity` metodları tarafından sağlanan verilerle ilişkilendirilmektedir. Bu indexte, `productId` ve `userId` sütunlarının bir kombinasyonu ile `expires_at` sütunu arasında eşlenik bir ilişki bulunmaktadır [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 92,
+     "end_line": 100
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/reservation/Reservation.java",
+     "start_line": 54,
+     "end_line": 91
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: process."
+   ],
+   "input_tokens": 2179,
+   "output_tokens": 164,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7754,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 38.8,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-why-separate-stock",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Stok sayacılar ürün tablosundan ayrı bir yerde tutulur çünkü `StockLevel` sınıfının `total`, `available`, ve `reserved` değişkenleri, ürün stoklarının güncel durumu hakkında bilgi içerir. Bu değişkenler, `StockLevelRepository` sınıflarında kullanılan SQL sorgularıyla güncellenir ve `ConsistencyService` sınıfı tarafından kontrol edilir [S1]. Stok sayacılar, `stock_levels` tablosundan çekilen verileri kullanarak ürün stoklarının güncel durumu hakkında bilgi sahibi olurlar. Bu nedenle, stok sayacılar genellikle ürün tablosundan ayrı bir yerde tutulur ve bu durumda, veri bütünlüğü kontrol edilebilir [S2].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 35
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 55,
+     "end_line": 65
+    }
+   ],
+   "rejected": [
+    "S1: lines 63-74 are outside the source range 11-35",
+    "S1: lines 89-96 are outside the source range 11-35"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: kept."
+   ],
+   "input_tokens": 2240,
+   "output_tokens": 273,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7623,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 44.8,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-lock-timeout-config",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: period, worth."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.1,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-reservation-defaults",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: supposed, kept, often, timers."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.1,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-two-instances",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Two instances of the application can share the same database by configuring them to use the same connection settings. This includes setting up separate databases or using a single shared database with appropriate isolation levels and transaction management [S4]. The `ReservationController.create` method ensures that each request is unique through its `Idempotency-Key`, preventing duplicate reservations even if multiple instances are running concurrently [S6]. Each instance can independently seed the necessary users and products as needed, ensuring a consistent state across all instances [S7, S5].",
+   "citations": [
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 147,
+     "end_line": 156
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 244,
+     "end_line": 263
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 43,
+     "end_line": 60
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/user/AdminSeeder.java",
+     "start_line": 11,
+     "end_line": 33
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2709,
+   "output_tokens": 186,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 9692,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 50.3,
+   "citations_recheck_valid": 4,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-auth-error-format",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: kind, mistake."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.1,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-username-race",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "İki kişi aynı anda aynı kullanıcı adıyla kaydolursa, AppUserRepository.findByUsername methodu, belirli bir kullanıcı adı için bir Optional<AppUser> döndürmesi gereken bir eşleşme bulur [S1]. Eğer eşleşme bulunmazsa, yeni bir kullanıcı oluşturulur ve bu işlem, PostgreSQL tarafından bloke edilir. Bu durumda, aynı kullanıcı adıyla daha önce kaydedilmiş bir kullanıcı oluşturmak mümkün olmayan durumda kalır [S1] [S2].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 10,
+     "end_line": 26
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 47,
+     "end_line": 55
+    }
+   ],
+   "rejected": [
+    "S1: lines 40-52 are outside the source range 10-26",
+    "S2: lines 64-74 are outside the source range 47-55"
+   ],
+   "warnings": [],
+   "input_tokens": 2138,
+   "output_tokens": 186,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7200,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 38.8,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-simulation-limit",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: simultaneous, sent."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.1,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-error-status-map",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Stok eksik hatası (insufficient stock) HTTP durum koduyla dönüyor [S2]. Bu enum içinde ErrorCode.STUFF_NOT_FOUND, ErrorCode.RESERVATION_EXPIRED ve ErrorCode.RESERVATION_ALREADY_SETTLED gibi stok eksikliği ile ilgili hataların değerleri belirlenir. Ancak, stok eksikliği durumu için kullanılan HTTP durum kodu ErrorCode.STUFF_NOT_FOUND'dur [S2].",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 5,
+     "end_line": 32
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: inadequate."
+   ],
+   "input_tokens": 2210,
+   "output_tokens": 144,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7834,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 38.5,
+   "citations_recheck_valid": 1,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-add-stock-limits",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Miktar için geçerli sınırlar `StockLevelRepository.moveAvailableToReserved` ve `ReservationRepository.expireDue` metodlarında belirtilmiştir. İlk metot, `available_quantity` değeri `:quantity` kadar azalırken, ikinci metot ise `reserved_quantity` değerini `:quantity` kadar artırır [S7, S2]. Bu süreçlerin bir parçası olan `ReservationExpiryService.expireDueBatch` metodunda da kullanılan `StockLedger.releaseReserved` fonksiyonu, `reserved_quantity` değeri üzerinde işlem yapar ve bu durumda miktar sınırları kontrol edilir [S8].",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 70,
+     "end_line": 90
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 61
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 70,
+     "end_line": 77
+    }
+   ],
+   "rejected": [
+    "S8: lines 14-48 are outside the source range 70-77"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: amount."
+   ],
+   "input_tokens": 1933,
+   "output_tokens": 229,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6311,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 36.7,
+   "citations_recheck_valid": 3,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-one-owner",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Notun iki sahibi olması veritabanında önlenmek için, bir notun sahibi olma yetkisi kontrol edilir. Eğer bir notun sahibi olma yetkisine sahip olan kullanıcı başka bir kullanıcıya notu paylaşır veya paylaşıldıktan sonra aynı notu iki kez sahip olamaz. Bu kontrol, `NotesService.create` ve `NotesController.remove` metodlarında gerçekleştirilir [S7, S8]. Eğer bir notun sahibi olma yetkisine sahip olan kullanıcı başka bir kullanıcıya notu paylaşırsa, `NotesService.create` metodu yeni bir not oluştururken aynı nota iki kez sahiplenemeyeceğini belirtir [S8]. Ayrıca, notun sahibi olma yetkisi kontrolü, `MembersController.list`, `MembersController.invite`, ve `MembersController.updateRole` metodlarında gerçekleştirilir [S1, S2, S3]. Bu metotlar bir notun sahibi olma yetkisine sahip olan kullanıcıya başka bir kullanıcıya notu paylaşmayı veya paylaşıldıktan sonra aynı nota iki kez sahiplenemeyeceğini belirtir [S1, S2, S3].",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "apps/web/src/lib/offline-store.ts",
+     "start_line": 3,
+     "end_line": 9
+    },
+    {
+     "source": "S7",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 74,
+     "end_line": 79
+    },
+    {
+     "source": "S8",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 80,
+     "end_line": 91
+    }
+   ],
+   "rejected": [
+    "S1: lines 91-98 are outside the source range 105-142",
+    "S3: lines 9-14 are outside the source range 91-98",
+    "S8: lines 30-43 are outside the source range 80-91"
+   ],
+   "warnings": [],
+   "input_tokens": 2045,
+   "output_tokens": 421,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5661,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 50.2,
+   "citations_recheck_valid": 3,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-collab-instances",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: operation, entire."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.1,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-redis-durability",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Redis verilerini diske yazan ayar `ResilientRedisExtension.onConfigure` metodunda. Bu, Redis bağlantısız olduğunda belirli bir süre boyunca kaydedilen verileri koruyarak sistem deyimo geçireceğini gösterir [S6].",
+   "citations": [
+    {
+     "source": "S6",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 32,
+     "end_line": 52
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: disk."
+   ],
+   "input_tokens": 1727,
+   "output_tokens": 110,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4734,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 27.9,
+   "citations_recheck_valid": 1,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-cookie-flags",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: snacks."
+   ],
+   "input_tokens": 1973,
+   "output_tokens": 71,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5849,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 29.4,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-env-validation",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Aşağıda belirtilen kodlar, uygulamanın açılışında yapılandırma değerlerini kontrol etmek için kullanılıyor. `configureApp` fonksiyonu, uygulamanın başlangıcında HTTP hattının nasıl kurulacağını tanımlıyor [S4]. Bu fonksiyon, nginx reverse proxy dahilindeki client IP'leri doğru şekilde belirlemek için 'trust proxy' özelliğini ayarlıyor ve 'x-powered-by' özelliği devre dışı bırakıyor. Ayrıca, uygulamanın prefixini ayarlıyor, helmet, cookieParser ve CORS ayarlarını yapıyor [S4]. `collabEnvSchema` de yapılandırma değerlerinin nasıl tanımlanacağını gösteriyor [S8]. Bu schema, NODE_ENV, DATABASE_URL, REDIS_URL gibi çeşitli yapılandırma değişkenlerini tanımlıyor. Yapılandırma değerleri uygulamanın çalışması sırasında kontrol edilir ve uygun olmayan değerler durdurulur veya ayarlanır.",
+   "citations": [
+    {
+     "source": "S4",
+     "path": "apps/api/src/app.setup.ts",
+     "start_line": 8,
+     "end_line": 35
+    },
+    {
+     "source": "S8",
+     "path": "apps/collab/src/config.ts",
+     "start_line": 3,
+     "end_line": 21
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1612,
+   "output_tokens": 283,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 3827,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 34.7,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-account-lock",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Hesaba, çok sayıda hatalı girişten sonra kullanıcı hesabının gizliliği açılır ve bir süreliğine kilitlenir. Bu durumda, `AuthService.registerFailedAttempt` fonksiyonu kullanılarak kullanıcıya başarısız giriş sayısını artırır [S1]. Eğer bu sayının 8 defa veya daha fazla olduğunda, hesabın gizliliği açılır ve kilitlenir. Kilitlenme süresi `LOGIN_LOCK_MINUTES` saniyelerdir [S2]. Bu durumda, `PermissionService.invalidateAll` fonksiyonu kullanılarak Redis'teki tüm kayıtlar sıfırlanır ve hesabın gizliliği kilitlenir [S3].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 188,
+     "end_line": 204
+    },
+    {
+     "source": "S2",
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22
+    },
+    {
+     "source": "S3",
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 83,
+     "end_line": 86
+    }
+   ],
+   "rejected": [
+    "S1: lines 40-52 are outside the source range 188-204"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: lot."
+   ],
+   "input_tokens": 2303,
+   "output_tokens": 258,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7291,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 45.5,
+   "citations_recheck_valid": 3,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-folder-delete",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Notlar silinirken, `MoveNoteDto` sınıfının `folderId` özelliği null olursa notun klasöründen kaldırılır [S2]. Bu durumda, notun klasörü kaldırılır ve kullanıcı tarafından kullanılan bir işlem ile işlenir [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 28,
+     "end_line": 33
+    },
+    {
+     "source": "S2",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 53,
+     "end_line": 64
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1695,
+   "output_tokens": 135,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4245,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 28.5,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-note-search",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: areas, look."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.1,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-health-redis",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Redis kapalıyken sağlık kontrolü, Redis bağlantısının durumunu kontrol eder ve Redis açıkken 'up' olur. Eğer Redis kapalıysa, 'degraded' olarak değerlendirilir [S2]. Bu durumda, API'nin işlevi devam eder ve veritabanına giden istekler için Redis bağlantısının durumu kontrol eder [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/collab/src/extensions/health.ts",
+     "start_line": 3,
+     "end_line": 32
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/health/health.controller.ts",
+     "start_line": 7,
+     "end_line": 34
+    }
+   ],
+   "rejected": [
+    "S1: lines 7-34 are outside the source range 3-32",
+    "S2: lines 19-37 are outside the source range 7-34"
+   ],
+   "warnings": [],
+   "input_tokens": 2510,
+   "output_tokens": 151,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7632,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 44.0,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-logout-access-token",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1977,
+   "output_tokens": 70,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5765,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 30.5,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-cursor-color",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Kullanıcının rengi, `colorForUser` fonksiyonu tarafından belirlenir ve bu fonksiyon, kullanıcı adı FNV-1a hash'ini kullanarak bir rengi üretir. Bu rengi, `CollaborativeEditor` komponentinde kullanılan `CollaborationCaret.configure` fonksiyonunun `user.color` parametresine atanır [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/lib/colors.ts",
+     "start_line": 15,
+     "end_line": 23
+    },
+    {
+     "source": "S7",
+     "path": "apps/web/src/collab/presence.tsx",
+     "start_line": 36,
+     "end_line": 56
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2023,
+   "output_tokens": 157,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5331,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 35.9,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-title-merge",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: person, disappear."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.1,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-theme-flash",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: period."
+   ],
+   "input_tokens": 1496,
+   "output_tokens": 16,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 3541,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 18.6,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-negative-stock-db",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "answered",
+   "answer": "Stock counters do not go negative at the database level because of the `StockLevelRepository` methods that ensure atomic updates. The `moveAvailableToReserved` method prevents a decrease in available stock by ensuring that the quantity being moved is less than or equal to what is currently available [S6]. Similarly, the `removeReserved` method ensures that reserved units are removed from the warehouse only if there is enough reserved stock available [S8]. These methods use transactions with MANDATORY propagation to ensure that either both operations succeed or fail together, thus preventing any counters from going negative.",
+   "citations": [
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 61
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74
+    }
+   ],
+   "rejected": [
+    "S6: lines 14-23 are outside the source range 50-61",
+    "S8: lines 14-23 are outside the source range 63-74"
+   ],
+   "warnings": [],
+   "input_tokens": 2092,
+   "output_tokens": 179,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6978,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 38.4,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-settled-immutable",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "answered",
+   "answer": "A settled reservation cannot be changed later because the `ReservationRepository.settleIfPendingAndInTime` method is used to settle a pending reservation. This method updates the status of the reservation to 'settled' if it meets certain conditions, such as being in a 'PENDING' state and not having expired yet. If no reservations match these conditions (i.e., `settleIfPendingAndInTime` returns 0), then the `ReservationTransactions.settle` method throws an exception indicating that the reservation is already settled [S1]. This ensures that once a reservation has been settled, it cannot be changed later.",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 54,
+     "end_line": 68
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 109,
+     "end_line": 114
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2016,
+   "output_tokens": 191,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6795,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 37.5,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-append-only",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "answered",
+   "answer": "Stock movement and audit rows are protected from being edited or deleted by the use of transactional boundaries [S2, S1]. The `AuditEvent` constructor in `src/main/java/com/stockguard/audit/AuditEvent.java` is marked as protected, indicating that it cannot be overridden. Similarly, the constructors of `StockMovement` and `StockLedger` classes in `src/main/java/com/stockguard/inventory/StockMovement.java` and `src/main/java/com/stockguard/inventory/StockLedger.java`, respectively, are also marked as protected [S2, S1]. This ensures that these objects cannot be instantiated outside of the transactional methods. The `StockLedger` class in `src/main/java/com/stockguard/inventory/StockLedger.java` is annotated with `@Transactional(propagation = Propagation.MANDATORY)`, which means any method within this class must run inside a business transaction [S3]. This ensures that all operations on stock levels and movements are atomic, meaning either all changes are committed or none of them are. The audit rows are protected by the `AuditEvent` constructor being marked as protected [S2], ensuring they cannot be edited or deleted outside of the auditing methods.",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 64,
+     "end_line": 65
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/audit/AuditEvent.java",
+     "start_line": 50,
+     "end_line": 51
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 10,
+     "end_line": 20
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: deleted."
+   ],
+   "input_tokens": 1597,
+   "output_tokens": 323,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4581,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 36.7,
+   "citations_recheck_valid": 3,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-sweep-index",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: supports."
+   ],
+   "input_tokens": 1922,
+   "output_tokens": 21,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6469,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 26.7,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-why-separate-stock",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "answered",
+   "answer": "Stock counters are kept apart from the product table in `com.stockguard.inventory.StockLevel` class, which defines a separate entity for stock levels. This separation ensures that changes to the stock levels do not affect the overall total quantity of products, maintaining consistency and integrity [S1]. The StockLevel class contains fields like productId, total, available, and reserved quantities, allowing for independent management of these counters without impacting product totals [S2].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 35
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 89,
+     "end_line": 96
+    }
+   ],
+   "rejected": [
+    "S2: lines 89-104 are outside the source range 89-96"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: kept."
+   ],
+   "input_tokens": 1982,
+   "output_tokens": 154,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6412,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 34.7,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-lock-timeout-config",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2382,
+   "output_tokens": 103,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 8335,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 39.3,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-reservation-defaults",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "answered",
+   "answer": "A reservation is held by default for the duration specified in the `defaultTtlSeconds` field, which is defined in the `ReservationTransactions` class [S1]. Expired reservations are scanned and removed from the system when they exceed their default TTL (Time To Live) period. This scanning process is triggered by the `expireDueBatch` method in the `ReservationExpiryService` class [S2], where expired reservations are identified based on their expiration time, which is compared against the current database clock to ensure consistency across different instances of the system.",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 18,
+     "end_line": 19
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: often."
+   ],
+   "input_tokens": 1968,
+   "output_tokens": 183,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6563,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 36.2,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-two-instances",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "answered",
+   "answer": "The application is started with two copies sharing one database by using a single instance of the `AppUserRepository` interface [S1]. This repository handles the insertion logic for new users, ensuring that usernames are unique and preventing duplicate entries even if multiple instances try to insert at the same time. The `GlobalExceptionHandler.handleIntegrity` method manages data integrity issues, such as when two requests race for the same username, by checking against known constraints [S2]. The `SimulationService.run` method runs a simulation with concurrent users, each using its own instance of `ReservationRepository.insertIfKeyUnused` to claim and create reservations without conflicts [S3-S6]. Finally, the `ReservationExpiryService.expireDueBatch` method handles expired reservations in a single transaction, ensuring that all related stock rows are updated correctly [S7]. Each component ensures that the database remains consistent across multiple instances.",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 10,
+     "end_line": 26
+    },
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 98,
+     "end_line": 106
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 90,
+     "end_line": 107
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/user/AdminSeeder.java",
+     "start_line": 11,
+     "end_line": 33
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48
+    }
+   ],
+   "rejected": [
+    "S1: lines 20-34 are outside the source range 10-26",
+    "S5: lines 29-53 are outside the source range 147-156",
+    "S6: lines 28-53 are outside the source range 29-52",
+    "S7: lines 14-49 are outside the source range 14-48"
+   ],
+   "warnings": [],
+   "input_tokens": 2632,
+   "output_tokens": 360,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 9564,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 58.6,
+   "citations_recheck_valid": 5,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-auth-error-format",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "answered",
+   "answer": "When a request is rejected for lack of authentication, the client receives an `ApiException` with the error code `UNAUTHENTICATED`. This exception is thrown by `ReservationTransactions.rejection` [S3], which determines that the latest reservation status is either `PENDING` or `EXPIRED`, leading to an `ApiException` being created and returned. The `ProblemAuthErrorHandler.commence` method in `src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java` [S4] handles this by setting a WWW-Authenticate header with the value 'Bearer' and writing the error message, indicating that a valid bearer token is required.",
+   "citations": [
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 116,
+     "end_line": 124
+    },
+    {
+     "source": "S4",
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 27,
+     "end_line": 32
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: lack."
+   ],
+   "input_tokens": 1696,
+   "output_tokens": 198,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5491,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 31.4,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-username-race",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "answered",
+   "answer": "If two people sign up with the same username at the same moment, the `AppUserRepository.insertIfAbsent` method will be called [S1]. This method checks if a user with that username already exists and inserts a new user only if no conflict occurs. If a conflict is detected (i.e., another request has already inserted a user with the same username), it does nothing and returns 0, indicating that the operation was not performed due to a conflict [S1]. The `AuthService.register` method will also fail because it requires the username to be unique [S3].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 10,
+     "end_line": 26
+    },
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 47,
+     "end_line": 55
+    }
+   ],
+   "rejected": [
+    "S1: lines 42-56 are outside the source range 10-26"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: moment."
+   ],
+   "input_tokens": 1720,
+   "output_tokens": 182,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5018,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 31.0,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-simulation-limit",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: largest, simultaneous, accepts."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.0,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sg-error-status-map",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1984,
+   "output_tokens": 75,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7201,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 30.7,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sg-add-stock-limits",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "answered",
+   "answer": "The code does not explicitly state limits on the quantity when receiving goods into stock. However, it is implied that there are internal checks and balances in place to ensure that the total quantity (total_quantity) of a product does not become negative or exceed what is available plus reserved [S7]. The `StockLevelRepository` methods like `addAvailable`, `removeReserved`, and `moveReservedToAvailable` handle adding, removing, and moving quantities within these constraints. These operations are transactional to ensure data consistency.",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 31,
+     "end_line": 37
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 70,
+     "end_line": 90
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 24,
+     "end_line": 44
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: goods."
+   ],
+   "input_tokens": 2193,
+   "output_tokens": 189,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7638,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 40.5,
+   "citations_recheck_valid": 3,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-one-owner",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "The database prevents a note from having two owners by ensuring that only one user can be designated as the owner of a note. This is achieved through the `NotesService.leave` method, which throws an error if the role attempting to leave is 'OWNER'. Additionally, the `MembersService.remove` method checks if the role being removed is 'OWNER' and throws a BadRequestException in such cases [S5]. Furthermore, the `PermissionService` handles revocation of roles by either pushing or pulling events over Redis or Postgres, respectively. If an event is lost (Redis down), users are cut off within the expiration time (`ttlMs`) of their role entries [S7].",
+   "citations": [
+    {
+     "source": "S5",
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 91,
+     "end_line": 98
+    },
+    {
+     "source": "S7",
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1858,
+   "output_tokens": 208,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5052,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 35.4,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-collab-instances",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "The number of collaboration server copies that run when the whole system starts under Docker is two. One collaboration server runs on port `1234` for WebSocket connections and another runs on port `4000` for API requests, as indicated by the proxy targets in the Vite configuration files [S7]. The collaboration server's creation logic in `server.ts` creates one instance per specified port [S6].",
+   "citations": [
+    {
+     "source": "S6",
+     "path": "apps/collab/src/server.ts",
+     "start_line": 65,
+     "end_line": 103
+    },
+    {
+     "source": "S7",
+     "path": "apps/web/vite.config.ts",
+     "start_line": 6,
+     "end_line": 9
+    }
+   ],
+   "rejected": [
+    "S6: lines 103-128 are outside the source range 65-103",
+    "S7: lines 9-14 are outside the source range 6-9"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: under."
+   ],
+   "input_tokens": 2590,
+   "output_tokens": 158,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7872,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 46.9,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-redis-durability",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "Redis writes its data to disk with the `lockTimeout` setting set to `0`. This can be seen in the comment of the `ResilientRedisExtension` class, which states that `lockTimeout: 0` ensures persistence is aborted when Redis is down [S4].",
+   "citations": [
+    {
+     "source": "S4",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 32,
+     "end_line": 52
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: disk."
+   ],
+   "input_tokens": 1813,
+   "output_tokens": 104,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5043,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 29.0,
+   "citations_recheck_valid": 1,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-cookie-flags",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "Session cookies use the `base` function from `apps/api/src/common/cookies.ts`, which sets their security settings to `secure: config.COOKIE_SECURE`, `sameSite: 'lax'`, and `path: '/'` [S1]. The `setCsrfCookie` function in the same file uses `httpOnly: false` for the CSRF cookie, making it readable by the SPA but not HttpOnly [S2].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/common/cookies.ts",
+     "start_line": 12,
+     "end_line": 14
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/common/cookies.ts",
+     "start_line": 45,
+     "end_line": 48
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1717,
+   "output_tokens": 162,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4510,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 30.4,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-env-validation",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "Configuration values are checked when the application starts in `apps/api/src/config/env.ts` [S4]. The configuration is parsed using a schema defined in `apps/collab/src/config.ts` [S8] and validated. If there are any issues, an error is thrown with details of the invalid configurations [S4]. Otherwise, the valid configuration values are used to initialize the application [S6].",
+   "citations": [
+    {
+     "source": "S4",
+     "path": "apps/api/src/config/env.ts",
+     "start_line": 37,
+     "end_line": 46
+    },
+    {
+     "source": "S6",
+     "path": "apps/api/src/main.ts",
+     "start_line": 8,
+     "end_line": 14
+    },
+    {
+     "source": "S8",
+     "path": "apps/collab/src/config.ts",
+     "start_line": 36,
+     "end_line": 45
+    }
+   ],
+   "rejected": [
+    "S8: lines 3-5 are outside the source range 36-45"
+   ],
+   "warnings": [],
+   "input_tokens": 1570,
+   "output_tokens": 153,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 3786,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 27.4,
+   "citations_recheck_valid": 3,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-account-lock",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "An account is locked after too many failed login attempts. The `AuthService.login` method increments the user's failedLoginCount [S1]. If this count reaches or exceeds the maximum allowed attempts (config.LOGIN_MAX_ATTEMPTS), the account is temporarily locked by setting the lockedUntil field to a future date [S2]. This prevents further logins until the lock expires, protecting against brute force attacks.",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 84,
+     "end_line": 114
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 195,
+     "end_line": 204
+    }
+   ],
+   "rejected": [
+    "S1: lines 189-193 are outside the source range 84-114"
+   ],
+   "warnings": [],
+   "input_tokens": 2147,
+   "output_tokens": 148,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6492,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 36.6,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-folder-delete",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "When a folder is deleted, notes inside it are not deleted — they move back to the 'unfiled' category (FK `ON DELETE SET NULL`). This behavior can be observed in [S1]. The code snippet from [S1] indicates that any note within a deleted folder will be associated with an 'unfiled' folder by default, meaning its location is reset but not physically removed. Therefore, the notes remain accessible and are merely reassigned to the 'unfiled' category upon deletion of their parent folder.",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 63,
+     "end_line": 67
+    },
+    {
+     "source": "S8",
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 28,
+     "end_line": 33
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1740,
+   "output_tokens": 171,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4645,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 31.5,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-note-search",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: looked."
+   ],
+   "input_tokens": 1940,
+   "output_tokens": 21,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4769,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 27.3,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-health-redis",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "The health check returns a status of 'ok' and the Redis status as either 'up' or 'down'. If Redis is down, it will return 'down' [S1]. The API keeps serving requests without Redis while reporting its status as 'down' to maintain service availability [S2].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/health/health.controller.ts",
+     "start_line": 7,
+     "end_line": 34
+    },
+    {
+     "source": "S2",
+     "path": "apps/collab/src/extensions/health.ts",
+     "start_line": 8,
+     "end_line": 17
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2582,
+   "output_tokens": 131,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 8201,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 44.7,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-logout-access-token",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "An access token that has not expired yet is refused after logging out because the `AuthController.logout` method in `apps/api/src/auth/auth.controller.ts` [S1] marks it as cancelled in one transaction. This means that even if the token itself has not expired, its associated session is marked for revocation, making it unusable and thus refusing access to protected routes [S2]. The logout process invalidates the access token immediately instead of waiting until expiration, ensuring security by cutting off unauthorized users promptly.",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 89,
+     "end_line": 101
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 16,
+     "end_line": 24
+    }
+   ],
+   "rejected": [
+    "S2: lines 32-72 are outside the source range 16-24"
+   ],
+   "warnings": [],
+   "input_tokens": 2699,
+   "output_tokens": 167,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 8675,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 49.3,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-cursor-color",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "Each user is given a cursor colour using the `colorForUser` function in `colors.ts` [S2]. This function calculates a hash from the user's ID and uses it to index into the `PRESENCE_COLORS` array, which contains distinct, readable-on-white cursor colours. The result of this function is then used as the `color` property for each `PresentUser` object in the `usePresence` hook [S4], ensuring that every user maintains their unique colour across sessions.",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "apps/web/src/lib/colors.ts",
+     "start_line": 15,
+     "end_line": 23
+    },
+    {
+     "source": "S4",
+     "path": "apps/web/src/collab/presence.tsx",
+     "start_line": 11,
+     "end_line": 34
+    }
+   ],
+   "rejected": [
+    "S4: lines 36-56 are outside the source range 11-34"
+   ],
+   "warnings": [],
+   "input_tokens": 1780,
+   "output_tokens": 165,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4271,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 31.9,
+   "citations_recheck_valid": 2,
+   "cites_gold": true,
+   "gold_in_context": true
+  },
+  {
+   "question": "v2-sn-title-merge",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "Collaborative edits to a note's title do not overwrite each other because of the Yjs merge-on-write mechanism implemented in `PersistenceExtension` [S1]. This extension ensures that updates are merged into the live document without overwriting existing state, thanks to Yjs's idempotent and commutative merges. The persistence does not depend on Redis for locking notes, allowing multiple instances to converge through Postgres even when Redis is down [S2].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/collab/src/extensions/persistence.ts",
+     "start_line": 20,
+     "end_line": 31
+    },
+    {
+     "source": "S2",
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 19,
+     "end_line": 37
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: simultaneous."
+   ],
+   "input_tokens": 2401,
+   "output_tokens": 156,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7512,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 42.9,
+   "citations_recheck_valid": 2,
+   "cites_gold": false,
+   "gold_in_context": false
+  },
+  {
+   "question": "v2-sn-theme-flash",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: avoid, briefly."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.0,
+   "citations_recheck_valid": 0,
+   "cites_gold": false,
+   "gold_in_context": false
+  }
+ ],
+ "unanswerable": [
+  {
+   "question": "v2-sg-neg-transfer",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Stok bir depodan başka bir depoya aktarım işlemi `StockLevelRepository.moveAvailableToReserved` ve `StockLevelRepository.moveReservedToAvailable` metodları kullanılarak gerçekleştirilir. İlk metot, belirli bir ürünün stok kalmamış olan boş alanlardan istenen miktarla dolu hale getirilmesini sağlar [S7]. İkinci metot ise, belirli bir ürünün stokta tutulmuş olan kalan miktardan istenen miktarla boş hale getirilmesini sağlar [S8]. Bu süreçte, `StockLevelRepository` sınıfının `moveAvailableToReserved` ve `moveReservedToAvailable` metodları, depodaki stokların güncellenmesi için gerekli olan row lock'u korurken atomic olarak işlem yapar. Bu, yeni stok düzeylerini güncellemekle birlikte, aynı işlemi de kaydeder veya iptal eder [S7], [S8].",
+   "citations": [
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 61
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 76,
+     "end_line": 87
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: transfer."
+   ],
+   "input_tokens": 1699,
+   "output_tokens": 283,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5327,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 36.0,
+   "refused": false
+  },
+  {
+   "question": "v2-sg-neg-coupon",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: discount, coupons."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.1,
+   "refused": true
+  },
+  {
+   "question": "v2-sg-neg-password-reset",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Kullanıcı şifresini değiştirme işlemi, `AuthService.login` metodundan gerçekleştirilir. Bu metot, kullanıcı adı ve parola ile giriş yapmayı deneyerek AuthenticationManager'ın authenticate fonksiyonunu çağırır [S6]. Eğer kullanıcı doğrulanırsa, `AppUserDetails` nesnesine erişilir ve bu nesnenin id'si ve rolü kullanılarak JwtTokenService tarafından bir JwtToken oluşturulur [S6]. Şifre değiştirme işlemi genellikle bu giriş yapma sürecinden geçer. Ancak, şifrenin değiştirilmesi için `AuthService.register` metodu da kullanılabilir ve bu metot, kullanıcı adı ve yeni parola ile yeni bir kullanıcı oluşturmayı sağlar [S5].",
+   "citations": [
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 47,
+     "end_line": 55
+    },
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 64,
+     "end_line": 74
+    }
+   ],
+   "rejected": [
+    "S6: lines 34-74 are outside the source range 64-74"
+   ],
+   "warnings": [],
+   "input_tokens": 1506,
+   "output_tokens": 235,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4476,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 30.2,
+   "refused": false
+  },
+  {
+   "question": "v2-sg-neg-backorder",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Ön sipariş alımı, stok bitince ürünün tamamen tahsis edildiğini `InventoryService.get(productId)` fonksiyonundan öğrenilir. Bu fonksiyon, `StockLevel` nesnesinin `getReserved()` metodunu çağırarak tahsis edilen miktarı döndürür [S7]. Eğer ürünün stok bitmediği durumda, `ProductController.get(productId)` ve `ProductController.ProductResponse.of(product, stock.get(product.getId()))` fonksiyonları ile ürün bilgileri ve onların üzerindeki stok bilgileri birleştirilir ve geri döndürülür [S8].",
+   "citations": [
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 33,
+     "end_line": 36
+    },
+    {
+     "source": "S8",
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 65,
+     "end_line": 69
+    }
+   ],
+   "rejected": [
+    "S7: lines 13-20 are outside the source range 33-36",
+    "S8: lines 9-16 are outside the source range 65-69"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: preorder."
+   ],
+   "input_tokens": 1517,
+   "output_tokens": 212,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4546,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 28.6,
+   "refused": false
+  },
+  {
+   "question": "v2-sg-neg-mongodb",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: MongoDB, mongo, db."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.1,
+   "refused": true
+  },
+  {
+   "question": "v2-sn-neg-tags",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Notların etiket eklenmesi `NoteWorkspace` komponentinde gerçekleştirilir. Bu komponent, notların düzenlenmesini ve etiketlerin eklenebilmesini sağlar [S1]. Notun düzenleyicisi olup olmadığını kontrol eder ve bu durumda düzenleme yetkisine tabi olur [S4]. Etiket eklemek için `NoteCard` komponentunda bir dropdown menü oluşturulur ve etiket ekleme butonu bulunur [S2]. Bu butona tıklanınca, notun etiketlerini değiştirebilir veya yeni bir etiket ekleyebilirsiniz [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 95,
+     "end_line": 131
+    },
+    {
+     "source": "S2",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 66,
+     "end_line": 81
+    },
+    {
+     "source": "S4",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 51,
+     "end_line": 65
+    }
+   ],
+   "rejected": [
+    "S4: lines 57-93 are outside the source range 51-65"
+   ],
+   "warnings": [],
+   "input_tokens": 2259,
+   "output_tokens": 239,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6795,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 43.5,
+   "refused": false
+  },
+  {
+   "question": "v2-sn-neg-comments",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: ability, comments."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.1,
+   "refused": true
+  },
+  {
+   "question": "v2-sn-neg-public-link",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Not herkese açık bağlantısı, bir notun sahibi olan kişi tarafından oluşturulan `ShareDialog` komponentinden paylaşım butonuna tıklanarak yapılır [S7]. Bu butona tıklandığında, kullanıcı e-posta adresini girer ve ardından 'EDITOR' veya 'VIEWER' rolü seçer. Eğer notun sahibi değilse, bu işlemi gerçekleştiren `LeaveNote` operasyonu çağrılır ve notun sahibine yönlendirilir [S6].",
+   "citations": [
+    {
+     "source": "S6",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 54,
+     "end_line": 78
+    },
+    {
+     "source": "S7",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 138,
+     "end_line": 153
+    }
+   ],
+   "rejected": [
+    "S6: lines 9-20 are outside the source range 54-78"
+   ],
+   "warnings": [],
+   "input_tokens": 2200,
+   "output_tokens": 179,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5989,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 40.0,
+   "refused": false
+  },
+  {
+   "question": "v2-sn-neg-ldap",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: LDAP, LSD."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.1,
+   "refused": true
+  },
+  {
+   "question": "v2-sn-neg-invite-mail",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "answer": "Davet e-postası gönderimi işlemi, `MembersService.invite` metodundan gerçekleştirilir. Bu metoddaki `email` parametresi ile davet edilecek kişinin e-posta adresini belirtir ve `role` parametresi ile davet edilen kişinin rolleri (OWNER, EDITOR veya VIEWER) belirlenir [S2]. E-posta adresi doğrulanarak ve rolü doğru olan bir kullanıcıya davet edilir. Eğer e-posta adresi yanlışsa BadRequestException, eğer kullanıcının zaten notun sahibiyse ConflictException hatası fırlatılır [S2].",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 38,
+     "end_line": 68
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2774,
+   "output_tokens": 177,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 8781,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 50.9,
+   "refused": false
+  },
+  {
+   "question": "v2-sg-neg-transfer",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "answered",
+   "answer": "Stock is moved from one warehouse to another using the `StockLedger` class, which contains methods for moving stock between reserved and available states. The method used for this purpose is `releaseReserved` [S5]. This method updates the stock levels by calling `moveReservedToAvailable` [S3] on the `StockLevelRepository`, reducing the reserved quantity and increasing the available quantity of a product, thereby transferring it from the reserved state to the available state. The transactional annotation ensures that this operation is atomic and all changes are committed or rolled back as one unit.",
+   "citations": [
+    {
+     "source": "S3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 76,
+     "end_line": 87
+    },
+    {
+     "source": "S5",
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 54,
+     "end_line": 58
+    }
+   ],
+   "rejected": [
+    "S5: lines 21-30 are outside the source range 54-58",
+    "S3: lines 64-74 are outside the source range 76-87"
+   ],
+   "warnings": [],
+   "input_tokens": 1749,
+   "output_tokens": 179,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 5412,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 31.9,
+   "refused": false
+  },
+  {
+   "question": "v2-sg-neg-coupon",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: discount, coupons."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.0,
+   "refused": true
+  },
+  {
+   "question": "v2-sg-neg-password-reset",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "answered",
+   "answer": "A user changes their password by calling the `AuthService.login` method with their username and raw password [S2, S5]. The `AuthService.login` method uses the `AuthenticationManager` to authenticate the user. If authentication is successful, it retrieves the user details and issues a JWT token [S4, S5]. The `passwordEncoder` from `SecurityConfig.passwordEncoder` is used to encode the raw password before comparison [S7].",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 108,
+     "end_line": 113
+    },
+    {
+     "source": "S7",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 103,
+     "end_line": 106
+    }
+   ],
+   "rejected": [
+    "S4: lines 64-74 are outside the source range 34-45",
+    "S5: lines 34-45 are outside the source range 64-74",
+    "S7: lines 22-32 are outside the source range 103-106"
+   ],
+   "warnings": [],
+   "input_tokens": 1546,
+   "output_tokens": 202,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 4757,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 29.3,
+   "refused": false
+  },
+  {
+   "question": "v2-sg-neg-backorder",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "answered",
+   "answer": "Pre-orders are not explicitly taken in the provided sources. However, when stock runs out, pre-orders can be handled by the `ReservationExpiryService` class [S6]. This service expires overdue reservations in a single transaction [S6], which could include expired pre-orders if they have reached their expiration time and no longer meet the current stock availability.",
+   "citations": [
+    {
+     "source": "S6",
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 14,
+     "end_line": 48
+    }
+   ],
+   "rejected": [
+    "S6: lines 14-52 are outside the source range 14-48"
+   ],
+   "warnings": [
+    "Not found anywhere in the indexed code: pre."
+   ],
+   "input_tokens": 2470,
+   "output_tokens": 111,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 8983,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 41.6,
+   "refused": false
+  },
+  {
+   "question": "v2-sg-neg-mongodb",
+   "repo": "stockguard",
+   "language": "en",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: MongoDB."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.0,
+   "refused": true
+  },
+  {
+   "question": "v2-sn-neg-tags",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2529,
+   "output_tokens": 54,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 8097,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 40.0,
+   "refused": true
+  },
+  {
+   "question": "v2-sn-neg-comments",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "Leaving a note is handled by the `useLeaveNote` hook in [S1]. When called, it uses the `NotesService.leave` method from [S2] to leave the note. The role of the user performing the action determines whether they can leave the note or not; if the role is 'OWNER', an error is thrown as the owner cannot leave a note directly. If successful, the mutation triggers a success toast message [S1].",
+   "citations": [
+    {
+     "source": "S1",
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 70,
+     "end_line": 80
+    },
+    {
+     "source": "S2",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 122,
+     "end_line": 127
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: comments."
+   ],
+   "input_tokens": 1600,
+   "output_tokens": 167,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 3729,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 28.9,
+   "refused": false
+  },
+  {
+   "question": "v2-sn-neg-public-link",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 2350,
+   "output_tokens": 162,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 6494,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 42.4,
+   "refused": true
+  },
+  {
+   "question": "v2-sn-neg-ldap",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "insufficient",
+   "answer": "",
+   "citations": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: LDAP."
+   ],
+   "input_tokens": null,
+   "output_tokens": null,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 0.0,
+   "refused": true
+  },
+  {
+   "question": "v2-sn-neg-invite-mail",
+   "repo": "syncnotes",
+   "language": "en",
+   "status": "answered",
+   "answer": "The invitation email is sent through the `MembersService.invite` method [S2]. This method takes the recipient's email and role as parameters, retrieves the user details from the database, checks if the user already owns the note or has invited the same user before. If everything is valid, it creates a new member record in the database and returns the updated member information [S3]. The `ShareDialog` component handles the form submission event by calling the `invite` method of the `MembersService`, passing the email and role as parameters to send the invitation email [S4].",
+   "citations": [
+    {
+     "source": "S2",
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 35,
+     "end_line": 46
+    },
+    {
+     "source": "S3",
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 38,
+     "end_line": 67
+    },
+    {
+     "source": "S4",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 101,
+     "end_line": 136
+    }
+   ],
+   "rejected": [
+    "S2: lines 35-68 are outside the source range 35-46"
+   ],
+   "warnings": [],
+   "input_tokens": 2379,
+   "output_tokens": 207,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 7147,
+   "sources_sent": 8,
+   "sources_dropped": 0,
+   "seconds": 45.2,
+   "refused": false
+  }
+ ],
+ "holdout_unanswerable": []
+}

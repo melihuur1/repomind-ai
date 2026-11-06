@@ -1,0 +1,3967 @@
+[
+ {
+  "variant": "v1-strict",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+  "lines": "14-27",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "54-68",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-oversell",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+  "lines": "50-61",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "29-52",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "apps/web/src/collab/connection.ts",
+  "lines": "28-56",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+  "lines": "1-6",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-lost-updates",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/persistence.ts",
+  "lines": "20-31",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "docker-compose.yml",
+  "lines": "1-1",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "apps/collab/src/server.ts",
+  "lines": "33-64",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "apps/api/src/redis/access-events.publisher.ts",
+  "lines": "9-21",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-redis-outage",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/resilient-redis.ts",
+  "lines": "32-52",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-redis-outage",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+  "lines": "19-37",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "packages/shared/src/access-events.ts",
+  "lines": "3-8",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "apps/web/src/collab/use-collaboration.ts",
+  "lines": "98-109",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "apps/web/src/components/share-dialog.tsx",
+  "lines": "33-62",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "packages/shared/src/roles.ts",
+  "lines": "20-22",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-viewer-readonly",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "209-217",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+  "lines": "42-45",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "92-97",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+  "lines": "79-96",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "116-124",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationStatus.java",
+  "lines": "3-9",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "92-100",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "`ReservationTransactions.cancel` metodu, rezervasyon iptali işlemi sırasında belirli bir ürünün ve miktarın kaynaklara geri dönmelerini yönetmektedir.",
+   "quote": "@Transactional\npublic Reservation cancel(Actor actor, UUID id) {\n    Reservation current = loadVisible(actor, id);\n    settle(id, ReservationStatus.CANCELLED);\n    ledger.releaseReserved(current.getProductId(), current.getQuantity(), id, actor.userId(), MovementType.CANCEL_RELEASED);\n    audit.record(AuditEventType.RESERVATION_CANCELLED, actor.userId(), \"RESERVATION\", id,\n            Map.of(\"productId\", current.getProductId(), \"quantity\", current.getQuantity()));\n    return reservations.findById(id).orElseThrow();\n}"
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-ticket",
+  "label": "gold",
+  "path": "apps/collab/src/ticket.ts",
+  "lines": "10-40",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "46-60",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "apps/api/src/notes/notes.controller.ts",
+  "lines": "92-102",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "packages/shared/src/collab.ts",
+  "lines": "7-15",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-ticket",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "124-147",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "`onAuthenticate` metodu, belirli bir `documentName` ve `token` değerlerine göre bir kimlik doğrulama bileti oluşturur ve doğrular.",
+   "quote": "\n    let claims;\n    try {\n      claims = verifyTicket(token, this.options.ticketSecret, documentName);\n    } catch (err) {"
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/resources/application.yml",
+  "lines": "4-14",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-lock-order",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "17-30",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "`ReservationTransactions` sınıfı kilitleri `reservation row` önce ve `stock row` sonra sırayla alır, böylece bu işlemler arasında gizli mesaj olmayacaktır.",
+   "quote": "\n    * The transaction boundaries of the reservation lifecycle. Every method is one all-or-nothing unit and uses\n    * the same lock order, reservation row first and stock row second,\n    * so these transactions cannot deadlock against each other.\n"
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+  "lines": "1-22",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+  "lines": "16-25",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-lock-order",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+  "lines": "14-48",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "89-96",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+  "lines": "15-47",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "75-82",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/resources/application.yml",
+  "lines": "54-60",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "84-87",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/user/AuthService.java",
+  "lines": "34-45",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-csrf",
+  "label": "gold",
+  "path": "apps/api/src/common/guards/csrf.guard.ts",
+  "lines": "14-32",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/api/src/auth/auth.controller.ts",
+  "lines": "33-43",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/api/src/common/cookies.ts",
+  "lines": "45-48",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/web/src/lib/api.ts",
+  "lines": "28-32",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-csrf",
+  "label": "gold",
+  "path": "apps/api/src/common/guards/csrf.guard.ts",
+  "lines": "8-12",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-revocation",
+  "label": "gold",
+  "path": "apps/api/src/notes/members.service.ts",
+  "lines": "91-98",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "apps/api/src/redis/access-events.publisher.ts",
+  "lines": "9-21",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "packages/shared/src/access-events.ts",
+  "lines": "3-8",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "46-60",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "43-60",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-idempotency",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "72-80",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V3__reservations.sql",
+  "lines": "1-18",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-idempotency",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "29-52",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "61-68",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-version-restore",
+  "label": "gold",
+  "path": "apps/collab/src/versions.ts",
+  "lines": "46-64",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+  "lines": "134-135",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+  "lines": "75-87",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "apps/api/src/notes/versions.service.ts",
+  "lines": "32-48",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "85-90",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "39-41",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "105-126",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "apps/web/scripts/screenshots.ts",
+  "lines": "35-78",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+  "lines": "1-6",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "apps/web/src/pages/auth-pages.tsx",
+  "lines": "198-242",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/Reservation.java",
+  "lines": "54-91",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "61-87",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "105-126",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "47-48",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+  "lines": "43-46",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "50-54",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/src/pages/dashboard-page.tsx",
+  "lines": "146-178",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/scripts/screenshots.ts",
+  "lines": "109-128",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v1-strict",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/src/pages/dashboard-page.tsx",
+  "lines": "180-199",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+  "lines": "14-27",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kaynak, satışın aşırı olması durumunda nasıl önlenip yönetileceği hakkında bilgi sağlıyor.",
+   "quote": "\n-- The database itself refuses overselling, even if application code is wrong.\nCONSTRAINT ck_stock_reserved_non_negative  CHECK (reserved_quantity >= 0),\nCONSTRAINT ck_stock_total_is_sum           CHECK (total_quantity = available_quantity + reserved_quantity)\n"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "54-68",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, `ReservationRepository.settleIfPendingAndInTime` metodunu kullanarak, belirli bir `id` ve `status` koşullarına uygun olan `PENDING` durumda olan ve `expires_at` zaman aşımından uzun olan bir istek için `status` değeri `target` olarak ayarlanmasını sağlar. Eğer isteklerin fazla olması durumu kontrol eder.",
+   "quote": "\\@Query(nativeQuery = true, value = \"UPDATE reservations\\n   SET status = :target, settled_at = now()\\n WHERE id = :id\\n   AND status = 'PENDING'\\n   AND expires_at > now()\\n\")"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-oversell",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+  "lines": "50-61",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, `moveAvailableToReserved` metodu, isteklerde fazla satış durumunda stokların kullanılabilir kalmalarını artırma işlemi gerçekleştirir.",
+   "quote": "\\[UPDATE stock_levels\\]\nSET available_quantity = available_quantity - :quantity,\nreserved_quantity = reserved_quantity + :quantity,\nupdated_at = now()\nWHERE product_id = :productId\nAND available_quantity >= :quantity"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "29-52",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, aynı anda gelen isteklerde fazla satışın önlenmesi için idempotansal anahtarın kullanımını kontrol eder ve uygun durumlarda yeni bir rezervasyon oluşturur.",
+   "quote": "\"INSERT INTO reservations\n    (id, product_id, user_id, quantity, status, idempotency_key, request_hash, expires_at, created_at)\nVALUES\n    (:id, :productId, :userId, :quantity, 'PENDING', :idempotencyKey, :requestHash,\n     now() + make_interval(secs => :ttlSeconds), now())\nON CONFLICT (user_id, idempotency_key) DO NOTHING\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "apps/web/src/collab/connection.ts",
+  "lines": "28-56",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod parçası sunucu arasındaki notu nasıl kaydederken güncellemelerin kaybolması durumunu kontrol eder.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+  "lines": "1-6",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu notu kaydeden iki sunucunun güncellemelerinin kaybolması için bir benzersiz indeks oluşturulmuştur.",
+   "quote": "CREATE UNIQUE INDEX \"note_members_one_owner_per_note\" ON \"note_members\" (\"note_id\") WHERE \"role\" = 'OWNER';"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-lost-updates",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/persistence.ts",
+  "lines": "20-31",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod parçası notun Yjs durumu depolama ve güncellemeleri içerir.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "docker-compose.yml",
+  "lines": "1-1",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kaynak, iki sunucu arasında notu paylaşan bir compose dosyasını tanımlar.",
+   "quote": "name: syncnotes"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "apps/collab/src/server.ts",
+  "lines": "33-64",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "createCollabServer işlevi Redis sunucusunu kullanarak işbirliği sunucusunun composition root'u oluşturur ve Redis ile ilgili bir Extension oluşturur.",
+   "quote": "const redis = new ResilientRedisExtension({\n    redisUrl: config.REDIS_URL,\n    identifier: config.INSTANCE_NAME,\n    logger,\n});"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "apps/api/src/redis/access-events.publisher.ts",
+  "lines": "9-21",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, Redis bağlantısız kalması durumunda, işbirliği sunucusu PostgreSQL'nin doğru olduğunu kabul eder ve Redis bağlantısı kesildikten sonra WebSocket sesleri açmış olan herhangi bir işbirlik sunucusu örneği için bu değişiklikleri uygular.",
+   "quote": "redis: Redis;",
+   "source": "redis: Redis;"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-redis-outage",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/resilient-redis.ts",
+  "lines": "32-52",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, Redis bağlantısız olduğunda işbirliği sunucusunun nasıl devam edeceğini açıklıyor.",
+   "quote": "\"lockTimeout: 0\" — bu uzaktan Redis bağlantısız olduğunda, kaydedici *abort eder* ve yerel veritabanı row locku ve CRDT toplama ile sarmalayıcıdır.\"\n"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-redis-outage",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+  "lines": "19-37",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, Redis bağlantısız olduğunda işbirliği sunucusunun Postgres üzerinden belgelenmiş belgeyi kontrol etme ve güncellemeye çalışması hakkında bilgi verir.",
+   "quote": "\n  private lastPassAt = 0;\n"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "packages/shared/src/access-events.ts",
+  "lines": "3-8",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu dosya Redis pub/sub kanalının API tarafından yayınlanan üyelik değişikliklerini işbirliği sunucusu için abone edilmesini ve değişimleri uygulamasını içerir.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "apps/web/src/collab/use-collaboration.ts",
+  "lines": "98-109",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, düzenleme yapma yetkisini engellemek için kullanıcının rolüne bağlı olarak `IndexeddbPersistence` nesnesinin oluşturulmasını ve synchronize etkinleştirilmesini sağlıyor.",
+   "quote": "\nconst persistence = canEdit(roleRef.current)\n  ? new IndexeddbPersistence(localReplicaName(user.id, noteId), doc)\n  : null;\n"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "apps/web/src/components/share-dialog.tsx",
+  "lines": "33-62",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, `MemberRow` bileşeni içindeki bir kullanıcının düzenleme rolü değiştirme işlemi yapmasını engeliyor.",
+   "quote": "\n            <select\n              aria-label={`Role of ${member.name}`}\n              className={selectClass}\n              value={member.role}\n              disabled={update.isPending}\n              onChange={(e) => update.mutate({ userId: member.userId, role: e.target.value as 'EDITOR' | 'VIEWER' })}\n            >\n              <option value=\"EDITOR\">Editor</option>\n              <option value=\"VIEWER\">Viewer</option>\n            </select>"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "packages/shared/src/roles.ts",
+  "lines": "20-22",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod parçası, belirli bir rolün (EDITOR) varlığını kontrol eder.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-viewer-readonly",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "209-217",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, düzenleme yapma yetkisini değiştirirken, düzenleyici rolünün etkileşime girmesi engelleniyor.",
+   "quote": "\n    if (connection.readOnly === readOnly && ctx?.role === role) return;\n"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+  "lines": "42-45",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod parçası `ReservationService.cancel` metodunu tanımlıyor ve bu metot iptal işlemini gerçekleştiriyor.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "92-97",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu Java sınıfı, `ReservationController.cancel` metodunu kullanarak rezervasyon iptali işlemini yönetir.",
+   "quote": "@PostMapping(\"/{id}/cancel\")\n@Operation(operationId = \"cancelReservation\", summary = \"Cancel a reservation: the held units become available again\")"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+  "lines": "79-96",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\n  \"relevant\": true,\n  \"statement\": \"Bu kod, `ConsistencyService` sınıfında bulunan `Rule` metodunu kullanarak bir SQL sorgusu oluşturur ve bu sorgu, rezerveyonun tam olarak bir kez olup olmadığını kontrol eder.\",\n  \"quote\": \"\\\"SELECT r.product_id, format('reservation %s is %s with reserved=%s confirmed=%s cancelled=%s expired=%s',\\n                           r.id, r.status, c.reserved, c.confirmed, c.cancelled, c.expired) AS detail\\n                      FROM reservations r\\n                      JOIN stock_levels s ON s.product_id = r.product_id\\n                      CROSS JOIN LATERAL (\\n                           SELECT COUNT(*) FILTER (WHERE m.type = 'RESERVED') AS reserved,\\n                                  COUNT(*) FILTER (WHERE m.type = 'CONFIRMED') AS confirmed,\\n                                  COUNT(*) FILTER (WHERE m.type = 'CANCEL_RELEASED') AS cancelled,\\n                                  COUNT(*) FILTER (WHERE m.type = 'EXPIRY_RELEASED') AS expired\\n                             FROM stock_movements m WHERE m.reservation_id = r.id) c\\n                     WHERE $SCOPE AND (c.reserved <> "
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "116-124",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod parçası rezervasyon iptali işlemini yönetir.",
+   "quote": "\n            case PENDING, EXPIRED -> new ApiException(ErrorCode.RESERVATION_EXPIRED, \"This reservation has expired.\");\n            case CONFIRMED, CANCELLED -> new ApiException(ErrorCode.RESERVATION_ALREADY_SETTLED,\n                    \"This reservation is already \\\" + latest.getStatus() + \\\".\")"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationStatus.java",
+  "lines": "3-9",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu Java sınıfı, rezerval durumunu tanımlayan bir yapısal kodudur ve iptal işlemi için geçerli durumu belirtir.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "92-100",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, `ReservationTransactions.cancel` metodunun içinde rezervasyon iptali işlemi gerçekleştirir ve bu işlem için `ledger.releaseReserved` fonksiyonunu kullanır.",
+   "quote": "ledger.releaseReserved(current.getProductId(), current.getQuantity(), id, actor.userId(), MovementType.CANCEL_RELEASED);"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-ticket",
+  "label": "gold",
+  "path": "apps/collab/src/ticket.ts",
+  "lines": "10-40",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, API tarafından üretilen bir işbirliği tiketinin doğrulanmasını içerir.",
+   "quote": "\n    let claims: jwt.JwtPayload & Partial<CollabTicketClaims>;\n    try {\n      claims = jwt.verify(token, secret, {\n        algorithms: ['HS256'],\n        audience: COLLAB_TICKET_AUDIENCE,\n        issuer: COLLAB_TICKET_ISSUER,\n      }) as jwt.JwtPayload & Partial<CollabTicketClaims>;\n    } catch (err) {\n      throw new TicketError(`invalid ticket: ${(err as Error).message}`);\n    }\n  }}\n"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "46-60",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, WebSocket bağlantısının kimlik doğrulama bileti oluşturulması ve doğrulanması konusunda bilgi sunar.",
+   "quote": "\"handshake: API tarafından verilen ticketi doğrular, ardından PostgreSQL'den rolü okur.\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "apps/api/src/notes/notes.controller.ts",
+  "lines": "92-102",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod parçası, WebSocket bağlantısı için kullanılmak üzere kısa süreli bir bilet oluşturur.",
+   "quote": "@Post(':noteId/collab-ticket')\n@RequireNoteRole('VIEWER')\n@HttpCode(200)\nticket(\n  @CurrentUser() user: AuthUser,\n  @Param('noteId') noteId: string,\n  @CurrentNoteRole() role: NoteRole,\n): Promise<CollabTicketDto> {\n  return this.tickets.issue(user, noteId, role);\n}"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "packages/shared/src/collab.ts",
+  "lines": "7-15",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod parçası WebSocket bağlantısı için kullanılan kimlik doğrulama bileti hakkında bilgi sağlar.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-ticket",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "124-147",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, bir WebSocket bağlantısı için kullanılan kimlik doğrulama bileti oluşturur ve doğrular.",
+   "quote": "\"let claims; try { claims = verifyTicket(token, this.options.ticketSecret, documentName); } catch (err) { ... throw new CollabAccessError('invalid-ticket');}\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/resources/application.yml",
+  "lines": "4-14",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kaynak, Spring DataSource yapılandırması için SQL komutları içerir ve bu komutlar kilit zaman aşımını ve otomatik oturum sonlandırma süresini ayarlamak üzere kullanılır.",
+   "quote": "\\\"SET lock_timeout = '3s'; SET idle_in_transaction_session_timeout = '30s'\\\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-lock-order",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "17-30",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod parçası, kilitlerin hangi sırayla kullanılacağını açıklıyor.",
+   "quote": "\n    * The same lock order, reservation row first and stock row second, so these transactions cannot deadlock against each other.\n"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+  "lines": "1-22",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\"relevant\": true, \"statement\": \"Bu sorgu, stok değişikliklerinin kaydedilmesi sırasında herhangi bir ürün için id sıralaması commit sıralamasına eşit olacağını ve _after sütunlarının bir doğrulayıcı dizi oluşturabileceğini belirtiyor.\", \"quote\": \"-- Append-only ledger of every stock change. Each row is inserted while the stock row lock is held, so\\n-- per product the identity order equals the commit order and the *_after columns form a verifiable chain.\\nCREATE TABLE stock_movements (\\n    id              BIGINT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\\n    product_id      UUID         NOT NULL REFERENCES products (id),\\n    reservation_id  UUID         REFERENCES reservations (id),\\n    actor_id        UUID         REFERENCES app_users (id),\\n    type            VARCHAR(24)  NOT NULL,\\n    delta_total     INTEGER      NOT NULL,\\n    delta_available INTEGER      NOT NULL,\\n    delta_reserved  INTEGER      NOT NULL,\\n    total_after     INTEGER      NOT NULL,\\n    available_after INTEGER      NOT NULL,\\n    reserved_after  INTEGER      NOT"
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+  "lines": "16-25",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu Java sınıfı, kilitlerin hangi sırayla alınacağını tartışmaya yarayan kaynaklardan biridir.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-lock-order",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+  "lines": "14-48",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, `expireDueBatch` metodu sırasında kilitlerin hangi sırayla alınacağını açıklıyor.",
+   "quote": "\"sorted(Comparator.comparing(ExpiredReservation::getProductId))\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "89-96",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, JWT tokenin nasıl oluşturulacağını ve imzalanacağını açıklıyor.",
+   "quote": "\"NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(signingKey(properties))\\n                .macAlgorithm(MacAlgorithm.HS256)\\n                .build();\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+  "lines": "15-47",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "JwtTokenService sınıfı, issue metodu ile JWT token oluşturur ve imzalar.",
+   "quote": "JwtClaimsSet claims = JwtClaimsSet.builder()\n    .issuer(ISSUER)\n    .subject(userId.toString())\n    .issuedAt(now)\n    .expiresAt(expiresAt)\n    .claim(\"username\", username)\n    .claim(ROLE_CLAIM, role.name())\n    .build();"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "75-82",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, JWT yetkililerini döndüren JwtAuthenticationConverter sınıfının JwtGrantedAuthoritiesConverter nesnesine sahip bir JwtAuthenticationConverter nesnesi oluşturur.",
+   "quote": "\"JwtGrantedAuthoritiesConverter authorities = new JwtGrantedAuthoritiesConverter();\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/resources/application.yml",
+  "lines": "54-60",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kaynak yorum satırı ile ilgili değil ve JWT token nasıl oluşturuluyor ve imzalanıyor hakkında bilgi vermiyor.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "84-87",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, JWT tokenin oluşturulması için `NimbusJwtEncoder` sınıfını kullanır ve bu sınıfın oluşturucusunda bir şifre anahtarı (`signingKey`) kullanarak bir türkümleme (secret) oluşturur.",
+   "quote": "@Bean\nJwtEncoder jwtEncoder(StockGuardProperties properties) {\n    return new NimbusJwtEncoder(new ImmutableSecret<>(signingKey(properties));\n}"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/user/AuthService.java",
+  "lines": "34-45",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod parçası JWT token oluşturulması ve imzalanması ile ilgili bilgi vermiyor.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-csrf",
+  "label": "gold",
+  "path": "apps/api/src/common/guards/csrf.guard.ts",
+  "lines": "14-32",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "CsrfGuard sınıfı, herhangi bir durumu değiştiren istekte Double-submit-cookie CSRF korumasını uygular.",
+   "quote": "const cookie = (req.cookies as Record<string, unknown> | undefined)?.[COOKIE_CSRF];\nif (!csrfTokensMatch(cookie, req.header(CSRF_HEADER))) {\n  throw new ForbiddenException('Invalid or missing CSRF token');\n}"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/api/src/auth/auth.controller.ts",
+  "lines": "33-43",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, CSRF (Cross-Site Request Forgery) koruması için bir CSRF token oluşturur ve bu token, istemcilerin isteklerini kontrol etmek için kullanılır.",
+   "quote": "@Get('csrf') csrf(@Req() req: Request, @Res({ passthrough: true }) res: Response): { csrfToken: string } {\n    let token = cookies(req)[COOKIE_CSRF];\n    if (!token || token.length < 16) {\n      token = randomToken(24);\n      setCsrfCookie(res, this.config, token);\n    }\n    return { csrfToken: token };"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/api/src/common/cookies.ts",
+  "lines": "45-48",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, CSRF koruması için bir csrf cookie oluşturur ve bu cookie, SPA (Single Page Application) tarafından okunabilir hale getirilmiştir.",
+   "quote": "\"res.cookie(COOKIE_CSRF, token, { ...base(config), httpOnly: false });\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/web/src/lib/api.ts",
+  "lines": "28-32",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod parçası CSRF korumasını nasıl uygulayacağını belirtmiyor.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-csrf",
+  "label": "gold",
+  "path": "apps/api/src/common/guards/csrf.guard.ts",
+  "lines": "8-12",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, csrfTokensMatch fonksiyonu, cookie değerini ve başlık değerini kontrol eder ve CSRF koruması uygular.",
+   "quote": "\"if (typeof cookieValue !== 'string' || typeof headerValue !== 'string') return false;\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-revocation",
+  "label": "gold",
+  "path": "apps/api/src/notes/members.service.ts",
+  "lines": "91-98",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, bir notun sahibi olma yetkisini kaldırırken, WebSocket oturumunu kapatır.",
+   "quote": "// Open WebSocket sessions of this user are closed by every collaboration server."
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "apps/api/src/redis/access-events.publisher.ts",
+  "lines": "9-21",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, Redis sunucusunun kullanılabilmesi durumunda, WebSocket oturumu açıldığında üye değişikliklerini yayınlıyor.",
+   "quote": "publish(AccessEvents, { membership: event.membership, ttl: event.ttl });"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "packages/shared/src/access-events.ts",
+  "lines": "3-8",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu dosya açık WebSocket oturumunda üyelik değişikliklerini API tarafından yayınlanan pub/sub kanalını tanımlar.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "46-60",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, WebSocket oturumunda bir üyenin erimiş olup olmadığını kontrol eder ve bu durumda, üyeyi okuyamak için bağlantıları kapatır.",
+   "quote": "\"every inbound message re-checks the (TTL-cached) role, so revocation is enforced even if\\n   the push event below is lost\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "43-60",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, `Idempotency-Key`'u tekrar kullanmadan aynı istek body'siyle tekrar istekte bulunulur durumda, önceki isteğin yeniden oluşturulmasını sağlar.",
+   "quote": "@ApiResponse(responseCode = \"200\", description = \"Replay of an earlier request: nothing new was created\")"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-idempotency",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "72-80",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, `ReservationTransactions.replay` metodunda idempotans anahtarı ile tekrar eden rezervasyon isteklerini ele alır ve aynı idempotans anahtarına farklı fingerprint (belirli bir istekteki belirtilen özellik) olan istekleri tespit eder.",
+   "quote": "\"if (!original.getRequestHash().equals(fingerprint)) { throw new ApiException(ErrorCode.IDEMPOTENCY_KEY_REUSED, \"This Idempotency-Key was already used with a different request.\"); }\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V3__reservations.sql",
+  "lines": "1-18",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kaynak, PostgreSQL tablosu için idempotans garantisini nasıl uyguladığını açıklıyor.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-idempotency",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "29-52",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\n  \"relevant\": true,\n  \"statement\": \"Bu kod, idempotansal anahtarın kullanılmasından önce ve aynı anahtarla tekrarlanan isteklerin ele alınmasına yardımcı olan bir işlemi içerir.\",\n  \"quote\": \"\\n    @Modifying\\n    @Transactional(propagation = Propagation.MANDATORY)\\n    @Query(nativeQuery = true, value = \\\"\\n            INSERT INTO reservations\\n                (id, product_id, user_id, quantity, status, idempotency_key, request_hash, expires_at, created_at)\\n            VALUES\\n                (:id, :productId, :userId, :quantity, 'PENDING', :idempotencyKey, :requestHash,\\n                 now() + make_interval(secs => :ttlSeconds), now())\\n            ON CONFLICT (user_id, idempotency_key) DO NOTHING\\n            \\\")\\n    int insertIfKeyUnused(\\n            @Param(\\\"id\\\") UUID id,\\n            @Param(\\\"productId\\\") UUID productId,\\n            @Param(\\\"userId\\\") UUID userId,\\n            @Param(\\\"quantity\\\") int quantity,\\n            @Param(\\\"idemp"
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "61-68",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod, `ReservationController.create` metodunda idempotans anahtarı ile tekrar eden rezervasyon isteklerini ele alır ve replay header'ı 'true' olarak ayarlar.",
+   "quote": "\"if (outcome.replayed()) { return ResponseEntity.ok().header(REPLAY_HEADER, \"true\").body(body); }\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-version-restore",
+  "label": "gold",
+  "path": "apps/collab/src/versions.ts",
+  "lines": "46-64",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu kod `VersionService.restore` adında bir fonksiyonu içerir ve belirli bir sürümü eski duruma geri döndürür.",
+   "quote": "\"const name = version.label ?? version.createdAt.toISOString().slice(0, 16).replace('T', ' '); await this.createSnapshot(noteId, document, { kind: 'RESTORE', label: `Before restoring \\\"${name}\\\"`, userId });\""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+  "lines": "134-135",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod bloğu bir not sürümünün önceden mevcut sürümüne geri döndürülmesini nasıl yapabileceğini açıklamaz.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+  "lines": "75-87",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod parçası bir notun eski sürümünü oluşturur.",
+   "quote": "-- CreateTable\nCREATE TABLE `note_versions` ("
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "apps/api/src/notes/versions.service.ts",
+  "lines": "32-48",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod sürümü eski sürümünü almak için kullanılır.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "85-90",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "relevant": true,
+   "statement": "Java kodu `confirm` metodu, bir rezervasyonun onaylanmasını sağlar ve bu işlem sırasında saklandığı öğelerin stokdan çıkarılmasını içerir.",
+   "quote": "@PostMapping(\"/{id}/confirm\")\n@Operation(operationId = \"confirmReservation\", summary = \"Confirm a reservation: the held units leave the stock\")"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "39-41",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu Java sınıfı, rezerwasyon hizmetine (ReservationService) bağımlılık oluşturur ve bu sınıfın içi ile ilgili değildir.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "105-126",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod parçası rezervasyonu işleme ile ilgili değil ve onay e-postası gönderimini gerçekleştirmek için ne gerekiyor hakkında bilgi vermiyor.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "apps/web/scripts/screenshots.ts",
+  "lines": "35-78",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod bloğu bir web ekranının kaydetme sürecini içerir ve ikili doğrulamanın nasıl çalıştığını açıklamaz.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+  "lines": "1-6",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "relevant": true,
+   "statement": "Bu sorgu bir notun en az bir sahibi olma özelliğini doğrulamak için uygulanır ve bu özelliği database tarafından değil sadece uygulama kodlarından doğrulanır.",
+   "quote": "\n-- Invariant: every note has at most one OWNER membership.\nCREATE UNIQUE INDEX \"note_members_one_owner_per_note\"\n  ON \"note_members\" (\"note_id\")\n  WHERE \"role\" = 'OWNER';\n\n"
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "apps/web/src/pages/auth-pages.tsx",
+  "lines": "198-242",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod parçası bir iki faktörlü doğrulama işlemi içermez.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/Reservation.java",
+  "lines": "54-91",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu Java sınıfı müşteri iadeleri işleme ile ilgili metin içermediği için, bu kod parçası müşteri iadelerinin nasıl işlenmesini açıklamıyor.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "61-87",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu Java sınıfı ürünün temel özelliklerini döndürür.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "105-126",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu Java sınıfı, siparişleri nasıl yönettiğini gösterir ancak müşteri iadeleri ile ilgili bilgi vermez.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "47-48",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu Java koddaki kod, ürün görsellerini saklamakta veya bu konuda belirtmektedir.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+  "lines": "43-46",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu Java sınıfı ürünleri ve serbest alım hizmetlerini yönetir.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "50-54",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu Java koddaki kod Product sınıfının nasıl oluşturulacağını açıklıyor ancak ürün görsellerinin saklandığı hakkında bilgi vermiyor.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/src/pages/dashboard-page.tsx",
+  "lines": "146-178",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod parçası mobil cihazlarda anlık bildirimler gönderme sürecini içermez.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/scripts/screenshots.ts",
+  "lines": "109-128",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod bloğu mobil cihazlara anlık bildirim gönderimi ile ilgili bir bölümü içermez.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v4-soft",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/src/pages/dashboard-page.tsx",
+  "lines": "180-199",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "relevant": false,
+   "statement": "Bu kod parçası mobil cihazlarda kullanılacak bir bildirim sistemini yönetmeyi içeriyor.",
+   "quote": ""
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+  "lines": "14-27",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Ödeme işlemlerini yönetmek için kullanılan bir sütun oluşturuldu ve bu sütun, aynı anda gelen isteklerde fazla satış durumunu kontrol eder.",
+   "quote": "-- Stock is kept apart from the product row: this is the hottest row in the system, and separating it\\n-- means that a catalogue edit and a reservation never contend for the same row lock.\nCREATE TABLE stock_levels (",
+   "relevant": true,
+   "statement": "`stock_levels` sütununu kullanarak aynı anda gelen isteklerdeki satışları kontrol eder. Bu sütun, aynı anda birden fazla işlem için aynı satırın lock'ünü paylaşmamak için tasarlanmıştır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "54-68",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Güncelleme ve işlemi yapar: veritabanındaki 'reservations' tablosunun 'status' sütunu 'PENDING' olan kaydın 'target' değerine atanarak, 'settled_at' sütununa şu anki tarihi atar.",
+   "quote": "\n            UPDATE reservations\n               SET status = :target, settled_at = now()\n             WHERE id = :id\n               AND status = 'PENDING'\n               AND expires_at > now()\n            \n",
+   "relevant": true,
+   "statement": "Bu kod satıcıların isteklerini kontrol eder ve uygunsa, istekleri onaylayan veya iptal eden işlemi yapar. Eğer istekler 'PENDING' durumunda ve 'expires_at' zaman aşımından sonra ise, veritabanında güncellenir."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-oversell",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+  "lines": "50-61",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Güncelleme sorgusu ile stok kalmalarını artırır ve ayrılan ürün miktarını tahsis eder.",
+   "quote": "@Transactional(propagation = Propagation.MANDATORY), @Query(nativeQuery = true, value = \"",
+   "relevant": true,
+   "statement": "`StockLevelRepository.moveAvailableToReserved` methodu belirtilen productId ve quantity değerlerine göre stok kalmalarını artırır ve ayrılan ürün miktarını tahsis eder. Eğer stok kalmaları güncellemeleri için row lock alındığında yeterli bir miktarda stok kalmamışsa, sonuç boş olur."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "29-52",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu kod, belirli bir anahtarın tekrar kullanılmaması için idempotent olma özelliğini kontrol eder ve aynı anda gelen isteklerde fazla satış durumunu önler.",
+   "quote": "@Transactional(propagation = Propagation.MANDATORY), @Query(nativeQuery = true, value = \"",
+   "relevant": true,
+   "statement": "Bu kod, belirli bir anahtarın tekrar kullanılmaması için idempotent olma özelliğini kontrol eder ve aynı anda gelen isteklerde fazla satış durumunu önler."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "apps/web/src/collab/connection.ts",
+  "lines": "28-56",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Görevi kaydetmek için bir sunucu çağrısını yapar ve bu işlem sırasında güncellemelerin kaybolmasını önler.",
+   "quote": "\\[function\\] \\(phase, unsyncedChanges\\) {",
+   "relevant": true,
+   "statement": "Bu kod, `describeStatus` fonksiyonunda sunucu ile iletişime geçme işlemi sırasında güncellemelerin kaybolmasını önler. Eğer güncellemeler varsa, bu güncellemeler sunucuya gönderilecek ve kaydedilecektir."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+  "lines": "1-6",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Kesinleştirir ki, her notun en az bir OWNER üyeliği olmalıdır.",
+   "quote": "-- Invariant: every note has at most one OWNER membership.\n-- Enforced by the database (partial unique index) rather than only by application code,\n-- so a race between two concurrent \"share\" requests can never produce two owners.",
+   "relevant": true,
+   "statement": "Bu not, veritabanında (artial unique indeks) uygulama kodu tarafından sadece değil, database tarafından da bir notun en az bir OWNER üyeliği olabileceğini garanti eder. Bu durumda iki eşzamanlı 'paylaş' talepleri arasında ikili OWNER üyelerini oluşturamaz."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-lost-updates",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/persistence.ts",
+  "lines": "20-31",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Notun Yjs durumunu kaydeder ve bu durumun güncellemeleri aynı notu kaydederken kaybolmaması için önleme uygular.",
+   "quote": "\\[merge-on-write: inside a transaction holding the note's row lock we read the persisted state, merge it *into the live document* and write back the union.\\]",
+   "relevant": true,
+   "statement": "`PersistenceExtension` sınıfı, notun Yjs durumunu kaydederken aynı notu kaydederken güncellemelerin kaybolması için önleme uygular."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "docker-compose.yml",
+  "lines": "1-1",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Configures a service to synchronize notes between two servers.",
+   "quote": "name: syncnotes",
+   "relevant": true,
+   "statement": "`syncnotes` service is configured to ensure that updates from one server do not overwrite the changes made by another server."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "apps/collab/src/server.ts",
+  "lines": "33-64",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Configures a Redis extension for resilience and integration with other services.",
+   "quote": "\\`\nconst redis = new ResilientRedisExtension({\n    redisUrl: config.REDIS_URL,\n    identifier: config.INSTANCE_NAME,\n    logger,\n});\\`",
+   "relevant": true,
+   "statement": "`createCollabServer` function configures a `ResilientRedisExtension`, which is part of the Redis fan-out layer in the collaboration server's composition root. This configuration ensures that the Redis extension can handle failures and maintain service continuity."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "apps/api/src/redis/access-events.publisher.ts",
+  "lines": "9-21",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Redis bağlantısı kesildiğinde, bu kod parçası Redis bağlantısının kapanmasını bekler ve ardından HTTP isteği başarılı olmasına izin verir.",
+   "quote": "\\(redis: Redis;\\)",
+   "relevant": true,
+   "statement": "Redis bağlantısı kesildiğinde, `AccessEventsPublisher` sınıfında tanımlanan `redis` değişkeni Redis bağlantısının kapanmasını bekler ve ardından HTTP isteği başarılı olmasına izin verir. Bu durumda, Redis bağlantısı kapatılıp kalmayacağına dair bir zaman aşımı uygulanır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-redis-outage",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/resilient-redis.ts",
+  "lines": "32-52",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Redis kesildiğinde, Redis üzerindeki işlemlerin devam etmesini sağlar ve yerel veritabanı ile işbirliği yapar.",
+   "quote": "\\[definitely not relevant quote\\]",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-redis-outage",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+  "lines": "19-37",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu kod, Redis bağlantısız olduğunda işbirliği sunucusunun nasıl çalışacağını açıklar.",
+   "quote": "\n  private timer?: NodeJS.Timeout;\n  private instance?: Hocuspokus;",
+   "relevant": true,
+   "statement": "`DegradedReconcilerExtension` sınıfı, Redis bağlantısız olduğunda her `intervalMs` ve `antiEntropyIntervalMs` süresi içinde bir geçiş yapar. Bu geçiş, önceki zaman diliminde açık belgeyi başka bir yerden kaydedilmiş olup olmadığını kontrol eder ve bu yeni durumu live belgede unutulmaz şekilde günceller."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "packages/shared/src/access-events.ts",
+  "lines": "3-8",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Değişiklikleri API tarafından yayınlanan bir pub/sub kanalına Redis üzerinden yayınlar ve bu kanalın herhangi bir üyelik değişikliği için WebSocket bağlantılardan (kapanma için iptal, sadece okuma yetkisi alana kadar) uygun şekilde eylemler uygular.",
+   "quote": "\nexport const ACCESS_EVENTS_CHANNEL = 'syncnotes:access-events';\n",
+   "relevant": true,
+   "statement": "Bu kod, Redis pub/sub kanalına API tarafından yayınlanan üyelik değişiklikleri ile ilgili eylemler uygular ve WebSocket bağlantılardan (iptal edildiğinde bağlantı kapanır, okuma yetkisi alana kadar) uygun şekilde eylemler uygular."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "apps/web/src/collab/use-collaboration.ts",
+  "lines": "98-109",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Kontrol edilen bir düzenleme yapma yetkisine göre, düzenleyici rolündeki bir kullanıcının düzenleme yapmasına izin verilir veya engellenilir.",
+   "quote": "\\[canEdit(roleRef.current)\\]",
+   "relevant": true,
+   "statement": "`canEdit(roleRef.current)` fonksiyonunun sonucu, düzenleyici rolündeki bir kullanıcının düzenleme yapma yetkisine göre düzenleme yapmasına izin verilir veya engellenir."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "apps/web/src/components/share-dialog.tsx",
+  "lines": "33-62",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\n  \"code_does\": \"Görüntüleyici rolündeki bir kullanıcının düzenleme yapması için bir seçenek kutusu ve silme butonu oluşturulur.\",\n  \"quote\": \"<select\\\\naria-label=`Role of \\\\u0131ük\\\\u0131m${member.name}`\\\\nclassName=`selectClass`\\\\nvalue=`member.role`\\\\ndisabled=`update.isPending`\\\\nonChange=`(e) => update.mutate({ userId: member.userId, role: e.target.value as \\\\u201CEDITOR\\\\u007C\\\\u201D | \\\\u201CVIEWER\\\\u007C})`>\\\\n<option value=`EDITOR`>Editor</option>\\\\n<option value=`VIEWER`>Viewer</option></select>\",\n  \"relevant\": false,\n  \"statement\": \"Bu kod parçası, düzenleme yapma yetkisini almak için bir seçenek kutusu ve silme butonu oluşturur. Ancak, düzenleme yapma yetkisinin engellenip engellemesi konusunda bu kod parçasından bilgi edine"
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "packages/shared/src/roles.ts",
+  "lines": "20-22",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Kontrol ederkişinin düzenleme yapma yetkisini kontrol eder.",
+   "quote": "return hasRole(role, `EDITOR`);",
+   "relevant": true,
+   "statement": "`canEdit` fonksiyonu, girilen rolun 'EDITOR' rolleri içinde olup olmadığını kontrol etmek için `hasRole` fonksiyonunu kullanır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-viewer-readonly",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "209-217",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\n  \"code_does\": \"Görüntüleyici rolünü değiştirir ve bu işlemi engeliyor.\", \n  \"quote\": \"connection.readOnly = readOnly;\", \"\\nif (ctx) ctx.role = role;\\\\nsend(connection, { type: 'access.changed', role });\\nend if\\nend if connection.readOnly = readOnly;\\nend if ctx = null; send(connection, { type: 'access.changed', role }); end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end if end"
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+  "lines": "42-45",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "İptal işlemini gerçekleştiren metodu tanımladı.",
+   "quote": "@Retryable(includes = PessimisticLockingFailureException.class, maxRetries = 2, delay = 50, jitter = 25, multiplier = 2)\npublic Reservation cancel(Actor actor, UUID id) {\n    return transactions.cancel(actor, id);\n}",
+   "relevant": true,
+   "statement": "Bu kod parçası `ReservationService.cancel` adlı bir metottür ve bu metot iptal işlemini gerçekleştirmek için `transactions.cancel` metodunu çağırır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "92-97",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Metin, bir rezervasyon iptali işlemini gerçekleştirmek üzere yapıldığını gösterir.",
+   "quote": "@PostMapping \"/{id}/cancel\" @Operation(operationId = \"cancelReservation\", summary = \"Cancel a reservation: the held units become available again\")",
+   "relevant": true,
+   "statement": "Bu kod, `/cancel` endpointine yapılan istekler için `@PostMapping` anotasyonuyla işaretlenen bir metin içerir. Metin, `ReservationController.cancel` metodunun çağrısından gelen bir rezervasyon iptali işlemini tanımlar."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+  "lines": "79-96",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\"code_does\": \"Sorunun belirli bir ürününün rezervasyon durumu kontrol eder.\", \"quote\": \"\\nSELECT r.product_id, format('reservation %s is %s with reserved=%s confirmed=%s cancelled=%s expired=%s',\\n                           r.id, r.status, c.reserved, c.confirmed, c.cancelled, c.expired) AS detail\\n                      FROM reservations r\\n                      JOIN stock_levels s ON s.product_id = r.product_id\\n                      CROSS JOIN LATERAL (\\n                           SELECT COUNT(*) FILTER (WHERE m.type = 'RESERVED') AS reserved,\\n                                  COUNT(*) FILTER (WHERE m.type = 'CONFIRMED') AS confirmed,\\n                                  COUNT(*) FILTER (WHERE m.type = 'CANCEL_RELEASED') AS cancelled,\\n                                  COUNT(*) FILTER (WHERE m.type = 'EXPIRY_RELEASED') AS expired\\n                             FROM stock_movements m WHERE m.reservation_id = r.id) c\\n                     WHERE $SCOPE AND (c.reserved <> 1\\n                                OR c.confirmed <> CASE WHEN r.status = 'CONFIRMED' THEN 1 ELSE 0 END\\n                                OR c.cancelled <> CASE WHEN r.status"
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "116-124",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Bir rezervasyon iptali işlemi gerçekleştirir.",
+   "quote": "\n            case PENDING, EXPIRED -> new ApiException(ErrorCode.RESERVATION_EXPIRED, \"This reservation has expired.\");\n        ",
+   "relevant": true,
+   "statement": "Bu kod bloğu bir rezervasyon iptali durumunu belirler ve uygun hata kodu oluşturur."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationStatus.java",
+  "lines": "3-9",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Belirtir hangi durum.enum için geçerli olan statüler.",
+   "quote": "/** PENDING is the only state with outgoing transitions; every other state is final. /**",
+   "relevant": true,
+   "statement": "Bu kod, `ReservationStatus` enum için geçerli olan statüleri tanımlar ve sadece `PENDING` durumu diğer durumlarla ilgili giden geçişler içerir."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "92-100",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "İptal işlemi yaparken kaynak verilerini boşaltır.",
+   "quote": "@Transactional\\npublic Reservation cancel(Actor actor, UUID id) {\\n    Reservation current = loadVisible(actor, id);\\n    settle(id, ReservationStatus.CANCELLED);\\n    ledger.releaseReserved(current.getProductId(), current.getQuantity(), id, actor.userId(), MovementType.CANCEL_RELEASED);\\n    audit.record(AuditEventType.RESERVATION_CANCELLED, actor.userId(), \"RESERVATION\", id, Map.of(\"productId\", current.getProductId(), \"quantity\", current.getQuantity()));\\n    return reservations.findById(id).orElseThrow();}",
+   "relevant": true,
+   "statement": "`ReservationTransactions.cancel` metodu, belirtilen `id` değerine sahip bir iptal işlemi gerçekleştirir ve bu işlem için kaynak verilerini boşaltır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-ticket",
+  "label": "gold",
+  "path": "apps/collab/src/ticket.ts",
+  "lines": "10-40",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\n  \"code_does\": \"Bu fonksiyon, API tarafından üretilen bir işbirliği tiketinin doğrulanmasını sağlar ve bu tikete ait kimlik bilgilerini döndürür.\",\n  \"quote\": \"\\n    let claims: jwt.JwtPayload & Partial<CollabTicketClaims>;\\n    try {\\n      claims = jwt.verify(token, secret, {\\n        algorithms: ['HS256'],\\n        audience: COLLAB_TICKET_AUDIENCE,\\n        issuer: COLLAB_TICKET_ISSUER,\\n      }) as jwt.JwtPayload & Partial<CollabTicketClaims>;\\n    } catch (err) {\\n      throw new TicketError(`invalid ticket: ${(err as Error).message}`);\\n    }\\n  \",\n  \"relevant\": true,\n  \"statement\": \"Bu kod, API tarafından üretilen bir işbirliği tiketinin doğrulanmasını sağlar ve bu tikete ait kimlik bilgilerini döndürür. Tiketin `sub` ve `nid` alanlarının doğru olup olmadığını kontrol eder ve belirli bir dosyaya a"
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "46-60",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\n  \"code_does\": \"Bu kod, WebSocket bağlantısının kimlik doğrulama bileti oluşturulması ve doğrulanması için işlemler içerir.\",\n  \"quote\": \"\\\\[handshake\\\\]: API tarafından verilen ticketi doğrular ve ardından PostgreSQL'den rolü okur \\\\n- Görüntülü kullanıcılar sadece okuma yetkisi ile bağlantıyı alır: Hocuspocus, server tarafında sync güncellemelerini yankılar \\\\n- Her gelen mesajın (TTL-cache edilmiş) rolünü tekrar kontrol etmek için işlem yapılır, bu da revokasyonu doğrulamaya uygulanır, örneğin push olayı kaybolursa bile \\\\n- API tarafından gelmesi gereken üyelik olaylarını canlı bağlantılar üzerinde doğrudan uygular: silinmiş → bağlantıyı kapalı olarak belirtir; rol değiştirilirse → okunabilirlik etiketi yerine geçer\\\\]\",\n  \"relevant\": true,\n  \"statement\": \"Bu kod, WebSocket bağlantısının kimlik doğrulama bileti oluşturulması"
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "apps/api/src/notes/notes.controller.ts",
+  "lines": "92-102",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Üretilen kimlik doğrulama bileti WebSocket bağlantısı için kullanılır ve doğrulanır.",
+   "quote": "@RequireNoteRole('VIEWER')",
+   "relevant": true,
+   "statement": "Bu kod parçası, `@RequireNoteRole('VIEWER')` etiketiyle işaretlenmiş `requireNoteRole` izin gereksinişini tanımlar ve WebSocket bağlantısı için VIEWER rolüne sahip kullanıcıların bileti oluşturmasını sağlar. Ayrıca, `CollabTicketService` tarafından kullanılan `issue` metodu ile bileti doğrulanır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "packages/shared/src/collab.ts",
+  "lines": "7-15",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu kod parçası WebSocket bağlantısı için kullanılan kısa süreli ve belge alanında emin olunan biletin claims içerir.",
+   "quote": "\"sub\": \"string\",\n\"nid\": \"string\",\n\"name\": \"string\"",
+   "relevant": true,
+   "statement": "Bu kod, WebSocket bağlantısının başlatılmasında API tarafından üretilen kısa süreli ve belge alanında emin olunan biletin içerdiği claimsi tanımlar. Bu claims, kullanıcı ID, notun (Hocuspocus belgesinin adı) ve display name içerebilir."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-ticket",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "124-147",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\n  \"code_does\": \"Bu kod, bir WebSocket bağlantısı için belirli bir belge doğrulanırken ve uygun rolleri belirlerken kullanılır.\",\n  \"quote\": \"\\\\[async onAuthenticate\\\\(\\\\{\\\\n    token:\\\\n      \\\\\\\"abc123\\\\\\\"\\\\\\\\n    documentName:\\\\n      \\\\\\\"collab-document.txt\\\\\\\"\\\\\\\\n    connectionConfig:\\\\n      { readOnly: true }\\\\\\\\n  \\\\}\\\\): Promise<CollabContext>\\\\]{,\\\\nlet claims;\\\\ntry {\\\\n  claims = verifyTicket(token, this.options.ticketSecret, documentName);\\\\n} catch (err) {\\\\n  this.options.logger.info('rejected collaboration handshake', {\\\\n    documentName:\\\\n      \\\\\\\"collab-document.txt\\\\\\\"\\\\\\\\n    reason:\\\\n      err instanceof TicketError ? err.message : 'unknown'\\\\\\\\n  });\\\\n  throw new CollabAccessError('invalid-ticket');\\\\n}\\\\nconst role = await this.options.permissions.getRole(claims.sub, documentName, { fresh: true });\\\\nif (!role) throw new CollabAccessError('not-a-member');\\\\"
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/resources/application.yml",
+  "lines": "4-14",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Ayarlar dosyasında hikari kilit zamanını ve otomatik oturum sonlandırma süresini ayarlıyor.",
+   "quote": "\\[connection-init-sql\\]: \\\"SET lock_timeout = '3s'; SET idle_in_transaction_session_timeout = '30s'\\\"",
+   "relevant": true,
+   "statement": "Bu kod, Spring DataSource ayar dosyasında hikari kilit zamanını ve otomatik oturum sonlandırma süresini '3 saniye' ve '30 saniye' olarak ayarlıyor."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-lock-order",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "17-30",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Belirtir ki, kilitlerin hangi sırayla alınması, otomasyonun kilitleme ve açma işlemlerini engelleyecek şekilde tasarlandığı.",
+   "quote": "\n    * the same lock order, reservation row first and stock row second,\n",
+   "relevant": true,
+   "statement": "Bu kod parçası otomasyonun kilitleme ve açma işlemlerini nasıl düzenleyeceğini belirtir. Kilitlerin ilk olarak resepsiyon satırını, sonra stok satırını kullanması gerekmektedir. Bu sıralamaya dayanarak, bu işlem öncelikli kilitleme ile otomatik çakışma (deadlock) engellenmiş olacak."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+  "lines": "1-22",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\n  \"code_does\": \"Tüm kilitlerin sıralaması, her bir ürün için işlevsellik sırasına uygun olarak oluşturulur.\", \n  \"quote\": \"-- Ürün başına işlevsellik sırasına göre kilitlerin sıralaması. Her satırın stok satırını kilitleme sırasında eklendiğinden, \"\n           \t\t\t\t\t\t\t\t\t                                                                                                  \n          \t\t\t\t\t\t\t\t\t                                                                                                  \n          \t\t\t\t\t\t\t\t\t                                                                                                  \n          \t\t\t\t\t\t\t\t\t                                                                                                  \n          \t\t\t\t\t\t\t\t\t                                                                                                  \n"
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+  "lines": "16-25",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Belirli bir sırayla kilitlerin alındığı belirtildi.",
+   "quote": "\n    * The retry boundary. It sits deliberately outside the transaction: PostgreSQL aborts the whole transaction\n    * when a deadlock or lock timeout hits it, so only a brand new transaction can try again.\n    ",
+   "relevant": true,
+   "statement": "Bu kod parçası kilitlerin alındığı sırayı belirtir ve PostgreSQL, çatışma veya kilit zaman aşımına uğradığında toplam transaktionu iptal eder. Bu durum, istekteki işlemi etkilemez; işsizliklere de uymaz."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-lock-order",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+  "lines": "14-48",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Release reserved stock items based on sorted product IDs.",
+   "quote": "\\ledger.releaseReserved(\\reservation.getProductId(), \\reservation.getQuantity(), \\reservation.getId(), null, MovementType.EXPIRY_RELEASED);",
+   "relevant": true,
+   "statement": "`expireDueBatch` method releases reserved stock items in a fixed order of product IDs to prevent deadlocks."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "89-96",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Bu kod, JWT tokenin nasıl oluşturulduğunu ve imzalanacağını açıklar.",
+   "quote": "@Bean\nJwtDecoder jwtDecoder(StockGuardProperties properties) {\n    NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(signingKey(properties))\n        .macAlgorithm(MacAlgorithm.HS256)\n        .build();\n    decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(JwtTokenService.ISSUER));\n    return decoder;\n}",
+   "relevant": true,
+   "statement": "Bu kod, JWT tokenin oluşturulması ve imzalanması için `NimbusJwtDecoder` sınıfını kullanır. `signingKey(properties)` fonksiyonu ile bir anahtar oluşturur ve `MacAlgorithm.HS256` ile imza oluşturur. Ayrıca, `JwtValidators.createDefaultWithIssuer(JwtTokenService.ISSUER)` fonksiyonunu kullanarak tokenin imzalanması için bir imza doğrulayıcısı ayarlar."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+  "lines": "15-47",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "JWT token oluşturur ve imzalar.",
+   "quote": "JwtClaimsSet claims = JwtClaimsSet.builder().issuer(ISSUER).subject(userId.toString()).issuedAt(now).expiresAt(expiresAt).claim(\"username\", username).claim(ROLE_CLAIM, role.name()).build();",
+   "relevant": true,
+   "statement": "Bu kod, `issue` metodu ile JWT token oluşturur ve imzalar. Issuer claim'ı, userId claim'ı, username claim'ı ve rol claim'ı eklenir ve sonra JwtEncoder kullanılarak token oluşturulur ve imzalanır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "75-82",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Bu kod, JWT yetkililerini dönüştürmek için bir JwtAuthenticationConverter nesnesi oluşturur ve JwtGrantedAuthoritiesConverter sınıfını kullanır.",
+   "quote": "JwtGrantedAuthoritiesConverter authorities = new JwtGrantedAuthoritiesConverter();",
+   "relevant": true,
+   "statement": "Kod, JWT yetkililerini (rol) dönüştürmek için bir JwtAuthenticationConverter nesnesi oluşturur ve JwtGrantedAuthoritiesConverter sınıfını kullanır. Bu sınıf, JWT verisindeki yetkilileri (rol) olarak kabul eder."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/resources/application.yml",
+  "lines": "54-60",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Belirtilen JWT token oluşturulur ve imzalanır.",
+   "quote": "`jwt-secret` değeri, `STOCKGUARD_JWT_SECRET` env değişkenine göre belirlenir.",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "84-87",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu kod, JWT tokenin oluşturulması ve imzalanması için bir JwtEncoder nesnesi oluşturur.",
+   "quote": "@Bean\\nJwtEncoder jwtEncoder(StockGuardProperties properties) {\\n    return new NimbusJwtEncoder(new ImmutableSecret<>(signingKey(properties)));}",
+   "relevant": true,
+   "statement": "`SecurityConfig.jwtEncoder` metodu, `NimbusJwtEncoder` sınıfının bir nesnesi oluşturur ve bu nesne, belirtilen JWT tokenin imzalanması için kullanılan `ImmutableSecret` nesnesinin değeri ile oluşturulur."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/user/AuthService.java",
+  "lines": "34-45",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "JWT token oluşturulur ve imzalanır.",
+   "quote": "JwtTokenService.createAndSignToken(user, jwtSecret);",
+   "relevant": true,
+   "statement": "`JwtTokenService.createAndSignToken` metodu, belirli bir kullanıcı için JWT token oluşturur ve tokeni belirtilen `jwtSecret` imzasıyla imzalar."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-csrf",
+  "label": "gold",
+  "path": "apps/api/src/common/guards/csrf.guard.ts",
+  "lines": "14-32",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "CsrfGuard sınıfı, herhangi bir durumu değiştiren istekte Double-submit-cookie CSRF korumasını uygular.",
+   "quote": "\\[\\]",
+   "relevant": true,
+   "statement": "`CsrfGuard.canActivate` metodunu çağırarak her HTTP isteği kontrol eder ve csrfTokensMatch metodu ile isteklerin CSRF token'larını doğrular. Eğer CSRF token'ı doğru değil veya mevcut değilse ForbiddenException fırlatılır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/api/src/auth/auth.controller.ts",
+  "lines": "33-43",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Geriye doğru CSRF (Cross-Site Request Forgery) etiketini üretir veya tekrar kullanır.",
+   "quote": "@Get('csrf') csrf(@Req() req: Request, @Res({ passthrough: true }) res: Response): { csrfToken: string }",
+   "relevant": true,
+   "statement": "`AuthController.csrf` fonksiyonu bir CSRF etiketi üretir veya tekrar kullanır ve bu etiket, istekte csrf parametreleriyle birlikte gönderildiğinde, belirli bir işlemi gerçekleştirmeyi engelleyecek."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/api/src/common/cookies.ts",
+  "lines": "45-48",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "A CSRF koruma kıssasını ayarlar ve Response objesine csrf cookie ekler.",
+   "quote": "res.cookie(COOKIE_CSRF, token, { ...base(config), httpOnly: false });",
+   "relevant": true,
+   "statement": "`setCsrfCookie` fonksiyonu CSRF koruması için bir CSRF cookie oluşturur ve Response objesine ekler. Bu cookie, SPA tarafından okunabilir olmasına rağmen HttpOnly özelliği yoktur."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/web/src/lib/api.ts",
+  "lines": "28-32",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Belirli bir CSRF (Cross-Site Request Forgery) cookie veya başlık için kontrol yapar.",
+   "quote": "\"CSRF_COOKIE\": \"sn_csrf\", \"CSRF_HEADER\": \"x-csrf-token\",",
+   "relevant": true,
+   "statement": "`CSRF_COOKIE` ve `CSRF_HEADER` tanımları CSRF koruması uygulamasını ayarlarken kullanılır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-csrf",
+  "label": "gold",
+  "path": "apps/api/src/common/guards/csrf.guard.ts",
+  "lines": "8-12",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Sınıf csrfTokensMatch, belirtilen cookie ve başlık değerlerinin uyumunu kontrol eder.",
+   "quote": "\\`if (typeof cookieValue !== 'string' || typeof headerValue !== 'string') return false;\\`",
+   "relevant": true,
+   "statement": "`csrfTokensMatch` fonksiyonu, gelen cookie ve başlık değerlerinin doğru bir string olup olmadığını kontrol eder. Eğer bu durum sağlanmazsa, fonksiyon false döndürür."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-revocation",
+  "label": "gold",
+  "path": "apps/api/src/notes/members.service.ts",
+  "lines": "91-98",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Kesinleştirilen bir notun sahibi olma yetkimizden kaldırılır.",
+   "quote": "// Open WebSocket sessions of this user are closed by every collaboration server.",
+   "relevant": true,
+   "statement": "Bu kod, belirtilen notun sahibi olan kullanıcının WebSocket oturumunu kapatır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "apps/api/src/redis/access-events.publisher.ts",
+  "lines": "9-21",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Redis bağlantısını kapatırken, Redis üzerinden yayınlanan üyelik değişikliklerini yayınlama işlemi 1 saniye sonra iptal edilir ve bu durum, Redis bağlıken olduğu gibi devam eder.",
+   "quote": "\\(redis.disconnect();\\)",
+   "relevant": true,
+   "statement": "`AccessEventsPublisher` sınıfı Redis bağlantısını kapatırken Redis üzerinden yayınlanan üyelik değişikliklerini yayınlama işlemi iptal etmek üzere kullanılır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "packages/shared/src/access-events.ts",
+  "lines": "3-8",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Görevi gerçekleştiren API kanalını paylaşır pub/sub kullanarak açık WebSocket bağlantılarda üyelik değişikliklerini yayınlıyor.",
+   "quote": "\nexport const ACCESS_EVENTS_CHANNEL = 'syncnotes:access-events';\n",
+   "relevant": false,
+   "statement": "Bu kod, API'nin açık WebSocket bağlantılarda üyelik değişikliklerini paylaşır pub/sub kanalıyla paylaşmayı sağlıyor. Ancak, bu kod yalnızca API'nin hangi kanalı kullanacağını belirtiyor ve hangi bağlantılar katılma değişiklikleri etkileyebileceğini açıklıyor."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "46-60",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Etkinleştirilmiş bir WebSocket oturumunda bir üyenin erişimi kaldırılınca, Hocuspocus nesnesi tarafından sync güncellemelerinin server tarafında yollaşılması durumu kontrol edilir ve uygun durumlarda hata oluşabilir.",
+   "quote": "Hocuspocus.checkRole(role);",
+   "relevant": true,
+   "statement": "Bu kod, WebSocket oturumunda bir üyenin erişimi kaldırıldığında Hocuspocus nesnesi tarafından sync güncellemelerinin server tarafında yollaşılması durumu kontrol eder ve uygun durumlarda hata oluşabilir."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "43-60",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Handles repeated reservation requests with the same Idempotency-Key and body by replaying an earlier request instead of creating a new one.",
+   "quote": "@PostMapping\n@Operation(operationId = \"createReservation\",\nsummary = \"Hold stock for a limited time\", \ndescription = \"\nRetrying with the same `Idempotency-Key` and the same body returns the original reservation instead of creating another one. A failed attempt holds nothing and does not use up the key.\",\n)",
+   "relevant": true,
+   "statement": "`create` method checks for a matching request based on Idempotency-Key and body. If found, it replays the earlier request without creating a new reservation."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-idempotency",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "72-80",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Kontrol eder ve tekrarlanan isteklerle ilgili bir hata oluşturur.",
+   "quote": "if (!original.getRequestHash().equals(fingerprint)) {",
+   "relevant": true,
+   "statement": "Bu kod, `replay` metodunda idempotensel anahtar ile tekrarlanan istekleri kontrol eder ve farklı isteklerle kullanılan bir hata oluşturur."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V3__reservations.sql",
+  "lines": "1-18",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Sınıfı oluşturur ve idempotans anahtarıyla tekrar eden rezervasyon isteklerini kontrol etmek için uygun kurallara sahiptir.",
+   "quote": "CONSTRAINT uq_reservations_user_idempotency_key UNIQUE (user_id, idempotency_key),\nCONSTRAINT ck_reservations_quantity_positive CHECK (quantity > 0),\nCONSTRAINT ck_reservations_status CHECK (status IN ('PENDING', 'CONFIRMED', 'CANCELLED', 'EXPIRED')),",
+   "relevant": true,
+   "statement": "Bu sorgu, PostgreSQL tarafından desteklenen idempotans anahtarıyla tekrar eden rezervasyon isteklerini kontrol etmek için uygulanan kurallara sahiptir. `CONSTRAINT uq_reservations_user_idempotency_key UNIQUE (user_id, idempotency_key)` sorgusu, aynı kullanıcı ve idempotans anahtarıyla birden fazla rezervasyon isteği oluşturmak için engellemek için kullanılır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-idempotency",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "29-52",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\n  \"code_does\": \"Bu kod, belirli bir anahtarın tekrar edilmesini önler ve bu anahtara dayalı bir rezervasyon oluşturur. Eğer başka bir işlem aynı anahtarı kullanmışsa, PostgreSQL bloklayıp bu işlemin bitene kadar bekler. Eğer ona commit etmişse, bu 0 (tekrarlanmış) döner. Eğer rollback etmişse, bu insert sadece devam eder. Bu, kontraktlu tekrarlı duplicates'ı tek bir logiksel işlem olarak dönüştürür.\",\n  \"quote\": \"@Modifying\\n@Transactional(propagation = Propagation.MANDATORY)\\n@Query(nativeQuery = true, value = \\\"INSERT INTO reservations\\\\n    (id, product_id, user_id, quantity, status, idempotency_key, request_hash, expires_at, created_at)\\\\nVALUES\\\\n    (:id, :productId, :userId, :quantity, 'PENDING', :idempotencyKey, :requestHash, now() + make_interval(secs => :ttlSeconds), now())\\\\nON CONFLICT (user_id"
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "61-68",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Kullanıcıdan gelen isteklerin tekrar edenleri için idempotent key kullanılarak ele alınır.",
+   "quote": "if (outcome.replayed()) {",
+   "relevant": true,
+   "statement": "`ReservationController.create` fonksiyonu, `replayed()` özelliği olan tekrar edilen istekler için `idempotencyKey` kullanarak işlemi yeniden yapılandırır."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-version-restore",
+  "label": "gold",
+  "path": "apps/collab/src/versions.ts",
+  "lines": "46-64",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Güncellenmiş sürümü eski sürümüne geri döndürür.",
+   "quote": "\\[versionId\\] = this.prisma.noteVersion.findFirst\\({\\n  where: { id: \\\"\\\" + versionId + \\\"\\\", noteId },\\n  select: { state: true, label: true, createdAt: true },\\n});",
+   "relevant": true,
+   "statement": "`restore` metodu, belirtilen `noteId` ve `versionId` değerlerine göre eski sürümü güncel sürümüne geri döndürür. Bu işlem, önceki durumu kaydederek restore işlemini mümkün kılar."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+  "lines": "134-135",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "-- AddForeignKey komutuyla bir notun eski sürümüne yabancı anahtar ekleniyor.",
+   "quote": "-- AddForeignKey\nALTER TABLE `note_versions` ADD CONSTRAINT `note_versions_note_id_fkey` FOREIGN KEY (`note_id`) REFERENCES `notes`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;\n",
+   "relevant": true,
+   "statement": "Yukarıdaki komut, bir notun eski sürümüne yabancı anahtar ekler. Bu, `note_versions` tablosundaki `note_id` sütunu, `notes` tablosundaki aynı isimli sütuna bağlanır ve veri silindikten sonra güncellenir."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+  "lines": "75-87",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Geri döndürülen bir notun eski sürümünü oluşturur.",
+   "quote": "-- CreateTable\nCREATE TABLE `note_versions` (\n    `id` UUID NOT NULL,\n    `note_id` UUID NOT NULL,\n    `kind` \"VersionKind\" NOT NULL DEFAULT 'MANUAL',\n    `label` TEXT,\n    `state` BYTEA NOT NULL,\n    `size_bytes` INTEGER NOT NULL,\n    `created_by_id` UUID,\n    `created_at` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n\n    CONSTRAINT `note_versions_pkey` PRIMARY KEY (`id`)\\n);",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "apps/api/src/notes/versions.service.ts",
+  "lines": "32-48",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Geri yükleme sürümünü alır ve belirli bir notun içindeki bilgileri içerir.",
+   "quote": "\\`const v = await this.prisma.db.noteVersion.findFirst\\({\\n  where: { id: versionId, noteId },\\n  include: { createdBy: { select: { id: true, name: true } } },\\n});\\`",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "85-90",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\n  \"code_does\": \"Geri alır ve onay e-postasını gönderir bir rezerwasyonu.\", \n  \"quote\": \"@PostMapping \\\"/{id}/confirm\\\" @Operation(operationId = \\\\\\\"confirmReservation\\\\\\\", summary = \\\\\\\"Confirm a reservation: the held units leave the stock\\\\\\\") @ApiResponse(responseCode = \\\\\\\"409\\\\\\\", description = \\\\\\\"RESERVATION_EXPIRED or RESERVATION_ALREADY_SETTLED\\\\\\\") public ReservationResponse confirm(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) { return ReservationResponse.from(reservations.confirm(Actor.from(jwt), id)); }\",\n  \"relevant\": true,\n  \"statement\": \"Bu kod, `confirm` metodu ile bir rezerwasyonu onaylamak için kullanılır. Metodunuzda, `reservations.confirm` fonksiyonu Actor'ın (`jwt`) izniyle belirtilen `id` değerine sahip bir rezerwasyonu onaylar ve bu işlemi gerçekleştiren `ReservationResponse.from(reservations.confirm(Actor.from(jwt), id))` kod satırı, e-posta gönderimi için gere"
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "39-41",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu kod satırı bir reservasyon kontroller sınıfının yapısını tanımlar.",
+   "quote": "",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "105-126",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Gönderir bir rezervasyon onay e-postası.",
+   "quote": "",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "apps/web/scripts/screenshots.ts",
+  "lines": "35-78",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu kod, bir sayfanın ekran görüntüsünü kaydediyor.",
+   "quote": "\\[ada.screenshot\\({ path: path.join\\(OUT, 'dashboard-empty.png'\\) \\});\\]",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+  "lines": "1-6",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Kullanıcıyı bir not üzerinde en fazla bir kez sahibi olarak tanımlar.",
+   "quote": "-- Invariant: every note has at most one OWNER membership.\n-- Enforced by the database (partial unique index) rather than only by application code,\n-- so a race between two concurrent \"share\" requests can never produce two owners.",
+   "relevant": true,
+   "statement": "`note_members_one_owner_per_note` sorgusu, bir not üzerindeki sahibi rolü için en fazla bir kez eşsiz bir indeks oluşturur. Bu, iki simultaneous `share` talebi arasındaki çatışma durumunda ikili sahibi oluşturmak mümkün olmaz."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "apps/web/src/pages/auth-pages.tsx",
+  "lines": "198-242",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Giriş yapma formunu oluşturur ve onu bir form içinde döndürür.",
+   "quote": "<form onSubmit\\={onSubmit} className\\=\"space-y-4\" noValidate>",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/Reservation.java",
+  "lines": "54-91",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Metod, müşteri iadelerinin durumu ve tarihlerini döndürür.",
+   "quote": "public ReservationStatus getStatus() {\n\treturn status;\n}",
+   "relevant": false,
+   "statement": "Bu kod, `Reservation` sınıfının `getStatus()` metodu ile ilgili. Bu metod, müşteri iadelerinin durumu (`status`) döndürür."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "61-87",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Görevi geri alır ve ürünün stokuna geri gönderir.",
+   "quote": "\nledger.release(order.items());\n",
+   "relevant": false,
+   "statement": "Bu kod satıcıdan alınan ürünlerin stokuna geri gönderilmesini sağlar. Ancak, bu kod satıcı iade sürecinin tamamını yapmaz."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "105-126",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Veritabanından bir sipariş response nesnesi oluşturur.",
+   "quote": "\nReservationResponse from(Reservation reservation);\n",
+   "relevant": true,
+   "statement": "`ReservationController.ReservationResponse.from` fonksiyonu veritabanından alınan bir `Reservation` nesnesini bir `ReservationResponse` nesne olarak dönüştürür."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "47-48",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Belirtir bir ürünün nasıl oluşturulduğu.",
+   "quote": "protected Product();",
+   "relevant": false,
+   "statement": "Bu kod satırı, `Product` sınıfının nasıl oluşturulacağını belirtiyor."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+  "lines": "43-46",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Sınıfın yapısını tanımlıyor.",
+   "quote": "ProductController(ProductService products, InventoryService inventory) {",
+   "relevant": false,
+   "statement": "Bu kod parçası `ProductController` sınıfının oluşturulduğu yapısal bir açıklamasını içeriyor."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "50-54",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu kısım bir ürünün SKU, adı ve açıklamasını tanımlar.",
+   "quote": "this.sku = sku;\nthis.name = name;\nthis.description = description;",
+   "relevant": false,
+   "statement": "Aşağıdaki kod, `Product` sınıfının yapısı hakkında bilgi verir. Ürünlerin SKU, adı ve açıklamasını tanımlar ancak ürün görsellerinin nasıl saklandığına ilgili değildir."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/src/pages/dashboard-page.tsx",
+  "lines": "146-178",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Gönderen metin yok. Code does not contain instructions for sending push notifications to mobile devices.",
+   "quote": "",
+   "relevant": false,
+   "statement": "Metin, mobil cihazlara anlık bildirim gönderimi konusunda hiçbir bilgi içermedi."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/scripts/screenshots.ts",
+  "lines": "109-128",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Yeni bir mobil cihaz bağlama ve oturum açma işlemlerini gerçekleştirir.",
+   "quote": "const mobile = await browser.newContext({\\n    viewport: { width: 390, height: 844 },\\n    colorScheme: 'dark',\\n    deviceScaleFactor: 2,\\n});",
+   "relevant": true,
+   "statement": "`browser.newContext` ve `newPage` fonksiyonları yeni bir mobil cihaz bağlamasını oluştururken ve oturum açma sayfasına gidir. Bu kod bloğu mobil cihazlara anlık bildirim göndermek için gereklilikleri içeriyor."
+  }
+ },
+ {
+  "variant": "v2-reason",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/src/pages/dashboard-page.tsx",
+  "lines": "180-199",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Görevi gerçekleştirmek için bir Dialog kontrolüdür ve mobil cihazlarda açık durumda olan bir navigasyon menüsüne sahiptir.",
+   "quote": "<DialogPrimitive.Root open=`mobileNav` onOpenChange={`setMobileNav`}>",
+   "relevant": false,
+   "statement": "`<DialogPrimitive.Root>` kontrolü, mobil cihazlarda açık durumda olan bir navigasyon menüsüne sahiptir."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+  "lines": "14-27",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Defines a table for stock levels with constraints to prevent overselling.",
+   "quote": "-- The database itself refuses overselling, even if application code is wrong.\nCONSTRAINT ck_stock_available_non_negative CHECK (available_quantity >= 0),\nCONSTRAINT ck_stock_reserved_non_negative  CHECK (reserved_quantity >= 0),\nCONSTRAINT ck_stock_total_is_sum           CHECK (total_quantity = available_quantity + reserved_quantity)\n",
+   "relevant": true,
+   "statement": "The SQL code defines a table `stock_levels` with constraints to ensure that the `available_quantity` and `reserved_quantity` columns are non-negative and that their sum equals the `total_quantity`. This prevents overselling by enforcing these rules directly in the database schema."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "54-68",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Modifiye edilen sorgu, belirli bir id ve status koşullarına göre veritabanında güncellenir.",
+   "quote": "@Query(nativeQuery = true, value = \"UPDATE reservations\\nSET status = :target, settled_at = now()\\nWHERE id = :id\\nAND status = 'PENDING'\\nAND expires_at > now()\"),",
+   "relevant": false,
+   "statement": "Bu kod, belirli bir id ve statü koşullarına göre veritabanında `reservations` tablosunda `status` sütunu güncellemektedir. Bu işlem, `PENDING` durumda olan ve `expires_at` zaman aşımından sonra gelen istekler için kullanılır."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-oversell",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+  "lines": "50-61",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Güncelleme sorgusu ile stok kalmamış olup olmadığını kontrol eder ve uygunsa, istenen miktarı satılık olarak günceller.",
+   "quote": "@Transactional(propagation = Propagation.MANDATORY), @Query(nativeQuery = true, value = \"UPDATE stock_levels\\nSET available_quantity = available_quantity - :quantity,\\nreserved_quantity = reserved_quantity + :quantity,\\nupdated_at = now()\\nWHERE product_id = :productId\\nAND available_quantity >= :quantity\\nRETURNING total_quantity AS \\\"total\\\", available_quantity AS \\\"available\\\", reserved_quantity AS \\\"reserved\\\"\")",
+   "relevant": true,
+   "statement": "Bu kod, istek sırasında stok kalmamış olup olmadığını kontrol eder ve uygunsa satılık stok miktarını artırır."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-oversell",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "29-52",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "İdempotent anahtarın kullanılmasını claim eder ve aynı anda gelen isteklerde fazla satış durumunu önler.",
+   "quote": "@Transactional(propagation = Propagation.MANDATORY), @Query(nativeQuery = true, value = \"",
+   "relevant": true,
+   "statement": "Bu kod, aynı anda gelen isteklerde idempotent anahtarın kullanılmasını kontrol eder ve böylece fazla satış durumunu önler. Eğer başka bir işlem aynı anahtarı kullanmışsa, PostgreSQL bloklayarak bu işlemin tamamlanması beklenir."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "apps/web/src/collab/connection.ts",
+  "lines": "28-56",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\n  \"code_does\": \"Veritabanına değişiklikleri kaydetmek için bir sunucu çağrısını içerir ve aynı notun kaybolmasını önler.\",\n  \"quote\": \"\\\\[function\\\\] \\\\(phase, unsyncedChanges\\\\) {\\\\n\\\\tconst pending = unsyncedChanges === 1 ? '1 change' : `${unsyncedChanges} changes`;\\\\n\\\\tswitch (phase) {\\\\n\\\\t\\\\tcase 'offline':\\\\n\\\\t\\\\t\\\\treturn {\\\\n\\\\t\\\\t\\\\tlabel: 'Offline',\\\\n\\\\t\\\\t\\\\tdetail: unsyncedChanges > 0 ? `${pending} saved on this device — they will sync when you reconnect.` : `You can keep editing; changes are saved on this device`,\\\\t\\\\t\\\\ttone: 'warn',\\\\t\\\\t};\\\\n\\\\t\\\\tcase 'reconnecting':\\\\n\\\\t\\\\t\\\\treturn {\\\\n\\\\t\\\\t\\\\tlabel: 'Reconnecting…',\\\\n\\\\t\\\\t\\\\tdetail: `Connection lost. Your edits are kept locally and will merge"
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+  "lines": "1-6",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "It creates a unique index to ensure that each note has at most one OWNER membership.",
+   "quote": "-- Invariant: every note has at most one OWNER membership.\n-- Enforced by the database (partial unique index) rather than only by application code,\n-- so a race between two concurrent \"share\" requests can never produce two owners.\nCREATE UNIQUE INDEX `note_members_one_owner_per_note` ON `note_members` (`note_id`) WHERE `role` = 'OWNER';",
+   "relevant": true,
+   "statement": "The SQL code creates a unique index to prevent multiple concurrent requests from assigning the same OWNER role to a note."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-lost-updates",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/persistence.ts",
+  "lines": "20-31",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Güncelleme güncellemelerini yürütmeyi önler.",
+   "quote": "\n    const persistedState = await this.persistence.readNoteYdocState(noteId);\n    const mergedState = this.document.merge(persistedState, update);\n    await this.persistence.writeNoteYdocState(noteId, mergedState);\n",
+   "relevant": true,
+   "statement": "Bu kod, notun Yjs durumu güncellenmesini önler. İki sunucu aynı notu kaydederken güncellemelerin kaybolması için bu kod, notun Yjs durumunu live dokümanda birleştirir ve yeniden yazır."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-lost-updates",
+  "label": "other",
+  "path": "docker-compose.yml",
+  "lines": "1-1",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Configures a service to synchronize notes between two servers.",
+   "quote": "\"syncnotes\": {",
+   "relevant": true,
+   "statement": "`syncnotes` configuration ensures that updates are saved on both servers and prevents duplicate entries by comparing and merging changes from each server."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "apps/collab/src/server.ts",
+  "lines": "33-64",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Creates a Redis extension and an AccessControlExtension, setting up their configurations.",
+   "quote": "\\`const redis = new ResilientRedisExtension\\({\\n\\tredisUrl: config.REDIS_URL,\\n\\tidentifier: config.INSTANCE_NAME,\\n\\tlrger,\\n});\\`",
+   "relevant": true,
+   "statement": "Bu kod, Redis sunucusunu korumak için `ResilientRedisExtension` sınıfını oluşturur ve `AccessControlExtension` sınıfının yapılandırmasını ayarlar. Bu, Redis bağlantısız kalmış durumu devam ettirmek için gereklidir."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "apps/api/src/redis/access-events.publisher.ts",
+  "lines": "9-21",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Publishes membership changes to WebSocket sessions, even if Redis is unavailable.",
+   "quote": "\n  @Injectable()\n  export class AccessEventsPublisher implements OnModuleDestroy {\n    private readonly logger = new Logger(AccessEventsPublisher.name);\n    private readonly redis: Redis;\n    private static readonly PUBLISH_TIMEOUT_MS = 1000;\n\n",
+   "relevant": true,
+   "statement": "Kredisunun kullanılabilmesi durumunda, bu kod WebSocket sesi üzerinde üyelik değişikliklerini yayınlarken işbirliği sunucusu Redis'un kullanılması durumunda da devam eder."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-redis-outage",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/resilient-redis.ts",
+  "lines": "32-52",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Handles Redis outage by deferring document loads and publishes, re-announcing state vectors on reconnect.",
+   "quote": "`deferred.add(doc.id);`, `publish(doc.stateVector)`, `doc.reannounceStateVector()`,",
+   "relevant": true,
+   "statement": "When Redis is cut off (`lockTimeout: 0`), the extension defers document loads and publishes. On reconnect, it re-announces state vectors for all open documents to ensure peers exchange only missed updates."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-redis-outage",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+  "lines": "19-37",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Yeni bir zamanlayıcı oluşturur ve belirlenen bir aralıklarla otomatik olarak çalıştırılır.",
+   "quote": "\n    this.timer = setInterval(this.run.bind(this), intervalMs);\n",
+   "relevant": true,
+   "statement": "Bu kod, `intervalMs` süresi içinde `run` metodunu çalıştırmak için bir zamanlayıcı oluşturur ve başlatır. Eğer Redis bağlı değilse işbirliği sunucusu bu kodun etkisine tabidir."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-redis-outage",
+  "label": "other",
+  "path": "packages/shared/src/access-events.ts",
+  "lines": "3-8",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Defines a Redis channel for publishing API membership changes.",
+   "quote": "\nconst ACCESS_EVENTS_CHANNEL = 'syncnotes:access-events';\n",
+   "relevant": false,
+   "statement": "This code defines a Redis channel named `ACCESS_EVENTS_CHANNEL` with the value `'syncnotes:access-events'`. It does not mention anything about what happens when Redis is cut off and how the co-operation server continues to work."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "apps/web/src/collab/use-collaboration.ts",
+  "lines": "98-109",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Kontrol eder ve düzenleme yapma yetkisine sahip bir kullanıcıyı engeliyor.",
+   "quote": "\n    const persistence = canEdit(roleRef.current)\n      ? new IndexeddbPersistence(localReplicaName(user.id, noteId), doc)\n      : null;\n",
+   "relevant": true,
+   "statement": "`canEdit` fonksiyonu, `roleRef.current` içindeki rolün düzenleme yetkisine sahip olduğundan emin olur ve bu durumda `IndexeddbPersistence` oluşturulmaz."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "apps/web/src/components/share-dialog.tsx",
+  "lines": "33-62",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Görüntüleyici rolünde bir kullanıcının düzenleme yapmasını engeliyor.",
+   "quote": "<select\\naria-label=`Role of \\u0131ük\\u0131m ${member.name}`\\nclassName={selectClass}\\nvalue={member.role}\\ndisabled={update.isPending}\\nonChange={(e) => update.mutate({ userId: member.userId, role: e.target.value as 'EDITOR' | 'VIEWER' })}\\/>",
+   "relevant": true,
+   "statement": "Bu kod parçası, görüntüleyici rolünde bir kullanıcının düzenleme yapmasını engeliyor. Eğer `member.role` değeri 'EDITOR' veya 'VIEWER' olursa, `update.mutate` fonksiyonu çağrılıyor ve bu durumda düzenleme yapma yetkisi sağlanır."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-viewer-readonly",
+  "label": "other",
+  "path": "packages/shared/src/roles.ts",
+  "lines": "20-22",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Returns true if the role is set to EDITOR.",
+   "quote": "return hasRole(role, `EDITOR`);",
+   "relevant": false,
+   "statement": "This function checks if the provided role is 'EDITOR'. If it is, the function returns true; otherwise, it returns false."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-viewer-readonly",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "209-217",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Görüntüleyici rolünün kullanıcıyı düzenleme yapma yetkisini etkiler.",
+   "quote": "\n    const readOnly = !canEdit(role);\n",
+   "relevant": true,
+   "statement": "`applyRole` fonksiyonu, `canEdit` fonksiyonunun geri çağrısından alınan `role` rolünün düzenleme yetkisini kontrol eder ve görüntüleyici rollerinde düzenleme yapma yetkisi etkilenir."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+  "lines": "42-45",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Bu kod, iptal işlemini gerçekleştirmek için `transactions.cancel` fonksiyonunu çağırır.",
+   "quote": "@Retryable(includes = PessimisticLockingFailureException.class, maxRetries = 2, delay = 50, jitter = 25, multiplier = 2)\npublic Reservation cancel(Actor actor, UUID id) {\n    return transactions.cancel(actor, id);\n}",
+   "relevant": true,
+   "statement": "`ReservationService.cancel` metodunda verilen `id` değerine göre iptal işlemini gerçekleştiren `transactions.cancel` fonksiyonunun çağrılması.`ReservationService.cancel` metodu, iptal işlemi yönetmektedir."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "92-97",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Handles the cancellation of a reservation.",
+   "quote": "@PostMapping(\"/{id}/cancel\")\n@Operation(operationId = \"cancelReservation\", summary = \"Cancel a reservation: the held units become available again\")",
+   "relevant": true,
+   "statement": "`ReservationController.cancel` handles the cancellation of reservations by calling `reservations.cancel`, which releases the held units back to stock."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+  "lines": "79-96",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\"code_does\": \"Geri sayım sırasında rezervasyonun ayarlanmış olup olmadığını kontrol eder.\", \"quote\": \"\\nSELECT r.product_id, format('reservation %s is %s with reserved=%s confirmed=%s cancelled=%s expired=%s',\\n               r.id, r.status, c.reserved, c.confirmed, c.cancelled, c.expired) AS detail\\n              FROM reservations r\\n              JOIN stock_levels s ON s.product_id = r.product_id\\n              CROSS JOIN LATERAL (\\n                   SELECT COUNT(*) FILTER (WHERE m.type = 'RESERVED') AS reserved,\\n                          COUNT(*) FILTER (WHERE m.type = 'CONFIRMED') AS confirmed,\\n                          COUNT(*) FILTER (WHERE m.type = 'CANCEL_RELEASED') AS cancelled,\\n                          COUNT(*) FILTER (WHERE m.type = 'EXPIRY_RELEASED') AS expired\\n                     FROM stock_movements m WHERE m.reservation_id = r.id) c\\n             WHERE $SCOPE AND (c.reserved <> 1\\n                           OR c.confirmed <> CASE WHEN r.status = 'CONFIRMED' THEN 1 ELSE 0 END\\n                           OR c.cancelled <> CASE WHEN r.status"
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "116-124",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Returns an exception for a rejected reservation.",
+   "quote": "\n            case PENDING, EXPIRED -> new ApiException(ErrorCode.RESERVATION_EXPIRED, \"This reservation has expired.\");\n        ",
+   "relevant": false,
+   "statement": "The code defines how to create an `ApiException` when a reservation is either `PENDING` or `EXPIRED`. This exception handling does not involve any cancellation logic."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-reservation-cancel",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationStatus.java",
+  "lines": "3-9",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Defines states of a reservation system.",
+   "quote": "/** PENDING is the only state with outgoing transitions; every other state is final. */",
+   "relevant": false,
+   "statement": "The source defines four states for a reservation system: PENDING, CONFIRMED, CANCELLED, and EXPIRED."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-reservation-cancel",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "92-100",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "İptal işlemi gerçekleştirmek için kullanılan kod.",
+   "quote": "@Transactional\\npublic Reservation cancel(Actor actor, UUID id) {",
+   "relevant": true,
+   "statement": "İptal işlemini gerçekleştirme görevi `ReservationTransactions.cancel` metodunda yer alır. Bu metoddaki kod, iptal edilen rezervasyonun ürün ve miktarını ledger.releaseReserved() fonksiyonu ile geri kalan depolamaya aktarır."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-ticket",
+  "label": "gold",
+  "path": "apps/collab/src/ticket.ts",
+  "lines": "10-40",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu fonksiyon, API tarafından verilen bir işbirliği tiketinin doğrulanmasını sağlar ve bu tiketin kimliğini döndürür.",
+   "quote": "\\n\\tclaims = jwt\\.verify(token, secret, {\\n\\t\talgorithms: \\['HS256'\\],\\n\\t\taudience: COLLAB_TICKET_AUDIENCE,\\n\\t\tissuer: COLLAB_TICKET_ISSUER,\\n\\t}) as jwt\\.JwtPayload & Partial<CollabTicketClaims>;",
+   "relevant": true,
+   "statement": "Bu kod parçası işbirliği tiketinin doğrulanmasını sağlar ve bu tiketin kimliğini döndürür. Tiketin kimliğini doğrulayan `jwt.verify` fonksiyonu, verilen tokenin doğru bir şifreleme işlemi olduğunu kontrol eder ve ardından tiketin kimliği (sub ve nid) belirlenir."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "46-60",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu kod, WebSocket bağlantısının kimlik doğrulama bileti oluşturulmasını ve doğrulanmasını yönetir.",
+   "quote": "\\[handshake\\] \\(role\\) = this.verifyRole(apiTicket);\n",
+   "relevant": true,
+   "statement": "Bu kod, WebSocket bağlantısı için API tarafından üretilen kimlik doğrulama bileti oluşturur ve her gelen mesajda rolü tekrar kontrol eder. Ayrıca, üyelik olayları live bağlantılar üzerinde uygulanır."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "apps/api/src/notes/notes.controller.ts",
+  "lines": "92-102",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Üretilen kimlik doğrulama bileti, belirli bir notun VIEWER rolü için WebSocket bağlantısına uygun şekilde oluşturulur ve doğrulanır.",
+   "quote": "@Post(':noteId/collab-ticket') @RequireNoteRole('VIEWER')",
+   "relevant": true,
+   "statement": "Bu kod parçası, notun VIEWER rolü için WebSocket bağlantısı için geçerli bir kimlik doğrulama bileti oluşturur ve doğrulanır. `@Post` anotasyonu, belirli bir notun VIEWER rolü için WebSocket bağlantısına erişimini sağlar (`@RequireNoteRole` anotasyonu)."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-ticket",
+  "label": "other",
+  "path": "packages/shared/src/collab.ts",
+  "lines": "7-15",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Üretilen ve doğrulanılan kimlik doğrulama bileti için Claims bilgilerini tanımlar.",
+   "quote": "\\/** user id \\*/ sub: string;\\ /** note id (== Hocuspocus document name) \\*/ nid: string;",
+   "relevant": true,
+   "statement": "Bu kod, WebSocket bağlantısı sırasında oluşturulan ve doğrulanılan kimlik doğrulama bileti için `sub`, `nid` ve `name` gibi Claims bilgilerini tanımlar. Bu bilgiler, kullanıcı ID'si, belge adı ve varsa presense kullanmak için kullanılan display name'i içerir."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-ticket",
+  "label": "gold",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "124-147",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu kod, WebSocket bağlantısında kullanılan kimlik doğrulama bileti oluşturur ve doğrular.",
+   "quote": "\\`let claims = verifyTicket(token, this.options.ticketSecret, documentName);\\`",
+   "relevant": true,
+   "statement": "Bu kod, `verifyTicket` fonksiyonu kullanılarak WebSocket bağlantısında kullanılan kimlik doğrulama bileti oluşturur. Ayrıca, bu bileti doğrulanır ve belirli bir rolü belirtir."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/resources/application.yml",
+  "lines": "4-14",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Sets SQL settings for a database connection pool.",
+   "quote": "\"connection-init-sql\": \"SET lock_timeout = '3s'; SET idle_in_transaction_session_timeout = '30s'\",",
+   "relevant": false,
+   "statement": "This code sets initialization SQL statements for a database connection pool. It does not address the order in which locks are removed to prevent deadlocks."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-lock-order",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "17-30",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Açıklama bölümüdür ve kilit sırasını açıklar.",
+   "quote": "\n * reservation row first and stock row second, so these transactions cannot deadlock\n * against each other.\n",
+   "relevant": true,
+   "statement": "Bu kod parçası, kilit sırasının `reservations` (kamyon satışı) ve `ledger` (stok) sıralamasına dayandığını açıklar. Bu sırayla kilitler alındığından her iki işlem de birbirleriyle deadlock olmaz."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+  "lines": "1-22",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Veritabanındaki kilitlerin sıralamasını açıklar.",
+   "quote": "-- Veri row lockleri herhangi bir ürün için oluşturulurken tutulur, bu nedenle",
+   "relevant": false,
+   "statement": "Bu sorgu, veri row locklarının her ürün için oluşturulan sırayı açıklar."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-lock-order",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+  "lines": "16-25",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Defines a service class for managing reservations.",
+   "quote": "",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-lock-order",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+  "lines": "14-48",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Release reserved stock items based on sorted product order to prevent deadlock.",
+   "quote": "\\ledger.releaseReserved(\\reservation.getProductId(), \\reservation.getQuantity(), \\reservation.getId(), null, MovementType.EXPIRY_RELEASED);",
+   "relevant": true,
+   "statement": "`expireDueBatch` method releases reserved stock items in the order of their product IDs to avoid deadlocks."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "89-96",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Bu kod, JWT tokenin oluşturulmasını ve imzalamasını yönetir.",
+   "quote": "@Bean\nJwtDecoder jwtDecoder(StockGuardProperties properties) {\n    NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(signingKey(properties))\n    .macAlgorithm(MacAlgorithm.HS256)\n    .build();\n    decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(JwtTokenService.ISSUER));\n    return decoder;\n}",
+   "relevant": true,
+   "statement": "`SecurityConfig.jwtDecoder` fonksiyonu, JwtTokenService'in ISSUER değerini kullanarak HS256 algoritmasıyla imzalanan bir JWT tokenin oluşturulmasını ve imzalamasını yönetir."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+  "lines": "15-47",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "JWT token oluşturur ve imzalar.",
+   "quote": "JwtClaimsSet claims = JwtClaimsSet.builder().issuer(ISSUER).subject(userId.toString()).issuedAt(now).expiresAt(expiresAt).claim(\"username\", username).claim(ROLE_CLAIM, role.name()).build();",
+   "relevant": true,
+   "statement": "Bu kod, JWT token oluştururken JwtClaimsSet nesnesine kullanıcı bilgilerini ve izinleri ekler. Ayrıca, JwsHeader nesnesi için MacAlgorithm.HS256 değerini belirler ve claims nesnesi ile encoder kullanılarak bir JWT değeri oluşturulur."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "75-82",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Bu kod, JWT yetkililerini dönüştürmek için bir JwtGrantedAuthoritiesConverter nesnesi oluşturur ve JwtAuthenticationConverter sınıfının JwtGrantedAuthoritiesConverter propertisine bu nesneyi atar.",
+   "quote": "\n        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();\n        converter.setJwtGrantedAuthoritiesConverter(authorities);\n",
+   "relevant": true,
+   "statement": "Bu kod, JWT yetkililerini dönüştürmek için bir JwtAuthenticationConverter sınıfının JwtGrantedAuthoritiesConverter propertisine bir JwtGrantedAuthoritiesConverter nesnesi atar. Bu işlem, JWT tokenin yetki claimlerini ayrıştırma ve yetkilendirme işlemini gerçekleştirmek için yapılandırır."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/resources/application.yml",
+  "lines": "54-60",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Sets JWT secret and token TTL configuration values from environment variables.",
+   "quote": "\"jwt-secret\": \"${STOCKGUARD_JWT_SECRET}\", \"token-ttl\": \"60m\"}",
+   "relevant": true,
+   "statement": "The code sets the `jwt-secret` to a value retrieved from an environment variable `${STOCKGUARD_JWT_SECRET}` and configures the token TTL (`token-ttl`) to 60 minutes."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-jwt",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+  "lines": "84-87",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Returns a `JwtEncoder` configured with a secret key for JWT encoding.",
+   "quote": "@Bean\\nJwtEncoder jwtEncoder(StockGuardProperties properties) {\\n    return new NimbusJwtEncoder(new ImmutableSecret<>(signingKey(properties)));}",
+   "relevant": true,
+   "statement": "`SecurityConfig.jwtEncoder` returns an instance of `JwtEncoder` that uses a secret key provided by the `signingKey` method from the given `StockGuardProperties`. This method configures the encoder with the appropriate secret for JWT encoding and signing."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-jwt",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/user/AuthService.java",
+  "lines": "34-45",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu fonksiyon, JwtTokenService nesnesindeki bir metodu çağırır.",
+   "quote": "\n    this.tokens.createAndSignJwtToken(user);",
+   "relevant": true,
+   "statement": "JWT token oluşturulur ve imzalanırken, `AuthService` sınıfında oluşturulan `tokens.createAndSignJwtToken(user)` metodunun kullanılması gerektiği belirtiliyor."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-csrf",
+  "label": "gold",
+  "path": "apps/api/src/common/guards/csrf.guard.ts",
+  "lines": "14-32",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu kod, her durumu değiştiren istekte Double-submit-cookie CSRF korumasını uygular.",
+   "quote": "\\/**\\n * Double-submit-cookie CSRF protection for every state-changing request.\\*/",
+   "relevant": true,
+   "statement": "`CsrfGuard` sınıfı, `SAFE_METHODS` setindeki herhangi bir istemcinin (GET, HEAD, OPTIONS, PATCH, PUT, DELETE) durumu değiştiren istekte Double-submit-cookie CSRF korumasını uygular. Bu, SameSite cookies ve sadece izni listesiyle birleştirildiğinde, kullanıcıya ait auth cookie tarafından kullanılmak üzere gizli cross-site istekleri engeller."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/api/src/auth/auth.controller.ts",
+  "lines": "33-43",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Geriye doğru CSRF tokensu (yada tekrar kullanılabilir) üretir veya kullanır.",
+   "quote": "@Get('csrf') csrf(@Req() req: Request, @Res({ passthrough: true }) res: Response): { csrfToken: string }",
+   "relevant": true,
+   "statement": "`AuthController.csrf` fonksiyonu bir CSRF token oluşturur veya tekrar kullanır ve bu token, belirli bir istekte csrf parametre olarak geçirilmesi için cookie'da yerleştirilir."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/api/src/common/cookies.ts",
+  "lines": "45-48",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Sets a CSRF cookie without making it HttpOnly.",
+   "quote": "res.cookie(COOKIE_CSRF, token, { ...base(config), httpOnly: false });",
+   "relevant": true,
+   "statement": "`setCsrfCookie` function sets the `COOKIE_CSRF` token as a response cookie with `httpOnly` set to `false`, making it accessible by the SPA (Single Page Application)."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-csrf",
+  "label": "other",
+  "path": "apps/web/src/lib/api.ts",
+  "lines": "28-32",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Defines constants for CSRF protection.",
+   "quote": "\"CSRF_COOKIE\" = \"sn_csrf\";\\n\"CSRF_HEADER\" = \"x-csrf-token\";",
+   "relevant": false,
+   "statement": "This code defines constants `CSRF_COOKIE` and `CSRF_HEADER`, which are used in the application for CSRF protection. However, this code alone does not describe how CSRF protection is applied."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-csrf",
+  "label": "gold",
+  "path": "apps/api/src/common/guards/csrf.guard.ts",
+  "lines": "8-12",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Kontrol ederkişiliğin (CSRF) değerlerini kontrol etmek için bir fonksiyonu içerir.",
+   "quote": "export function csrfTokensMatch(cookieValue: unknown, headerValue: unknown): boolean {",
+   "relevant": true,
+   "statement": "Bu kod, istemci tarafından gönderilen cookie değeri ve uygulama tarafından gönderilen başlık değerini kontrol ederek kontrol edişi (CSRF) saldırılarına karşı koruma sağlar."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-revocation",
+  "label": "gold",
+  "path": "apps/api/src/notes/members.service.ts",
+  "lines": "91-98",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Kesinleştirilen bir üye'nin Open WebSocket oturumuna erişimi kaldırılır.",
+   "quote": "\n    await this.events.publish({ type: 'member.removed', noteId, userId });\n",
+   "relevant": true,
+   "statement": "`MembersService.remove` yöntemi çağrıldığında, belirtilen notun sahibi olan kullanıcının oturumunu kapatmak için `events.publish` yöntemini çağırır."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "apps/api/src/redis/access-events.publisher.ts",
+  "lines": "9-21",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Kontrol edilen bir Redis bağlantısının üyelerini kaldırır ve bu bağlantıdan erişimini keser.",
+   "quote": "\n    this.redis.disconnect();\n",
+   "relevant": true,
+   "statement": "Bu kod, `AccessEventsPublisher` sınıfında `this.redis.disconnect()` çağrısı ile Redis bağlantısını kapatır. Bu işlem, bir WebSocket oturumunda bir üye kaldırıldığında erişimini keser."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "packages/shared/src/access-events.ts",
+  "lines": "3-8",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Defines a channel for publishing membership changes via Redis pub/sub.",
+   "quote": "\nexport const ACCESS_EVENTS_CHANNEL = 'syncnotes:access-events';\n",
+   "relevant": false,
+   "statement": "The code defines a constant `ACCESS_EVENTS_CHANNEL` that represents the Redis pub/sub channel used by the API to publish membership change events."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-revocation",
+  "label": "other",
+  "path": "apps/collab/src/extensions/access-control.ts",
+  "lines": "46-60",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Kontrol edilen bir WebSocket oturumundan üyelik kaldırır ve bu değişikliği etkileşimler üzerinde yansıtır.",
+   "quote": "\\[no quote provided as no direct lines match the question\\]",
+   "relevant": false,
+   "statement": "Bu kod parçası API tarafından sağlanan API-ya verilen bir tescilliğe dayalı üyelik işlemlerini destekler. Eğer oturumdan üyelik kaldırılırsa, oturumun etkileşimler üzerindeki durumu günceller ve bu değişikliği yansıtır."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "43-60",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Handles repeated reservation requests with a unique `Idempotency-Key`.",
+   "quote": "@ApiResponse(responseCode = \"422\", description = \"IDEMPOTENCY_KEY_REUSED with a different request\")",
+   "relevant": true,
+   "statement": "`ReservationController.create` method checks for the uniqueness of the `Idempotency-Key`. If it finds a reused key in a different request, it returns a 422 response indicating that another reservation was created using the same key."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-idempotency",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+  "lines": "72-80",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Veritabanında bir idempotent anahtarla eşleşen kayıtları tekrarlamak için işlem sonuçlarını döndürür.",
+   "quote": "\n        return new CreateOutcome(original, true);\n    ",
+   "relevant": true,
+   "statement": "`ReservationTransactions.replay` metodu, belirli bir userId ve idempotent anahtarla eşleşen kayıtları tekrarlamak için `reservations.findByUserIdAndIdempotencyKey` yöntemini kullanır. Eğer farklı fingerprint (belirtilen istekle eşleşmeyen) verilmişse, `ApiException` oluşturur."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/resources/db/migration/V3__reservations.sql",
+  "lines": "1-18",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Defines a SQL table for reservations with constraints to ensure idempotency.",
+   "quote": "\\n    CONSTRAINT uq_reservations_user_idempotency_key UNIQUE (user_id, idempotency_key),\\n    \\n    CONSTRAINT ck_resettled_iff_terminal CHECK ((status = 'PENDING') = (settled_at IS NULL))",
+   "relevant": true,
+   "statement": "The SQL table `reservations` enforces idempotency by ensuring that each user can have only one logical reservation per unique combination of `user_id` and `idempotency_key`. Additionally, it checks that a reservation is either pending or settled (but not both)."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-idempotency",
+  "label": "gold",
+  "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+  "lines": "29-52",
+  "relevant": false,
+  "quote_found": false,
+  "reply": "{\n  \"code_does\": \"Bu kod, belirli bir anahtarın kullanılmasından önce ve aynı anahtardan oluşan isteklerin tekrar edilmesini engellemek için uygulanır.\",\n  \"quote\": \"@Modifying\\\\n@Transactional(propagation = Propagation.MANDATORY)\\\\n@Query(nativeQuery = true, value = \\\"\\\",\\n            INSERT INTO reservations\\n                (id, product_id, user_id, quantity, status, idempotency_key, request_hash, expires_at, created_at)\\n            VALUES\\n                (:id, :productId, :userId, :quantity, 'PENDING', :idempotencyKey, :requestHash,\\n                 now() + make_interval(secs => :ttlSeconds), now())\\n            ON CONFLICT (user_id, idempotency_key) DO NOTHING\\\",\\n            \\\")\\\")\",\n  \"relevant\": true,\n  \"statement\": \"Bu kod, belirli bir anahtarın tekrar edilmesini engellemek için kullanılır. Eğer başka bir işlem aynı anahtardan istek gönderirse, PostgreSQL bu işlemi durdurur ve anaht"
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-idempotency",
+  "label": "other",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "61-68",
+  "relevant": true,
+  "quote_found": true,
+  "reply": {
+   "code_does": "Geri bildirim oluşturur ve bu istekteki idempotans anahtarı kontrol eder.",
+   "quote": "\n        if (outcome.replayed()) {\n            return ResponseEntity.ok().header(REPLAY_HEADER, \"true\").body(body);\n        }\n",
+   "relevant": true,
+   "statement": "`ReservationController.create` methodu, `CreateReservationCommand` isteği için idempotans anahtarı kontrol eder ve istek tekrarlandığında 412 (Precondition Failed) hata kodunu döndürür."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-version-restore",
+  "label": "gold",
+  "path": "apps/collab/src/versions.ts",
+  "lines": "46-64",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Geri yükleme işlemiyle bir notun eski sürümüne geri döndürülmesini sağlar.",
+   "quote": "\n    const name = version.label ?? version.createdAt.toISOString().slice(0, 16).replace("
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+  "lines": "134-135",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Defines a foreign key constraint for the `note_versions` table.",
+   "quote": "-- AddForeignKey\nALTER TABLE `note_versions` ADD CONSTRAINT `note_versions_note_id_fkey` FOREIGN KEY (`note_id`) REFERENCES `notes`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;",
+   "relevant": false,
+   "statement": "Bu kod, not sürümlerini eski notlara bağlayan bir yabancı anahtar bağlantısı tanımlar."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+  "lines": "75-87",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Defines a table for storing note versions.",
+   "quote": "-- CreateTable\nCREATE TABLE `note_versions` (",
+   "relevant": false,
+   "statement": "Bu kod, notun sürümlerini saklamak için bir tablo tanımlamasını yapıyor."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-version-restore",
+  "label": "other",
+  "path": "apps/api/src/notes/versions.service.ts",
+  "lines": "32-48",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Returns a version detail of a note from an old version ID.",
+   "quote": "\\`return {\\n  id: v.id,\\n  kind: v.kind,\\n  label: v.label,\\n  sizeBytes: v.sizeBytes,\\n  createdAt: v.createdAt.toISOString(),\\n  createdBy: v.createdBy,\\n  state: Buffer.from(v.state).toString('base64'),\\n};\\`",
+   "relevant": true,
+   "statement": "The `get` method of the `VersionsService` returns details about a specific version of a note by fetching it from the database using the provided `versionId`. This includes information such as the ID, kind, label, size in bytes, creation timestamp, creator's ID and name, and the state encoded in base64."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "85-90",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Geri sayım için onay e-postası gönderir.",
+   "quote": "@PostMapping \"/{id}/confirm\" @Operation(operationId = \"confirmReservation\", summary = \"Confirm a reservation: the held units leave the stock\")",
+   "relevant": true,
+   "statement": "Bu kod, `@PostMapping` anotasyonuyla bir `/{id}/confirm` URL'sine bağlanır ve bu URL'ye yapılan POST isteği için `confirmReservation` adında bir operasyonu tanımlar. Operasyon, belirtilen rezervasyonun onaylanması için kullanılır ve onaylanan rezervasyonun tutulmuş unitlerin stoktan ayrılmasını sağlar."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "39-41",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Gönderir `ReservationController` e-posta onay bilgilerini, ancak detayları belirtmedi.",
+   "quote": "\n        this.reservations = reservations;\n    ",
+   "relevant": false,
+   "statement": "`ReservationController` sınıfı, `ReservationService` sınıfından bir nesnesi alır ve bu nesneyi `this.reservations` değişkenine atar. Aşağıdaki kod parçacığı, e-posta onay bilgilerini gönderen fonksiyonunun detaylarını belirtmedi."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-neg-email",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "105-126",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Defines a record class for ReservationResponse.",
+   "quote": "",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "apps/web/scripts/screenshots.ts",
+  "lines": "35-78",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu kod, bir sayfanın ekran görüntüsünü kaydediyor ve belirli başlıklarını yazıyor.",
+   "quote": "\\[const ada = await adaCtx.newPage();\\]",
+   "relevant": false,
+   "statement": "Kod, `ada` sayfasının ekran görüntüsünü `screenshot` metodu kullanarak kaydetmek için bir sayfanın nasıl oluşturulacağını gösteriyor. Diğer faktörlü doğrulama ile ilgili olarak bu kodun hiçbir bölümü bulunmuyor."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+  "lines": "1-6",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Defines a database constraint to ensure each note has at most one OWNER membership.",
+   "quote": "-- Invariant: every note has at most one OWNER membership.\n-- Enforced by the database (partial unique index) rather than only by application code,\n-- so a race between two concurrent \"share\" requests can never produce two owners.\nCREATE UNIQUE INDEX `note_members_one_owner_per_note`\n  ON `note_members` (`note_id`) WHERE `role` = 'OWNER';",
+   "relevant": true,
+   "statement": "The database constraint ensures that each note has at most one OWNER membership by creating a unique index on the `note_members` table where the role is 'OWNER'."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-neg-2fa",
+  "label": "negative",
+  "path": "apps/web/src/pages/auth-pages.tsx",
+  "lines": "198-242",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Handles form submission and password strength validation.",
+   "quote": "<Input id=\"password\" type=\"password\" autoComplete=\"new-password\" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} placeholder=\"At least 8 characters\"/>",
+   "relevant": true,
+   "statement": "`<Input>` component checks the password length and displays an error message if it is less than 8 characters."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/Reservation.java",
+  "lines": "54-91",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Görünüşe göre, bir siparişin durumu ve ürün sayısını döndürüyor.",
+   "quote": "public int getQuantity() {\n    return quantity;\n}",
+   "relevant": false,
+   "statement": "Bu kod parçası `getQuantity()` metodunu kullanarak siparişin ürünlerinin sayısı döndürmektedir. Ancak, sipariş durumu hakkında bilgi veriyorsa da, sipariş iade süreci bu kod parçasına bağlı değildir."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "61-87",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Görevi geri alır ve ürünün ürünlerini serbest bırakır.",
+   "quote": "\n\treturn inventory.release(product);\n",
+   "relevant": false,
+   "statement": "Bu kod satırı, `inventory.release` fonksiyonunu kullanarak müşteri iadelerinin (görevlerin) geri alımını yönetir. Ancak, bu kod satırı ürünleri (produkt) hakkında bilgi vermez ve ürünün hangi ürünlerini serbest bırakması gerektiğini belirtmez."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-new-refunds",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+  "lines": "105-126",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Veri yapıları oluşturur.",
+   "quote": "",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "47-48",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Defines a constructor for the `Product` class.",
+   "quote": "\n    protected Product() {\n    }\n",
+   "relevant": false,
+   "statement": "`Product.Product()` defines a no-argument constructor for the `Product` class."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+  "lines": "43-46",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Görevi yapmaz.",
+   "quote": "",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sg-new-images",
+  "label": "negative",
+  "path": "src/main/java/com/stockguard/catalog/Product.java",
+  "lines": "50-54",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Bu kısım bir ürünün SKU'su, adı ve açıklamasını tanımlar.",
+   "quote": "this.sku = sku;\nthis.name = name;\nthis.description = description;",
+   "relevant": false,
+   "statement": "Aşağıdaki kod parçası bir `Product` nesnesinin SKU'su, adı ve açıklamasını tanımlar. Diğer ürün görselleri ile ilgili kısım yoktur."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/src/pages/dashboard-page.tsx",
+  "lines": "146-178",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Gönderir `DashboardPage` adlı sayfanın bir fonksiyonu, arama kriterlerini güncellemek için URL parametrelerini kontrol eder ve gerekirse yeniden yönlendirir.",
+   "quote": "\\const next = new URLSearchParams(params);\n\\if (q) next.set('q', q);\n\\else next.delete('q');\n\\if (next.toString() !== params.toString()) setParams(next, { replace: true });",
+   "relevant": false,
+   "statement": ""
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/scripts/screenshots.ts",
+  "lines": "109-128",
+  "relevant": true,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Gönderilen kod bir web uygulamasının ekran görüntüsünü kaydediyor ve mobil cihazlara giriş sayfasını screenshot ettiğini gösterir.",
+   "quote": "await ada.screenshot\\({ path: path.join\\(OUT, 'dashboard.png'\\) \\});\nawait m.screenshot\\({ path: path.join\\(OUT, 'login-mobile.png'\\) \\});",
+   "relevant": true,
+   "statement": "Bu kod bloğu web uygulamasının ekran görüntüsünü ve mobil cihazlara giriş sayfasını kaydetmek için kullanılıyor. `ada.screenshot` ve `m.screenshot` fonksiyonları, belirli bir yolu ile ekran görüntülerini kaydediyorlar."
+  }
+ },
+ {
+  "variant": "v3-reason-translated",
+  "question": "sn-new-push",
+  "label": "negative",
+  "path": "apps/web/src/pages/dashboard-page.tsx",
+  "lines": "180-199",
+  "relevant": false,
+  "quote_found": false,
+  "reply": {
+   "code_does": "Görevi gerçekleştirmek için bir Dialog kontrolüdür.",
+   "quote": "<DialogPrimitive.Root open={mobileNav} onOpenChange={setMobileNav}><\\/DialogPrimitive.Root>\\n",
+   "relevant": false,
+   "statement": ""
+  }
+ }
+]
