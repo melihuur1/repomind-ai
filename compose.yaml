@@ -1,0 +1,36 @@
+# Infrastructure owned by RepoMind only. The fixed project name and the unusual
+# loopback port keep it isolated from any other Compose project on this machine.
+name: repomind
+
+services:
+  db:
+    image: pgvector/pgvector:0.8.0-pg17
+    container_name: repomind-db
+    environment:
+      POSTGRES_USER: repomind
+      POSTGRES_PASSWORD: ${REPOMIND_DB_PASSWORD:-repomind}
+      POSTGRES_DB: repomind
+    ports:
+      - "127.0.0.1:${REPOMIND_DB_PORT:-55432}:5432"
+    volumes:
+      - repomind-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U repomind -d repomind"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  # Optional local LLM. It starts only with `docker compose --profile llm up -d`,
+  # needs no account or API key, and listens on loopback only.
+  ollama:
+    profiles: ["llm"]
+    image: ollama/ollama:0.5.7
+    container_name: repomind-ollama
+    ports:
+      - "127.0.0.1:${REPOMIND_OLLAMA_PORT:-11535}:11434"
+    volumes:
+      - repomind-ollama:/root/.ollama
+
+volumes:
+  repomind-db:
+  repomind-ollama:
