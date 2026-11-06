@@ -8,7 +8,7 @@ The goal of this phase is to reach the right code reliably, and to know how far 
 | --- | --- |
 | Does retrieval find the right code? | Often. On held-out questions at least one correct span is in the top 5 for 80 to 85% of English and 55 to 65% of Turkish questions. Recall@5 is moderate, at 0.59 to 0.62 and 0.43 to 0.48. |
 | Is hybrid search better? | **Not demonstrably.** Most differences are within noise. |
-| Are citations real? | **Yes.** All 930 search results and all 67 citations shown with answers match Git at the indexed commit. |
+| Are citations real? | **Yes.** All 930 search results, and all 67 citations shown with answers to answerable questions, match Git at the indexed commit. |
 | Are AI answers reliable? | **No, not with this small local model.** On manual review, 5 of 27 answers were correct, 12 partly correct and 10 wrong. |
 | Does it refuse what it cannot answer? | **Mostly.** 7 of 8 fresh unanswerable questions were refused, at the cost of wrongly refusing about 10% of answerable Turkish questions. |
 
@@ -136,7 +136,7 @@ Where the 69 gold spans ended up in hybrid search, over all 31 questions:
 - **Comments help a lot.** StockGuard's Javadoc is rich and scores far higher than SyncNotes, which has less prose and much more UI code (English hybrid Recall@5 0.677 against 0.467, MRR 0.805 against 0.560).
 - **Broad questions fail.** "Where are user permissions checked?" misses in both repositories, because the answer is spread across several places that use varied vocabulary.
 - **Concept and code differ.** "How are viewers prevented from editing?" is implemented by `connection.readOnly = !canEdit(role)`, which shares few words with the question.
-- **Multi-span questions cap recall.** Questions with one gold span reach 1.000 Recall@5, those with two or three about 0.50.
+- **Multi-span questions cap recall.** The two questions with one gold span reach 1.000 Recall@5, those with two or three about 0.50.
 - **Translation errors propagate.** `Şifreler` became "codes", and that question lost its password code.
 - **Scores are conservative.** Gold labels are not exhaustive. For "How does StockGuard keep stock counters consistent?", the top result is `ConsistencyService`, which is a reasonable answer but not in the gold list. Under the rules above, the label was not changed.
 
@@ -156,7 +156,7 @@ Model: `qwen2.5:3b` through Ollama in RepoMind's own container, on CPU, at no co
 | Citations rejected by the backend | 26 | 27 |
 | Invalid model responses | 0 | 0 |
 
-Those gold-citation and context rows are from two separate runs, and the model's output varied between them, so small differences there are not an effect of the checks.
+The context row counts only questions that reached the model, so it falls when the check refuses a question before the model call. The gold-citation row falls for the same reason, for answers discarded by the fabrication check, and because the model's output varied between the two runs.
 
 Usage of the second run, over 45 questions: 64,044 input and 7,627 output tokens, at most 9,909 characters of context per question, 27.8 seconds per question on average, **$0**.
 
