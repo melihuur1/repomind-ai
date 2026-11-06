@@ -39,6 +39,7 @@ class IndexReport:
     imports: int
     skipped: dict[str, int] = field(default_factory=dict)
     skipped_for_secrets: list[str] = field(default_factory=list)
+    config_chunks_withheld: dict[str, int] = field(default_factory=dict)
     files_with_syntax_errors: list[str] = field(default_factory=list)
     languages: dict[str, int] = field(default_factory=dict)
     embedding: EmbeddingReport | None = None
@@ -61,7 +62,7 @@ def _read_and_parse(git: GitRepository, commit: str) -> tuple[list[tuple[ParsedF
     parsed: list[tuple[ParsedFile, str]] = []
     secret_paths: list[str] = []
     for entry, raw in git.read_blobs(selected):
-        text, reason = classify_content(raw)
+        text, reason = classify_content(raw, languages_by_path[entry.path])
         if text is None:
             skipped[reason] += 1
             if reason == "contains_secret":
@@ -74,6 +75,7 @@ def _read_and_parse(git: GitRepository, commit: str) -> tuple[list[tuple[ParsedF
         "files_indexed": len(parsed),
         "skipped": dict(sorted(skipped.items())),
         "skipped_for_secrets": secret_paths,
+        "config_chunks_withheld": {p.path: p.withheld_chunks for p, _ in parsed if p.withheld_chunks},
         "files_with_syntax_errors": [p.path for p, _ in parsed if p.has_syntax_errors],
         "languages": dict(sorted(Counter(p.language for p, _ in parsed).items())),
         "chunks": sum(len(p.chunks) for p, _ in parsed),
@@ -152,6 +154,7 @@ def index_repository(
         imports=stats["imports"],
         skipped=stats["skipped"],
         skipped_for_secrets=stats["skipped_for_secrets"],
+        config_chunks_withheld=stats.get("config_chunks_withheld", {}),
         files_with_syntax_errors=stats["files_with_syntax_errors"],
         languages=stats["languages"],
         embedding=embedding,

@@ -26,6 +26,9 @@ LANGUAGE_BY_EXTENSION = {
     ".mjs": "javascript",
     ".cjs": "javascript",
     ".jsx": "javascript",
+    ".sql": "sql",
+    ".yml": "yaml",
+    ".yaml": "yaml",
 }
 
 EXCLUDED_DIRECTORIES = frozenset(
@@ -61,6 +64,49 @@ _SECRET_PATTERNS = {
 }
 
 
+# Word boundaries inside a file name, so "application-local.yml" matches but "locale.yml" does not.
+_PERSONAL_CONFIG = re.compile(
+    r"(?:^|[._-])(?:local|personal|private|secrets?|credentials?|creds|vault|kubeconfig|override)(?:[._-]|$)",
+    re.IGNORECASE,
+)
+_LOCK_FILE = re.compile(r"(?:^|[._-])lock(?:[._-]|$)", re.IGNORECASE)
+_DATA_DUMP = re.compile(r"(?:^|[._-])(?:dump|backup|bak|seeds?|fixtures?|export)(?:[._-]|$)", re.IGNORECASE)
+
+_SQL_CREDENTIAL = re.compile(r"\b(?:PASSWORD|IDENTIFIED\s+BY)\s+'[^']+'", re.IGNORECASE)
+
+_CONFIG_SECRET_KEY = re.compile(
+    r"^[\s-]*#?\s*[\"']?([\w.-]*(?:password|passwd|pwd|secret|token|api[_-]?key|private[_-]?key|access[_-]?key"
+    r"|credential|auth[_-]?key)[\w.-]*)[\"']?\s*:\s*(.*)$",
+    re.IGNORECASE,
+)
+_CONFIG_BENIGN_KEY = re.compile(
+    r"(?:ttl|expir\w*|timeout|length|size|limit|url|uri|path|file|name|header|enabled|interval|lifetime|duration"
+    r"|algorithm|issuer|audience|policy|type|prefix)$",
+    re.IGNORECASE,
+)
+# ${NAME}, ${NAME:} and ${NAME:?message} hold no value. ${NAME:-value} and ${NAME:value} do.
+_CONFIG_PLACEHOLDER = re.compile(r"^\$\{\w+(?::?\?[^}]*|:-?)?\}$")
+_CONFIG_REFERENCE = re.compile(r"^(?:\{\{.*\}\}|<[^>]*>|\*\S+|!\S+.*)$")
+_URL_CREDENTIALS = re.compile(r"\b[a-z][a-z0-9+.-]*://[^/\s:@${}]+:[^/\s@${}]+@", re.IGNORECASE)
+
+
+def find_config_secret(text: str) -> str | None:
+    """The name of the first key holding a literal credential. Never the value."""
+    for line in text.split("\n"):
+        if _URL_CREDENTIALS.search(line):
+            return "credentials in a URL"
+        match = _CONFIG_SECRET_KEY.match(line)
+        if not match or _CONFIG_BENIGN_KEY.search(match.group(1)):
+            continue
+        value = match.group(2).split(" #", 1)[0].strip().strip("'\"")
+        if value.lower() in {"", "null", "~", "true", "false"} or value.isdigit():
+            continue
+        if _CONFIG_PLACEHOLDER.match(value) or _CONFIG_REFERENCE.match(value):
+            continue
+        return match.group(1)
+    return None
+
+
 @dataclass(frozen=True)
 class PathDecision:
     language: str | None
@@ -88,6 +134,12 @@ def classify_path(path: str, size: int = 0) -> PathDecision:
         return PathDecision(None, "sensitive_name")
     if language is None:
         return PathDecision(None, "unsupported_language")
+    if language == "yaml" and _PERSONAL_CONFIG.search(pure.stem):
+        return PathDecision(None, "sensitive_name")
+    if language == "yaml" and _LOCK_FILE.search(pure.stem):
+        return PathDecision(None, "generated")
+    if language == "sql" and _DATA_DUMP.search(pure.stem):
+        return PathDecision(None, "data_dump")
     if name.endswith(GENERATED_SUFFIXES):
         return PathDecision(None, "generated")
     if size > MAX_FILE_BYTES:
@@ -116,7 +168,7 @@ def normalize_source(raw: bytes) -> str | None:
     return text.replace("\r\n", "\n")
 
 
-def classify_content(raw: bytes) -> tuple[str | None, str | None]:
+def classify_content(raw: bytes, language: str | None = None) -> tuple[str | None, str | None]:
     """Return ``(text, None)`` when indexable, otherwise ``(None, skip_reason)``."""
     if b"\0" in raw:
         return None, "binary"
@@ -129,6 +181,8 @@ def classify_content(raw: bytes) -> tuple[str | None, str | None]:
     if len(text) / max(len(lines), 1) > MAX_AVERAGE_LINE_LENGTH:
         return None, "minified"
     if find_secret_rules(text):
+        return None, "contains_secret"
+    if language == "sql" and _SQL_CREDENTIAL.search(text):
         return None, "contains_secret"
     return text, None
 

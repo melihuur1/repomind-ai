@@ -73,7 +73,7 @@ def test_gold_span_exists_and_contains_its_anchor(question, span):
 
 
 @pytest.mark.gold
-@pytest.mark.parametrize("question", DATASET.questions, ids=lambda q: q.id)
+@pytest.mark.parametrize("question", ALL_QUESTIONS, ids=lambda q: q.id)
 def test_gold_files_are_indexable(question):
     for span in question.gold:
         assert classify_path(span.path).included, f"{span.path} can never be retrieved"

@@ -58,3 +58,4 @@ class ParsedFile:
     symbols: list[SymbolInfo] = field(default_factory=list)
     imports: list[ImportInfo] = field(default_factory=list)
     chunks: list[Chunk] = field(default_factory=list)
+    withheld_chunks: int = 0  # configuration chunks left out because they hold a credential

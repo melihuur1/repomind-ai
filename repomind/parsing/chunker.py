@@ -24,6 +24,7 @@ from tree_sitter import Node
 from repomind.ingest.filters import is_test_path
 from repomind.parsing.languages import LanguageSpec, parser_for, spec_for
 from repomind.parsing.models import Chunk, ImportInfo, ParsedFile, SymbolInfo
+from repomind.parsing.structured import parse_sql, parse_yaml
 
 _CLOSERS_ONLY = re.compile(r"^[\s})\];,]*$")
 _WHITESPACE = re.compile(r"\s+")
@@ -52,6 +53,10 @@ class _Declaration:
 
 def parse_source(path: str, language: str, text: str, config: ChunkingConfig | None = None) -> ParsedFile:
     """Parse text produced by ``repomind.ingest.filters.normalize_source``."""
+    if language == "sql":
+        return parse_sql(path, text)
+    if language == "yaml":
+        return parse_yaml(path, text)
     return _FileChunker(path, language, text, config or ChunkingConfig()).run()
 
 

@@ -58,6 +58,8 @@ def command_index(args: argparse.Namespace, settings: Settings) -> int:
     _emit(f"  skipped     {report.skipped}")
     if report.skipped_for_secrets:
         _emit(f"  WARNING     skipped because they appear to contain secrets: {report.skipped_for_secrets}")
+    if report.config_chunks_withheld:
+        _emit(f"  withheld    configuration chunks holding a credential: {report.config_chunks_withheld}")
     if report.files_with_syntax_errors:
         _emit(f"  syntax      {len(report.files_with_syntax_errors)} file(s) with parse errors were kept: {report.files_with_syntax_errors}")
     if report.embedding:
@@ -132,10 +134,24 @@ def _translator(settings: Settings, args: argparse.Namespace):
     return LocalTurkishTranslator(settings.models_dir)
 
 
+def _reranker(settings: Settings, args: argparse.Namespace, modes):
+    if "reranked" not in modes:
+        return None
+    from repomind.search.rerank import CrossEncoderReranker
+
+    return CrossEncoderReranker(args.reranker or settings.rerank_model, settings.models_dir)
+
+
 def command_search(args: argparse.Namespace, settings: Settings) -> int:
     embedder = None if args.mode == "keyword" else _embedder(settings, args.model)
     with _store(settings) as store:
-        engine = SearchEngine(store, embedder, SearchConfig(include_tests=args.include_tests), _translator(settings, args))
+        engine = SearchEngine(
+            store,
+            embedder,
+            SearchConfig(include_tests=args.include_tests),
+            _translator(settings, args),
+            _reranker(settings, args, (args.mode,)),
+        )
         result = engine.search(args.query, args.mode, args.repo, args.limit)
         for warning in result.warnings:
             _emit(f"warning: {warning}")
@@ -155,9 +171,9 @@ def command_evaluate(args: argparse.Namespace, settings: Settings) -> int:
     dataset = load_dataset(args.dataset)
     modes = tuple(args.modes)
     embedder = _embedder(settings, args.model) if set(modes) & {"semantic", "hybrid"} else None
-    config = SearchConfig(include_tests=args.include_tests, rrf_k=args.rrf_k)
+    config = SearchConfig(include_tests=args.include_tests, rrf_k=args.rrf_k, rerank_blend=args.rerank_blend)
     with _store(settings) as store:
-        engine = SearchEngine(store, embedder, config, _translator(settings, args))
+        engine = SearchEngine(store, embedder, config, _translator(settings, args), _reranker(settings, args, modes))
         results = run_evaluation(engine, store, dataset, modes=modes, languages=tuple(args.languages))
     _emit(format_summary(results, args.split))
     comparisons = {k: v for k, v in results["comparisons"].items() if k.startswith(f"{args.split}/")}
@@ -297,6 +313,7 @@ def build_parser() -> argparse.ArgumentParser:
     search.add_argument("-k", "--limit", type=int, default=5)
     search.add_argument("--explain", action="store_true", help="show why each result was ranked")
     search.add_argument("--model", help="embedding model")
+    search.add_argument("--reranker", help="cross-encoder model for --mode reranked")
     search.add_argument(
         "--include-tests",
         action=argparse.BooleanOptionalAction,
@@ -320,6 +337,8 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--rrf-k", type=int, default=60)
     evaluate.add_argument("--include-tests", action=argparse.BooleanOptionalAction, default=None)
     evaluate.add_argument("--translate", action=argparse.BooleanOptionalAction, default=True)
+    evaluate.add_argument("--reranker", help="cross-encoder model for the reranked method")
+    evaluate.add_argument("--rerank-blend", choices=["pure", "rrf"], default="pure")
     evaluate.add_argument("--output", help="write full per-question results to this JSON file")
     evaluate.set_defaults(handler=command_evaluate)
 

@@ -9,11 +9,12 @@ from repomind.embeddings.provider import Embedder
 from repomind.errors import RepoMindError
 from repomind.search.hybrid import reciprocal_rank_fusion
 from repomind.search.keyword import BM25Config, KeywordIndex
+from repomind.search.rerank import Reranker, rerank_text
 from repomind.search.tokenizer import fold
 from repomind.search.translation import QueryTranslator, looks_turkish
 from repomind.store.database import ChunkRow, Store
 
-MODES = ("keyword", "semantic", "hybrid")
+MODES = ("keyword", "semantic", "hybrid", "reranked")
 
 _ASKS_ABOUT_TESTS = re.compile(r"\b(tests?|testing|test[a-z]+|specs?|e2e)\b")
 
@@ -29,6 +30,9 @@ class SearchConfig:
     # None: leave tests out unless the query asks about them. Tests repeat the
     # vocabulary of the code they exercise, and otherwise crowd out the implementation.
     include_tests: bool | None = None
+    # "pure" orders candidates by the cross-encoder alone; "rrf" fuses that order with
+    # the hybrid order, so that one bad cross-encoder score cannot bury a strong candidate.
+    rerank_blend: str = "pure"
     bm25: BM25Config = BM25Config()
 
 
@@ -56,11 +60,13 @@ class SearchEngine:
         embedder: Embedder | None = None,
         config: SearchConfig = SearchConfig(),
         translator: QueryTranslator | None = None,
+        reranker: Reranker | None = None,
     ) -> None:
         self.store = store
         self.embedder = embedder
         self.config = config
         self.translator = translator
+        self.reranker = reranker
         self._indexes: dict[tuple, KeywordIndex] = {}
         self._translations: dict[str, str | None] = {}
 
@@ -174,14 +180,44 @@ class SearchEngine:
         include_tests = self._tests_included(query, translated)
         depth = max(limit, self.config.candidates)
 
+        if mode == "reranked" and self.reranker is None:
+            raise RepoMindError("Reranked search needs a reranker model, and none is loaded.")
+
         lists: dict[str, list[SearchHit]] = {}
-        if mode in ("keyword", "hybrid"):
+        if mode in ("keyword", "hybrid", "reranked"):
             lists["keyword"] = self._keyword_hits(query, translated, snapshot_ids, include_tests, depth)
-        if mode in ("semantic", "hybrid"):
+        if mode in ("semantic", "hybrid", "reranked"):
             self._require_embeddings(snapshot_ids, warnings)
             lists["semantic"] = self._semantic_hits(query, snapshot_ids, include_tests, depth)
             if translated:
                 lists["semantic_translated"] = self._semantic_hits(translated, snapshot_ids, include_tests, depth)
 
-        hits = next(iter(lists.values()))[:limit] if len(lists) == 1 else self._fuse(lists, limit)
+        if mode == "reranked":
+            hits = self._rerank(translated or query, self._fuse(lists, depth), limit)
+        elif len(lists) == 1:
+            hits = next(iter(lists.values()))[:limit]
+        else:
+            hits = self._fuse(lists, limit)
         return SearchResult(query, mode, hits, translated, warnings)
+
+    def _rerank(self, query: str, candidates: list[SearchHit], limit: int) -> list[SearchHit]:
+        if not candidates:
+            return []
+        scores = self.reranker.score(query, [rerank_text(hit.chunk) for hit in candidates])
+        by_score = sorted(range(len(candidates)), key=lambda i: (-scores[i], i))
+        if self.config.rerank_blend == "rrf":
+            fused = reciprocal_rank_fusion(
+                {"retrieval": list(range(len(candidates))), "cross_encoder": by_score}, k=self.config.rrf_k
+            )
+            order = [item.key for item in fused]
+        else:
+            order = by_score
+        return [
+            SearchHit(
+                candidates[i].chunk,
+                rank,
+                scores[i],
+                {**candidates[i].explanation, "rerank_score": round(scores[i], 4), "retrieval_rank": i + 1},
+            )
+            for rank, i in enumerate(order[:limit], start=1)
+        ]

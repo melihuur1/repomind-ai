@@ -10,6 +10,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 DEFAULT_DATABASE_URL = "postgresql://repomind:repomind@127.0.0.1:55432/repomind"
 DEFAULT_EMBEDDING_MODEL = "intfloat/multilingual-e5-small"
+DEFAULT_RERANK_MODEL = "Xenova/ms-marco-MiniLM-L-6-v2"
 
 
 def _read_dotenv(path: Path) -> dict[str, str]:
@@ -37,11 +38,13 @@ class Settings:
     database_url: str
     embedding_model: str
     models_dir: Path
+    rerank_model: str = DEFAULT_RERANK_MODEL
 
     @classmethod
     def load(cls) -> "Settings":
         return cls(
             database_url=get_setting("REPOMIND_DATABASE_URL", DEFAULT_DATABASE_URL),
             embedding_model=get_setting("REPOMIND_EMBEDDING_MODEL", DEFAULT_EMBEDDING_MODEL),
+            rerank_model=get_setting("REPOMIND_RERANK_MODEL", DEFAULT_RERANK_MODEL),
             models_dir=Path(get_setting("REPOMIND_MODELS_DIR", str(PROJECT_ROOT / ".models"))),
         )

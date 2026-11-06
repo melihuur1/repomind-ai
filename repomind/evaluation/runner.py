@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from dataclasses import asdict, dataclass, is_dataclass
 from typing import Sequence
 
@@ -55,7 +56,9 @@ def _verifiers(store: Store, dataset: Dataset) -> dict[str, CitationVerifier]:
 def _evaluate_question(
     engine: SearchEngine, question: Question, language: str, mode: str, verifier: CitationVerifier, depth: int
 ) -> dict:
+    started = time.perf_counter()
     hits = engine.search(question.text(language), mode=mode, repos=[question.repo], limit=depth).hits
+    latency_ms = (time.perf_counter() - started) * 1000
     locations = [_as_location(hit) for hit in hits]
     citations = [
         verifier.check(h.chunk.path, h.chunk.start_line, h.chunk.end_line, h.chunk.content) for h in hits[:K]
@@ -69,6 +72,8 @@ def _evaluate_question(
         "repo": question.repo,
         "language": language,
         "mode": mode,
+        "kind": question.kind,
+        "latency_ms": round(latency_ms, 1),
         "split": None,
         "recall_at_5": recall_at_k(locations, question.gold, K),
         "hit_at_5": hit_at_k(locations, question.gold, K),
@@ -96,8 +101,11 @@ def _summary(rows: Sequence[dict]) -> dict:
         ci = bootstrap_ci([r[metric] for r in rows])
         return {"mean": round(ci.mean, 4), "ci95": [round(ci.low, 4), round(ci.high, 4)]}
 
+    latencies = sorted(r["latency_ms"] for r in rows)
     return {
         "questions": len(rows),
+        "latency_ms_median": latencies[len(latencies) // 2],
+        "latency_ms_p95": latencies[min(int(len(latencies) * 0.95), len(latencies) - 1)],
         "recall_at_5": stat("recall_at_5"),
         "hit_at_5": stat("hit_at_5"),
         "mrr": stat("reciprocal_rank"),
@@ -119,6 +127,9 @@ def run_evaluation(
 ) -> dict:
     """Depth is the same for all methods, so MRR compares them on equal terms."""
     verifiers = _verifiers(store, dataset)
+    # Load every model first, so that loading does not count as a query's latency.
+    for mode in modes:
+        engine.search("warm up nasıl", mode=mode, repos=[dataset.questions[0].repo], limit=1)
     rows: list[dict] = []
     for question in dataset.questions:
         for language in languages:
@@ -150,16 +161,16 @@ def run_evaluation(
         return sorted(selected, key=lambda r: r["question"])
 
     comparisons: dict = {}
-    if "hybrid" in modes:
+    for reference in (m for m in ("hybrid", "reranked") if m in modes):
         for split in ("all", "test"):
             for language in languages:
-                for other in (m for m in modes if m != "hybrid"):
+                for other in modes[: modes.index(reference)]:
                     for metric in ("recall_at_5", "reciprocal_rank"):
                         ci = paired_difference_ci(
-                            [r[metric] for r in paired_rows("hybrid", language, split)],
+                            [r[metric] for r in paired_rows(reference, language, split)],
                             [r[metric] for r in paired_rows(other, language, split)],
                         )
-                        comparisons[f"{split}/{language}/hybrid-minus-{other}/{metric}"] = {
+                        comparisons[f"{split}/{language}/{reference}-minus-{other}/{metric}"] = {
                             "mean_difference": round(ci.mean, 4),
                             "ci95": [round(ci.low, 4), round(ci.high, 4)],
                             "significant": not (ci.low <= 0.0 <= ci.high),
@@ -171,6 +182,7 @@ def run_evaluation(
         "repositories": {name: pin.commit for name, pin in dataset.repositories.items()},
         "embedding_model": engine.embedder.model_name if engine.embedder else None,
         "query_translation": engine.translator is not None,
+        "reranker": engine.reranker.model_name if engine.reranker else None,
         "config": asdict(config) if is_dataclass(config) else {},
         "summaries": summaries,
         "comparisons": comparisons,
@@ -183,7 +195,7 @@ def format_summary(results: dict, split: str = "all") -> str:
         f"Embedding model: {results['embedding_model']}",
         f"Evaluation set sha256: {results['dataset_sha256'][:16]}   split: {split}",
         "",
-        f"{'language':<8} {'method':<9} {'n':>3}  {'Recall@5':>21}  {'Hit@5':>6}  {'MRR':>21}  {'FileR@5':>7}  {'citations':>9}",
+        f"{'language':<8} {'method':<9} {'n':>3}  {'Recall@5':>21}  {'Hit@5':>6}  {'MRR':>21}  {'FileR@5':>7}  {'citations':>9}  {'ms p50/p95':>12}",
     ]
     for language, modes in results["summaries"].get(split, {}).items():
         for mode, s in modes.items():
@@ -194,6 +206,7 @@ def format_summary(results: dict, split: str = "all") -> str:
                 f"{s['hit_at_5']['mean']:>6.3f}  "
                 f"{mrr['mean']:.3f} [{mrr['ci95'][0]:.3f}, {mrr['ci95'][1]:.3f}]  "
                 f"{s['file_recall_at_5']['mean']:>7.3f}  "
-                f"{s['citations_valid']}/{s['citations_checked']}"
+                f"{s['citations_valid']}/{s['citations_checked']}  "
+                f"{s['latency_ms_median']:.0f}/{s['latency_ms_p95']:.0f}"
             )
     return "\n".join(lines)
