@@ -108,22 +108,23 @@ def _row(identifier: str, repo: str, language: str, result: AskResult, seconds: 
         "status": result.status,
         "translated_query": result.translated_query,
         "answer": result.answer,
+        "note": result.note,
+        "note_problem": result.note_problem,
         "citations": [
             {"source": c.source_id, "path": c.path, "start_line": c.start_line, "end_line": c.end_line}
             for c in result.citations
         ],
-        "readings": [
+        "passages": [
             {
-                "source": r.source.id,
-                "path": r.source.chunk.path,
-                "start_line": r.source.chunk.start_line,
-                "end_line": r.source.chunk.end_line,
-                "outcome": r.outcome,
-                "reason": r.reason,
-                "statement": r.claimed_statement,
-                "quote": r.claimed_quote,
+                "id": p.id,
+                "path": p.path,
+                "start_line": p.start_line,
+                "end_line": p.end_line,
+                "shared_terms": list(p.shared_terms),
+                "chosen": any(c.source_id == p.id for c in result.citations),
+                "text": p.text,
             }
-            for r in result.readings
+            for p in result.passages
         ],
         "rejected": result.rejected,
         "warnings": result.warnings,
@@ -145,19 +146,33 @@ def _ask(qa: QAEngine, question, language: str) -> tuple[AskResult, dict]:
     return result, _row(question.id, question.repo, language, result, time.perf_counter() - started)
 
 
+def _squeezed(text: str) -> str:
+    return "".join(text.split()).casefold()
+
+
 def _answerable_row(qa: QAEngine, question: Question, language: str, verifier: CitationVerifier) -> dict:
     result, row = _ask(qa, question, language)
     row["citations_recheck_valid"] = sum(verifier.check(c.path, c.start_line, c.end_line).valid for c in result.citations)
+    # Everything shown is rechecked, including closest lines listed on a refusal.
+    row["references_shown"] = len(result.passages)
+    row["references_recheck_valid"] = sum(verifier.check(p.path, p.start_line, p.end_line).valid for p in result.passages)
     row["cites_gold"] = any(touches(c, span) for c in result.citations for span in question.gold)
-    row["gold_in_context"] = any(
-        overlaps(hit.chunk, span) for hit in result.hits[: result.sources_sent] for span in question.gold
-    )
+    row["gold_in_context"] = any(touches(p, span) for p in result.passages for span in question.gold)
+    row["gold_in_search"] = any(overlaps(hit.chunk, span) for hit in result.hits for span in question.gold)
+    anchors = [_squeezed(span.anchor) for span in question.gold]
+    chosen_lines = _squeezed("\n".join(item.passage.text for item in result.evidence))
+    offered_lines = _squeezed("\n".join(p.text for p in result.passages))
+    row["anchor_in_chosen"] = any(anchor in chosen_lines for anchor in anchors)
+    row["anchor_in_passages"] = any(anchor in offered_lines for anchor in anchors)
     return row
 
 
-def _unanswerable_row(qa: QAEngine, question: UnanswerableQuestion, language: str) -> dict:
+def _unanswerable_row(qa: QAEngine, question: UnanswerableQuestion, language: str, verifier: CitationVerifier) -> dict:
     result, row = _ask(qa, question, language)
     row["refused"] = result.status in _REFUSALS
+    row["citations_recheck_valid"] = sum(verifier.check(c.path, c.start_line, c.end_line).valid for c in result.citations)
+    row["references_shown"] = len(result.passages)
+    row["references_recheck_valid"] = sum(verifier.check(p.path, p.start_line, p.end_line).valid for p in result.passages)
     return row
 
 
@@ -209,7 +224,7 @@ def run_ask_evaluation(
             if item.section == "answerable":
                 row = _answerable_row(qa, item.question, item.language, verifiers[item.question.repo])
             else:
-                row = _unanswerable_row(qa, item.question, item.language)
+                row = _unanswerable_row(qa, item.question, item.language, verifiers[item.question.repo])
         except RepoMindError as exc:
             stopped_because = f"error: {exc}"
             break
@@ -259,7 +274,10 @@ def _results(qa: QAEngine, dataset: Dataset, sections: dict[str, list[dict]]) ->
             "holdout_unanswerable_questions": len(holdout_rows),
             "holdout_unanswerable_refused": sum(r["refused"] for r in holdout_rows),
             "citations_shown": cited,
-            "statements_discarded_by_backend": sum(len(r["rejected"]) for r in rows),
+            "references_shown": sum(r["references_shown"] for r in rows),
+            "references_recheck_valid": sum(r["references_recheck_valid"] for r in rows),
+            "notes_left_out": sum(r["note_problem"] is not None for r in rows),
+            "rejected_by_backend": sum(len(r["rejected"]) for r in rows),
             "input_tokens": sum(r["input_tokens"] or 0 for r in rows),
             "output_tokens": sum(r["output_tokens"] or 0 for r in rows),
             "cost_usd": round(sum(r["cost_usd"] for r in rows), 6),

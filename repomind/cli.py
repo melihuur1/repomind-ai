@@ -223,7 +223,7 @@ def _qa_engine(store, settings: Settings, args: argparse.Namespace):
     from repomind.qa.engine import QAEngine
     from repomind.qa.llm import OpenAICompatibleClient, load_llm_config
 
-    config = load_llm_config()
+    config = None if args.no_llm else load_llm_config()
     client = OpenAICompatibleClient(config) if config else None
     search = SearchEngine(store, _embedder(settings, args.model), SearchConfig(), _translator(settings, args))
     return QAEngine(store, search, config, client)
@@ -231,13 +231,20 @@ def _qa_engine(store, settings: Settings, args: argparse.Namespace):
 
 _STATUS_MESSAGES = {
     "no_llm": (
-        "No LLM is configured, so this is not an AI answer. The most relevant code is listed below.\n"
-        "To enable answers, set REPOMIND_LLM_BASE_URL and REPOMIND_LLM_MODEL (see README)."
+        "This is not an AI answer: no LLM was used. These are the lines closest to the question, best first.\n"
+        "They may or may not answer it, so read them. To add a model, set REPOMIND_LLM_BASE_URL and REPOMIND_LLM_MODEL (see README)."
     ),
     "no_results": "I do not know: no indexed code matches this question.",
     "insufficient": "I do not know: the indexed code does not give enough evidence to answer this.",
     "invalid_response": "I do not know: the model did not return a valid response, so none of it is shown.",
 }
+
+
+def _print_passage(passage) -> None:
+    chunk = passage.chunk
+    _emit(f"{chunk.path}:{passage.start_line}-{passage.end_line}  ({chunk.repo}@{chunk.commit_sha[:12]})")
+    for line in passage.text.split("\n"):
+        _emit(f"    | {safe_text(line)}")
 
 
 def command_ask(args: argparse.Namespace, settings: Settings) -> int:
@@ -248,23 +255,30 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
     for warning in result.warnings:
         _emit(f"warning: {safe_text(warning)}")
     if result.status == "answered":
+        _emit("The model chose these lines as the answer:")
         for item in result.evidence:
-            citation = item.citation
             _emit("")
-            _emit(safe_text(item.statement))
-            _emit(
-                f"  [{citation.source_id}] {citation.path}:{citation.start_line}-{citation.end_line}"
-                f"  ({citation.repo}@{citation.commit_sha[:12]})"
-            )
-            for line in item.quote.split("\n"):
-                _emit(f"    | {safe_text(line)}")
+            _print_passage(item.passage)
+        if result.note:
+            _emit("")
+            _emit(f"Model's reading, not verified: {safe_text(result.note)}")
+        if result.note_problem:
+            _emit("")
+            _emit(f"The model's sentence was left out: {safe_text(result.note_problem)}")
         _emit("")
-        _emit("Each quote above is checked against Git. Whether a statement describes its quote correctly is not.")
+        _emit("Each line above is checked against Git. That they answer the question is the model's judgement, and a citation alone does not prove an answer.")
     else:
         _emit(_STATUS_MESSAGES[result.status])
-        if result.hits:
+        if result.passages:
+            if result.status != "no_llm":
+                _emit("")
+                _emit("Closest lines found, which are not an answer:")
+            for passage in result.passages:
+                _emit("")
+                _print_passage(passage)
+        elif result.hits:
             _emit("")
-            _emit("Closest code found:" if result.status != "no_llm" else "Sources:")
+            _emit("Closest code found, which is not an answer:")
             print_hits(result.hits, preview_lines=0)
     for rejection in result.rejected:
         _emit(f"discarded: {safe_text(rejection)}")
@@ -273,7 +287,7 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
         _emit("")
         _emit(
             f"model {result.model}: {result.input_tokens} input + {result.output_tokens} output tokens{approximate}, "
-            f"${result.cost_usd:.6f}; {result.sources_sent} sources read, "
+            f"${result.cost_usd:.6f}; {result.sources_sent} passages read, "
             f"{result.sources_dropped} left out by the limits"
         )
     return 0
@@ -297,7 +311,7 @@ def command_evaluate_ask(args: argparse.Namespace, settings: Settings) -> int:
     from repomind.evaluation.dataset import DEFAULT_DATASET_PATH, load_dataset, load_holdout_unanswerable
     from repomind.qa.llm import load_llm_config
 
-    if load_llm_config() is None:
+    if not args.no_llm and load_llm_config() is None:
         raise RepoMindError(
             "No LLM is configured, so there are no answers to evaluate.",
             hint="Set REPOMIND_LLM_BASE_URL and REPOMIND_LLM_MODEL (see README).",
@@ -397,6 +411,7 @@ def build_parser() -> argparse.ArgumentParser:
     ask.add_argument("--repo", action="append", help="limit to a repository (repeatable)")
     ask.add_argument("--model", help="embedding model")
     ask.add_argument("--translate", action=argparse.BooleanOptionalAction, default=True)
+    ask.add_argument("--no-llm", action="store_true", help="only list the closest lines, even if a model is configured")
     ask.set_defaults(handler=command_ask)
 
     evaluate_ask = commands.add_parser("evaluate-ask", help="measure answers from the configured LLM")
@@ -407,6 +422,7 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate_ask.add_argument(
         "--output", required=True, help="write answers to this JSON file; each question is also saved next to it as it finishes"
     )
+    evaluate_ask.add_argument("--no-llm", action="store_true", help="measure the evidence selection alone, with no model")
     evaluate_ask.add_argument("--overwrite", action="store_true", help="start again from nothing, replacing a finished result")
     evaluate_ask.add_argument("--limit", type=int, help="answer only this many questions, evenly spaced across the set")
     evaluate_ask.add_argument(

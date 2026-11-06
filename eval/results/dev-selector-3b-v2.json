@@ -1,0 +1,3445 @@
+{
+ "model": "qwen2.5:3b",
+ "base_url": "http://127.0.0.1:11535/v1",
+ "dataset_sha256": "f6531022d8c0bd12480974e4ba40bec37a3abc5018e7d45b43db391d4106a827",
+ "summary": {
+  "answerable_questions": 26,
+  "answered": 26,
+  "answered_citing_gold": 15,
+  "gold_was_in_context": 19,
+  "refused_answerable": 0,
+  "invalid_responses": 0,
+  "unanswerable_questions": 10,
+  "unanswerable_refused": 3,
+  "holdout_unanswerable_questions": 0,
+  "holdout_unanswerable_refused": 0,
+  "citations_shown": 44,
+  "references_shown": 166,
+  "references_recheck_valid": 166,
+  "notes_left_out": 2,
+  "rejected_by_backend": 0,
+  "input_tokens": 33610,
+  "output_tokens": 1936,
+  "cost_usd": 0.0,
+  "max_context_chars": 2593,
+  "mean_seconds": 17.3,
+  "lowest_free_memory_gb": 4.4
+ },
+ "answerable_citations_rechecked_valid": 35,
+ "answerable_citations_shown": 35,
+ "answerable": [
+  {
+   "question": "v2-sg-negative-stock-db",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What restrictions are in place at the database level to prevent counters from going negative?",
+   "answer": "src/main/resources/db/migration/V2__catalog_and_stock.sql:22-26\n\n    -- The database itself refuses overselling, even if application code is wrong.\n    CONSTRAINT ck_stock_available_non_negative CHECK (available_quantity >= 0),\n    CONSTRAINT ck_stock_reserved_non_negative  CHECK (reserved_quantity >= 0),\n    CONSTRAINT ck_stock_total_is_sum           CHECK (total_quantity = available_quantity + reserved_quantity)",
+   "note": "",
+   "note_problem": "it is too long to be one sentence",
+   "citations": [
+    {
+     "source": "P1",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 22,
+     "end_line": 26
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 22,
+     "end_line": 26,
+     "shared_terms": [
+      "databas",
+      "negat"
+     ],
+     "chosen": true,
+     "text": "\n    -- The database itself refuses overselling, even if application code is wrong.\n    CONSTRAINT ck_stock_available_non_negative CHECK (available_quantity >= 0),\n    CONSTRAINT ck_stock_reserved_non_negative  CHECK (reserved_quantity >= 0),\n    CONSTRAINT ck_stock_total_is_sum           CHECK (total_quantity = available_quantity + reserved_quantity)"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 15,
+     "shared_terms": [
+      "counter",
+      "level"
+     ],
+     "chosen": false,
+     "text": "/**\n * Read model of the stock counters. {@code @Immutable} and the absence of setters are deliberate: a counter\n * written back from a Java copy is the classic lost update, so the counters only ever change through the\n * conditional statements in {@link StockLevelRepository}.\n */"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 5,
+     "end_line": 7,
+     "shared_terms": [
+      "counter"
+     ],
+     "chosen": false,
+     "text": "    description VARCHAR(2000),\n    -- Optimistic lock for admin edits. Stock counters live elsewhere so they never bump this.\n    version     BIGINT       NOT NULL,"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 18,
+     "shared_terms": [
+      "level"
+     ],
+     "chosen": false,
+     "text": "-- Stock is kept apart from the product row: this is the hottest row in the system, and separating it\n-- means that a catalogue edit and a reservation never contend for the same row lock.\nCREATE TABLE stock_levels (\n    product_id         UUID        PRIMARY KEY REFERENCES products (id),\n    total_quantity     INTEGER     NOT NULL,"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 196,
+     "end_line": 200,
+     "shared_terms": [
+      "counter",
+      "negat"
+     ],
+     "chosen": false,
+     "text": "        long unexpected = results.size() - successful - rejected;\n        long oversoldUnits = Math.max(0, unitsHeld - initialStock);\n        long negativeCounters = (stock.getAvailable() < 0 ? 1 : 0) + (stock.getReserved() < 0 ? 1 : 0) + (stock.getTotal() < 0 ? 1 : 0);\n        // Nothing releases stock during a run, so the only correct outcome is to sell as much as fits. Selling less\n        // would mean customers were turned away while stock was left, which is also a failure."
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: restrictions, place, prevent."
+   ],
+   "input_tokens": 1156,
+   "output_tokens": 144,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 2450,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 27.1,
+   "free_memory_gb": 4.7,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sg-settled-immutable",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How is the modification of a finalized reservation prevented in the database?",
+   "answer": "src/main/java/com/stockguard/inventory/ConsistencyService.java:79-83\n            new Rule(\"RESERVATION_NOT_SETTLED_EXACTLY_ONCE\", \"\"\"\n                    SELECT r.product_id, format('reservation %s is %s with reserved=%s confirmed=%s cancelled=%s expired=%s',\n                           r.id, r.status, c.reserved, c.confirmed, c.cancelled, c.expired) AS detail\n                      FROM reservations r\n                      JOIN stock_levels s ON s.product_id = r.product_id\n\nModel's reading, not verified: new Rule checks if a reservation is settled exactly once.",
+   "note": "new Rule checks if a reservation is settled exactly once.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P5",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 83
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 30,
+     "end_line": 34,
+     "shared_terms": [
+      "reserv"
+     ],
+     "chosen": false,
+     "text": "@RestController\n@RequestMapping(\"/api/v1/reservations\")\n@Tag(name = \"Reservations\")\npublic class ReservationController {\n"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 15,
+     "end_line": 19,
+     "shared_terms": [
+      "databas",
+      "reserv"
+     ],
+     "chosen": false,
+     "text": "/**\n * Deadlines are compared with the database clock ({@code now()}), never the JVM clock, so all instances agree\n * on when a reservation has expired regardless of clock skew between them.\n */\ninterface ReservationRepository extends Repository<Reservation, UUID> {"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 16,
+     "shared_terms": [
+      "reserv"
+     ],
+     "chosen": false,
+     "text": "-- Stock is kept apart from the product row: this is the hottest row in the system, and separating it\n-- means that a catalogue edit and a reservation never contend for the same row lock.\nCREATE TABLE stock_levels ("
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 35,
+     "end_line": 36,
+     "shared_terms": [
+      "final"
+     ],
+     "chosen": false,
+     "text": "    static final String REPLAY_HEADER = \"Idempotency-Replayed\";\n"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 83,
+     "shared_terms": [
+      "reserv"
+     ],
+     "chosen": true,
+     "text": "            new Rule(\"RESERVATION_NOT_SETTLED_EXACTLY_ONCE\", \"\"\"\n                    SELECT r.product_id, format('reservation %s is %s with reserved=%s confirmed=%s cancelled=%s expired=%s',\n                           r.id, r.status, c.reserved, c.confirmed, c.cancelled, c.expired) AS detail\n                      FROM reservations r\n                      JOIN stock_levels s ON s.product_id = r.product_id"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: modification, prevented."
+   ],
+   "input_tokens": 1019,
+   "output_tokens": 43,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1969,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 18.0,
+   "free_memory_gb": 4.8,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": false,
+   "gold_in_context": false,
+   "gold_in_search": true,
+   "anchor_in_chosen": false,
+   "anchor_in_passages": false
+  },
+  {
+   "question": "v2-sg-append-only",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How can preventive measures be taken to prevent the deletion or update of purchase transactions and audit records in a software repository?",
+   "answer": "src/main/resources/db/migration/V4__ledger_and_audit.sql:48-50\nCREATE TRIGGER tg_stock_movements_append_only\n    BEFORE UPDATE OR DELETE ON stock_movements\n    FOR EACH ROW EXECUTE FUNCTION forbid_history_rewrite();\n\nsrc/main/resources/db/migration/V4__ledger_and_audit.sql:52-54\nCREATE TRIGGER tg_audit_events_append_only\n    BEFORE UPDATE OR DELETE ON audit_events\n    FOR EACH ROW EXECUTE FUNCTION forbid_history_rewrite();\n\nModel's reading, not verified: Bu triggelerin `FORBID_HISTORY_REWRITE` fonksiyonunu çağırması, stok hareketleri ve denetim kayıtlarının silinmesi veya güncellenmesini önler.",
+   "note": "Bu triggelerin `FORBID_HISTORY_REWRITE` fonksiyonunu çağırması, stok hareketleri ve denetim kayıtlarının silinmesi veya güncellenmesini önler.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 48,
+     "end_line": 50
+    },
+    {
+     "source": "P2",
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 52,
+     "end_line": 54
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 48,
+     "end_line": 50,
+     "shared_terms": [
+      "delet",
+      "updat"
+     ],
+     "chosen": true,
+     "text": "CREATE TRIGGER tg_stock_movements_append_only\n    BEFORE UPDATE OR DELETE ON stock_movements\n    FOR EACH ROW EXECUTE FUNCTION forbid_history_rewrite();"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 52,
+     "end_line": 54,
+     "shared_terms": [
+      "audit",
+      "delet",
+      "updat"
+     ],
+     "chosen": true,
+     "text": "CREATE TRIGGER tg_audit_events_append_only\n    BEFORE UPDATE OR DELETE ON audit_events\n    FOR EACH ROW EXECUTE FUNCTION forbid_history_rewrite();"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 50,
+     "end_line": 54,
+     "shared_terms": [
+      "transact",
+      "updat"
+     ],
+     "chosen": false,
+     "text": "    /** The anti-overselling statement. An empty result means too little stock was left once it got the row lock. */\n    @Transactional(propagation = Propagation.MANDATORY)\n    @Query(nativeQuery = true, value = \"\"\"\n            UPDATE stock_levels\n               SET available_quantity = available_quantity - :quantity,"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 50,
+     "end_line": 54,
+     "shared_terms": [
+      "audit",
+      "record",
+      "updat"
+     ],
+     "chosen": false,
+     "text": "        product.rename(name, description);\n        products.flush();\n        audit.record(AuditEventType.PRODUCT_UPDATED, actorId, \"PRODUCT\", id, Map.of(\"name\", name, \"version\", product.getVersion()));\n        return product;\n    }"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 76,
+     "end_line": 80,
+     "shared_terms": [
+      "transact",
+      "updat"
+     ],
+     "chosen": false,
+     "text": "    /** Cancellation or expiry: held units become sellable again. */\n    @Transactional(propagation = Propagation.MANDATORY)\n    @Query(nativeQuery = true, value = \"\"\"\n            UPDATE stock_levels\n               SET available_quantity = available_quantity + :quantity,"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: preventive, measures, prevent, purchase, software."
+   ],
+   "input_tokens": 1064,
+   "output_tokens": 94,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 2064,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 21.4,
+   "free_memory_gb": 4.6,
+   "citations_recheck_valid": 2,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sg-sweep-index",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What index in the database is used for the reservation retrieval process that has been running for a while?",
+   "answer": "src/main/resources/db/migration/V3__reservations.sql:20-21\n-- Partial index: the sweeper only ever looks at PENDING rows, which stay a small part of the table.\nCREATE INDEX ix_reservations_pending_expiry ON reservations (expires_at) WHERE status = 'PENDING';\n\nModel's reading, not verified: `ix_reservations_pending_expiry` indeksi varsa, süresi geçen rezervasyonları tarayabilir.",
+   "note": "`ix_reservations_pending_expiry` indeksi varsa, süresi geçen rezervasyonları tarayabilir.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 20,
+     "end_line": 21
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 20,
+     "end_line": 21,
+     "shared_terms": [
+      "index",
+      "reserv"
+     ],
+     "chosen": true,
+     "text": "-- Partial index: the sweeper only ever looks at PENDING rows, which stay a small part of the table.\nCREATE INDEX ix_reservations_pending_expiry ON reservations (expires_at) WHERE status = 'PENDING';"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 22,
+     "end_line": 22,
+     "shared_terms": [
+      "index",
+      "reserv"
+     ],
+     "chosen": false,
+     "text": "CREATE INDEX ix_reservations_user_created ON reservations (user_id, created_at DESC);"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 23,
+     "end_line": 23,
+     "shared_terms": [
+      "index",
+      "reserv"
+     ],
+     "chosen": false,
+     "text": "CREATE INDEX ix_reservations_product ON reservations (product_id);"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 25,
+     "end_line": 25,
+     "shared_terms": [
+      "index",
+      "reserv"
+     ],
+     "chosen": false,
+     "text": "CREATE INDEX ix_stock_movements_reservation ON stock_movements (reservation_id);"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 15,
+     "end_line": 19,
+     "shared_terms": [
+      "databas",
+      "reserv"
+     ],
+     "chosen": false,
+     "text": "/**\n * Deadlines are compared with the database clock ({@code now()}), never the JVM clock, so all instances agree\n * on when a reservation has expired regardless of clock skew between them.\n */\ninterface ReservationRepository extends Repository<Reservation, UUID> {"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: retrieval, process."
+   ],
+   "input_tokens": 943,
+   "output_tokens": 63,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1590,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 18.0,
+   "free_memory_gb": 4.8,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sg-why-separate-stock",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "Why are counter software repositories kept in a separate place from the products table?",
+   "answer": "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-18\n-- Stock is kept apart from the product row: this is the hottest row in the system, and separating it\n-- means that a catalogue edit and a reservation never contend for the same row lock.\nCREATE TABLE stock_levels (\n    product_id         UUID        PRIMARY KEY REFERENCES products (id),\n    total_quantity     INTEGER     NOT NULL,\n\nModel's reading, not verified: `stock_levels` tablosu ürün tablosundan ayrı tutulması nedeniyle bir hata oluştuğu açıklandı.",
+   "note": "`stock_levels` tablosu ürün tablosundan ayrı tutulması nedeniyle bir hata oluştuğu açıklandı.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 18
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 18,
+     "shared_terms": [
+      "kept",
+      "product",
+      "separ",
+      "tabl"
+     ],
+     "chosen": true,
+     "text": "-- Stock is kept apart from the product row: this is the hottest row in the system, and separating it\n-- means that a catalogue edit and a reservation never contend for the same row lock.\nCREATE TABLE stock_levels (\n    product_id         UUID        PRIMARY KEY REFERENCES products (id),\n    total_quantity     INTEGER     NOT NULL,"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/inventory/StockLevel.java",
+     "start_line": 11,
+     "end_line": 15,
+     "shared_terms": [
+      "counter",
+      "repositori"
+     ],
+     "chosen": false,
+     "text": "/**\n * Read model of the stock counters. {@code @Immutable} and the absence of setters are deliberate: a counter\n * written back from a Java copy is the classic lost update, so the counters only ever change through the\n * conditional statements in {@link StockLevelRepository}.\n */"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 1,
+     "end_line": 3,
+     "shared_terms": [
+      "product",
+      "tabl"
+     ],
+     "chosen": false,
+     "text": "CREATE TABLE products (\n    id          UUID         PRIMARY KEY,\n    sku         VARCHAR(64)  NOT NULL,"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 5,
+     "end_line": 7,
+     "shared_terms": [
+      "counter"
+     ],
+     "chosen": false,
+     "text": "    description VARCHAR(2000),\n    -- Optimistic lock for admin edits. Stock counters live elsewhere so they never bump this.\n    version     BIGINT       NOT NULL,"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 9,
+     "end_line": 11,
+     "shared_terms": [
+      "product"
+     ],
+     "chosen": false,
+     "text": "    updated_at  TIMESTAMPTZ  NOT NULL,\n\n    CONSTRAINT uq_products_sku UNIQUE (sku)"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: software, place."
+   ],
+   "input_tokens": 986,
+   "output_tokens": 62,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1771,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 18.3,
+   "free_memory_gb": 4.8,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sg-lock-timeout-config",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "Where is the lock wait timeout set and what is its value?",
+   "answer": "src/main/resources/application.yml:10-14\n      minimum-idle: 2\n      connection-timeout: 10000\n      # lock_timeout must stay above PostgreSQL's deadlock_timeout (1s) so that deadlocks are\n      # reported as deadlocks. The idle-in-transaction limit stops a hung client from pinning a row lock.\n      connection-init-sql: \"SET lock_timeout = '3s'; SET idle_in_transaction_session_timeout = '30s'\"\n\nModel's reading, not verified: `connection-init-sql` satırında lock_timeout ve idle_in_transaction_session_timeout değerleri ayarlanıyor.",
+   "note": "`connection-init-sql` satırında lock_timeout ve idle_in_transaction_session_timeout değerleri ayarlanıyor.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "src/main/resources/application.yml",
+     "start_line": 10,
+     "end_line": 14
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/resources/application.yml",
+     "start_line": 10,
+     "end_line": 14,
+     "shared_terms": [
+      "lock",
+      "set",
+      "timeout"
+     ],
+     "chosen": true,
+     "text": "      minimum-idle: 2\n      connection-timeout: 10000\n      # lock_timeout must stay above PostgreSQL's deadlock_timeout (1s) so that deadlocks are\n      # reported as deadlocks. The idle-in-transaction limit stops a hung client from pinning a row lock.\n      connection-init-sql: \"SET lock_timeout = '3s'; SET idle_in_transaction_session_timeout = '30s'\""
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 54,
+     "end_line": 58,
+     "shared_terms": [
+      "lock",
+      "set",
+      "wait"
+     ],
+     "chosen": false,
+     "text": "    /**\n     * Compare-and-set: of all attempts to settle one reservation, exactly one can match {@code PENDING}.\n     * Losers either see the winner's committed status directly or wait on its row lock and then re-check.\n     * After the deadline neither confirm nor cancel matches, which leaves expiry as the only way out.\n     */"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 16,
+     "end_line": 20,
+     "shared_terms": [
+      "lock",
+      "timeout"
+     ],
+     "chosen": false,
+     "text": "/**\n * The retry boundary. It sits deliberately outside the transaction: PostgreSQL aborts the whole transaction\n * when a deadlock or lock timeout hits it, so only a brand new transaction can try again. These failures say\n * nothing about the request itself, which makes a short bounded retry safe; business rejections are not retried.\n */"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 84,
+     "end_line": 86,
+     "shared_terms": [
+      "set"
+     ],
+     "chosen": false,
+     "text": "            UPDATE reservations r\n               SET status = 'EXPIRED', settled_at = now()\n              FROM due"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 80,
+     "end_line": 82,
+     "shared_terms": [
+      "lock"
+     ],
+     "chosen": false,
+     "text": "                 ORDER BY expires_at\n                 LIMIT :limit\n                 FOR UPDATE SKIP LOCKED"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1075,
+   "output_tokens": 55,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 2171,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 20.1,
+   "free_memory_gb": 4.7,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sg-reservation-defaults",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How much does a reservation default cost and how often is it scheduled to run?",
+   "answer": "src/main/resources/application.yml:61-63\n  reservation:\n    default-ttl: 15m\n    expiry:\n\nModel's reading, not verified: reservation default-ttl: 15m gösterir.",
+   "note": "reservation default-ttl: 15m gösterir.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "src/main/resources/application.yml",
+     "start_line": 61,
+     "end_line": 63
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/resources/application.yml",
+     "start_line": 61,
+     "end_line": 63,
+     "shared_terms": [
+      "default",
+      "reserv"
+     ],
+     "chosen": true,
+     "text": "  reservation:\n    default-ttl: 15m\n    expiry:"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 17,
+     "end_line": 21,
+     "shared_terms": [
+      "reserv"
+     ],
+     "chosen": false,
+     "text": "/**\n * The transaction boundaries of the reservation lifecycle. Every method is one all-or-nothing unit and uses\n * the same lock order, reservation row first and stock row second, so these transactions cannot deadlock\n * against each other. The stock row is the contended one, so it is always touched last and held for as short\n * a time as possible."
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 113,
+     "end_line": 117,
+     "shared_terms": [
+      "reserv"
+     ],
+     "chosen": false,
+     "text": "            Instant createdAt) {\n\n        static ReservationResponse from(Reservation reservation) {\n            return new ReservationResponse(\n                    reservation.getId(),"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 72,
+     "end_line": 76,
+     "shared_terms": [
+      "default",
+      "reserv"
+     ],
+     "chosen": false,
+     "text": "    public PageResponse<ReservationResponse> list(\n            @RequestParam(defaultValue = \"0\") @Min(0) int page,\n            @RequestParam(defaultValue = \"20\") @Min(1) @Max(100) int size,\n            @AuthenticationPrincipal Jwt jwt) {\n        return PageResponse.of(reservations.list(Actor.from(jwt), page, size), ReservationResponse::from);"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 23,
+     "end_line": 27,
+     "shared_terms": [
+      "reserv"
+     ],
+     "chosen": false,
+     "text": "@Service\npublic class ReservationTransactions {\n\n    private final ReservationRepository reservations;\n    private final StockLedger ledger;"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: cost, often."
+   ],
+   "input_tokens": 1017,
+   "output_tokens": 47,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1993,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 19.3,
+   "free_memory_gb": 4.7,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sg-two-instances",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How do I launch two copies of the application to share the same database?",
+   "answer": "compose.yaml:1-3\n# Two application instances sharing one PostgreSQL, which is the setup StockGuard's guarantees are built for.\n# All ports are bound to localhost only. Copy .env.example to .env and fill it in before starting.\nname: stockguard\n\nModel's reading, not verified: # Two application instances sharing one PostgreSQL",
+   "note": "# Two application instances sharing one PostgreSQL",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P3",
+     "path": "compose.yaml",
+     "start_line": 1,
+     "end_line": 3
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 12,
+     "end_line": 16,
+     "shared_terms": [
+      "same",
+      "two"
+     ],
+     "chosen": false,
+     "text": "    Optional<AppUser> findByUsername(String username);\n\n    /** Safe when two requests, or two instances seeding the admin, race for the same username. */\n    @Modifying\n    @Query(nativeQuery = true, value = \"\"\""
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/common/config/OpenApiConfig.java",
+     "start_line": 23,
+     "end_line": 27,
+     "shared_terms": [
+      "copi"
+     ],
+     "chosen": false,
+     "text": "                                Inventory management and concurrent reservation engine.\n\n                                1. Call `POST /api/v1/auth/login` (or `register`) and copy `accessToken`.\n                                2. Press **Authorize** and paste the token.\n                                \"\"\"))"
+    },
+    {
+     "id": "P3",
+     "path": "compose.yaml",
+     "start_line": 1,
+     "end_line": 3,
+     "shared_terms": [
+      "applic",
+      "copi",
+      "share",
+      "two"
+     ],
+     "chosen": true,
+     "text": "# Two application instances sharing one PostgreSQL, which is the setup StockGuard's guarantees are built for.\n# All ports are bound to localhost only. Copy .env.example to .env and fill it in before starting.\nname: stockguard"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 29,
+     "end_line": 33,
+     "shared_terms": [
+      "same"
+     ],
+     "chosen": false,
+     "text": "    /**\n     * Claims the idempotency key and creates the reservation in one statement. If another transaction has\n     * just inserted the same key, PostgreSQL blocks this statement until that transaction ends. If it\n     * committed, this returns 0 (a duplicate). If it rolled back, this insert simply goes ahead. That is what\n     * turns concurrent duplicates into exactly one logical operation."
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 62,
+     "end_line": 66,
+     "shared_terms": [
+      "databas"
+     ],
+     "chosen": false,
+     "text": "    })\n    ResponseEntity<ProblemDetail> handleTransient(Exception ex) {\n        log.warn(\"Transient database failure: {}\", ex.getMessage());\n        ProblemDetail problem = problem(ErrorCode.TEMPORARILY_UNAVAILABLE, \"The operation could not complete right now. Retry shortly.\");\n        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: launch."
+   ],
+   "input_tokens": 1091,
+   "output_tokens": 40,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 2349,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 19.7,
+   "free_memory_gb": 4.4,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": false,
+   "gold_in_context": false,
+   "gold_in_search": false,
+   "anchor_in_chosen": false,
+   "anchor_in_passages": false
+  },
+  {
+   "question": "v2-sg-auth-error-format",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How does the client throw an error when a request to create an entry is rejected?",
+   "answer": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:103-107\n        }\n        // Any other constraint means application code tried to break an invariant: a bug, not a client error.\n        log.error(\"Database rejected a write that should have been impossible\", ex);\n        return respond(ErrorCode.INTERNAL_ERROR, \"An unexpected error occurred.\");\n    }\n\nModel's reading, not verified: Database rejected a write that should have been impossible.",
+   "note": "Database rejected a write that should have been impossible.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 103,
+     "end_line": 107
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 103,
+     "end_line": 107,
+     "shared_terms": [
+      "client",
+      "error",
+      "reject"
+     ],
+     "chosen": true,
+     "text": "        }\n        // Any other constraint means application code tried to break an invariant: a bug, not a client error.\n        log.error(\"Database rejected a write that should have been impossible\", ex);\n        return respond(ErrorCode.INTERNAL_ERROR, \"An unexpected error occurred.\");\n    }"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 65,
+     "end_line": 69,
+     "shared_terms": [
+      "creat",
+      "error",
+      "reject",
+      "request",
+      "throw"
+     ],
+     "chosen": false,
+     "text": "        if (!ledger.tryReserve(productId, command.quantity(), id, actor.userId())) {\n            // Rolls back the insert above too, so a rejected request does not use up its idempotency key.\n            throw new ApiException(ErrorCode.INSUFFICIENT_STOCK, \"Not enough stock is available for this request.\");\n        }\n        return new CreateOutcome(created, false);"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 34,
+     "end_line": 38,
+     "shared_terms": [
+      "error",
+      "request",
+      "throw"
+     ],
+     "chosen": false,
+     "text": "    @Override\n    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException ex)\n            throws IOException {\n        write(request, response, ErrorCode.ACCESS_DENIED, \"You do not have permission to perform this action.\");\n    }"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 27,
+     "end_line": 31,
+     "shared_terms": [
+      "error",
+      "request",
+      "throw"
+     ],
+     "chosen": false,
+     "text": "    @Override\n    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex)\n            throws IOException {\n        response.setHeader(HttpHeaders.WWW_AUTHENTICATE, \"Bearer\");\n        write(request, response, ErrorCode.UNAUTHENTICATED, \"A valid bearer token is required.\");"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 74,
+     "end_line": 78,
+     "shared_terms": [
+      "error",
+      "request",
+      "throw"
+     ],
+     "chosen": false,
+     "text": "                .orElseThrow(() -> new IllegalStateException(\"A conflicting key was reported but the row is not visible\"));\n        if (!original.getRequestHash().equals(fingerprint)) {\n            throw new ApiException(ErrorCode.IDEMPOTENCY_KEY_REUSED,\n                    \"This Idempotency-Key was already used with a different request.\");\n        }"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1119,
+   "output_tokens": 46,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 2593,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 20.4,
+   "free_memory_gb": 4.6,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": false,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": false,
+   "anchor_in_passages": false
+  },
+  {
+   "question": "v2-sg-username-race",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What happens if two people sign up for the same username at the same time?",
+   "answer": "src/main/java/com/stockguard/user/AppUserRepository.java:12-16\n    Optional<AppUser> findByUsername(String username);\n\n    /** Safe when two requests, or two instances seeding the admin, race for the same username. */\n    @Modifying\n    @Query(nativeQuery = true, value = \"\"\"\n\nsrc/main/java/com/stockguard/user/AppUserRepository.java:18-20\n            VALUES (:id, :username, :passwordHash, :role, now())\n            ON CONFLICT (username) DO NOTHING\n            \"\"\")\n\nModel's reading, not verified: İki kullanıcı aynı anda aynı username ile kaydedildiğinde, `findByUsername` methodu Optional<AppUser> döndürür.",
+   "note": "İki kullanıcı aynı anda aynı username ile kaydedildiğinde, `findByUsername` methodu Optional<AppUser> döndürür.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 12,
+     "end_line": 16
+    },
+    {
+     "source": "P3",
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 18,
+     "end_line": 20
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 12,
+     "end_line": 16,
+     "shared_terms": [
+      "same",
+      "two",
+      "usernam"
+     ],
+     "chosen": true,
+     "text": "    Optional<AppUser> findByUsername(String username);\n\n    /** Safe when two requests, or two instances seeding the admin, race for the same username. */\n    @Modifying\n    @Query(nativeQuery = true, value = \"\"\""
+    },
+    {
+     "id": "P2",
+     "path": "src/main/resources/db/migration/V1__users.sql",
+     "start_line": 7,
+     "end_line": 11,
+     "shared_terms": [
+      "usernam"
+     ],
+     "chosen": false,
+     "text": "\n    CONSTRAINT uq_app_users_username UNIQUE (username),\n    CONSTRAINT ck_app_users_username_lowercase CHECK (username = lower(username)),\n    CONSTRAINT ck_app_users_role CHECK (role IN ('ADMIN', 'USER'))\n);"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 18,
+     "end_line": 20,
+     "shared_terms": [
+      "usernam"
+     ],
+     "chosen": true,
+     "text": "            VALUES (:id, :username, :passwordHash, :role, now())\n            ON CONFLICT (username) DO NOTHING\n            \"\"\")"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/resources/db/migration/V1__users.sql",
+     "start_line": 1,
+     "end_line": 5,
+     "shared_terms": [
+      "usernam"
+     ],
+     "chosen": false,
+     "text": "CREATE TABLE app_users (\n    id            UUID         PRIMARY KEY,\n    username      VARCHAR(64)  NOT NULL,\n    password_hash VARCHAR(100) NOT NULL,\n    role          VARCHAR(16)  NOT NULL,"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/user/AppUserRepository.java",
+     "start_line": 22,
+     "end_line": 24,
+     "shared_terms": [
+      "usernam"
+     ],
+     "chosen": false,
+     "text": "            @Param(\"id\") UUID id,\n            @Param(\"username\") String username,\n            @Param(\"passwordHash\") String passwordHash,"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 982,
+   "output_tokens": 69,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1683,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 18.9,
+   "free_memory_gb": 4.7,
+   "citations_recheck_valid": 2,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sg-simulation-limit",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How many concurrent requests can be sent in a racing simulation software?",
+   "answer": "src/main/java/com/stockguard/simulation/SimulationService.java:100-104\n        long startedAt = System.nanoTime();\n        List<RequestResult> results = race(concurrentRequests, index -> {\n            String target = targets.get(index % targets.size());\n            return reserve(target, users.get(index), product.getId(), quantityPerRequest, runId + \"-\" + index);\n        });\n\nModel's reading, not verified: race(int count, Function<Integer, RequestResult> task) işlevi, isteklerin genel bir gate dahilinde ve aynı anda yayınlanmasını sağlar.",
+   "note": "race(int count, Function<Integer, RequestResult> task) işlevi, isteklerin genel bir gate dahilinde ve aynı anda yayınlanmasını sağlar.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P4",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 100,
+     "end_line": 104
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 90,
+     "end_line": 94,
+     "shared_terms": [
+      "concurr",
+      "request",
+      "simul"
+     ],
+     "chosen": false,
+     "text": "    public SimulationReport run(int initialStock, int concurrentRequests, int quantityPerRequest, UUID adminId) {\n        UUID runId = UUID.randomUUID();\n        Product product = products.create(\n                \"SIM-\" + runId.toString().substring(0, 13), \"Simulation \" + runId, \"Created by a concurrency simulation\", adminId);\n        if (initialStock > 0) {"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 96,
+     "end_line": 98,
+     "shared_terms": [
+      "concurr",
+      "request",
+      "simul"
+     ],
+     "chosen": false,
+     "text": "        }\n\n        List<SimulatedUser> users = simulatedUsers(concurrentRequests);"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 118,
+     "end_line": 120,
+     "shared_terms": [
+      "race",
+      "request"
+     ],
+     "chosen": false,
+     "text": "    /** All tasks wait behind one gate and are released together, so the requests genuinely overlap. */\n    private static List<RequestResult> race(int count, Function<Integer, RequestResult> task) {\n        CountDownLatch ready = new CountDownLatch(count);"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 100,
+     "end_line": 104,
+     "shared_terms": [
+      "concurr",
+      "race",
+      "request"
+     ],
+     "chosen": true,
+     "text": "        long startedAt = System.nanoTime();\n        List<RequestResult> results = race(concurrentRequests, index -> {\n            String target = targets.get(index % targets.size());\n            return reserve(target, users.get(index), product.getId(), quantityPerRequest, runId + \"-\" + index);\n        });"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 35,
+     "end_line": 39,
+     "shared_terms": [
+      "concurr",
+      "request",
+      "simul"
+     ],
+     "chosen": false,
+     "text": "    }\n\n    public record SimulationRequest(\n            @NotNull @Min(0) @Max(100_000) Integer initialStock,\n            @NotNull @Min(1) @Max(1000) Integer concurrentRequests,"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: sent, software."
+   ],
+   "input_tokens": 1047,
+   "output_tokens": 67,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 2086,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 19.8,
+   "free_memory_gb": 4.6,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": false,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": false,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sg-error-status-map",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "Which HTTP status code does an out of stock error return?",
+   "answer": "src/main/java/com/stockguard/common/error/ErrorCode.java:13-17\n    USERNAME_TAKEN(HttpStatus.CONFLICT),\n    SKU_TAKEN(HttpStatus.CONFLICT),\n    STALE_VERSION(HttpStatus.CONFLICT),\n    INSUFFICIENT_STOCK(HttpStatus.CONFLICT),\n    RESERVATION_ALREADY_SETTLED(HttpStatus.CONFLICT),",
+   "note": "",
+   "note_problem": "it gives numbers that are not in the chosen lines: 400",
+   "citations": [
+    {
+     "source": "P2",
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 13,
+     "end_line": 17
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 150,
+     "end_line": 154,
+     "shared_terms": [
+      "code",
+      "error",
+      "http",
+      "status"
+     ],
+     "chosen": false,
+     "text": "            HttpStatus resolved = HttpStatus.resolve(status.value());\n            String code = status.value() == 400 ? ErrorCode.VALIDATION_FAILED.name()\n                    : resolved != null ? resolved.name() : ErrorCode.INTERNAL_ERROR.name();\n            problem.setProperty(\"code\", code);\n        }"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 13,
+     "end_line": 17,
+     "shared_terms": [
+      "http",
+      "status",
+      "stock"
+     ],
+     "chosen": true,
+     "text": "    USERNAME_TAKEN(HttpStatus.CONFLICT),\n    SKU_TAKEN(HttpStatus.CONFLICT),\n    STALE_VERSION(HttpStatus.CONFLICT),\n    INSUFFICIENT_STOCK(HttpStatus.CONFLICT),\n    RESERVATION_ALREADY_SETTLED(HttpStatus.CONFLICT),"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 23,
+     "end_line": 27,
+     "shared_terms": [
+      "code",
+      "error",
+      "http",
+      "status"
+     ],
+     "chosen": false,
+     "text": "    private final HttpStatus status;\n\n    ErrorCode(HttpStatus status) {\n        this.status = status;\n    }"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 5,
+     "end_line": 9,
+     "shared_terms": [
+      "code",
+      "error",
+      "http",
+      "status"
+     ],
+     "chosen": false,
+     "text": "/** Machine readable error contract. Clients branch on these codes, not on message text. */\npublic enum ErrorCode {\n    VALIDATION_FAILED(HttpStatus.BAD_REQUEST),\n    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED),\n    UNAUTHENTICATED(HttpStatus.UNAUTHORIZED),"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 144,
+     "end_line": 148,
+     "shared_terms": [
+      "code",
+      "error",
+      "http",
+      "status"
+     ],
+     "chosen": false,
+     "text": "    /** Spring MVC's own errors (malformed JSON, wrong method, type mismatch...) also get a {@code code}. */\n    @Override\n    protected ResponseEntity<Object> handleExceptionInternal(\n            Exception ex, Object body, HttpHeaders headers, HttpStatusCode status, WebRequest request) {\n        ResponseEntity<Object> response = super.handleExceptionInternal(ex, body, headers, status, request);"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1014,
+   "output_tokens": 53,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 2192,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 18.7,
+   "free_memory_gb": 4.7,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sg-add-stock-limits",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What are the limits for quantity in the deposit shortage request in the repository?",
+   "answer": "src/main/java/com/stockguard/inventory/StockLevelRepository.java:58-60\n               AND available_quantity >= :quantity\n            RETURNING total_quantity AS \"total\", available_quantity AS \"available\", reserved_quantity AS \"reserved\"\n            \"\"\")\n\nsrc/main/java/com/stockguard/inventory/StockLevelRepository.java:52-56\n    @Query(nativeQuery = true, value = \"\"\"\n            UPDATE stock_levels\n               SET available_quantity = available_quantity - :quantity,\n                   reserved_quantity = reserved_quantity + :quantity,\n                   updated_at = now()\n\nModel's reading, not verified: Limits for quantity are checked in expireDue method and applied in moveAvailableToReserved method.",
+   "note": "Limits for quantity are checked in expireDue method and applied in moveAvailableToReserved method.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P4",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 58,
+     "end_line": 60
+    },
+    {
+     "source": "P5",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 52,
+     "end_line": 56
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 86,
+     "end_line": 90,
+     "shared_terms": [
+      "limit",
+      "quantiti"
+     ],
+     "chosen": false,
+     "text": "              FROM due\n             WHERE r.id = due.id\n            RETURNING r.id AS \"id\", r.product_id AS \"productId\", r.user_id AS \"userId\", r.quantity AS \"quantity\"\n            \"\"\")\n    List<ExpiredReservation> expireDue(@Param(\"limit\") int limit);"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 80,
+     "end_line": 82,
+     "shared_terms": [
+      "limit"
+     ],
+     "chosen": false,
+     "text": "                 ORDER BY expires_at\n                 LIMIT :limit\n                 FOR UPDATE SKIP LOCKED"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+     "start_line": 60,
+     "end_line": 62,
+     "shared_terms": [
+      "quantiti",
+      "request"
+     ],
+     "chosen": false,
+     "text": "    public record AddStockRequest(\n            @NotNull @Min(1) @Max(1_000_000) Integer quantity,\n            @Size(max = 200) String note) {"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 58,
+     "end_line": 60,
+     "shared_terms": [
+      "quantiti"
+     ],
+     "chosen": true,
+     "text": "               AND available_quantity >= :quantity\n            RETURNING total_quantity AS \"total\", available_quantity AS \"available\", reserved_quantity AS \"reserved\"\n            \"\"\")"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 52,
+     "end_line": 56,
+     "shared_terms": [
+      "quantiti"
+     ],
+     "chosen": true,
+     "text": "    @Query(nativeQuery = true, value = \"\"\"\n            UPDATE stock_levels\n               SET available_quantity = available_quantity - :quantity,\n                   reserved_quantity = reserved_quantity + :quantity,\n                   updated_at = now()"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: deposit, shortage."
+   ],
+   "input_tokens": 1005,
+   "output_tokens": 56,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1929,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 18.7,
+   "free_memory_gb": 4.6,
+   "citations_recheck_valid": 2,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": false,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": false,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sn-one-owner",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How is a double ownership of a note handled in the database?",
+   "answer": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql:1-5\n-- Invariant: every note has at most one OWNER membership.\n-- Enforced by the database (partial unique index) rather than only by application code,\n-- so a race between two concurrent \"share\" requests can never produce two owners.\nCREATE UNIQUE INDEX \"note_members_one_owner_per_note\"\n  ON \"note_members\" (\"note_id\")\n\nModel's reading, not verified: `note_members_one_owner_per_note` index enforces that a note has at most one OWNER membership.",
+   "note": "`note_members_one_owner_per_note` index enforces that a note has at most one OWNER membership.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 5
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 5,
+     "shared_terms": [
+      "databas",
+      "note"
+     ],
+     "chosen": true,
+     "text": "-- Invariant: every note has at most one OWNER membership.\n-- Enforced by the database (partial unique index) rather than only by application code,\n-- so a race between two concurrent \"share\" requests can never produce two owners.\nCREATE UNIQUE INDEX \"note_members_one_owner_per_note\"\n  ON \"note_members\" (\"note_id\")"
+    },
+    {
+     "id": "P2",
+     "path": "apps/web/src/lib/offline-store.ts",
+     "start_line": 3,
+     "end_line": 7,
+     "shared_terms": [
+      "databas",
+      "note"
+     ],
+     "chosen": false,
+     "text": "/**\n * IndexedDB database name for a user's local replica of a note.\n * Scoped by user so that two accounts on one browser never see each other's cached notes.\n */\nexport function localReplicaName(userId: string, noteId: string): string {"
+    },
+    {
+     "id": "P3",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 181,
+     "end_line": 183,
+     "shared_terms": [
+      "note"
+     ],
+     "chosen": false,
+     "text": "        }\n        logger.info('access revoked', { noteId: event.noteId, userId: event.userId });\n        break;"
+    },
+    {
+     "id": "P4",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 177,
+     "end_line": 179,
+     "shared_terms": [
+      "note"
+     ],
+     "chosen": false,
+     "text": "        permissions.set(event.userId, event.noteId, null);\n        for (const connection of this.connectionsFor(event.noteId, event.userId)) {\n          send(connection, { type: 'access.revoked' });"
+    },
+    {
+     "id": "P5",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 173,
+     "end_line": 175,
+     "shared_terms": [
+      "handl"
+     ],
+     "chosen": false,
+     "text": "  private handleAccessEvent(event: AccessEvent): void {\n    const { permissions, logger } = this.options;\n    switch (event.type) {"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1024,
+   "output_tokens": 52,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1885,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 18.9,
+   "free_memory_gb": 4.6,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sn-collab-instances",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How many copies are working from the collaboration server when the system is opened with Docker?",
+   "answer": "docker-compose.yml:80-82\n    environment:\n      <<: *server-env\n      INSTANCE_NAME: collab-1\n\ndocker-compose.yml:86-88\n    environment:\n      <<: *server-env\n      INSTANCE_NAME: collab-2\n\nModel's reading, not verified: collab-1 ve collab-2 adlı kopyaların çalışma durumu belirtiliyor.",
+   "note": "collab-1 ve collab-2 adlı kopyaların çalışma durumu belirtiliyor.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "docker-compose.yml",
+     "start_line": 80,
+     "end_line": 82
+    },
+    {
+     "source": "P2",
+     "path": "docker-compose.yml",
+     "start_line": 86,
+     "end_line": 88
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "docker-compose.yml",
+     "start_line": 80,
+     "end_line": 82,
+     "shared_terms": [
+      "server"
+     ],
+     "chosen": true,
+     "text": "    environment:\n      <<: *server-env\n      INSTANCE_NAME: collab-1"
+    },
+    {
+     "id": "P2",
+     "path": "docker-compose.yml",
+     "start_line": 86,
+     "end_line": 88,
+     "shared_terms": [
+      "server"
+     ],
+     "chosen": true,
+     "text": "    environment:\n      <<: *server-env\n      INSTANCE_NAME: collab-2"
+    },
+    {
+     "id": "P3",
+     "path": "apps/collab/src/server.ts",
+     "start_line": 112,
+     "end_line": 116,
+     "shared_terms": [
+      "collabor",
+      "server"
+     ],
+     "chosen": false,
+     "text": "    async listen() {\n      await server.listen(config.COLLAB_PORT);\n      const port = server.address.port;\n      logger.info('collaboration server listening', { port });\n      return port;"
+    },
+    {
+     "id": "P4",
+     "path": "apps/collab/src/server.ts",
+     "start_line": 104,
+     "end_line": 106,
+     "shared_terms": [
+      "server"
+     ],
+     "chosen": false,
+     "text": "  return {\n    server,\n    config,"
+    },
+    {
+     "id": "P5",
+     "path": "apps/collab/src/server.ts",
+     "start_line": 120,
+     "end_line": 124,
+     "shared_terms": [
+      "server"
+     ],
+     "chosen": false,
+     "text": "      destroyed = true;\n      // Persist pending changes before shutting down (graceful restart / deploy).\n      server.hocuspocus.flushPendingStores();\n      await server.destroy();\n      await accessEvents.close();"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 896,
+   "output_tokens": 63,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1263,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 16.3,
+   "free_memory_gb": 4.7,
+   "citations_recheck_valid": 2,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sn-redis-durability",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What does Redis save its data to using a certain setting?",
+   "answer": "docker-compose.yml:48-52\n      - redisdata:/data\n    healthcheck:\n      test: ['CMD', 'redis-cli', 'ping']\n      interval: 3s\n      timeout: 3s\n\nModel's reading, not verified: 'redisdata:/data' ayarı Redis verilerini diske yazmayı sağlar.",
+   "note": "'redisdata:/data' ayarı Redis verilerini diske yazmayı sağlar.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P3",
+     "path": "docker-compose.yml",
+     "start_line": 48,
+     "end_line": 52
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 36,
+     "end_line": 40,
+     "shared_terms": [
+      "redi"
+     ],
+     "chosen": false,
+     "text": " * 1. `lockTimeout: 0` — the extension's Redlock would *abort persistence* when Redis is down.\n *    Concurrent stores are serialised by a Postgres row lock + CRDT merge instead.\n * 2. Document loads never block on Redis: while it is unavailable, the subscription is deferred.\n * 3. Publishes are skipped while disconnected (no unbounded offline queue, no log flood).\n * 4. On reconnect every open document re-announces its state vector, so peers exchange exactly"
+    },
+    {
+     "id": "P2",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 32,
+     "end_line": 34,
+     "shared_terms": [
+      "redi"
+     ],
+     "chosen": false,
+     "text": "/**\n * The official Hocuspocus Redis extension (cross-instance document + awareness fan-out),\n * hardened so that a Redis outage degrades the system instead of breaking it:"
+    },
+    {
+     "id": "P3",
+     "path": "docker-compose.yml",
+     "start_line": 48,
+     "end_line": 52,
+     "shared_terms": [
+      "data",
+      "redi"
+     ],
+     "chosen": true,
+     "text": "      - redisdata:/data\n    healthcheck:\n      test: ['CMD', 'redis-cli', 'ping']\n      interval: 3s\n      timeout: 3s"
+    },
+    {
+     "id": "P4",
+     "path": "docker-compose.yml",
+     "start_line": 42,
+     "end_line": 46,
+     "shared_terms": [
+      "redi"
+     ],
+     "chosen": false,
+     "text": "  redis:\n    image: redis:7.4-alpine\n    command: ['redis-server', '--appendonly', 'yes']\n    ports:\n      - '6380:6379'"
+    },
+    {
+     "id": "P5",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 46,
+     "end_line": 50,
+     "shared_terms": [
+      "set"
+     ],
+     "chosen": false,
+     "text": "  private hp?: Hocuspocus;\n  private readonly deferred = new Set<string>();\n  private readonly pendingUnloads = new Set<string>();\n  private wasHealthy = false;\n  private everHealthy = false;"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: certain."
+   ],
+   "input_tokens": 1024,
+   "output_tokens": 49,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1815,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 18.5,
+   "free_memory_gb": 4.7,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": false,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sn-cookie-flags",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "Are session cookies sent with which security settings?",
+   "answer": "apps/api/src/common/guards/csrf.guard.ts:14-18\n/**\n * Double-submit-cookie CSRF protection for every state-changing request.\n * Combined with SameSite cookies and a strict CORS allow-list this blocks cross-site\n * requests that would otherwise ride on the user's auth cookies.\n */\n\napps/web/src/lib/api.ts:28-32\nconst CSRF_COOKIE = 'sn_csrf';\nconst CSRF_HEADER = 'x-csrf-token';\nconst BASE = '/api';\n\nlet onSessionExpired: (() => void) | undefined;\n\nModel's reading, not verified: CsrfGuard açıklaması ve CSRF_COOKIE ve CSRF_HEADER tanımlamaları gösterir.",
+   "note": "CsrfGuard açıklaması ve CSRF_COOKIE ve CSRF_HEADER tanımlamaları gösterir.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 14,
+     "end_line": 18
+    },
+    {
+     "source": "P2",
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 28,
+     "end_line": 32
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 14,
+     "end_line": 18,
+     "shared_terms": [
+      "cooki"
+     ],
+     "chosen": true,
+     "text": "/**\n * Double-submit-cookie CSRF protection for every state-changing request.\n * Combined with SameSite cookies and a strict CORS allow-list this blocks cross-site\n * requests that would otherwise ride on the user's auth cookies.\n */"
+    },
+    {
+     "id": "P2",
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 28,
+     "end_line": 32,
+     "shared_terms": [
+      "cooki",
+      "session"
+     ],
+     "chosen": true,
+     "text": "const CSRF_COOKIE = 'sn_csrf';\nconst CSRF_HEADER = 'x-csrf-token';\nconst BASE = '/api';\n\nlet onSessionExpired: (() => void) | undefined;"
+    },
+    {
+     "id": "P3",
+     "path": "apps/api/src/common/guards/csrf.guard.ts",
+     "start_line": 24,
+     "end_line": 28,
+     "shared_terms": [
+      "cooki"
+     ],
+     "chosen": false,
+     "text": "    if (SAFE_METHODS.has(req.method.toUpperCase())) return true;\n\n    const cookie = (req.cookies as Record<string, unknown> | undefined)?.[COOKIE_CSRF];\n    if (!csrfTokensMatch(cookie, req.header(CSRF_HEADER))) {\n      throw new ForbiddenException('Invalid or missing CSRF token');"
+    },
+    {
+     "id": "P4",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 21,
+     "end_line": 23,
+     "shared_terms": [
+      "session"
+     ],
+     "chosen": false,
+     "text": "-- CreateTable\nCREATE TABLE \"sessions\" (\n    \"id\" UUID NOT NULL,"
+    },
+    {
+     "id": "P5",
+     "path": "apps/web/public/theme-init.js",
+     "start_line": 1,
+     "end_line": 3,
+     "shared_terms": [
+      "secur"
+     ],
+     "chosen": false,
+     "text": "// Applied before first paint so the page never flashes the wrong theme.\n// Kept as an external file (not inline) so the Content-Security-Policy can forbid inline scripts.\n(function () {"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 942,
+   "output_tokens": 52,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1584,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 17.5,
+   "free_memory_gb": 4.7,
+   "citations_recheck_valid": 2,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": false,
+   "gold_in_context": false,
+   "gold_in_search": false,
+   "anchor_in_chosen": false,
+   "anchor_in_passages": false
+  },
+  {
+   "question": "v2-sn-env-validation",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How are configuration values checked while an application is open?",
+   "answer": "apps/collab/src/extensions/resilient-redis.ts:142-144\n      if (this.everHealthy)\n        this.log.info('redis recovered: resynchronising open documents', { outageMs: outage });\n      else if (outage > 0)\n\nModel's reading, not verified: ResilientRedisExtension.onClientStatusChange fonksiyonu açılan bağlantıları yeniden synchronizes.",
+   "note": "ResilientRedisExtension.onClientStatusChange fonksiyonu açılan bağlantıları yeniden synchronizes.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P3",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 142,
+     "end_line": 144
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/collab/src/config.ts",
+     "start_line": 19,
+     "end_line": 21,
+     "shared_terms": [
+      "open",
+      "while"
+     ],
+     "chosen": false,
+     "text": "  AUTO_VERSION_KEEP: z.coerce.number().int().positive().default(50),\n  /** How often open documents are reconciled through Postgres while Redis is unavailable. */\n  DEGRADED_RECONCILE_INTERVAL_MS: z.coerce.number().int().positive().default(3000),"
+    },
+    {
+     "id": "P2",
+     "path": "apps/collab/src/config.ts",
+     "start_line": 11,
+     "end_line": 15,
+     "shared_terms": [
+      "open"
+     ],
+     "chosen": false,
+     "text": "  /** Max age of a cached role before it is re-read from Postgres. */\n  PERMISSION_CACHE_TTL_MS: z.coerce.number().int().positive().default(5000),\n  /** Every open connection is re-authorised this often — also connections that never send. */\n  PERMISSION_SWEEP_INTERVAL_MS: z.coerce.number().int().positive().default(5000),\n  STORE_DEBOUNCE_MS: z.coerce.number().int().nonnegative().default(2000),"
+    },
+    {
+     "id": "P3",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 142,
+     "end_line": 144,
+     "shared_terms": [
+      "open"
+     ],
+     "chosen": true,
+     "text": "      if (this.everHealthy)\n        this.log.info('redis recovered: resynchronising open documents', { outageMs: outage });\n      else if (outage > 0)"
+    },
+    {
+     "id": "P4",
+     "path": "apps/collab/src/extensions/resilient-redis.ts",
+     "start_line": 146,
+     "end_line": 150,
+     "shared_terms": [
+      "open"
+     ],
+     "chosen": false,
+     "text": "      this.everHealthy = true;\n      if (outage > 0 || this.deferred.size > 0 || this.pendingUnloads.size > 0) {\n        void this.resyncOpenDocuments();\n      }\n    } else if (!healthy && this.wasHealthy) {"
+    },
+    {
+     "id": "P5",
+     "path": "apps/web/src/providers/auth.tsx",
+     "start_line": 17,
+     "end_line": 19,
+     "shared_terms": [
+      "valu"
+     ],
+     "chosen": false,
+     "text": "interface AuthContextValue {\n  status: AuthStatus;\n  user: PublicUser | null;"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1053,
+   "output_tokens": 53,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1869,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 19.7,
+   "free_memory_gb": 4.6,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": false,
+   "gold_in_context": false,
+   "gold_in_search": false,
+   "anchor_in_chosen": false,
+   "anchor_in_passages": false
+  },
+  {
+   "question": "v2-sn-account-lock",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What happens to my account after many incorrect entries?",
+   "answer": "apps/api/src/auth/auth.service.ts:94-98\n    if (user.lockedUntil && user.lockedUntil > new Date()) {\n      throw new HttpException(\n        'Too many failed login attempts. The account is temporarily locked.',\n        HttpStatus.TOO_MANY_REQUESTS,\n      );\n\napps/api/src/auth/auth.service.ts:200-204\n        },\n      });\n      this.logger.warn(`Account ${userId} locked after repeated failed logins`);\n    }\n  }\n\nModel's reading, not verified: P2 shows account is temporarily locked and P3 warns about locking an account after repeated failed logins.",
+   "note": "P2 shows account is temporarily locked and P3 warns about locking an account after repeated failed logins.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P2",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 94,
+     "end_line": 98
+    },
+    {
+     "source": "P3",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 200,
+     "end_line": 204
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 13,
+     "end_line": 15,
+     "shared_terms": [
+      "after",
+      "entri"
+     ],
+     "chosen": false,
+     "text": " * 1. push — the API publishes an access event over Redis and we `set`/`invalidate` immediately;\n * 2. pull — entries expire after `ttlMs`, so even if an event is lost (Redis down) a revoked\n *    user is cut off within `ttlMs` on their next message."
+    },
+    {
+     "id": "P2",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 94,
+     "end_line": 98,
+     "shared_terms": [
+      "account",
+      "mani"
+     ],
+     "chosen": true,
+     "text": "    if (user.lockedUntil && user.lockedUntil > new Date()) {\n      throw new HttpException(\n        'Too many failed login attempts. The account is temporarily locked.',\n        HttpStatus.TOO_MANY_REQUESTS,\n      );"
+    },
+    {
+     "id": "P3",
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 200,
+     "end_line": 204,
+     "shared_terms": [
+      "account",
+      "after"
+     ],
+     "chosen": true,
+     "text": "        },\n      });\n      this.logger.warn(`Account ${userId} locked after repeated failed logins`);\n    }\n  }"
+    },
+    {
+     "id": "P4",
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 19,
+     "end_line": 21,
+     "shared_terms": [
+      "entri"
+     ],
+     "chosen": false,
+     "text": " */\nexport class PermissionService {\n  private readonly cache = new Map<string, CacheEntry>();"
+    },
+    {
+     "id": "P5",
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 83,
+     "end_line": 85,
+     "shared_terms": [
+      "after"
+     ],
+     "chosen": false,
+     "text": "  /** After a Redis outage we may have missed events: forget everything. */\n  invalidateAll(): void {\n    this.cache.clear();"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: incorrect."
+   ],
+   "input_tokens": 944,
+   "output_tokens": 54,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1552,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 17.2,
+   "free_memory_gb": 4.5,
+   "citations_recheck_valid": 2,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sn-folder-delete",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What happens to notes inside a folder when it is deleted?",
+   "answer": "apps/api/src/folders/folders.service.ts:63-67\n  /** Notes inside the folder are not deleted — they move back to \"unfiled\" (FK `ON DELETE SET NULL`). */\n  async remove(userId: string, folderId: string): Promise<void> {\n    await this.assertOwned(userId, folderId);\n    await this.prisma.db.folder.delete({ where: { id: folderId } });\n  }\n\nModel's reading, not verified: Notes inside the folder are not deleted — they move back to 'unfiled' (FK `ON DELETE SET NULL`).",
+   "note": "Notes inside the folder are not deleted — they move back to 'unfiled' (FK `ON DELETE SET NULL`).",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P4",
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 63,
+     "end_line": 67
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 51,
+     "end_line": 55,
+     "shared_terms": [
+      "delet",
+      "folder",
+      "note"
+     ],
+     "chosen": false,
+     "text": "function NoteCard({ note }: { note: NoteSummaryDto }) {\n  const me = useCurrentUser();\n  const folders = useFolders();\n  const move = useMoveNote();\n  const del = useDeleteNote();"
+    },
+    {
+     "id": "P2",
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 28,
+     "end_line": 32,
+     "shared_terms": [
+      "folder",
+      "note"
+     ],
+     "chosen": false,
+     "text": "export class MoveNoteDto {\n  /** `null` removes the note from its folder (for the current user only). */\n  @IsOptional()\n  @IsUUID()\n  folderId!: string | null;"
+    },
+    {
+     "id": "P3",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 56,
+     "end_line": 59,
+     "shared_terms": [
+      "note"
+     ],
+     "chosen": false,
+     "text": "  const leave = useLeaveNote();\n  const isOwner = note.role === 'OWNER';\n\n  return ("
+    },
+    {
+     "id": "P4",
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 63,
+     "end_line": 67,
+     "shared_terms": [
+      "delet",
+      "folder",
+      "insid",
+      "note"
+     ],
+     "chosen": true,
+     "text": "  /** Notes inside the folder are not deleted — they move back to \"unfiled\" (FK `ON DELETE SET NULL`). */\n  async remove(userId: string, folderId: string): Promise<void> {\n    await this.assertOwned(userId, folderId);\n    await this.prisma.db.folder.delete({ where: { id: folderId } });\n  }"
+    },
+    {
+     "id": "P5",
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 201,
+     "end_line": 205,
+     "shared_terms": [
+      "delet",
+      "note"
+     ],
+     "chosen": false,
+     "text": "          connection.close(COLLAB_CLOSE.noteDeleted);\n        }\n        logger.info('note deleted', { noteId: event.noteId });\n        break;\n      }"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 986,
+   "output_tokens": 56,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1617,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 18.3,
+   "free_memory_gb": 4.5,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sn-note-search",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What fields are checked when searching for items in a repository?",
+   "answer": "apps/api/src/notes/notes.service.ts:11-15\nexport interface ListNotesQuery {\n  scope?: NoteScope;\n  /** folder uuid, or `none` for notes that are not in any folder */\n  folderId?: string;\n  q?: string;\n\napps/api/src/notes/notes.service.ts:56-58\n    if (query.scope === 'owned') where.role = 'OWNER';\n    if (query.scope === 'shared') where.role = { not: 'OWNER' };\n    if (query.folderId === 'none') where.folderId = null;\n\nModel's reading, not verified: Fields checked are scope, folderId and q.",
+   "note": "Fields checked are scope, folderId and q.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P4",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 11,
+     "end_line": 15
+    },
+    {
+     "source": "P2",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 56,
+     "end_line": 58
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 8,
+     "end_line": 9,
+     "shared_terms": [
+      "search"
+     ],
+     "chosen": false,
+     "text": "-- Fast dashboard listing / search on derived text columns.\nCREATE INDEX \"notes_updated_at_idx\" ON \"notes\" (\"updated_at\" DESC);"
+    },
+    {
+     "id": "P2",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 56,
+     "end_line": 58,
+     "shared_terms": [
+      "not"
+     ],
+     "chosen": true,
+     "text": "    if (query.scope === 'owned') where.role = 'OWNER';\n    if (query.scope === 'shared') where.role = { not: 'OWNER' };\n    if (query.folderId === 'none') where.folderId = null;"
+    },
+    {
+     "id": "P3",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 146,
+     "end_line": 150,
+     "shared_terms": [
+      "search"
+     ],
+     "chosen": false,
+     "text": "export function DashboardPage() {\n  const [view] = useView();\n  const [params, setParams] = useSearchParams();\n  const [search, setSearch] = useState(params.get('q') ?? '');\n  const q = useDebounced(search.trim(), 250);"
+    },
+    {
+     "id": "P4",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 11,
+     "end_line": 15,
+     "shared_terms": [
+      "not"
+     ],
+     "chosen": true,
+     "text": "export interface ListNotesQuery {\n  scope?: NoteScope;\n  /** folder uuid, or `none` for notes that are not in any folder */\n  folderId?: string;\n  q?: string;"
+    },
+    {
+     "id": "P5",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 156,
+     "end_line": 158,
+     "shared_terms": [
+      "search"
+     ],
+     "chosen": false,
+     "text": "  useEffect(() => {\n    const next = new URLSearchParams(params);\n    if (q) next.set('q', q);"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: repository."
+   ],
+   "input_tokens": 991,
+   "output_tokens": 45,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1555,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 17.7,
+   "free_memory_gb": 4.6,
+   "citations_recheck_valid": 2,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": false,
+   "gold_in_context": false,
+   "gold_in_search": true,
+   "anchor_in_chosen": false,
+   "anchor_in_passages": false
+  },
+  {
+   "question": "v2-sn-health-redis",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "What does health check return while Redis is running?",
+   "answer": "apps/collab/src/extensions/health.ts:15-19\n  async onRequest({ request, response, instance }: onRequestPayload): Promise<void> {\n    if (!request.url?.startsWith('/health')) return;\n    const redis = this.deps.isRedisHealthy();\n    response.writeHead(200, { 'Content-Type': 'application/json' });\n    response.end(\n\napps/collab/src/extensions/health.ts:3-7\n/** `GET /health` on the collaboration port (used by Docker health checks and the load balancer). */\nexport class HealthExtension implements Extension {\n  extensionName = 'syncnotes-health';\n\n  constructor(\n\nModel's reading, not verified: HealthExtension ve HealthController passları Redis kapalıyken sağlık kontrolü döndürmeleri hakkında bilgi verir.",
+   "note": "HealthExtension ve HealthController passları Redis kapalıyken sağlık kontrolü döndürmeleri hakkında bilgi verir.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "apps/collab/src/extensions/health.ts",
+     "start_line": 15,
+     "end_line": 19
+    },
+    {
+     "source": "P5",
+     "path": "apps/collab/src/extensions/health.ts",
+     "start_line": 3,
+     "end_line": 7
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/collab/src/extensions/health.ts",
+     "start_line": 15,
+     "end_line": 19,
+     "shared_terms": [
+      "health",
+      "redi",
+      "return"
+     ],
+     "chosen": true,
+     "text": "  async onRequest({ request, response, instance }: onRequestPayload): Promise<void> {\n    if (!request.url?.startsWith('/health')) return;\n    const redis = this.deps.isRedisHealthy();\n    response.writeHead(200, { 'Content-Type': 'application/json' });\n    response.end("
+    },
+    {
+     "id": "P2",
+     "path": "apps/collab/src/extensions/degraded-reconciler.ts",
+     "start_line": 21,
+     "end_line": 25,
+     "shared_terms": [
+      "health",
+      "redi",
+      "while"
+     ],
+     "chosen": false,
+     "text": " *\n * - **Degraded** (this instance lost Redis): a pass every `intervalMs`.\n * - **Anti-entropy** (this instance is healthy): a pass every `antiEntropyIntervalMs`. Redis\n *   health is a *local* observation — another instance may be cut off while we are not\n *   (asymmetric partition). Its edits still reach Postgres, and this slow pass brings them to"
+    },
+    {
+     "id": "P3",
+     "path": "apps/api/src/health/health.controller.ts",
+     "start_line": 15,
+     "end_line": 19,
+     "shared_terms": [
+      "check",
+      "redi"
+     ],
+     "chosen": false,
+     "text": "  /**\n   * Postgres is required (503 when down). Redis is reported but not required: the API keeps\n   * serving requests without it (access events degrade to the collab server's TTL re-check).\n   */\n  @Public()"
+    },
+    {
+     "id": "P4",
+     "path": "apps/collab/src/extensions/health.ts",
+     "start_line": 9,
+     "end_line": 11,
+     "shared_terms": [
+      "redi"
+     ],
+     "chosen": false,
+     "text": "      instanceName: string;\n      isRedisHealthy: () => boolean;\n      startedAt: number;"
+    },
+    {
+     "id": "P5",
+     "path": "apps/collab/src/extensions/health.ts",
+     "start_line": 3,
+     "end_line": 7,
+     "shared_terms": [
+      "check",
+      "health"
+     ],
+     "chosen": true,
+     "text": "/** `GET /health` on the collaboration port (used by Docker health checks and the load balancer). */\nexport class HealthExtension implements Extension {\n  extensionName = 'syncnotes-health';\n\n  constructor("
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 1028,
+   "output_tokens": 61,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1893,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 19.2,
+   "free_memory_gb": 4.6,
+   "citations_recheck_valid": 2,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": false,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": false,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sn-logout-access-token",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "Access key is not accepted because the time has not expired after the output was made?",
+   "answer": "apps/api/src/auth/auth.controller.ts:87-89\n  /** Public so that a user with an expired access token can still log out cleanly. */\n  @Public()\n  @Post('logout')\n\nModel's reading, not verified: `AuthController.logout` public method is used for users with expired access tokens.",
+   "note": "`AuthController.logout` public method is used for users with expired access tokens.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 87,
+     "end_line": 89
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 87,
+     "end_line": 89,
+     "shared_terms": [
+      "access",
+      "expir"
+     ],
+     "chosen": true,
+     "text": "  /** Public so that a user with an expired access token can still log out cleanly. */\n  @Public()\n  @Post('logout')"
+    },
+    {
+     "id": "P2",
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 40,
+     "end_line": 44,
+     "shared_terms": [
+      "access",
+      "time"
+     ],
+     "chosen": false,
+     "text": "          timer = setTimeout(\n            () => reject(new Error('publish timed out')),\n            AccessEventsPublisher.PUBLISH_TIMEOUT_MS,\n          );\n        }),"
+    },
+    {
+     "id": "P3",
+     "path": "apps/api/src/auth/auth.controller.ts",
+     "start_line": 93,
+     "end_line": 97,
+     "shared_terms": [
+      "access",
+      "expir"
+     ],
+     "chosen": false,
+     "text": "    let familyId: string | undefined;\n    if (access) {\n      // Expired tokens are fine here — we only need to know which session to revoke.\n      const claims = this.jwt.decode<AccessTokenClaims | null>(access);\n      familyId = typeof claims?.sid === 'string' ? claims.sid : undefined;"
+    },
+    {
+     "id": "P4",
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 11,
+     "end_line": 15,
+     "shared_terms": [
+      "access",
+      "after",
+      "expir"
+     ],
+     "chosen": false,
+     "text": " *\n * Revocation has two paths:\n * 1. push — the API publishes an access event over Redis and we `set`/`invalidate` immediately;\n * 2. pull — entries expire after `ttlMs`, so even if an event is lost (Redis down) a revoked\n *    user is cut off within `ttlMs` on their next message."
+    },
+    {
+     "id": "P5",
+     "path": "apps/api/src/common/guards/jwt-auth.guard.ts",
+     "start_line": 40,
+     "end_line": 44,
+     "shared_terms": [
+      "access",
+      "not"
+     ],
+     "chosen": false,
+     "text": "    const req = context.switchToHttp().getRequest<AuthenticatedRequest>();\n    const token = (req.cookies as Record<string, string | undefined> | undefined)?.[COOKIE_ACCESS];\n    if (!token) throw new UnauthorizedException('Not authenticated');\n\n    let claims: AccessTokenClaims;"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: accepted, output, made."
+   ],
+   "input_tokens": 1069,
+   "output_tokens": 51,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1918,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 19.4,
+   "free_memory_gb": 4.7,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": false,
+   "gold_in_context": false,
+   "gold_in_search": true,
+   "anchor_in_chosen": false,
+   "anchor_in_passages": false
+  },
+  {
+   "question": "v2-sn-cursor-color",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How do you assign a color to a mouse button in the software repository?",
+   "answer": "apps/web/src/lib/colors.ts:15-17\n/** Stable colour per user id (FNV-1a hash), so a user keeps their colour across sessions. */\nexport function colorForUser(userId: string): string {\n  let hash = 0x811c9dc5;\n\nModel's reading, not verified: `colorForUser` fonksiyonu kullanıcıya ait bir renk tanımlar.",
+   "note": "`colorForUser` fonksiyonu kullanıcıya ait bir renk tanımlar.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "apps/web/src/lib/colors.ts",
+     "start_line": 15,
+     "end_line": 17
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/web/src/lib/colors.ts",
+     "start_line": 15,
+     "end_line": 17,
+     "shared_terms": [
+      "color"
+     ],
+     "chosen": true,
+     "text": "/** Stable colour per user id (FNV-1a hash), so a user keeps their colour across sessions. */\nexport function colorForUser(userId: string): string {\n  let hash = 0x811c9dc5;"
+    },
+    {
+     "id": "P2",
+     "path": "apps/web/src/components/theme-toggle.tsx",
+     "start_line": 15,
+     "end_line": 19,
+     "shared_terms": [
+      "button"
+     ],
+     "chosen": false,
+     "text": "    >\n      {resolved === 'dark' ? <Sun className=\"size-4\" /> : <Moon className=\"size-4\" />}\n    </Button>\n  );\n}"
+    },
+    {
+     "id": "P3",
+     "path": "apps/web/src/components/theme-toggle.tsx",
+     "start_line": 7,
+     "end_line": 11,
+     "shared_terms": [
+      "button"
+     ],
+     "chosen": false,
+     "text": "  const next = resolved === 'dark' ? 'light' : 'dark';\n  return (\n    <Button\n      variant=\"ghost\"\n      size=\"icon\""
+    },
+    {
+     "id": "P4",
+     "path": "apps/web/src/lib/colors.ts",
+     "start_line": 21,
+     "end_line": 23,
+     "shared_terms": [
+      "color"
+     ],
+     "chosen": false,
+     "text": "  }\n  return PRESENCE_COLORS[(hash >>> 0) % PRESENCE_COLORS.length]!;\n}"
+    },
+    {
+     "id": "P5",
+     "path": "apps/web/src/providers/theme.tsx",
+     "start_line": 32,
+     "end_line": 32,
+     "shared_terms": [
+      "color"
+     ],
+     "chosen": false,
+     "text": "const systemDark = () => window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: repository."
+   ],
+   "input_tokens": 876,
+   "output_tokens": 54,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1270,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 16.3,
+   "free_memory_gb": 4.7,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  },
+  {
+   "question": "v2-sn-title-merge",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "Why are changes made by users editing a title not disappearing?",
+   "answer": "apps/web/src/pages/note-page.tsx:99-101\n        >\n          <Eye className=\"size-3.5\" /> You are viewing this note. Only editors can make changes.\n        </div>\n\napps/web/src/collab/use-collaboration.ts:100-104\n    let disposed = false;\n    const doc = new Y.Doc();\n    // Viewers never write, so they don't keep an offline replica that could hold rejected edits.\n    const persistence = canEdit(roleRef.current)\n      ? new IndexeddbPersistence(localReplicaName(user.id, noteId), doc)\n\nModel's reading, not verified: Passages show that only editors can make changes and there is a persistence mechanism for edited notes.",
+   "note": "Passages show that only editors can make changes and there is a persistence mechanism for edited notes.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 99,
+     "end_line": 101
+    },
+    {
+     "source": "P3",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 100,
+     "end_line": 104
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 99,
+     "end_line": 101,
+     "shared_terms": [
+      "chang"
+     ],
+     "chosen": true,
+     "text": "        >\n          <Eye className=\"size-3.5\" /> You are viewing this note. Only editors can make changes.\n        </div>"
+    },
+    {
+     "id": "P2",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 109,
+     "end_line": 113,
+     "shared_terms": [
+      "edit",
+      "titl",
+      "user"
+     ],
+     "chosen": false,
+     "text": "                key={collab.generation}\n                session={collab.session}\n                user={user}\n                editable={editable}\n                autoFocusTitle={(location.state as { fresh?: boolean } | null)?.fresh}"
+    },
+    {
+     "id": "P3",
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 100,
+     "end_line": 104,
+     "shared_terms": [
+      "edit",
+      "user"
+     ],
+     "chosen": true,
+     "text": "    let disposed = false;\n    const doc = new Y.Doc();\n    // Viewers never write, so they don't keep an offline replica that could hold rejected edits.\n    const persistence = canEdit(roleRef.current)\n      ? new IndexeddbPersistence(localReplicaName(user.id, noteId), doc)"
+    },
+    {
+     "id": "P4",
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 10,
+     "end_line": 14,
+     "shared_terms": [
+      "edit",
+      "titl",
+      "user"
+     ],
+     "chosen": false,
+     "text": "const FEATURES = [\n  {\n    icon: Users,\n    title: 'Real-time co-editing',\n    text: 'See every cursor and keystroke as it happens — conflict-free.',"
+    },
+    {
+     "id": "P5",
+     "path": "apps/web/src/editor/title-input.tsx",
+     "start_line": 55,
+     "end_line": 59,
+     "shared_terms": [
+      "chang",
+      "titl"
+     ],
+     "chosen": false,
+     "text": "      aria-label=\"Note title\"\n      data-testid=\"note-title\"\n      onChange={(e) => {\n        setValue(e.target.value);\n        applyTextDiff(ytext, e.target.value, LOCAL_ORIGIN);"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: made, disappearing."
+   ],
+   "input_tokens": 991,
+   "output_tokens": 54,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1674,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 18.2,
+   "free_memory_gb": 4.6,
+   "citations_recheck_valid": 2,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": false,
+   "gold_in_context": false,
+   "gold_in_search": false,
+   "anchor_in_chosen": false,
+   "anchor_in_passages": false
+  },
+  {
+   "question": "v2-sn-theme-flash",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How do I prevent a short-term display of the theme from occurring while opening a page?",
+   "answer": "apps/web/public/theme-init.js:1-5\n// Applied before first paint so the page never flashes the wrong theme.\n// Kept as an external file (not inline) so the Content-Security-Policy can forbid inline scripts.\n(function () {\n  try {\n    var stored = localStorage.getItem('syncnotes:theme');\n\nModel's reading, not verified: The passage shows a function that applies before first paint to prevent the page from flashing the wrong theme.",
+   "note": "The passage shows a function that applies before first paint to prevent the page from flashing the wrong theme.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "apps/web/public/theme-init.js",
+     "start_line": 1,
+     "end_line": 5
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/web/public/theme-init.js",
+     "start_line": 1,
+     "end_line": 5,
+     "shared_terms": [
+      "page",
+      "theme"
+     ],
+     "chosen": true,
+     "text": "// Applied before first paint so the page never flashes the wrong theme.\n// Kept as an external file (not inline) so the Content-Security-Policy can forbid inline scripts.\n(function () {\n  try {\n    var stored = localStorage.getItem('syncnotes:theme');"
+    },
+    {
+     "id": "P2",
+     "path": "apps/web/src/app.tsx",
+     "start_line": 52,
+     "end_line": 56,
+     "shared_terms": [
+      "theme"
+     ],
+     "chosen": false,
+     "text": "export function App() {\n  return (\n    <ThemeProvider>\n      <QueryClientProvider client={queryClient}>\n        <TooltipProvider delayDuration={300}>"
+    },
+    {
+     "id": "P3",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 133,
+     "end_line": 137,
+     "shared_terms": [
+      "open"
+     ],
+     "chosen": false,
+     "text": "      <ShareDialog\n        open={shareOpen}\n        onOpenChange={setShareOpen}\n        noteId={note.id}\n        members={note.members}"
+    },
+    {
+     "id": "P4",
+     "path": "apps/web/src/app.tsx",
+     "start_line": 47,
+     "end_line": 49,
+     "shared_terms": [
+      "theme"
+     ],
+     "chosen": false,
+     "text": "function ThemedToaster() {\n  const { resolved } = useTheme();\n  return <Toaster theme={resolved} position=\"bottom-right\" richColors closeButton />;"
+    },
+    {
+     "id": "P5",
+     "path": "apps/web/src/app.tsx",
+     "start_line": 60,
+     "end_line": 64,
+     "shared_terms": [
+      "page"
+     ],
+     "chosen": false,
+     "text": "                <Route element={<GuestOnly />}>\n                  <Route path=\"/login\" element={<LoginPage />} />\n                  <Route path=\"/register\" element={<RegisterPage />} />\n                </Route>\n                <Route element={<RequireAuth />}>"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: term, occurring."
+   ],
+   "input_tokens": 973,
+   "output_tokens": 57,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1569,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 18.0,
+   "free_memory_gb": 4.7,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5,
+   "cites_gold": true,
+   "gold_in_context": true,
+   "gold_in_search": true,
+   "anchor_in_chosen": true,
+   "anchor_in_passages": true
+  }
+ ],
+ "unanswerable": [
+  {
+   "question": "v2-sg-neg-transfer",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How is data transferred from one repository to another?",
+   "answer": "src/main/java/com/stockguard/inventory/StockLedger.java:10-14\n/**\n * The single gateway for changing stock. Each operation performs one atomic counter update and records its\n * ledger line while the row lock is still held. Callers own the transaction, so the change, the ledger line\n * and the caller's own writes commit or roll back as one unit.\n */\n\nModel's reading, not verified: StockLedger'in bir satırın locki tutulduğunda değişiklik, ledger line ve çağlamanın birleşim veya iptal edilmesi için bir birim commit veya roll back yapar.",
+   "note": "StockLedger'in bir satırın locki tutulduğunda değişiklik, ledger line ve çağlamanın birleşim veya iptal edilmesi için bir birim commit veya roll back yapar.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P3",
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 10,
+     "end_line": 14
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/inventory/StockMovementRepository.java",
+     "start_line": 8,
+     "end_line": 10,
+     "shared_terms": [
+      "repositori"
+     ],
+     "chosen": false,
+     "text": "interface StockMovementRepository extends Repository<StockMovement, Long> {\n\n    StockMovement save(StockMovement movement);"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 70,
+     "end_line": 74,
+     "shared_terms": [
+      "anoth"
+     ],
+     "chosen": false,
+     "text": "    /**\n     * Claims a batch of overdue reservations. SKIP LOCKED makes parallel sweepers on different instances pass\n     * over rows another sweeper or an in-flight confirm is holding, instead of queueing behind them. Whichever\n     * side loses the race then finds that the row is no longer PENDING.\n     */"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 10,
+     "end_line": 14,
+     "shared_terms": [
+      "one"
+     ],
+     "chosen": true,
+     "text": "/**\n * The single gateway for changing stock. Each operation performs one atomic counter update and records its\n * ledger line while the row lock is still held. Callers own the transaction, so the change, the ledger line\n * and the caller's own writes commit or roll back as one unit.\n */"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/catalog/ProductRepository.java",
+     "start_line": 6,
+     "end_line": 7,
+     "shared_terms": [
+      "repositori"
+     ],
+     "chosen": false,
+     "text": "interface ProductRepository extends JpaRepository<Product, UUID> {\n}"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 18,
+     "end_line": 20,
+     "shared_terms": [
+      "repositori"
+     ],
+     "chosen": false,
+     "text": "\n    private final StockLevelRepository levels;\n    private final StockMovementRepository movements;"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: transferred."
+   ],
+   "input_tokens": 969,
+   "output_tokens": 75,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1767,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 18.7,
+   "free_memory_gb": 4.7,
+   "refused": false,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5
+  },
+  {
+   "question": "v2-sg-neg-coupon",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "translated_query": "How do discounts coupons work?",
+   "answer": "",
+   "note": "",
+   "note_problem": null,
+   "citations": [],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 116,
+     "end_line": 118,
+     "shared_terms": [
+      "work"
+     ],
+     "chosen": false,
+     "text": "    /** Works out why the compare-and-set lost, using the latest committed state. */\n    private static ApiException rejection(Reservation latest) {\n        return switch (latest.getStatus()) {"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: discounts, coupons."
+   ],
+   "input_tokens": 512,
+   "output_tokens": 22,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 392,
+   "sources_sent": 1,
+   "sources_dropped": 0,
+   "seconds": 8.8,
+   "free_memory_gb": 4.7,
+   "refused": true,
+   "citations_recheck_valid": 0,
+   "references_shown": 1,
+   "references_recheck_valid": 1
+  },
+  {
+   "question": "v2-sg-neg-password-reset",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How do I change my password?",
+   "answer": "src/main/java/com/stockguard/security/SecurityConfig.java:103-105\n    @Bean\n    PasswordEncoder passwordEncoder() {\n        return new BCryptPasswordEncoder();\n\nsrc/main/java/com/stockguard/security/SecurityConfig.java:108-112\n    @Bean\n    AuthenticationManager authenticationManager(UserDetailsService users, PasswordEncoder encoder) {\n        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(users);\n        provider.setPasswordEncoder(encoder);\n        return new ProviderManager(provider);\n\nModel's reading, not verified: Şifre değiştirme işlemlerini gerçekleştiren sınıflar ve metodlar.",
+   "note": "Şifre değiştirme işlemlerini gerçekleştiren sınıflar ve metodlar.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 103,
+     "end_line": 105
+    },
+    {
+     "source": "P2",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 108,
+     "end_line": 112
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 103,
+     "end_line": 105,
+     "shared_terms": [
+      "password"
+     ],
+     "chosen": true,
+     "text": "    @Bean\n    PasswordEncoder passwordEncoder() {\n        return new BCryptPasswordEncoder();"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/security/SecurityConfig.java",
+     "start_line": 108,
+     "end_line": 112,
+     "shared_terms": [
+      "password"
+     ],
+     "chosen": true,
+     "text": "    @Bean\n    AuthenticationManager authenticationManager(UserDetailsService users, PasswordEncoder encoder) {\n        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(users);\n        provider.setPasswordEncoder(encoder);\n        return new ProviderManager(provider);"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 34,
+     "end_line": 38,
+     "shared_terms": [
+      "password"
+     ],
+     "chosen": false,
+     "text": "    public AuthService(\n            AppUserRepository users,\n            PasswordEncoder passwordEncoder,\n            AuthenticationManager authenticationManager,\n            JwtTokenService tokens,"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 40,
+     "end_line": 42,
+     "shared_terms": [
+      "password"
+     ],
+     "chosen": false,
+     "text": "        this.users = users;\n        this.passwordEncoder = passwordEncoder;\n        this.authenticationManager = authenticationManager;"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 57,
+     "end_line": 61,
+     "shared_terms": [
+      "password"
+     ],
+     "chosen": false,
+     "text": "    /** Idempotent, because every instance runs it on startup. */\n    @Transactional\n    public void seedAdmin(String username, String rawPassword) {\n        requireBcryptCompatible(rawPassword);\n        insert(normalize(username), rawPassword, Role.ADMIN);"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 943,
+   "output_tokens": 49,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1852,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 17.2,
+   "free_memory_gb": 4.7,
+   "refused": false,
+   "citations_recheck_valid": 2,
+   "references_shown": 5,
+   "references_recheck_valid": 5
+  },
+  {
+   "question": "v2-sg-neg-backorder",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How do I get an advance order in stock checkout?",
+   "answer": "src/main/java/com/stockguard/catalog/ProductController.java:106-110\n            Instant updatedAt) {\n\n        static ProductResponse of(Product product, StockLevel stock) {\n            return new ProductResponse(\n                    product.getId(),\n\nModel's reading, not verified: get methodu ürünün güncellemelerini gösterir.",
+   "note": "get methodu ürünün güncellemelerini gösterir.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P4",
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 106,
+     "end_line": 110
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 72,
+     "end_line": 76,
+     "shared_terms": [
+      "order",
+      "stock"
+     ],
+     "chosen": false,
+     "text": "                              FROM stock_movements m\n                            WINDOW w AS (PARTITION BY product_id ORDER BY id)) c\n                      JOIN stock_levels s ON s.product_id = c.product_id\n                     WHERE $SCOPE AND (c.prev_total + c.delta_total <> c.total_after\n                                OR c.prev_available + c.delta_available <> c.available_after"
+    },
+    {
+     "id": "P2",
+     "path": "src/main/java/com/stockguard/inventory/InventoryController.java",
+     "start_line": 35,
+     "end_line": 39,
+     "shared_terms": [
+      "get",
+      "stock"
+     ],
+     "chosen": false,
+     "text": "    @GetMapping\n    @Operation(operationId = \"getStock\", summary = \"Read total, available and reserved quantities\")\n    public StockResponse get(@PathVariable UUID productId) {\n        return StockResponse.from(inventory.get(productId));\n    }"
+    },
+    {
+     "id": "P3",
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 114,
+     "end_line": 118,
+     "shared_terms": [
+      "get",
+      "stock"
+     ],
+     "chosen": false,
+     "text": "                    product.getVersion(),\n                    stock.getTotal(),\n                    stock.getAvailable(),\n                    stock.getReserved(),\n                    product.getCreatedAt(),"
+    },
+    {
+     "id": "P4",
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 106,
+     "end_line": 110,
+     "shared_terms": [
+      "get",
+      "stock"
+     ],
+     "chosen": true,
+     "text": "            Instant updatedAt) {\n\n        static ProductResponse of(Product product, StockLevel stock) {\n            return new ProductResponse(\n                    product.getId(),"
+    },
+    {
+     "id": "P5",
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 111,
+     "end_line": 112,
+     "shared_terms": [
+      "get"
+     ],
+     "chosen": false,
+     "text": "                    product.getSku(),\n                    product.getName(),"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: advance, checkout."
+   ],
+   "input_tokens": 962,
+   "output_tokens": 42,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 2021,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 16.4,
+   "free_memory_gb": 4.6,
+   "refused": false,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5
+  },
+  {
+   "question": "v2-sg-neg-mongodb",
+   "repo": "stockguard",
+   "language": "tr",
+   "status": "insufficient",
+   "translated_query": "How do I set up the StockGuard MongoDB connection?",
+   "answer": "",
+   "note": "",
+   "note_problem": null,
+   "citations": [],
+   "passages": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: MongoDB."
+   ],
+   "input_tokens": 61,
+   "output_tokens": 17,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 1.6,
+   "free_memory_gb": 4.7,
+   "refused": true,
+   "citations_recheck_valid": 0,
+   "references_shown": 0,
+   "references_recheck_valid": 0
+  },
+  {
+   "question": "v2-sn-neg-tags",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How does adding tags to issues work?",
+   "answer": "apps/api/src/notes/collab-ticket.service.ts:27-31\n  ) {}\n\n  async issue(\n    user: { id: string; name: string },\n    noteId: string,\n\nModel's reading, not verified: CollabTicketService has an issue method.",
+   "note": "CollabTicketService has an issue method.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P2",
+     "path": "apps/api/src/notes/collab-ticket.service.ts",
+     "start_line": 27,
+     "end_line": 31
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 113,
+     "end_line": 114,
+     "shared_terms": [
+      "add"
+     ],
+     "chosen": false,
+     "text": "-- AddForeignKey\nALTER TABLE \"sessions\" ADD CONSTRAINT \"sessions_user_id_fkey\" FOREIGN KEY (\"user_id\") REFERENCES \"users\"(\"id\") ON DELETE CASCADE ON UPDATE CASCADE;"
+    },
+    {
+     "id": "P2",
+     "path": "apps/api/src/notes/collab-ticket.service.ts",
+     "start_line": 27,
+     "end_line": 31,
+     "shared_terms": [
+      "issu"
+     ],
+     "chosen": true,
+     "text": "  ) {}\n\n  async issue(\n    user: { id: string; name: string },\n    noteId: string,"
+    },
+    {
+     "id": "P3",
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 122,
+     "end_line": 123,
+     "shared_terms": [
+      "add"
+     ],
+     "chosen": false,
+     "text": "-- AddForeignKey\nALTER TABLE \"note_members\" ADD CONSTRAINT \"note_members_note_id_fkey\" FOREIGN KEY (\"note_id\") REFERENCES \"notes\"(\"id\") ON DELETE CASCADE ON UPDATE CASCADE;"
+    },
+    {
+     "id": "P4",
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 16,
+     "end_line": 20,
+     "shared_terms": [
+      "work"
+     ],
+     "chosen": false,
+     "text": "  {\n    icon: WifiOff,\n    title: 'Works offline',\n    text: 'Keep writing without a connection; changes merge when you are back.',\n  },"
+    },
+    {
+     "id": "P5",
+     "path": "apps/api/src/notes/collab-ticket.service.ts",
+     "start_line": 13,
+     "end_line": 15,
+     "shared_terms": [
+      "issu"
+     ],
+     "chosen": false,
+     "text": "/**\n * Issues the short-lived, single-document ticket used for the WebSocket handshake.\n *"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: tags."
+   ],
+   "input_tokens": 936,
+   "output_tokens": 36,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1442,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 15.3,
+   "free_memory_gb": 4.6,
+   "refused": false,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5
+  },
+  {
+   "question": "v2-sn-neg-comments",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How does the commenting feature on notes work?",
+   "answer": "apps/web/src/pages/note-page.tsx:135-139\n        onOpenChange={setShareOpen}\n        noteId={note.id}\n        members={note.members}\n        role={collab.role}\n      />\n\nModel's reading, not verified: `onOpenChange={setShareOpen}` function is used to open a share modal.",
+   "note": "`onOpenChange={setShareOpen}` function is used to open a share modal.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 135,
+     "end_line": 139
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 135,
+     "end_line": 139,
+     "shared_terms": [
+      "note"
+     ],
+     "chosen": true,
+     "text": "        onOpenChange={setShareOpen}\n        noteId={note.id}\n        members={note.members}\n        role={collab.role}\n      />"
+    },
+    {
+     "id": "P2",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 68,
+     "end_line": 72,
+     "shared_terms": [
+      "note"
+     ],
+     "chosen": false,
+     "text": "    @Param('noteId') noteId: string,\n    @Body() dto: MoveNoteDto,\n  ): Promise<NoteSummaryDto> {\n    return this.notes.moveToFolder(user.id, noteId, dto.folderId ?? null);\n  }"
+    },
+    {
+     "id": "P3",
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 51,
+     "end_line": 55,
+     "shared_terms": [
+      "note"
+     ],
+     "chosen": false,
+     "text": "function NoteCard({ note }: { note: NoteSummaryDto }) {\n  const me = useCurrentUser();\n  const folders = useFolders();\n  const move = useMoveNote();\n  const del = useDeleteNote();"
+    },
+    {
+     "id": "P4",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 64,
+     "end_line": 66,
+     "shared_terms": [
+      "note"
+     ],
+     "chosen": false,
+     "text": "  @Patch(':noteId/folder')\n  @RequireNoteRole('VIEWER')\n  move("
+    },
+    {
+     "id": "P5",
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 85,
+     "end_line": 89,
+     "shared_terms": [
+      "note"
+     ],
+     "chosen": false,
+     "text": "    @CurrentUser() user: AuthUser,\n    @Param('noteId') noteId: string,\n    @CurrentNoteRole() role: NoteRole,\n  ): Promise<void> {\n    return this.notes.leave(user.id, noteId, role);"
+    }
+   ],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: commenting."
+   ],
+   "input_tokens": 931,
+   "output_tokens": 45,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1478,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 16.1,
+   "free_memory_gb": 4.7,
+   "refused": false,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5
+  },
+  {
+   "question": "v2-sn-neg-public-link",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How is a note shared publicly via a link?",
+   "answer": "apps/web/src/components/share-dialog.tsx:92-96\n      open={open}\n      onOpenChange={onOpenChange}\n      title=\"Share note\"\n      description={\n        isOwner\n\nModel's reading, not verified: `ShareDialog` open prop is set to true when a user clicks on the share button.",
+   "note": "`ShareDialog` open prop is set to true when a user clicks on the share button.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P3",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 92,
+     "end_line": 96
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 133,
+     "end_line": 137,
+     "shared_terms": [
+      "note",
+      "share"
+     ],
+     "chosen": false,
+     "text": "      <ShareDialog\n        open={shareOpen}\n        onOpenChange={setShareOpen}\n        noteId={note.id}\n        members={note.members}"
+    },
+    {
+     "id": "P2",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 57,
+     "end_line": 61,
+     "shared_terms": [
+      "link",
+      "note"
+     ],
+     "chosen": false,
+     "text": "      <header className=\"flex h-14 shrink-0 items-center gap-2 border-b border-line bg-surface/80 px-3 backdrop-blur sm:px-5\">\n        <Link\n          to=\"/\"\n          className=\"inline-flex size-8 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-fg\"\n          aria-label=\"Back to notes\""
+    },
+    {
+     "id": "P3",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 92,
+     "end_line": 96,
+     "shared_terms": [
+      "note",
+      "share"
+     ],
+     "chosen": true,
+     "text": "      open={open}\n      onOpenChange={onOpenChange}\n      title=\"Share note\"\n      description={\n        isOwner"
+    },
+    {
+     "id": "P4",
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 73,
+     "end_line": 77,
+     "shared_terms": [
+      "share"
+     ],
+     "chosen": false,
+     "text": "            variant=\"secondary\"\n            size=\"sm\"\n            onClick={() => setShareOpen(true)}\n            data-testid=\"share-button\"\n          >"
+    },
+    {
+     "id": "P5",
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 9,
+     "end_line": 9,
+     "shared_terms": [
+      "note",
+      "share"
+     ],
+     "chosen": false,
+     "text": "export type NoteScope = 'all' | 'owned' | 'shared';"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 949,
+   "output_tokens": 47,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1480,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 17.4,
+   "free_memory_gb": 4.6,
+   "refused": false,
+   "citations_recheck_valid": 1,
+   "references_shown": 5,
+   "references_recheck_valid": 5
+  },
+  {
+   "question": "v2-sn-neg-ldap",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "insufficient",
+   "translated_query": "How do I authenticate users using SyncNotes LDAP?",
+   "answer": "",
+   "note": "",
+   "note_problem": null,
+   "citations": [],
+   "passages": [],
+   "rejected": [],
+   "warnings": [
+    "Not found anywhere in the indexed code: LDAP."
+   ],
+   "input_tokens": 63,
+   "output_tokens": 16,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 0,
+   "sources_sent": 0,
+   "sources_dropped": 0,
+   "seconds": 1.7,
+   "free_memory_gb": 4.7,
+   "refused": true,
+   "citations_recheck_valid": 0,
+   "references_shown": 0,
+   "references_recheck_valid": 0
+  },
+  {
+   "question": "v2-sn-neg-invite-mail",
+   "repo": "syncnotes",
+   "language": "tr",
+   "status": "answered",
+   "translated_query": "How is an email invitation sent?",
+   "answer": "apps/web/src/components/share-dialog.tsx:105-109\n            placeholder=\"name@example.com\"\n            value={email}\n            onChange={(e) => setEmail(e.target.value)}\n            aria-label=\"E-mail to invite\"\n            className=\"h-9\"\n\napps/web/src/components/share-dialog.tsx:80-84\n  const navigate = useNavigate();\n  const [email, setEmail] = useState('');\n  const [inviteRole, setInviteRole] = useState<'EDITOR' | 'VIEWER'>('EDITOR');\n\n  const submit = (e: FormEvent) => {\n\nModel's reading, not verified: The passages show an input field for entering an e-mail address and a submit function.",
+   "note": "The passages show an input field for entering an e-mail address and a submit function.",
+   "note_problem": null,
+   "citations": [
+    {
+     "source": "P1",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 105,
+     "end_line": 109
+    },
+    {
+     "source": "P4",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 80,
+     "end_line": 84
+    }
+   ],
+   "passages": [
+    {
+     "id": "P1",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 105,
+     "end_line": 109,
+     "shared_terms": [
+      "e",
+      "email",
+      "invit"
+     ],
+     "chosen": true,
+     "text": "            placeholder=\"name@example.com\"\n            value={email}\n            onChange={(e) => setEmail(e.target.value)}\n            aria-label=\"E-mail to invite\"\n            className=\"h-9\""
+    },
+    {
+     "id": "P2",
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 38,
+     "end_line": 42,
+     "shared_terms": [
+      "email",
+      "invit"
+     ],
+     "chosen": false,
+     "text": "  async invite(\n    noteId: string,\n    inviterId: string,\n    email: string,\n    role: AssignableRole,"
+    },
+    {
+     "id": "P3",
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 46,
+     "end_line": 50,
+     "shared_terms": [
+      "e",
+      "email",
+      "invit"
+     ],
+     "chosen": false,
+     "text": "      select: { id: true, email: true, name: true },\n    });\n    if (!user) throw new NotFoundException('No SyncNotes account uses this e-mail address');\n    if (user.id === inviterId) throw new BadRequestException('You already own this note');\n"
+    },
+    {
+     "id": "P4",
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 80,
+     "end_line": 84,
+     "shared_terms": [
+      "e",
+      "email",
+      "invit"
+     ],
+     "chosen": true,
+     "text": "  const navigate = useNavigate();\n  const [email, setEmail] = useState('');\n  const [inviteRole, setInviteRole] = useState<'EDITOR' | 'VIEWER'>('EDITOR');\n\n  const submit = (e: FormEvent) => {"
+    },
+    {
+     "id": "P5",
+     "path": "apps/api/src/auth/dto.ts",
+     "start_line": 8,
+     "end_line": 12,
+     "shared_terms": [
+      "e",
+      "email"
+     ],
+     "chosen": false,
+     "text": "export class RegisterDto {\n  @Transform(normaliseEmail)\n  @IsEmail({}, { message: 'email must be a valid e-mail address' })\n  @MaxLength(254)\n  email!: string;"
+    }
+   ],
+   "rejected": [],
+   "warnings": [],
+   "input_tokens": 969,
+   "output_tokens": 47,
+   "tokens_estimated": false,
+   "cost_usd": 0.0,
+   "context_chars": 1629,
+   "sources_sent": 5,
+   "sources_dropped": 0,
+   "seconds": 17.1,
+   "free_memory_gb": 4.7,
+   "refused": false,
+   "citations_recheck_valid": 2,
+   "references_shown": 5,
+   "references_recheck_valid": 5
+  }
+ ],
+ "holdout_unanswerable": [],
+ "run": {
+  "complete": true,
+  "status": "complete",
+  "questions_planned": 36,
+  "questions_selected": 36,
+  "questions_done": 36,
+  "questions_restored_from_checkpoint": 0,
+  "stopped_because": null
+ }
+}

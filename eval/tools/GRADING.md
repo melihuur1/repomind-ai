@@ -10,6 +10,8 @@ Answerable questions:
 - **partial**: gets at least one real part of EXPECTED, but misses another main part, or also contains a false or off-topic claim that does not reverse the main point.
 - **wrong**: the main claim is false or contradicts EXPECTED, or the answer does not address what was asked, or it is too garbled to understand.
 
+When an answer shows code lines, a line that visibly shows a main point counts as saying it, because a reader can see it. A false sentence next to them still lowers the grade to partial, even when it is labelled as unverified. Added before the pilot's answers existed, for answers made of code lines.
+
 Unanswerable questions, where the repository does not have the feature:
 
 - **fabricated**: says or implies that the repository has the feature.

@@ -9,7 +9,7 @@ from repomind.qa.engine import QAEngine
 from repomind.qa.sufficiency import check_sufficiency
 from repomind.search.engine import SearchEngine
 from repomind.search.tokenizer import tokenize
-from tests.test_qa import GOOD_REPLY, LOCAL, FakeClient, only_about_order_service
+from tests.test_qa import FIRST, LOCAL, FakeClient, only_about_order_service
 
 CODE = """
 class Reservation { void cancel() { stockLedger.release(); log("connection lost"); } }
@@ -103,7 +103,7 @@ class TestInEngine:
         return SearchEngine(store, fake_embedder)
 
     def test_refusal_never_calls_the_model(self, store, search):
-        client = FakeClient(GOOD_REPLY)
+        client = FakeClient(FIRST)
         result = QAEngine(store, search, LOCAL, client).ask("How does cancelOrder publish to Kafka?", ["shop"])
         assert result.status == "insufficient"
         assert client.calls == []

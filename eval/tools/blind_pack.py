@@ -6,7 +6,6 @@ Writes blind_items.txt (grade from this) and blind_key.json (do not open until e
 
 import json
 import random
-import re
 import sys
 from pathlib import Path
 
@@ -23,6 +22,15 @@ raw = yaml.safe_load((ROOT / "eval" / "questions_v2.yaml").read_bytes())
 questions = {q["id"]: q for q in raw["questions"]}
 negatives = {q["id"]: q for q in raw["unanswerable"]}
 
+
+def shown(row: dict) -> str:
+    """What a reader sees. The older pipeline showed the code each statement quoted, so that counts too."""
+    if "readings" in row:
+        kept = [r for r in row["readings"] if r["outcome"] == "supported"]
+        return "\n".join(f"{r['statement']}\n    code: {' '.join(r['quote'].split())}" for r in kept)
+    return row["answer"].strip()
+
+
 items = []
 for label, name in runs.items():
     data = json.loads((ROOT / "eval" / "results" / name).read_text(encoding="utf-8"))
@@ -38,7 +46,7 @@ for label, name in runs.items():
                 "answerable": row["question"] in questions,
                 "text": entry[language],
                 "expected": entry.get("expected") or "(unanswerable: the repository does not have this)",
-                "answer": re.sub(r"\s+", " ", re.sub(r"\s*\[(?:S\d+|unverified)\]", "", row["answer"])).strip(),
+                "answer": shown(row),
             }
         )
 

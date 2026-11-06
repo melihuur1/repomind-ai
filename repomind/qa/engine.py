@@ -1,4 +1,4 @@
-"""Retrieve, read each source separately, keep only what the source itself proves."""
+"""Retrieve, narrow down to a few real lines, and let the model choose among them or decline."""
 
 from __future__ import annotations
 
@@ -9,16 +9,16 @@ from repomind.errors import RepoMindError
 from repomind.evaluation.citations import CitationVerifier
 from repomind.ingest.git_source import GitRepository
 from repomind.qa.llm import LLMClient, LLMConfig, cost_usd
+from repomind.qa.passages import Passage, is_evidence, select_passages
 from repomind.qa.prompt import (
-    ContextSource,
     PreparedPrompt,
-    build_reading_prompt,
+    build_selection_prompt,
     build_translation_prompt,
+    fit_passages,
     new_nonce,
-    select_sources,
 )
 from repomind.qa.sufficiency import check_sufficiency
-from repomind.qa.verification import Evidence, Reading, VerifiedCitation, verify_reading
+from repomind.qa.verification import VerifiedCitation, verify_selection
 from repomind.search.engine import SearchEngine, SearchHit
 from repomind.search.translation import looks_turkish
 from repomind.store.database import Store
@@ -30,13 +30,23 @@ _TRANSLATION_OUTPUT_TOKENS = 80
 _MAX_TRANSLATION_CHARACTERS = 400
 
 
+@dataclass(frozen=True)
+class Evidence:
+    passage: Passage
+    citation: VerifiedCitation
+
+
 @dataclass
 class AskResult:
+    """``passages`` are the closest lines found. Only ``evidence`` was chosen as an answer."""
+
     status: str  # answered | insufficient | invalid_response | no_llm | no_results
     question: str
     answer: str = ""
     evidence: list[Evidence] = field(default_factory=list)
-    readings: list[Reading] = field(default_factory=list)
+    note: str = ""
+    note_problem: str | None = None
+    passages: list[Passage] = field(default_factory=list)
     rejected: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     hits: list[SearchHit] = field(default_factory=list)
@@ -55,9 +65,14 @@ class AskResult:
         return [item.citation for item in self.evidence]
 
 
-def assemble_answer(evidence: list[Evidence]) -> str:
-    """Written by the backend, so that no sentence can appear without its proof."""
-    return "\n".join(f"{item.statement} [{item.citation.source_id}]" for item in evidence)
+def assemble_answer(evidence: list[Evidence], note: str = "") -> str:
+    """Written by the backend. The code comes first, and the model's sentence is labelled as its own."""
+    parts = [
+        f"{item.citation.path}:{item.citation.start_line}-{item.citation.end_line}\n{item.passage.text}" for item in evidence
+    ]
+    if note:
+        parts.append(f"Model's reading, not verified: {note}")
+    return "\n\n".join(parts)
 
 
 class QAEngine:
@@ -81,10 +96,19 @@ class QAEngine:
             self._verifiers[key] = CitationVerifier(GitRepository(snapshot.source_path), commit)
         return self._verifiers[key]
 
-    def _git_check(self, source: ContextSource, start: int, end: int):
-        chunk = source.chunk
-        expected = "\n".join(chunk.content.split("\n")[start - chunk.start_line : end - chunk.start_line + 1])
-        return self._verifier(chunk.repo, chunk.commit_sha).check(chunk.path, start, end, expected)
+    def _verified_passages(self, passages: list[Passage], result: AskResult) -> list[Passage]:
+        """Against Git rather than RepoMind's database, so a tampered row is never shown."""
+        verified = []
+        for passage in passages:
+            chunk = passage.chunk
+            check = self._verifier(chunk.repo, chunk.commit_sha).check(
+                chunk.path, passage.start_line, passage.end_line, passage.text
+            )
+            if check.valid:
+                verified.append(passage)
+            else:
+                result.rejected.append(f"{chunk.path}:{passage.start_line}-{passage.end_line}: {check.reason}")
+        return verified
 
     def _enforce_budget(self, prompt: PreparedPrompt) -> None:
         config = self.config
@@ -168,43 +192,65 @@ class QAEngine:
             result.status = "insufficient"
             return result
 
+        queries = [text for text in (question, retrieved.translated_query) if text]
+        found = select_passages([hit.chunk for hit in retrieved.hits], queries, self.search.embedder)
+        result.passages = self._verified_passages(found, result)
+        if not result.passages:
+            result.status = "insufficient"
+            result.warnings.append("Search found code, but no lines that mention what the question asks about.")
+            return result
+        # Code is in English, so the English wording is what can be compared with it.
+        wording = retrieved.translated_query or question
+        if not any(is_evidence(passage, wording) for passage in result.passages):
+            result.status = "insufficient"
+            result.warnings.append("The closest lines mention too little of the question to count as evidence.")
+            return result
+
         if self.client is None or self.config is None:
             return result
 
         nonce = new_nonce()
-        sources, result.sources_dropped = select_sources(
-            question,
-            [hit.chunk for hit in retrieved.hits],
-            self.config.max_context_chunks,
-            self.config.max_input_tokens,
-            nonce,
-            english,
+        offered, result.sources_dropped = fit_passages(
+            question, result.passages, self.config.max_input_tokens, nonce, english
         )
         result.model = self.config.model
-        result.sources_sent = len(sources)
-        if not sources:
+        result.sources_sent = len(offered)
+        if not offered:
             result.status = "insufficient"
-            result.warnings.append("No source fits within the input token limit, so the model was not called.")
+            result.warnings.append("The passages do not fit within the input token limit, so the model was not called.")
             return result
 
-        for source in sources:
-            prompt = build_reading_prompt(question, source, nonce, english)
-            reply = self._call(prompt, self.config.max_output_tokens, result)
-            reading = verify_reading(reply, source, self._git_check, question)
-            result.readings.append(reading)
-            if reading.evidence:
-                result.evidence.append(reading.evidence)
-            elif reading.reason:
-                result.rejected.append(f"{source.id}: {reading.reason}")
-
-        if result.evidence:
-            result.status = "answered"
-            result.answer = assemble_answer(result.evidence)
-            if len(result.evidence) == 1:
-                result.warnings.append("Only one source supports this answer, so it may be incomplete.")
-        elif all(reading.outcome == "invalid" for reading in result.readings):
+        prompt = build_selection_prompt(question, offered, nonce, english)
+        reply = self._call(prompt, self.config.max_output_tokens, result)
+        selection = verify_selection(reply, offered, question)
+        if selection.outcome == "invalid":
             result.status = "invalid_response"
+            result.rejected.append(selection.reason)
             result.warnings.append("The model did not return the required JSON.")
-        else:
+        elif selection.outcome == "none":
             result.status = "insufficient"
+        elif not (chosen := [passage for passage in selection.chosen if is_evidence(passage, wording)]):
+            result.status = "insufficient"
+            result.rejected.append("the model chose lines that mention too little of the question")
+        else:
+            result.status = "answered"
+            result.evidence = [
+                Evidence(
+                    passage,
+                    VerifiedCitation(
+                        passage.id,
+                        passage.chunk.repo,
+                        passage.chunk.commit_sha,
+                        passage.path,
+                        passage.start_line,
+                        passage.end_line,
+                    ),
+                )
+                for passage in chosen
+            ]
+            # A note was written about everything chosen, so it may describe lines that were just left out.
+            complete = len(chosen) == len(selection.chosen)
+            result.note = selection.note if complete else ""
+            result.note_problem = selection.note_problem if complete else "it may describe lines that were left out"
+            result.answer = assemble_answer(result.evidence, result.note)
         return result

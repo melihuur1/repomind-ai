@@ -28,7 +28,7 @@ class LLMConfig:
     allow_remote: bool = False
     max_context_chunks: int = 8
     max_input_tokens: int = 4000
-    # Per request. Each request reads one source and returns one statement and its quote.
+    # Per request. The reply is a short list of passage ids and at most one sentence.
     max_output_tokens: int = 250
     input_usd_per_mtok: float = 0.0
     output_usd_per_mtok: float = 0.0
