@@ -33,6 +33,9 @@ MAX_PASSAGES_PER_FILE = 3
 # what nearby code looks like. On an earlier question set, this rule took unanswerable questions
 # refused from 3 of 10 to 7 of 10, and wrong sources from 11 of 26 to 7, while gold fell from 15 to 13.
 MIN_SHARED_TERMS = 2
+# Lower than the usual 60, so that a window one list ranks first can beat one all lists rank in the
+# middle. Lower still lets more unanswerable questions through. See docs/evaluation.md.
+_WINDOW_RRF_K = 30
 _HAS_WORD = re.compile(r"[^\W\d_]{3}")
 
 
@@ -65,7 +68,10 @@ def _windows(chunks: Sequence[ChunkRow]) -> list[_Window]:
     seen: set[str] = set()
     for rank, chunk in enumerate(chunks):
         lines = chunk.content.split("\n")
-        for offset in range(0, max(len(lines) - WINDOW_LINES + 1, 1), WINDOW_STEP):
+        last = max(len(lines) - WINDOW_LINES, 0)
+        # The last window is added on its own: with steps of 2, the last line of a chunk with an
+        # even number of lines would be in no window, and could never be shown.
+        for offset in dict.fromkeys((*range(0, last + 1, WINDOW_STEP), last)):
             piece = lines[offset : offset + WINDOW_LINES]
             text = "\n".join(piece)
             if text in seen or not _HAS_WORD.search(text):
@@ -113,24 +119,31 @@ def _merged(ordered: Sequence[_Window], terms: set[str], limit: int) -> list[Pas
     def overlaps_another(chunk: ChunkRow, start: int, end: int, ignoring: list) -> bool:
         return any(i is not ignoring and i[0].id == chunk.id and start <= i[2] and i[1] <= end for i in taken)
 
-    for window in ordered:
-        chunk, start, end = window.chunk, window.start_line, window.end_line
+    def extended(chunk: ChunkRow, start: int, end: int) -> bool:
         for item in taken:
             if item[0].id != chunk.id or start > item[2] + 1 or item[1] > end + 1:
                 continue
             wider = min(item[1], start), max(item[2], end)
             if wider[1] - wider[0] + 1 <= MAX_PASSAGE_LINES and not overlaps_another(chunk, *wider, item):
                 item[1], item[2] = wider
-                break
-        else:
-            same_file = sum(item[0].path == chunk.path for item in taken)
-            if len(taken) == limit or same_file >= MAX_PASSAGES_PER_FILE:
-                continue
-            for other, first, last in taken:
-                if other.id == chunk.id and start <= last and first <= end:
-                    start, end = (last + 1, end) if start >= first else (start, first - 1)
-            if start <= end and terms & set(tokenize(_lines(chunk, start, end))):
-                taken.append([chunk, start, end])
+                return True
+        return False
+
+    for window in ordered:
+        chunk, start, end = window.chunk, window.start_line, window.end_line
+        if extended(chunk, start, end):
+            continue
+        for other, first, last in taken:
+            if other.id == chunk.id and start <= last and first <= end:
+                start, end = (last + 1, end) if start >= first else (start, first - 1)
+        # What is left is often a line between two passages, which should not use up a passage of its own.
+        if start > end or extended(chunk, start, end):
+            continue
+        same_file = sum(item[0].path == chunk.path for item in taken)
+        if len(taken) == limit or same_file >= MAX_PASSAGES_PER_FILE:
+            continue
+        if terms & set(tokenize(_lines(chunk, start, end))):
+            taken.append([chunk, start, end])
     return [
         Passage(f"P{number}", chunk, start, end, _lines(chunk, start, end), tuple(sorted(terms & set(tokenize(_lines(chunk, start, end))))))
         for number, (chunk, start, end) in enumerate(taken, start=1)
@@ -144,13 +157,18 @@ def is_evidence(passage: Passage, wording: str) -> bool:
 
 
 def select_passages(
-    chunks: Sequence[ChunkRow], queries: Sequence[str], embedder: Embedder | None, limit: int = MAX_PASSAGES
+    chunks: Sequence[ChunkRow],
+    queries: Sequence[str],
+    embedder: Embedder | None,
+    limit: int = MAX_PASSAGES,
+    more_terms: Sequence[str] = (),
 ) -> list[Passage]:
     """The best short passages, best first. A window that shares no term with the question is not evidence.
 
     Without any such window the result is empty, which the caller reports as not enough evidence.
+    ``more_terms`` are other words the question may mean, such as the senses in the glossary.
     """
-    terms = {term for query in queries for term in tokenize(query)}
+    terms = {term for query in (*queries, *more_terms) for term in tokenize(query)}
     windows = [w for w in _windows(chunks) if terms & w.tokens]
     if not windows:
         return []
@@ -161,5 +179,10 @@ def select_passages(
     }
     if embedder is not None:
         lists["meaning"] = _by_meaning(windows, queries, embedder)
-    ordered = [windows[item.key] for item in reciprocal_rank_fusion(lists, k=60)]
+    ordered = [windows[item.key] for item in reciprocal_rank_fusion(lists, k=_WINDOW_RRF_K)]
+    if embedder is not None:
+        # Only this list can see a synonym, so when the question's words are not in the code, the
+        # other two can bury the right window. Measured, this let in no more unanswerable questions.
+        closest = windows[lists["meaning"][0]]
+        ordered = [closest, *(window for window in ordered if window is not closest)]
     return _merged(ordered, terms, limit)

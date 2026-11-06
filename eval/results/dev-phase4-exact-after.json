@@ -1,0 +1,102 @@
+{
+ "terms": 144,
+ "all": {
+  "n": 288,
+  "top1": 225,
+  "top5": 272,
+  "found": 284,
+  "shown": 277
+ },
+ "rows": [
+  {
+   "kind": "HTTP status constant",
+   "query": "bare",
+   "n": 12,
+   "top1": 9,
+   "top5": 11,
+   "found": 12,
+   "shown": 11
+  },
+  {
+   "kind": "HTTP status constant",
+   "query": "turkish",
+   "n": 12,
+   "top1": 10,
+   "top5": 11,
+   "found": 12,
+   "shown": 11
+  },
+  {
+   "kind": "SQL constraint or index name",
+   "query": "bare",
+   "n": 26,
+   "top1": 26,
+   "top5": 26,
+   "found": 26,
+   "shown": 26
+  },
+  {
+   "kind": "SQL constraint or index name",
+   "query": "turkish",
+   "n": 26,
+   "top1": 23,
+   "top5": 26,
+   "found": 26,
+   "shown": 26
+  },
+  {
+   "kind": "config key with a hyphen",
+   "query": "bare",
+   "n": 25,
+   "top1": 19,
+   "top5": 25,
+   "found": 25,
+   "shown": 25
+  },
+  {
+   "kind": "config key with a hyphen",
+   "query": "turkish",
+   "n": 25,
+   "top1": 21,
+   "top5": 25,
+   "found": 25,
+   "shown": 25
+  },
+  {
+   "kind": "environment variable",
+   "query": "bare",
+   "n": 50,
+   "top1": 43,
+   "top5": 49,
+   "found": 50,
+   "shown": 49
+  },
+  {
+   "kind": "environment variable",
+   "query": "turkish",
+   "n": 50,
+   "top1": 43,
+   "top5": 49,
+   "found": 50,
+   "shown": 49
+  },
+  {
+   "kind": "header or hyphenated literal",
+   "query": "bare",
+   "n": 31,
+   "top1": 17,
+   "top5": 26,
+   "found": 31,
+   "shown": 28
+  },
+  {
+   "kind": "header or hyphenated literal",
+   "query": "turkish",
+   "n": 31,
+   "top1": 14,
+   "top5": 24,
+   "found": 27,
+   "shown": 27
+  }
+ ]
+}

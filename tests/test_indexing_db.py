@@ -205,12 +205,25 @@ class TestSearch:
         assert similarities == sorted(similarities, reverse=True)
         assert all(-1.0001 <= s <= 1.0001 for s in similarities)
 
+    def test_glossary_seats_add_chunks_after_the_others_and_never_replace_one(self, engine):
+        question = "Sipariş nasıl iptal ediliyor?"
+        plain = engine.search(question, "hybrid", limit=1).hits
+        snapshots = engine._snapshot_ids(None)
+        assert not plain[0].chunk.path.endswith("payment.ts")
+        seated = engine._with_glossary_seats(plain, ["refund"], snapshots, False, 3)
+        assert seated[0] is plain[0]
+        assert [hit.chunk.path for hit in seated[1:]] == ["src/payment.ts"]
+        assert seated[1].rank == 2 and set(seated[1].explanation["ranks"]) == {"glossary"}
+        assert engine._with_glossary_seats(seated, ["refund"], snapshots, False, 3) == seated
+        assert set(engine.search(question, "hybrid", limit=1, glossary_seats=3).glossary_terms) >= {"order", "cancel"}
+        assert engine.search("How is an order cancelled?", "hybrid", limit=1, glossary_seats=3).glossary_terms == []
+
     def test_hybrid_explains_both_ranks(self, engine):
         hit = engine.search("refund payment", "hybrid").hits[0]
         assert hit.chunk.path == "src/payment.ts"
         assert set(hit.explanation["ranks"]) == {"keyword", "semantic"}
         assert hit.score == pytest.approx(
-            sum(1 / (60 + rank) for rank in hit.explanation["ranks"].values())
+            sum(1 / (engine.config.rrf_k + rank) for rank in hit.explanation["ranks"].values())
         )
 
     def test_hybrid_matches_rrf_of_the_two_lists(self, engine):
@@ -219,9 +232,9 @@ class TestSearch:
         for hit in engine.search("cancel order", "hybrid", limit=50).hits:
             expected = 0.0
             if hit.chunk.id in keyword:
-                expected += 1 / (60 + keyword.index(hit.chunk.id) + 1)
+                expected += 1 / (engine.config.rrf_k + keyword.index(hit.chunk.id) + 1)
             if hit.chunk.id in semantic:
-                expected += 1 / (60 + semantic.index(hit.chunk.id) + 1)
+                expected += 1 / (engine.config.rrf_k + semantic.index(hit.chunk.id) + 1)
             assert hit.score == pytest.approx(expected)
 
     def test_tests_are_left_out_unless_the_query_asks_for_them(self, engine):

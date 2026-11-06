@@ -100,15 +100,17 @@ Semantic search is an exact cosine scan. At about 1,200 chunks it is fast enough
 
 ## Retrieval
 
-**Keyword** (`search/keyword.py`). BM25 (k1 = 1.2, b = 0.75) over a code-aware tokenizer. `cancelReservation` yields `cancel`, `reserv` and the whole identifier, so both natural language and exact symbol searches match. Symbol names count three times and the file name 1.5 times. The index is built in memory per process, which is simple and fast at this size but will not scale to very large corpora.
+**Keyword** (`search/keyword.py`). BM25 (k1 = 1.2, b = 0.75) over a code-aware tokenizer. `cancelReservation` yields `cancel`, `reserv` and the whole identifier, so both natural language and exact symbol searches match. Names joined by a hyphen or underscore, such as `token-ttl`, are also kept whole, which makes them rare and so easy to find. Symbol names count three times and the file name 1.5 times. The index is built in memory per process, which is simple and fast at this size but will not scale to very large corpora.
 
 **Semantic** (`search/engine.py`, `store/database.py`). Cosine similarity over `intfloat/multilingual-e5-small`: 384 dimensions, MIT licensed, run locally through ONNX with no API cost. Each chunk is embedded with its path and symbol as context. It was chosen on the dev split against `BAAI/bge-small-en-v1.5` and `jinaai/jina-embeddings-v2-base-code`: it was best for Turkish questions and on combined MRR, and it is the only candidate that understands Turkish without the translator. English-only results favoured `bge-small`, though with 11 dev questions the confidence intervals overlap. See [evaluation.md](evaluation.md#embedding-model-comparison).
 
-**Hybrid** (`search/hybrid.py`). Reciprocal Rank Fusion with k = 60: `score(d) = Σ 1 / (60 + rank_list(d))`. It uses only ranks, so BM25 scores and cosine similarities never have to be made comparable, and `--explain` can show exactly why a result is where it is.
+**Hybrid** (`search/hybrid.py`). Reciprocal Rank Fusion with k = 10: `score(d) = Σ 1 / (10 + rank_list(d))`. It uses only ranks, so BM25 scores and cosine similarities never have to be made comparable, and `--explain` can show exactly why a result is where it is. The usual k = 60 rewards agreement, and the right chunk was often high in one list and lost to chunks in the middle of all of them.
 
 **Test code is left out by default.** In the first measurement 55% of the top results for English questions were tests, because tests repeat the vocabulary of the code they exercise. They are included when a query mentions tests or when `--include-tests` is passed.
 
 **Turkish queries** (`search/translation.py`). Code is in English, so a Turkish question shares few terms with it. A pinned local Opus-MT model (CTranslate2, CPU, about 0.1 s) adds an English version of the query. The translation is sometimes wrong, so it is added to the original rather than replacing it. If the model cannot load, search continues with a warning.
+
+**Turkish software words** (`search/glossary.py`). A translator picks one sense of a word, and "yenileme anahtarı" came back as "update key". A small hand-written glossary keeps every sense, and only those the repository's code contains are used. `ask` gives the best chunks for those words seats after the others, up to 5. This needs no model, and reading the extra chunks adds about 0.3 seconds per question.
 
 These ideas were tested and rejected, and their code removed:
 
@@ -116,13 +118,14 @@ These ideas were tested and rejected, and their code removed:
 - Mapping unknown Turkish words to the nearest code vocabulary through embeddings produced useful pairs such as `Rezervasyon → reservation`, but also noise such as `Şifreler → reconciler`. Similarities sat in a narrow 0.83 to 0.91 band, so no threshold could separate the two.
 - Cross-encoder reranking gave no clear gain across both question sets and took about 21 seconds per query with the only candidate worth considering. See [evaluation.md](evaluation.md#reranker).
 - Symbol names, file paths, callers and callees as an extra ranked list made results worse or no better on the first question set, so they were never run on the second.
+- A separate index of single lines, and one chunk per YAML key, each found some short lines and lost as many other questions. See [evaluation.md](evaluation.md#measured-and-left-out).
 
 ## Answering
 
 `repomind/qa/` answers only through this sequence:
 
 1. Translate a Turkish question to English with the same model. This wording is better than the local translator's, at about 2.5 seconds, so only `ask` uses it. `search` keeps working without any LLM.
-2. Retrieve up to 8 chunks with hybrid search.
+2. Retrieve up to 12 chunks with hybrid search, and for a Turkish question up to 5 more through the glossary.
 3. Refuse if the question is about something the code never mentions.
 4. Narrow the chunks to at most 5 short passages with no LLM, and compare each with Git.
 5. Refuse if no passage mentions enough of the question.
@@ -134,9 +137,9 @@ These ideas were tested and rejected, and their code removed:
 
 A source existing does not mean it supports a claim. Two earlier designs failed on this. Given 8 sources at once, the small model stitched them into plausible stories. Given one source per request and asked to quote its proof, it still wrote false sentences next to real quotes, and none of 26 answers was fully correct.
 
-So the model no longer writes the answer. `repomind/qa/passages.py` cuts the retrieved chunks into 3-line windows and ranks them by three lists through RRF: shared terms, weighing rare ones more; the local embedding model; and the rank search gave the chunk, because a window cannot see what search weighed. Each window is embedded with its path and symbol, because 3 lines alone say little. Neighbouring windows merge up to 5 lines, no line is shown twice, and one file can fill at most 3 of the 5 passages. This takes under a second and needs no LLM. All these settings were chosen on earlier question sets.
+So the model no longer writes the answer. `repomind/qa/passages.py` cuts the retrieved chunks into 3-line windows, so that every line is in one, and ranks them by three lists through RRF with k = 30: shared terms, weighing rare ones more; the local embedding model; and the rank search gave the chunk, because a window cannot see what search weighed. The closest window in meaning is always shown, because only that list can see a synonym. Each window is embedded with its path and symbol, because 3 lines alone say little. Neighbouring windows merge up to 5 lines, no line is shown twice, a line left between two passages extends one of them, and one file can fill at most 3 of the 5 passages. This takes about a second and needs no LLM. All these settings were chosen on question sets that have been read.
 
-Before that, search takes 12 chunks. A Turkish question is searched in the model's translation and in the local translator's, so that one wrong translation cannot decide alone, and file paths, symbol names and acronyms are kept through translation. Limits per chunk, removing near-duplicate windows, and adding path terms to the ranking were measured and left out, because they did not help. On a new question set these changes showed no clear gain over 8 chunks and one translation. See [evaluation.md](evaluation.md#fourth-question-set).
+Before that, search takes 12 chunks. A Turkish question is searched in the model's translation and in the local translator's, so that one wrong translation cannot decide alone, and file paths, symbol names and acronyms are kept through translation. Limits per chunk, removing near-duplicate windows, and adding path terms to the ranking were measured and left out, because they did not help. On a new question set these changes showed no clear gain over 8 chunks and one translation. See [evaluation.md](evaluation.md#fourth-question-set). The later work described above has not had that test.
 
 The model then gets one request: which passages answer the question, at most two, or none? It replies with ids, and the lines shown come from the backend, so it cannot change a value, a file or a line number. It may add one sentence, which is shown apart and labelled "Model's reading, not verified".
 
@@ -180,7 +183,7 @@ Repository content is untrusted: a comment can address the model directly. The d
 
 | Limit | Default |
 | --- | --- |
-| Chunks taken from search per question | 12 |
+| Chunks taken from search per question | 12, and up to 5 more through the glossary |
 | Passages offered per question | 5, of at most 5 lines |
 | Estimated input tokens per request | 4000 |
 | Output tokens per request | 250 |
@@ -207,7 +210,8 @@ Free memory here means the smaller of free physical memory and free commit space
 ## Known limitations
 
 - **A verified line is not a proven answer.** The lines are real, and choosing them is still a judgement. In the pilot, the model chose lines that do not touch the gold span for 7 of 12 Turkish questions. See [evaluation.md](evaluation.md#pilot-answers-made-of-real-lines).
-- **The right lines often never reach the model.** On the fourth question set, search missed them for 5 of 16 Turkish questions, and passage selection for 4 more. Short configuration lines and translation errors are the main causes.
+- **The right lines often never reach the model.** On the fourth question set, when it was measured, search missed them for 5 of 16 Turkish questions, and passage selection for 4 more. After later work on questions already read, they still miss 17 of 85. A short line that a question describes without naming, such as `token-ttl`, is still hard to find.
+- **The evidence rule drops some right answers.** It asks for 2 words shared with the question, which a short line often does not have. For 12 of 85 questions it would drop the right lines if the model chose them.
 - **The refusal rules look at words, not meaning.** They miss questions whose words appear in nearby code. Features next to existing code are the hard case: "how are notes in the trash restored?" passes because notes and deletion both exist. They also refuse some answerable questions.
 - **Declining depends on the model.** `qwen2.5:3b` never chose "none" in the pilot, in 13 requests. `qwen2.5:7b` did so in 5 of 16, every time the right lines were absent.
 - **Recall@5 is good on the second set and moderate on the first**, 0.67 to 0.83 against 0.50 to 0.58. See [evaluation.md](evaluation.md).

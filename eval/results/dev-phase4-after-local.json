@@ -1,0 +1,1090 @@
+{
+ "summary": {
+  "median_seconds": 0.88,
+  "mean_seconds": 0.89,
+  "p95_seconds": 1.47,
+  "mean_chunks": 15.1,
+  "mean_lines_shown": 21.2,
+  "peak_memory_mb": 1109
+ },
+ "questions": {
+  "sg-stock-consistency": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "sg-reservation-cancel": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "sg-db-connection-error": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sg-user-permissions": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": true,
+   "config": false
+  },
+  "sg-oversell": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "sg-idempotency": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sg-expiry": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sg-retry": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sg-lock-order": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sg-jwt": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sg-password": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sg-audit": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "sg-stale-version": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sg-invariants": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sg-simulation-race": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "sg-first-admin": {
+   "set": "first",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sn-realtime": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "sn-user-permissions": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": true,
+   "config": false
+  },
+  "sn-revocation": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sn-lost-updates": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sn-redis-outage": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": false,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sn-offline": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": false,
+   "refused": true,
+   "config": false
+  },
+  "sn-ticket": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sn-refresh-reuse": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sn-csrf": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sn-password": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "sn-version-restore": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sn-auto-version": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "sn-presence": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "sn-viewer-readonly": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "sn-session-refresh": {
+   "set": "first",
+   "repo": "syncnotes",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": true,
+   "config": false
+  },
+  "sg-neg-kafka": {
+   "set": "first",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": true
+  },
+  "sg-neg-stripe": {
+   "set": "first",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": true
+  },
+  "sg-neg-email": {
+   "set": "first",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": false
+  },
+  "sn-neg-graphql": {
+   "set": "first",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": true
+  },
+  "sn-neg-2fa": {
+   "set": "first",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": true
+  },
+  "sn-neg-s3": {
+   "set": "first",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": true
+  },
+  "sg-new-excel": {
+   "set": "first",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": true
+  },
+  "sg-new-images": {
+   "set": "first",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": true
+  },
+  "sg-new-refunds": {
+   "set": "first",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": true
+  },
+  "sg-new-redis": {
+   "set": "first",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": true
+  },
+  "sn-new-elasticsearch": {
+   "set": "first",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": true
+  },
+  "sn-new-forgot-password": {
+   "set": "first",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": false
+  },
+  "sn-new-push": {
+   "set": "first",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": false
+  },
+  "sn-new-pdf": {
+   "set": "first",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": true
+  },
+  "v2-sg-negative-stock-db": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": true
+  },
+  "v2-sg-settled-immutable": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": true
+  },
+  "v2-sg-append-only": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": true
+  },
+  "v2-sg-sweep-index": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": true
+  },
+  "v2-sg-why-separate-stock": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": true
+  },
+  "v2-sg-lock-timeout-config": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": true
+  },
+  "v2-sg-reservation-defaults": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": false,
+   "refused": false,
+   "config": true
+  },
+  "v2-sg-two-instances": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": true
+  },
+  "v2-sg-auth-error-format": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v2-sg-username-race": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v2-sg-simulation-limit": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v2-sg-error-status-map": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": false,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v2-sg-add-stock-limits": {
+   "set": "second",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": false,
+   "refused": true,
+   "config": false
+  },
+  "v2-sn-one-owner": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": true
+  },
+  "v2-sn-collab-instances": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": false,
+   "refused": true,
+   "config": true
+  },
+  "v2-sn-redis-durability": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": true
+  },
+  "v2-sn-cookie-flags": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v2-sn-env-validation": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v2-sn-account-lock": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v2-sn-folder-delete": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v2-sn-note-search": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v2-sn-health-redis": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v2-sn-logout-access-token": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v2-sn-cursor-color": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v2-sn-title-merge": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v2-sn-theme-flash": {
+   "set": "second",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v2-sg-neg-transfer": {
+   "set": "second",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": false
+  },
+  "v2-sg-neg-coupon": {
+   "set": "second",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": true
+  },
+  "v2-sg-neg-password-reset": {
+   "set": "second",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": false
+  },
+  "v2-sg-neg-backorder": {
+   "set": "second",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": false
+  },
+  "v2-sg-neg-mongodb": {
+   "set": "second",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": true
+  },
+  "v2-sn-neg-tags": {
+   "set": "second",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": false
+  },
+  "v2-sn-neg-comments": {
+   "set": "second",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": false
+  },
+  "v2-sn-neg-public-link": {
+   "set": "second",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": false
+  },
+  "v2-sn-neg-ldap": {
+   "set": "second",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": true
+  },
+  "v2-sn-neg-invite-mail": {
+   "set": "second",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": false
+  },
+  "v3-sg-instance-header": {
+   "set": "third",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v3-sg-audit-page-size": {
+   "set": "third",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v3-sg-movement-types": {
+   "set": "third",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": false,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v3-sg-username-lowercase": {
+   "set": "third",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": true
+  },
+  "v3-sg-request-fingerprint": {
+   "set": "third",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": false,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v3-sg-no-setters": {
+   "set": "third",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v3-sn-register-password": {
+   "set": "third",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v3-sn-who-can-edit": {
+   "set": "third",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v3-sn-share-ownership": {
+   "set": "third",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v3-sn-role-cache-ttl": {
+   "set": "third",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v3-sn-redis-access-events": {
+   "set": "third",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v3-sn-user-delete-sql": {
+   "set": "third",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": true
+  },
+  "v3-sg-neg-extend-reservation": {
+   "set": "third",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": false
+  },
+  "v3-sg-neg-low-stock-alert": {
+   "set": "third",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": true
+  },
+  "v3-sg-neg-barcode": {
+   "set": "third",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": true
+  },
+  "v3-sn-neg-trash": {
+   "set": "third",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": false
+  },
+  "v3-sn-neg-mention": {
+   "set": "third",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": true
+  },
+  "v3-sn-neg-sunset-theme": {
+   "set": "third",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": false
+  },
+  "v4-sg-token-ttl": {
+   "set": "fourth",
+   "repo": "stockguard",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": true
+  },
+  "v4-sg-db-port": {
+   "set": "fourth",
+   "repo": "stockguard",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": true,
+   "config": true
+  },
+  "v4-sg-reservation-states": {
+   "set": "fourth",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v4-sg-audit-null-actor": {
+   "set": "fourth",
+   "repo": "stockguard",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": true
+  },
+  "v4-sg-username-format": {
+   "set": "fourth",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v4-sg-login-response": {
+   "set": "fourth",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v4-sg-consistency-endpoint": {
+   "set": "fourth",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v4-sg-register-role": {
+   "set": "fourth",
+   "repo": "stockguard",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v4-sn-refresh-token-storage": {
+   "set": "fourth",
+   "repo": "syncnotes",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v4-sn-guard-order": {
+   "set": "fourth",
+   "repo": "syncnotes",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v4-sn-unknown-fields": {
+   "set": "fourth",
+   "repo": "syncnotes",
+   "candidates": false,
+   "passages": false,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v4-sn-offline-message": {
+   "set": "fourth",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": false,
+   "evidence": false,
+   "refused": false,
+   "config": false
+  },
+  "v4-sn-revoked-close-code": {
+   "set": "fourth",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v4-sn-ticket-not-access-token": {
+   "set": "fourth",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v4-sn-folder-name-unique": {
+   "set": "fourth",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": true,
+   "refused": false,
+   "config": false
+  },
+  "v4-sn-postgres-port": {
+   "set": "fourth",
+   "repo": "syncnotes",
+   "candidates": true,
+   "passages": true,
+   "anchor": true,
+   "evidence": false,
+   "refused": false,
+   "config": true
+  },
+  "v4-sg-neg-wishlist": {
+   "set": "fourth",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": false
+  },
+  "v4-sg-neg-reduce-quantity": {
+   "set": "fourth",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": false
+  },
+  "v4-sg-neg-sms": {
+   "set": "fourth",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": true
+  },
+  "v4-sg-neg-csv": {
+   "set": "fourth",
+   "repo": "stockguard",
+   "negative": true,
+   "refused": true
+  },
+  "v4-sn-neg-template": {
+   "set": "fourth",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": false
+  },
+  "v4-sn-neg-pin": {
+   "set": "fourth",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": false
+  },
+  "v4-sn-neg-view-log": {
+   "set": "fourth",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": false
+  },
+  "v4-sn-neg-spellcheck": {
+   "set": "fourth",
+   "repo": "syncnotes",
+   "negative": true,
+   "refused": false
+  }
+ }
+}

@@ -41,6 +41,8 @@ _TECHNICAL_TERM = re.compile(
     r"|\b[a-z]+[A-Z]\w*\b"
     r"|\b[A-Z][a-z]+[A-Z]\w*\b"
     r"|\b[A-Z]{2,}\d*\b"
+    # token-ttl, Retry-After, X-Request-Id, but not the Turkish word e-posta.
+    r"|\b(?:[A-Z]|[A-Za-z][A-Za-z0-9]+)(?:-[A-Za-z0-9]+)+\b"
 )
 
 

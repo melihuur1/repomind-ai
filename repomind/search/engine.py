@@ -8,6 +8,7 @@ from typing import Sequence
 
 from repomind.embeddings.provider import Embedder
 from repomind.errors import RepoMindError
+from repomind.search.glossary import repository_terms
 from repomind.search.hybrid import reciprocal_rank_fusion
 from repomind.search.keyword import BM25Config, KeywordIndex
 from repomind.search.tokenizer import fold
@@ -25,7 +26,9 @@ def asks_about_tests(query: str) -> bool:
 
 @dataclass(frozen=True)
 class SearchConfig:
-    rrf_k: int = 60
+    # Low, so that a chunk ranked near the top of one list beats one ranked 20th in all of them. A
+    # short configuration line is often found by only one wording. See docs/evaluation.md.
+    rrf_k: int = 10
     candidates: int = 50
     # None: leave tests out unless the query asks about them. Tests repeat the
     # vocabulary of the code they exercise, and otherwise crowd out the implementation.
@@ -48,6 +51,7 @@ class SearchResult:
     hits: list[SearchHit]
     translated_query: str | None = None
     warnings: list[str] = field(default_factory=list)
+    glossary_terms: list[str] = field(default_factory=list)
 
 
 class SearchEngine:
@@ -167,6 +171,25 @@ class SearchEngine:
             for rank, item in enumerate(fused[:limit], start=1)
         ]
 
+    def _with_glossary_seats(
+        self, hits: list[SearchHit], terms: Sequence[str], snapshot_ids: list[int], include_tests: bool, seats: int
+    ) -> list[SearchHit]:
+        """Adds the best chunks for the glossary's terms after the others.
+
+        They get seats and not a vote. A fifth list hardly moves a chunk that only it finds, and
+        voting also pushed out chunks that were already there.
+        """
+        have = {hit.chunk.id for hit in hits}
+        found = self._keyword_hits(" ".join(terms), [], snapshot_ids, include_tests, seats)
+        extra = [hit for hit in found if hit.chunk.id not in have]
+        return [
+            *hits,
+            *(
+                SearchHit(hit.chunk, rank, hit.score, {"ranks": {"glossary": hit.rank}, **hit.explanation})
+                for rank, hit in enumerate(extra, start=len(hits) + 1)
+            ),
+        ]
+
     def check_repositories(self, repos: list[str] | None) -> None:
         """Raises the same helpful error a search would, without doing any work."""
         self._snapshot_ids(repos)
@@ -179,11 +202,13 @@ class SearchEngine:
         limit: int = 5,
         translated: str | None = None,
         more_wordings: Sequence[str] = (),
+        glossary_seats: int = 0,
     ) -> SearchResult:
         """``translated`` is an English wording the caller already has; otherwise the translator makes one.
 
         ``more_wordings`` are other wordings of the same question, each searched on its own, so
-        that one wrong translation cannot decide alone what search finds.
+        that one wrong translation cannot decide alone what search finds. ``glossary_seats`` adds up
+        to that many chunks beyond ``limit``, for a Turkish question, found by what its words can mean.
         """
         if not query.strip():
             raise RepoMindError("The search query is empty.")
@@ -211,4 +236,9 @@ class SearchEngine:
             hits = next(iter(lists.values()))[:limit]
         else:
             hits = self._fuse(lists, limit)
-        return SearchResult(query, mode, hits, translated, warnings)
+        terms: list[str] = []
+        if glossary_seats and looks_turkish(query):
+            terms = repository_terms(query, self._keyword_index(snapshot_ids, include_tests).postings)
+            if terms:
+                hits = self._with_glossary_seats(hits, terms, snapshot_ids, include_tests, glossary_seats)
+        return SearchResult(query, mode, hits, translated, warnings, terms)

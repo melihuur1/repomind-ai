@@ -1,7 +1,9 @@
 """Code-aware tokenization shared by documents and queries.
 
 ``cancelReservation`` must match the query "cancel reservation" as well as the exact
-identifier, so an identifier yields both its stemmed parts and its whole form.
+identifier, so an identifier yields both its stemmed parts and its whole form. The same
+goes for names joined by punctuation, such as ``token-ttl`` and ``STOCKGUARD_DB_HOST_PORT``:
+the whole form is rare, which is what lets BM25 find the one line that holds it.
 """
 
 from __future__ import annotations
@@ -13,6 +15,7 @@ import snowballstemmer
 
 _WORD = re.compile(r"[^\W_]+", re.UNICODE)
 _IDENTIFIER_PART = re.compile(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+|\d+")
+_JOINED_NAME = re.compile(r"[^\W_]+(?:[-_][^\W_]+)+", re.UNICODE)
 _STEMMER = snowballstemmer.stemmer("english")
 _STEM_CACHE: dict[str, str] = {}
 
@@ -55,4 +58,5 @@ def tokenize(text: str) -> list[str]:
                 tokens.append(_stem(folded))
         if len(parts) > 1:
             tokens.append(fold(word))
+    tokens.extend(fold(name) for name in _JOINED_NAME.findall(text))
     return tokens

@@ -96,7 +96,13 @@ The pilot met one target of four. It also changed what the plan assumed:
 
 `qwen2.5:7b` then ran on the same 18 questions, with no tuning. It missed the bar by one wrong source. It became the default, search and passage selection were tuned on the three earlier sets, and a [fourth question set](evaluation.md#fourth-question-set) measured the result once. **That also missed the bar:** 6 correct sources of 16 and 3 wrong ones, and the search changes showed no clear gain over the baseline.
 
-The largest remaining loss is search on short configuration lines, and translation errors. Any further tuning needs a new question set, because all four have been read.
+[Later search work](evaluation.md#search-work-after-the-fourth-set), with no model, took the right code reaching the passages from 61 to 68 of 85 questions already read. That is not independent. Any claim about it needs a new question set, because all four have been read.
+
+These are proposals, none of them approved:
+
+1. **Decide the evidence rule with a short run on earlier questions.** It would drop the right lines for 12 of those 85 if chosen, and loosening it sends about 6 more unanswerable questions to the model. Only the model can show whether it declines them.
+2. **Try glossary terms in the model's translation prompt,** in the same run.
+3. **Write and commit a small fifth question set,** and measure the result once with `qwen2.5:7b`.
 
 ## Trying 7B safely
 

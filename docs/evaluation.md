@@ -13,7 +13,8 @@ The goal is to reach the right code reliably, explain it correctly, and know how
 | Are citations real? | **Yes.** Every search result and every citation shown with an answer matches Git at the indexed commit. |
 | Are AI answers reliable? | **Not proven.** On a new set of 16 answerable questions, `qwen2.5:7b` found the right source for 6, against a target of at least 8, and showed a wrong one for 3, against at most 2. |
 | Does it refuse what it cannot answer? | **With 7B, so far yes:** 8 of 8 on the new set, and 28 or 29 of 30 on the earlier ones. It also refuses some answerable questions. |
-| Did the latest search changes help? | **Not clearly.** They helped on the earlier sets they were tuned on, but on the new set the right lines reached the model no more often. |
+| Did the search changes measured on the fourth set help? | **Not clearly.** They helped on the earlier sets they were tuned on, but on the new set the right lines reached the model no more often. |
+| Did the search work after that help? | **On the questions it was tuned on, yes:** the right code reached the passages for 68 of 85 questions, up from 61, with no more unanswerable questions let through. It has had no independent test. See [the details](#search-work-after-the-fourth-set). |
 | Is `qwen2.5:7b` better than 3B? | **On the pilot, clearly.** They were not compared on the new set. Its older run on the second question set is `incomplete — interrupted due to memory pressure`. |
 
 ## Phase 2
@@ -338,6 +339,90 @@ Where each answerable question ended:
 
 Improved stays in place because it showed fewer wrong sources and no loss, not because it is shown to be better. These questions have now been read, so any further tuning on them needs a new set.
 
+## Search work after the fourth set
+
+**This is development data, and it does not show how the system does on new questions.** All four question sets have been read, and these fixes came from looking at their failures. No model ran, so it says nothing about answers. Stored 7B translations stood in for the model, and [`retrieval_funnel.py`](../eval/tools/retrieval_funnel.py) put each question through the same search, vocabulary check, passage selection and evidence rule as `ask`.
+
+| Turkish, 85 answerable and 38 unanswerable | Before | After |
+| --- | --- | --- |
+| Gold code in the search candidates | 74 | **77** |
+| Gold code in the 5 passages | 61 | **68** |
+| Gold anchor text in the passages | 54 | 58 |
+| Gold code in a passage that passes the evidence rule | 51 | **56** |
+| Answerable refused before the model | 9 | 8 |
+| Unanswerable refused before the model | 26 | 26 |
+| Median seconds per question, without a model | 0.70 | 0.98 |
+| 95th percentile seconds | 1.19 | 1.54 |
+| Mean chunks read | 12.0 | 14.9 |
+| Mean lines shown | 21.1 | 21.4 |
+| Peak memory of the process | 1,109 MB | 1,109 MB |
+
+The extra 0.3 seconds is embedding the windows of the extra chunks. Peak memory is set by loading the models, so these changes do not move it.
+
+| Gold code in the passages | Questions | Before | After |
+| --- | --- | --- | --- |
+| First set | 31 | 23 | 23 |
+| Second set | 26 | 21 | 23 |
+| Third set | 12 | 10 | 11 |
+| Fourth set | 16 | 7 | 11 |
+| Answer in SQL or YAML | 17 | 12 | 14 |
+| Answer in code | 68 | 49 | 54 |
+
+Other ways of asking, with the same code:
+
+| Candidates, passages, evidence, unanswerable refused | Before | After |
+| --- | --- | --- |
+| Turkish, local translator only, no LLM at all | 65, 51, 44, 20 | 72, 59, 49, 19 |
+| English, no translation | 75, 62, 57, 24 | 77, 62, 58, 23 |
+
+The English path did not gain, because the glossary does not apply to it.
+
+Naming a term exactly is a separate test. [`exact_terms.py`](../eval/tools/exact_terms.py) takes 144 terms from the index, by a fixed random choice and not by hand, and asks for each one bare and inside a Turkish sentence:
+
+| 288 lookups | Before | After |
+| --- | --- | --- |
+| The line holding the term is shown | 261 | **277** |
+| A chunk holding it ranks first | 206 | 225 |
+| Configuration keys with a hyphen, shown, of 50 | 44 | **50** |
+| Environment variables, shown, of 100 | 94 | 98 |
+| SQL constraint and index names, shown, of 52 | 51 | 52 |
+| HTTP status constants, shown, of 24 | 22 | 22 |
+| Headers and hyphenated literals, shown, of 62 | 50 | 55 |
+
+### What changed
+
+- **A bug: the last line of many chunks could never be shown.** Windows of 3 lines moved by 2, so a chunk with an even number of lines left its last line out of every window. A 4-line YAML group could not show its last key. This is the main reason configuration keys went from 44 to 50.
+- **Fusion rewards a strong rank more.** Chunks now use k = 10 instead of 60, and windows k = 30. The right chunk was often near the top of one list, such as 4th for one wording, and then lost to chunks ranked around 20th in all four. Lower k on windows lets more unanswerable questions through: at k = 1 they fell from 26 to 21.
+- **Names joined by punctuation are also whole tokens.** `token-ttl` and `STOCKGUARD_DB_HOST_PORT` are rare as wholes, so BM25 can find the one line that holds them. Hyphenated names also now survive translation.
+- **A small glossary of Turkish software words.** A translator picks one sense: "yenileme anahtarı" came back as "update key". The [glossary](../repomind/search/glossary.py) keeps every sense, and uses only those the repository's code contains. Its top 5 chunks get seats after the first 12, and its terms count when choosing windows. It gets seats and not a vote, because voting pushed out chunks that were already there.
+- **A leftover line no longer takes a passage.** Lines 92-94 and 96-100 could leave line 95 as a third passage of its own. It now extends a neighbour.
+- **The closest window in meaning is always shown.** Only that list can see a synonym. This let in no more unanswerable questions.
+
+### Measured and left out
+
+| Idea | Result |
+| --- | --- |
+| Nearest repository word through embeddings | The wanted word was in the top 6 for 8 of 40 cases. "veritabanı" gave "verifiable". |
+| A separate index of single lines, voting | Candidates 74 to 73, or to 60 with SQL and YAML only, which pushed out code. |
+| One chunk per YAML key, in a separate test database | Found `token-ttl`, but passages rose only from 67 to 69, candidates fell from 77 to 74, and evidence from 55 to 54. It would also need the index rebuilt. |
+| Seats for the closest configuration lines | `token-ttl` reached the candidates but not the passages, and 2 or more seats lost another question. |
+| A seat for the best of every window list | Unanswerable refused fell from 26 to 21. |
+| Dotted names as whole tokens | No better than hyphens and underscores alone. |
+
+### What this does not show
+
+- **Most of the gain is where the failures were studied.** 4 of the 7 extra passages are on the fourth set, whose failures led to this work, and the 31 questions of the first set gained nothing. Two k values and the glossary were chosen after seeing these results, and the glossary was written after reading the failures, though from general vocabulary. The previous round of tuning also looked better on its own questions than it did on the fourth set.
+- **A difference of 1 or 2 means little.** Any change moves some windows across the cut, and gold anchors in the passages fell for 3 questions while they rose for 7.
+- **Answers were not measured.** More gold in the passages does not mean more right answers.
+
+### What is still lost
+
+Of 85 questions after these changes: search misses 8, passage selection misses 9, and for 12 more the right lines are offered but the evidence rule would drop them if chosen.
+
+- **`token-ttl` is found when named, and not when described.** "How long is the access token valid?" still misses it. Even when offered, `token-ttl: 60m` shares only one word with that question, and the rule asks for 2.
+- **The evidence rule is now a large loss.** Counting either translation, or the glossary, raised evidence by about 6 questions, but unanswerable refused fell from 26 to 20. Those then depend on the model declining, which only a run with the model can measure.
+- **Translation still costs something.** With the developer's own English as a perfect translation, before the glossary was added, passages rose from 65 to 68, anchors from 56 to 63 and evidence from 54 to 60. Unanswerable refused fell from 26 to 20, so some of today's refusals rest on poor translations. Passing glossary terms to the model's translation has not been tried, because it needs the model.
+
 # Phase 1
 
 The rest of this document is the phase 1 evaluation, kept as the baseline. Its statements about what was planned next, such as a reranker being the most promising step, describe what was known at that time.
@@ -553,7 +638,8 @@ Stored results are in [`eval/results/`](../eval/results):
 | `v2-ask-phase1-3b.json`, `v2-ask-phase2-3b.json`, `v2-grades-3b-tr.json` | 3B answers on the second set and their grades |
 | `v3-old-3b-tr.json`, `v3-nollm-*.json`, `v3-new-3b-*.json`, `v3-new-7b-tr.json`, `v3-grades-*.json` | The pilot and its grades |
 | `v4-baseline-7b-tr.json`, `v4-improved-7b-tr.json`, `v4-grades-7b-tr.json` | The fourth question set and its grades |
-| `dev-phase3-*.json`, `dev-improved-7b-v3.json` | Tuning runs for the latest search changes on earlier sets, not independent |
+| `dev-phase4-*.json` | Search before and after the latest work, with no model, on questions already read, not independent |
+| `dev-phase3-*.json`, `dev-improved-7b-v3.json` | Tuning runs for the search changes measured on the fourth set, not independent |
 | `dev-selector-3b-v2.json` | The new pipeline on the second set, before the evidence rule, not independent |
 | `v2-ask-phase2-7b.status.json` | The interrupted 7B run, which saved no answers |
 | `dev-phase2-7b-tr.json`, `prompt-lab/` | Development runs on the first set, not independent |

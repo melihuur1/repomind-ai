@@ -55,6 +55,8 @@ No configuration passed. `qwen2.5:7b` missed the bar by one question and did muc
 
 **This did not pass, and the search changes showed no clear gain.** The system now rarely invents an answer and shows only real lines, but it finds the right source for fewer than half of the questions. The pilot had looked better than this. Search is the largest loss, on short configuration lines and through translation errors. The same developer wrote these questions, and 24 are too few to prove anything in general. Details are in the [full evaluation](docs/evaluation.md#fourth-question-set).
 
+Search was then worked on further, with no model, on these same questions and the earlier ones: the right code reaches the 5 passages for 68 of 85 Turkish questions, up from 61, and a named term such as `token-ttl` is shown for 277 of 288 lookups, up from 261. No more unanswerable questions get through, at about 0.3 seconds more per question. These questions had already been read, so this is not an independent result, and it has not yet been measured on answers. See [the details](docs/evaluation.md#search-work-after-the-fourth-set).
+
 ## How it works
 
 1. **Read** a commit from Git's object database. Analyzed projects are never modified and their code is never executed.
@@ -153,7 +155,7 @@ The full method, every stage of the investigation and the rejected ideas are in 
 ## Known limitations
 
 - **AI answers are not proven reliable.** On the newest question set, `qwen2.5:7b` found the right source for 6 of 16 questions and showed a wrong one for 3. It refused 8 of 8 unanswerable ones.
-- **The right lines often never reach the model.** For 9 of those 16 questions, search or passage selection lost them.
+- **The right lines often never reach the model.** For 9 of those 16 questions, search or passage selection lost them. Later search work reduced this on questions already read, and it has had no independent test.
 - **`qwen2.5:3b` does not decline.** Asked to choose lines or none, it chose every time, so with that model all refusals come from mechanical rules.
 - **A verified line is not a proven answer.** Lines are checked against Git. Whether they answer the question is not checked.
 - The plan for improving answers is in [docs/answer-plan.md](docs/answer-plan.md).

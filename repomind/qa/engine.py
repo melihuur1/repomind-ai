@@ -27,6 +27,8 @@ from repomind.store.database import Store
 # silently (for example Ollama's small default context) and sources were never seen.
 _TRUNCATION_RATIO = 0.5
 _CHUNKS_WITHOUT_A_MODEL = 12
+# Beyond those. With anything from 2 to 8 seats, the same number of questions reached the passages.
+_GLOSSARY_SEATS = 5
 _TRANSLATION_OUTPUT_TOKENS = 80
 _MAX_TRANSLATION_CHARACTERS = 400
 
@@ -175,7 +177,15 @@ class QAEngine:
         english = self._translate_with_the_model(question, result)
         # A second translator's wording is searched too, so one wrong translation cannot decide alone.
         second = self.search.local_translation(question, result.warnings) if english else None
-        retrieved = self.search.search(question, "hybrid", repos, chunk_limit, translated=english, more_wordings=[second] if second else ())
+        retrieved = self.search.search(
+            question,
+            "hybrid",
+            repos,
+            chunk_limit,
+            translated=english,
+            more_wordings=[second] if second else (),
+            glossary_seats=_GLOSSARY_SEATS,
+        )
         result.hits = retrieved.hits
         result.translated_query = retrieved.translated_query
         result.warnings.extend(retrieved.warnings)
@@ -196,7 +206,9 @@ class QAEngine:
             return result
 
         queries = [text for text in (question, retrieved.translated_query, second) if text]
-        found = select_passages([hit.chunk for hit in retrieved.hits], queries, self.search.embedder)
+        found = select_passages(
+            [hit.chunk for hit in retrieved.hits], queries, self.search.embedder, more_terms=retrieved.glossary_terms
+        )
         result.passages = self._verified_passages(found, result)
         if not result.passages:
             result.status = "insufficient"

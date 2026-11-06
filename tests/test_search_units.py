@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from repomind.search.engine import asks_about_tests
+from repomind.search.glossary import repository_terms
 from repomind.search.hybrid import reciprocal_rank_fusion
 from repomind.search.keyword import BM25Config, KeywordIndex
 from repomind.search.tokenizer import fold, tokenize
@@ -35,6 +36,20 @@ def chunk(identifier: int, content: str, path: str = "src/a.ts", symbol: str | N
     )
 
 
+class TestGlossary:
+    def test_only_senses_the_repository_uses_are_kept(self):
+        assert repository_terms("Yenileme anahtarı nerede?", {"refresh", "token"}) == ["refresh", "token"]
+        assert repository_terms("Yenileme anahtarı nerede?", set()) == []
+
+    def test_a_phrase_and_a_stem_changed_by_a_suffix_are_found(self):
+        assert repository_terms("Kullanıcı adı kuralı nedir?", {"usernam"}) == ["username"]
+        assert repository_terms("Bu isteği kim reddediyor?", {"request"}) == ["request"]
+
+    def test_a_common_word_does_not_match_by_its_first_letters(self):
+        assert repository_terms("Bu kim tarafından yapılıyor?", {"scan", "poll", "sweep"}) == []
+        assert repository_terms("Türkçe mi yazılıyor?", {"type"}) == []
+
+
 class TestTokenizer:
     def test_splits_camel_snake_and_acronyms(self):
         assert "reservationservic" not in tokenize("ReservationService")
@@ -47,6 +62,10 @@ class TestTokenizer:
 
     def test_exact_identifier_is_a_token(self):
         assert "cancelreservation" in tokenize("cancelReservation")
+
+    def test_a_name_joined_by_punctuation_is_a_token_as_well_as_its_parts(self):
+        assert set(tokenize("token-ttl: 60m")) >= {"token", "ttl", "token-ttl"}
+        assert set(tokenize("STOCKGUARD_DB_HOST_PORT")) >= {"host", "port", "stockguard_db_host_port"}
 
     def test_removes_english_and_turkish_stopwords(self):
         assert tokenize("how is the cancel") == ["cancel"]

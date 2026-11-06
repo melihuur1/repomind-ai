@@ -17,12 +17,15 @@ from repomind.qa.passages import (
     MAX_PASSAGES,
     MAX_PASSAGES_PER_FILE,
     Passage,
+    _merged,
+    _Window,
     is_evidence,
     select_passages,
 )
 from repomind.qa.prompt import SYSTEM_PROMPT, build_selection_prompt, estimate_tokens, fit_passages
 from repomind.qa.verification import MAX_CHOSEN, verify_selection
 from repomind.search.engine import SearchEngine
+from repomind.search.tokenizer import tokenize
 from repomind.search.translation import keep_technical_terms
 from repomind.store.database import ChunkRow
 from tests.conftest import FakeEmbedder, commit_all, write
@@ -113,6 +116,38 @@ class TestPassageSelection:
         braces = chunk(start=1, end=3, content="}\n}\n}")
         assert select_passages([braces], ["compute"], None) == []
 
+    def test_the_last_line_of_a_chunk_with_an_even_number_of_lines_can_be_shown(self):
+        source = chunk(start=1, end=4, content="alpha: 1\nbeta: 2\ngamma: 3\ntoken-ttl: 60m")
+        assert any("token-ttl: 60m" in p.text for p in select_passages([source], ["token-ttl"], None))
+
+    def test_a_line_between_two_passages_does_not_use_up_a_passage(self):
+        source = chunk(start=1, end=9, content=numbered_content(1, 9))
+
+        def window(start, end):
+            text = "\n".join(source.content.split("\n")[start - 1 : end])
+            return _Window(0, source, start, end, text, frozenset(tokenize(text)))
+
+        passages = _merged([window(1, 3), window(5, 9), window(3, 5)], {"comput"}, MAX_PASSAGES)
+        assert [(p.start_line, p.end_line) for p in passages] == [(1, 4), (5, 9)]
+
+    def test_the_closest_window_in_meaning_is_shown_when_other_words_are_used(self):
+        class OneMeaning:
+            def embed_query(self, _text):
+                return [1.0, 0.0]
+
+            def embed_passages(self, texts):
+                return [[1.0, 0.0] if "closest" in text else [0.0, 1.0] for text in texts]
+
+        lines = ["compute rare_word"] * 2 + ["other = 1"] * 12 + ["compute closest"]
+        content = "\n".join(f"{line} {n}" for n, line in enumerate(lines))
+        source = chunk(start=1, end=len(lines), content=content)
+        assert "closest" in select_passages([source], ["compute rare word"], OneMeaning(), limit=1)[0].text
+
+    def test_more_terms_let_in_lines_with_none_of_the_question_s_own_words(self):
+        source = chunk(start=1, end=1, content="token-ttl: 60m")
+        assert select_passages([source], ["access duration"], None) == []
+        assert select_passages([source], ["access duration"], None, more_terms=["ttl"])
+
     def test_ids_follow_the_order_of_the_passages(self):
         big = chunk(start=1, end=60, content=numbered_content(1, 60))
         passages = select_passages([big], ["compute"], None)
@@ -129,7 +164,7 @@ class TestPassageSelection:
 class TestTechnicalTerms:
     @pytest.mark.parametrize(
         "term",
-        ["`applyDiscount`", "applyDiscount", "OrderService", "MAX_RETRIES", "application.yml", "apps/api/src/main.ts", "CSRF"],
+        ["`applyDiscount`", "applyDiscount", "OrderService", "MAX_RETRIES", "application.yml", "apps/api/src/main.ts", "CSRF", "token-ttl", "Retry-After", "X-Request-Id"],
     )
     def test_a_term_the_translator_dropped_is_added_back(self, term):
         result = keep_technical_terms(f"{term} nasıl çalışıyor?", "How does it work?")
@@ -140,6 +175,7 @@ class TestTechnicalTerms:
 
     def test_ordinary_words_are_left_to_the_translation(self):
         assert keep_technical_terms("Rezervasyon iptali nasıl yapılıyor?", "How is it cancelled?") == "How is it cancelled?"
+        assert keep_technical_terms("Doğrulama e-posta ile mi gidiyor?", "Is it sent by email?") == "Is it sent by email?"
 
     def test_a_turkish_suffix_does_not_hide_a_file_name(self):
         assert keep_technical_terms("README.md'de ne yazıyor?", "What does it say?") == "What does it say? README.md"
