@@ -27,7 +27,10 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("code", type=Path)
 parser.add_argument("mode", choices=("7b", "local", "en"))
 parser.add_argument("--output", type=Path)
+parser.add_argument("--translations", type=Path, help="A JSON file of question id to wording, replacing the stored 7B wording for those questions.")
 arguments = parser.parse_args()
+if arguments.output and arguments.output.exists():
+    parser.error(f"{arguments.output} already exists, and is not overwritten.")
 
 sys.path.insert(0, str(arguments.code))
 sys.stdout.reconfigure(encoding="utf-8")
@@ -88,6 +91,8 @@ def peak_memory_mb() -> int | None:
 
 
 translations = stored_translations()
+if arguments.translations:
+    translations.update(json.loads(arguments.translations.read_text(encoding="utf-8")))
 settings = Settings.load()
 with _store(settings) as store:
     embedder = _embedder(settings)
