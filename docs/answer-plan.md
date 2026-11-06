@@ -108,4 +108,4 @@ No paid API or account is needed for any of this, and nothing is built until a p
 - Retries with backoff on rate limits. A failed request already stops the run cleanly, and the checkpoint continues it.
 - A printed worst-case cost before an `evaluate-ask` run.
 
-The design above also helps here: one short request per question costs a fraction of today's 9 requests.
+The design above also helps here: one short reading request instead of 8 costs a fraction of today's tokens. Turkish questions still need one more request for translation.
