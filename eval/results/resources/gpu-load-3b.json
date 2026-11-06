@@ -1,0 +1,15 @@
+{
+ "model": "qwen2.5:3b",
+ "question": "Bir isteği uygulamanın hangi kopyasının karşıladığı istemciye nasıl bildiriliyor?",
+ "status": "answered",
+ "seconds": 6.0,
+ "input_tokens": 1069,
+ "output_tokens": 61,
+ "chosen": [
+  "src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java:14-18"
+ ],
+ "note": "InstanceHeaderFilter sınıfı, istemcilerin hangi sürümü tarafından işlemek üzere olduğunu bildirir.",
+ "note_problem": null,
+ "python_peak_physical_mb": 920,
+ "python_commit_mb": 1367
+}

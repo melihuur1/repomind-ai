@@ -103,7 +103,7 @@ REPOMIND_LLM_MODEL=qwen2.5:3b
 
 `qwen2.5:3b` is under the Qwen Research License rather than an open source license, so check that it suits your use. `qwen2.5:7b` is Apache-2.0 licensed, and used up to 7.7 GiB of memory before the current limits were set. Any OpenAI-compatible endpoint works. Sending code to a remote endpoint must be enabled explicitly, and paid use needs prices and a budget in `.env`.
 
-The container keeps one model in memory at a time and is limited to 8 GB. To give the memory back when you are done, run `docker compose stop ollama`.
+The container keeps one model in memory at a time, is limited to 8 GB, and uses an NVIDIA GPU through `gpus: all` in `compose.yaml`. On a machine without one, remove that line and it runs on the CPU. To give the memory back when you are done, run `docker compose stop ollama`.
 
 **Limits of answers.** Every line shown is checked against Git, and lines that mention too little of a question do not count as evidence. That does not make them the answer: choosing them is the model's judgement, and in the evaluation it often chose wrongly. A citation alone does not prove an answer. Use `ask` to find the relevant code, and read it.
 
