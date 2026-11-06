@@ -1,6 +1,6 @@
 # Architecture
 
-RepoMind's first phase is a retrieval and answering engine with a command line interface. There is deliberately no web application, user management, GitHub API integration or job queue yet: those come only after the core is shown to find the right code.
+RepoMind is so far a retrieval and answering engine with a command line interface. There is deliberately no web application, user management, GitHub API integration or job queue yet: those come only after the core is shown to find the right code and explain it correctly.
 
 ```mermaid
 flowchart LR
@@ -30,9 +30,10 @@ flowchart LR
     DB --> S2
 
     subgraph Ask["python -m repomind ask"]
-        RRF --> P[Bounded prompt, repository content as untrusted data]
-        P --> L[Optional LLM]
-        L --> V[Backend citation check against Git]
+        RRF --> P[One source per request, as untrusted data]
+        P --> L[Optional LLM: statement and quote]
+        L --> V[Backend finds the quote, checks Git]
+        V --> A[Answer assembled without the model, or I do not know]
     end
 ```
 
@@ -59,11 +60,18 @@ A `.env` that *was* committed is still reachable through Git, so the filters bel
 - files whose name starts with the word `secret`, `secrets`, `credential`, `credentials` or `creds` (so `secrets.ts`, but not `SecretRotationService.java`), or that carry an `.env.` segment (`prod.env.js`);
 - generated files (`*.d.ts`, `*.min.js`, bundles), files over 1 MB, and unsupported languages.
 
-Content rules then reject binary files, non-UTF-8 files, minified code, and files matching high-confidence credential patterns (private keys and AWS, GitHub, OpenAI, Anthropic, Google and Slack tokens). The report names such a file but never its secret. This scan does not catch generic values such as `password = "..."`; see [limitations](#known-limitations).
+Content rules then reject binary files, non-UTF-8 files, minified code, and files matching high-confidence credential patterns (private keys and AWS, GitHub, OpenAI, Anthropic, Google and Slack tokens). The report names such a file but never its secret. This scan does not catch generic values such as `password = "..."` in code; see [limitations](#known-limitations).
+
+Two more file types need rules of their own:
+
+- **YAML** files with a personal or secret marker in the name (`application-local.yml`, `*-override.yml`, `vault.yml`, `kubeconfig.yml`) and lock files are skipped. In the rest, a chunk holding a literal credential, such as a password key or a URL with a password, is withheld on its own and reported, so that one development password does not hide a whole compose file.
+- **SQL** files with a literal `PASSWORD '...'` or `IDENTIFIED BY '...'` are rejected.
 
 ## Parsing and chunking
 
 `repomind/parsing/chunker.py` uses Tree-sitter grammars for Java, TypeScript, TSX and JavaScript. Source is parsed, never evaluated.
+
+`repomind/parsing/structured.py` handles the other two. SQL is split into statements by a small lexer that understands comments, strings and dollar quoting. YAML goes through Tree-sitter, which yields syntax nodes only, so a tag such as `!!python/object` stays plain text, unlike with a loader that constructs objects. Neither is ever executed.
 
 | Situation | Result |
 | --- | --- |
@@ -89,7 +97,7 @@ PostgreSQL 17 with pgvector runs in RepoMind's own Compose project, on `127.0.0.
 
 Re-indexing the same commit with the same `PIPELINE_VERSION` does nothing.
 
-Semantic search is an exact cosine scan. At about 1,100 chunks it is fast enough, and it keeps an approximate index from capping the measured recall.
+Semantic search is an exact cosine scan. At about 1,200 chunks it is fast enough, and it keeps an approximate index from capping the measured recall.
 
 ## Retrieval
 
@@ -103,21 +111,31 @@ Semantic search is an exact cosine scan. At about 1,100 chunks it is fast enough
 
 **Turkish queries** (`search/translation.py`). Code is in English, so a Turkish question shares few terms with it. A pinned local Opus-MT model (CTranslate2, CPU, about 0.1 s) adds an English version of the query. The translation is sometimes wrong, so it is added to the original rather than replacing it. If the model cannot load, search continues with a warning.
 
-Two ideas were tested and rejected:
+These ideas were tested and rejected, and their code removed:
 
-- A per-file result cap made no measurable difference and was removed.
+- A per-file result cap made no measurable difference.
 - Mapping unknown Turkish words to the nearest code vocabulary through embeddings produced useful pairs such as `Rezervasyon → reservation`, but also noise such as `Şifreler → reconciler`. Similarities sat in a narrow 0.83 to 0.91 band, so no threshold could separate the two.
+- Cross-encoder reranking gave no clear gain across both question sets and took about 21 seconds per query with the only candidate worth considering. See [evaluation.md](evaluation.md#reranker).
+- Symbol names, file paths, callers and callees as an extra ranked list made results worse or no better on the first question set, so they were never run on the second.
 
 ## Answering
 
 `repomind/qa/` answers only through this sequence:
 
-1. Retrieve up to 8 chunks with hybrid search.
-2. Refuse if the question is about something the code never mentions.
-3. Without a configured LLM, stop and return the sources, labelled as not being an AI answer.
-4. Build a bounded prompt. Chunks are included whole or not at all, because cutting one would invalidate its line range.
-5. Enforce the budget, then call the endpoint.
-6. Verify the output before showing anything.
+1. Translate a Turkish question to English with the same model. This wording is better than the local translator's, at about 2.5 seconds, so only `ask` uses it. `search` keeps working without any LLM.
+2. Retrieve up to 8 chunks with hybrid search.
+3. Refuse if the question is about something the code never mentions.
+4. Without a configured LLM, stop and return the sources, labelled as not being an AI answer.
+5. Send each source to the model in its own request, and enforce the budget before each one.
+6. Verify each reply and assemble what survives.
+
+### One source at a time
+
+Asked about 8 sources at once, the small model stitched them into plausible stories: every source was real, none supported the claim. The difference between a source existing and an answer being supported by it is the main problem of this layer.
+
+Each request now holds one source, and the model returns `{"relevant", "statement", "quote"}`: whether this code carries out any step of what is asked, what it does, and the lines that prove it. Reading one source at a time removes the chance to combine them. The cost is about 3 times the input tokens and twice the time per question.
+
+The answer is the verified statements joined together, with no further model call, so it cannot add anything that was not checked. If none survives, the answer is "I do not know" with the closest code. If only one survives, a warning says the answer may be incomplete.
 
 ### Refusing without a model
 
@@ -126,21 +144,21 @@ The first run with a real model answered 5 of 6 unanswerable questions by invent
 Retrieval similarity does not help: on the measured questions, unanswerable ones scored as high as answerable ones (cosine 0.82 to 0.87 against 0.80 to 0.89). Vocabulary does differ, so `repomind/qa/sufficiency.py` refuses before any model call when either of these holds:
 
 - a name-like term (`Kafka`, `GraphQL`, `S3`) from the question occurs nowhere in the code;
-- at least two ordinary words of the English question, or of its translation, occur nowhere in the code.
+- at least two ordinary words of an English question occur nowhere in the code.
 
-A single missing ordinary word, such as "prevent", is common in answerable questions too, so it only produces a warning. Questions refused this way cost nothing. The check cannot catch a question whose every word happens to appear in the code.
+Words of a translated question only produce a warning. A translation's wording says little about the code, and this rule refused 3 answerable Turkish questions while catching only 2 negatives. Questions refused this way cost nothing. The check cannot catch a question whose every word happens to appear in the code.
 
-### Citation verification
+### Evidence verification
 
-The model refers to sources by id (`S1`) and may give lines. For each citation, `repomind/qa/verification.py` checks that the source was actually supplied, that the lines lie inside its range, and that those lines equal the blob in Git at the indexed commit. The comparison is against Git rather than RepoMind's database, so a tampered row fails too.
+`repomind/qa/verification.py` checks each reply before it can reach the user:
 
-- Path and SHA shown to the user come from the backend, never from model text.
-- A source cited with wrong lines is shown with its verified full range, and the rejection is reported.
-- An unverifiable inline marker becomes `[unverified]`.
-- An answer that names a file not among the sources, or puts an identifier in backticks that appears in neither the sources nor the question, is discarded whole.
-- Invalid JSON, `insufficient: true` or the absence of any verified citation yields "I do not know".
+- The quote has to occur in the source. The search ignores whitespace, allows `...` between exact parts, allows lines given out of order, and accepts a near match only for a single passage at 90% similarity, so that `value_12` can never pass for `value_16`.
+- Line numbers come from where the backend found the quote. The model does not supply them. The quote's lines are compared with the blob in Git at the indexed commit, so a tampered database row fails too.
+- The text shown is the source's, never the model's copy.
+- A quote has to be long enough to prove something (at least 15 characters) and short enough to point at the proof (at most 15 lines).
+- A statement is discarded if it names something that is in neither the source nor the question, or drifts into a script that is in neither, such as Chinese in an answer to a Turkish question.
 
-**What this does not prove.** Verification shows that a cited location exists and contains the code shown, and that the answer names nothing the model cannot have read. It does not show that the model's sentence about that code is true. See [limitations](#known-limitations).
+**What this does not prove.** Verification shows that a quote exists at the commit and that the statement names nothing the model cannot have read. It does not show that the statement describes the quote correctly. The `ask` command says so under every answer. This is the largest remaining gap; see [limitations](#known-limitations).
 
 ### Prompt injection
 
@@ -148,33 +166,48 @@ Repository content is untrusted: a comment can address the model directly. The d
 
 1. Sources are wrapped in tags with a random per-request nonce, so code cannot close the data block.
 2. Paths and symbols, which the repository also controls, are reduced to safe characters.
-3. The system prompt declares the sources to be data.
+3. The system prompt declares the source to be data.
 4. The model has no tools, so an injection can at worst distort the answer text.
-5. Citations are verified regardless of what the model was persuaded to say.
-6. Repository content and model output have terminal control characters removed before printing.
+5. A source is read alone, so a hostile comment cannot influence what the model says about other sources.
+6. Every statement needs a quote that exists in Git, whatever the model was persuaded to say.
+7. Repository content and model output have terminal control characters removed before printing.
 
 ### Cost and data limits
 
 | Limit | Default |
 | --- | --- |
-| Chunks sent per question | 8 |
-| Estimated input tokens per question | 4000 |
-| Output tokens per question | 600 |
+| Chunks read per question | 8 |
+| Estimated input tokens per request | 4000 |
+| Output tokens per request | 250 |
 | Total spend | $0 unless prices and a budget are set |
 
-The budget check runs before the request, using worst-case cost. A non-loopback endpoint is refused unless `REPOMIND_LLM_ALLOW_REMOTE=1`, because it sends source code to a third party, and a remote endpoint with an API key is refused until prices are configured. If an endpoint reports far fewer input tokens than were sent, a warning says that it may have truncated the sources.
+The budget check runs before each request, using worst-case cost. A non-loopback endpoint is refused unless `REPOMIND_LLM_ALLOW_REMOTE=1`, because it sends source code to a third party, and a remote endpoint with an API key is refused until prices are configured. If an endpoint reports far fewer input tokens than were sent, a warning says that it may have truncated the source.
 
 All providers share one small OpenAI-compatible client using only the standard library. The default local setup is Ollama in a container from RepoMind's Compose file, with no account or API key.
 
+### Memory limits
+
+A run with the 7B model was once stopped because the machine ran critically low on memory, and everything it had answered was lost. Four things now guard against that:
+
+| Measure | Why |
+| --- | --- |
+| `OLLAMA_MAX_LOADED_MODELS=1` | Two models loaded together were measured at 8.7 GiB |
+| `OLLAMA_NUM_PARALLEL=1` | Ollama's default reserved twice the context (`--parallel 2 --ctx-size 16384`), although RepoMind sends one request at a time |
+| `OLLAMA_KEEP_ALIVE=2m` and `mem_limit: 8g` | A model is released soon after use, and a model that does not fit fails inside its container |
+| `evaluate-ask` | Saves each question to a checkpoint as it finishes, does not start with less than 3 GB free, and stops between questions if free memory falls below that |
+
+Free memory here means the smaller of free physical memory and free commit space, because Windows can run out of commit space while physical memory is still free. A checkpoint records the model, question set and prompts, and refuses to continue a run if any of them changed. The memory check runs between questions, so it cannot catch a spike during one, which is why [`resource_trial.ps1`](../eval/tools/resource_trial.ps1) asks for 10 GB before it loads a model.
+
 ## Known limitations
 
-- **Verified citations do not make a claim true.** When retrieval misses the right code, a small model can still give a wrong answer that cites real but irrelevant code. See [evaluation.md](evaluation.md#answer-layer).
-- **The refusal check is vocabulary based.** It misses questions whose every word appears in the code, and a poor translation can make it refuse a question that could be answered.
-- **Recall@5 is moderate**, about 0.5 to 0.6 on the held-out split. Most misses are ranking problems rather than candidate problems; see [evaluation.md](evaluation.md#why-results-are-where-they-are).
-- **Only Java, TypeScript and JavaScript are indexed.** SQL migrations and YAML configuration are invisible, so constraints such as StockGuard's database `CHECK`s cannot be cited.
+- **A verified quote does not make a statement true.** The model can quote real code and describe it wrongly. In the second evaluation, 5 wrong answers had read the right code and made a statement about it. See [evaluation.md](evaluation.md#phase-2-answers).
+- **The refusal check is vocabulary based.** It misses questions whose words all appear in the code. Features next to existing code are the hard case: "how are invitation emails sent?" passes because invitations and emails both exist.
+- **Answers are joined, not judged as a whole.** Nothing compares the statements with each other or with the question once they have passed, so an off-topic but true statement stays in the answer.
+- **Recall@5 is good on the second set and moderate on the first**, 0.67 to 0.83 against 0.50 to 0.58. See [evaluation.md](evaluation.md).
 - **Turkish depends on an imperfect translator**, and detection relies on Turkish letters or common function words, so a bare `stok rezervasyon` is not translated.
-- **2.4% of chunks exceed the model's 512-token window** (26 of 1,106, longest 623). Their tails are not embedded, although keyword search still covers them.
-- **Secret detection is pattern based.** It catches known token formats, not arbitrary hardcoded passwords.
+- **Adding SQL and YAML cost some Turkish ranking on code questions**, because the new chunks compete with code.
+- **2.4% of the code chunks exceed the model's 512-token window** (26 of 1,106, longest 623). Their tails are not embedded, although keyword search still covers them.
+- **Secret detection is pattern based.** It catches known token formats and literal credential keys, not every hardcoded password.
 - **Only the latest indexed commit is kept per repository.**
 - **The keyword index is rebuilt in memory per process.**
-- **The evaluation has 31 questions on two repositories**, labelled by one person, so intervals are wide and results may not generalize.
+- **The evaluation has 57 answerable questions on two repositories**, labelled and graded by one reviewer, so intervals are wide and results may not generalize.

@@ -1,0 +1,394 @@
+[
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sg-add-stock-limits",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Miktar için geçerli sınırlar `StockLevelRepository.moveAvailableToReserved` ve `ReservationRepository.expireDue` metodlarında belirtilmiştir. İlk metot, `available_quantity` değeri `:quantity` kadar azalırken, ikinci metot ise `reserved_quantity` değerini `:quantity` kadar artırır [S7, S2]. Bu süreçlerin bir parçası olan `ReservationExpiryService.expireDueBatch` metodunda da kullanılan `StockLedger.releaseReserved` fonksiyonu, `reserved_quantity` değeri üzerinde işlem yapar ve bu durumda miktar sınırları kontrol edilir."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sg-error-status-map",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Stok eksik hatası (insufficient stock) HTTP durum koduyla dönüyor. Bu enum içinde ErrorCode.STUFF_NOT_FOUND, ErrorCode.RESERVATION_EXPIRED ve ErrorCode.RESERVATION_ALREADY_SETTLED gibi stok eksikliği ile ilgili hataların değerleri belirlenir. Ancak, stok eksikliği durumu için kullanılan HTTP durum kodu ErrorCode.STUFF_NOT_FOUND'dur."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sg-neg-backorder",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "fabricated",
+  "answer": "Ön sipariş alımı, stok bitince ürünün tamamen tahsis edildiğini `InventoryService.get(productId)` fonksiyonundan öğrenilir. Bu fonksiyon, `StockLevel` nesnesinin `getReserved()` metodunu çağırarak tahsis edilen miktarı döndürür. Eğer ürünün stok bitmediği durumda, `ProductController.get(productId)` ve `ProductController.ProductResponse.of(product, stock.get(product.getId()))` fonksiyonları ile ürün bilgileri ve onların üzerindeki stok bilgileri birleştirilir ve geri döndürülür."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sg-neg-password-reset",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "fabricated",
+  "answer": "Kullanıcı şifresini değiştirme işlemi, `AuthService.login` metodundan gerçekleştirilir. Bu metot, kullanıcı adı ve parola ile giriş yapmayı deneyerek AuthenticationManager'ın authenticate fonksiyonunu çağırır. Eğer kullanıcı doğrulanırsa, `AppUserDetails` nesnesine erişilir ve bu nesnenin id'si ve rolü kullanılarak JwtTokenService tarafından bir JwtToken oluşturulur. Şifre değiştirme işlemi genellikle bu giriş yapma sürecinden geçer. Ancak, şifrenin değiştirilmesi için `AuthService.register` metodu da kullanılabilir ve bu metot, kullanıcı adı ve yeni parola ile yeni bir kullanıcı oluşturmayı sağlar."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sg-neg-transfer",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "fabricated",
+  "answer": "Stok bir depodan başka bir depoya aktarım işlemi `StockLevelRepository.moveAvailableToReserved` ve `StockLevelRepository.moveReservedToAvailable` metodları kullanılarak gerçekleştirilir. İlk metot, belirli bir ürünün stok kalmamış olan boş alanlardan istenen miktarla dolu hale getirilmesini sağlar. İkinci metot ise, belirli bir ürünün stokta tutulmuş olan kalan miktardan istenen miktarla boş hale getirilmesini sağlar. Bu süreçte, `StockLevelRepository` sınıfının `moveAvailableToReserved` ve `moveReservedToAvailable` metodları, depodaki stokların güncellenmesi için gerekli olan row lock'u korurken atomic olarak işlem yapar. Bu, yeni stok düzeylerini güncellemekle birlikte, aynı işlemi de kaydeder veya iptal eder,."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sg-negative-stock-db",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "wrong",
+  "answer": "Stok sayacıların eksiye düşmesini veritabanı seviyesinde engelliyor `StockLevelRepository.removeReserved` metodu. Bu metod, belirli bir ürünün ve miktarın stok sayacının eksiye düşmesini sağlar. Ancak, `StockLevel.total`, `StockLevel.available`, ve `StockLevel.reserved` alanlarının toplamını günceller ve bu güncellemelerin gerçekleşmesi için gerekli olan row lock'u alır. Eğer belirtilen miktarın stok sayacının eksiye düşmemesi durumunda, metot sonucu `Optional<StockCounts>` olarak döndürülür. Bu durumda, `total`, `available`, ve `reserved` alanlarının güncel değerlerini döndürebilir."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sg-settled-immutable",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "wrong",
+  "answer": "Sonuçlanmış bir rezervasyonun sonradan değiştirilmesi veritabanında engellenmek için, `ReservationController.cancel` metodu kullanılarak bu işlem gerçekleştirilmektedir. Bu metod, `ReservationService.cancel` yöntemini çağırarak belirlenen rezervasyonu iptal etmektedir. Ancak, `ReservationStatus` enum'deki PENDING durumu için geçerli bir işlem olmamaktadır ve bu nedenle, `ReservationTransactions.settle` metodu ile rezervasyonun son durumuna doğru değiştirilmesi engellenmektedir. Bu, `ReservationService.cancel` metodunda belirlenen `target` parametresinin PENDING durumu için geçerli bir işlem olmamasından kaynaklanmaktadır."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sg-sweep-index",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "wrong",
+  "answer": "Rezervasyonların süresi geçen ones için veritabanında kullanılan indeks, `ReservationRepository.ExpiredReservation` interface'deki `getProductId`, `getUserId`, ve `quantity` metodları tarafından sağlanan verilerle ilişkilendirilmektedir. Bu indexte, `productId` ve `userId` sütunlarının bir kombinasyonu ile `expires_at` sütunu arasında eşlenik bir ilişki bulunmaktadır."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sg-two-instances",
+  "language": "tr",
+  "kind": "yaml",
+  "grade": "wrong",
+  "answer": "Two instances of the application can share the same database by configuring them to use the same connection settings. This includes setting up separate databases or using a single shared database with appropriate isolation levels and transaction management. The `ReservationController.create` method ensures that each request is unique through its `Idempotency-Key`, preventing duplicate reservations even if multiple instances are running concurrently. Each instance can independently seed the necessary users and products as needed, ensuring a consistent state across all instances [S7, S5]."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sg-username-race",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "İki kişi aynı anda aynı kullanıcı adıyla kaydolursa, AppUserRepository.findByUsername methodu, belirli bir kullanıcı adı için bir Optional<AppUser> döndürmesi gereken bir eşleşme bulur. Eğer eşleşme bulunmazsa, yeni bir kullanıcı oluşturulur ve bu işlem, PostgreSQL tarafından bloke edilir. Bu durumda, aynı kullanıcı adıyla daha önce kaydedilmiş bir kullanıcı oluşturmak mümkün olmayan durumda kalır."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sg-why-separate-stock",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "wrong",
+  "answer": "Stok sayacılar ürün tablosundan ayrı bir yerde tutulur çünkü `StockLevel` sınıfının `total`, `available`, ve `reserved` değişkenleri, ürün stoklarının güncel durumu hakkında bilgi içerir. Bu değişkenler, `StockLevelRepository` sınıflarında kullanılan SQL sorgularıyla güncellenir ve `ConsistencyService` sınıfı tarafından kontrol edilir. Stok sayacılar, `stock_levels` tablosundan çekilen verileri kullanarak ürün stoklarının güncel durumu hakkında bilgi sahibi olurlar. Bu nedenle, stok sayacılar genellikle ürün tablosundan ayrı bir yerde tutulur ve bu durumda, veri bütünlüğü kontrol edilebilir."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sn-account-lock",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Hesaba, çok sayıda hatalı girişten sonra kullanıcı hesabının gizliliği açılır ve bir süreliğine kilitlenir. Bu durumda, `AuthService.registerFailedAttempt` fonksiyonu kullanılarak kullanıcıya başarısız giriş sayısını artırır. Eğer bu sayının 8 defa veya daha fazla olduğunda, hesabın gizliliği açılır ve kilitlenir. Kilitlenme süresi `LOGIN_LOCK_MINUTES` saniyelerdir. Bu durumda, `PermissionService.invalidateAll` fonksiyonu kullanılarak Redis'teki tüm kayıtlar sıfırlanır ve hesabın gizliliği kilitlenir."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sn-cursor-color",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Kullanıcının rengi, `colorForUser` fonksiyonu tarafından belirlenir ve bu fonksiyon, kullanıcı adı FNV-1a hash'ini kullanarak bir rengi üretir. Bu rengi, `CollaborativeEditor` komponentinde kullanılan `CollaborationCaret.configure` fonksiyonunun `user.color` parametresine atanır."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sn-env-validation",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Aşağıda belirtilen kodlar, uygulamanın açılışında yapılandırma değerlerini kontrol etmek için kullanılıyor. `configureApp` fonksiyonu, uygulamanın başlangıcında HTTP hattının nasıl kurulacağını tanımlıyor. Bu fonksiyon, nginx reverse proxy dahilindeki client IP'leri doğru şekilde belirlemek için 'trust proxy' özelliğini ayarlıyor ve 'x-powered-by' özelliği devre dışı bırakıyor. Ayrıca, uygulamanın prefixini ayarlıyor, helmet, cookieParser ve CORS ayarlarını yapıyor. `collabEnvSchema` de yapılandırma değerlerinin nasıl tanımlanacağını gösteriyor. Bu schema, NODE_ENV, DATABASE_URL, REDIS_URL gibi çeşitli yapılandırma değişkenlerini tanımlıyor. Yapılandırma değerleri uygulamanın çalışması sırasında kontrol edilir ve uygun olmayan değerler durdurulur veya ayarlanır."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sn-folder-delete",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Notlar silinirken, `MoveNoteDto` sınıfının `folderId` özelliği null olursa notun klasöründen kaldırılır. Bu durumda, notun klasörü kaldırılır ve kullanıcı tarafından kullanılan bir işlem ile işlenir."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sn-health-redis",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Redis kapalıyken sağlık kontrolü, Redis bağlantısının durumunu kontrol eder ve Redis açıkken 'up' olur. Eğer Redis kapalıysa, 'degraded' olarak değerlendirilir. Bu durumda, API'nin işlevi devam eder ve veritabanına giden istekler için Redis bağlantısının durumu kontrol eder."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sn-neg-invite-mail",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "fabricated",
+  "answer": "Davet e-postası gönderimi işlemi, `MembersService.invite` metodundan gerçekleştirilir. Bu metoddaki `email` parametresi ile davet edilecek kişinin e-posta adresini belirtir ve `role` parametresi ile davet edilen kişinin rolleri (OWNER, EDITOR veya VIEWER) belirlenir. E-posta adresi doğrulanarak ve rolü doğru olan bir kullanıcıya davet edilir. Eğer e-posta adresi yanlışsa BadRequestException, eğer kullanıcının zaten notun sahibiyse ConflictException hatası fırlatılır."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sn-neg-public-link",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "fabricated",
+  "answer": "Not herkese açık bağlantısı, bir notun sahibi olan kişi tarafından oluşturulan `ShareDialog` komponentinden paylaşım butonuna tıklanarak yapılır. Bu butona tıklandığında, kullanıcı e-posta adresini girer ve ardından 'EDITOR' veya 'VIEWER' rolü seçer. Eğer notun sahibi değilse, bu işlemi gerçekleştiren `LeaveNote` operasyonu çağrılır ve notun sahibine yönlendirilir."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sn-neg-tags",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "fabricated",
+  "answer": "Notların etiket eklenmesi `NoteWorkspace` komponentinde gerçekleştirilir. Bu komponent, notların düzenlenmesini ve etiketlerin eklenebilmesini sağlar. Notun düzenleyicisi olup olmadığını kontrol eder ve bu durumda düzenleme yetkisine tabi olur. Etiket eklemek için `NoteCard` komponentunda bir dropdown menü oluşturulur ve etiket ekleme butonu bulunur. Bu butona tıklanınca, notun etiketlerini değiştirebilir veya yeni bir etiket ekleyebilirsiniz."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sn-one-owner",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "wrong",
+  "answer": "Notun iki sahibi olması veritabanında önlenmek için, bir notun sahibi olma yetkisi kontrol edilir. Eğer bir notun sahibi olma yetkisine sahip olan kullanıcı başka bir kullanıcıya notu paylaşır veya paylaşıldıktan sonra aynı notu iki kez sahip olamaz. Bu kontrol, `NotesService.create` ve `NotesController.remove` metodlarında gerçekleştirilir [S7, S8]. Eğer bir notun sahibi olma yetkisine sahip olan kullanıcı başka bir kullanıcıya notu paylaşırsa, `NotesService.create` metodu yeni bir not oluştururken aynı nota iki kez sahiplenemeyeceğini belirtir. Ayrıca, notun sahibi olma yetkisi kontrolü, `MembersController.list`, `MembersController.invite`, ve `MembersController.updateRole` metodlarında gerçekleştirilir [S1, S2, S3]. Bu metotlar bir notun sahibi olma yetkisine sahip olan kullanıcıya başka bir kullanıcıya notu paylaşmayı veya paylaşıldıktan sonra aynı nota iki kez sahiplenemeyeceğini belirtir [S1, S2, S3]."
+ },
+ {
+  "run": "v2-ask-phase1-3b.json",
+  "question": "v2-sn-redis-durability",
+  "language": "tr",
+  "kind": "yaml",
+  "grade": "wrong",
+  "answer": "Redis verilerini diske yazan ayar `ResilientRedisExtension.onConfigure` metodunda. Bu, Redis bağlantısız olduğunda belirli bir süre boyunca kaydedilen verileri koruyarak sistem deyimo geçireceğini gösterir."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-add-stock-limits",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Bu kod parçası, depo kalmazlık isteğinde miktar için sınırların nasıl belirlenmesini açıklıyor. Bu kod parçası, depodan saklanan mal miktarını çıkarırken, `reserved_quantity` sütunu güncellemek için kullanılır. Bu kod parçası `moveReservedToAvailable` metodunu kullanır ve bu metot, depodaki tutulan miktarları satılabilirlik kazançlı hale getirir. Bu kod parçası `StockLevelRepository.addAvailable` metodunu kullanır ve bu metottan gelen ürün ID'si ve miktarı güncellemek için SQL sorgusu çalıştırır. Bu kod parçası depo kirliliği isteği için miktar alan bir sınıf tanımlar ve bu sınıfın quantity parametresi 1 ile 1_000_000 arasında olmalıdır."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-append-only",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "partial",
+  "answer": "Bu kod, `stock_movements` tablosunun güncellemeleri veya silinmelerini önleme için bir trigge oluşturur. Bu kod parçası `StockLevelRepository.moveAvailableToReserved` metodunu kullanarak stok kalmalarını tahsis edilen kalmaların üzerinde işlem yapar ve bu işlem sonucunda `total_quantity`, `available` ve `reserved` değerlerinin güncellemeleri yapılır. Bu kod, `moveReservedToAvailable` metodunu kullanarak stok düzeylerini güncellemek için Transactional propertisli bir Query oluşturur ve bu işlem, satışı tekrar mümkün hale getirir. Bu kod, `audit_events` tablosunun güncellemeleri veya silinmelerini engelleyen bir triggeerin oluşturulmasını sağlar. Bu kod, `ProductService.update` metodunun içinde ürün adı ve açıklamasını güncellemek için gerekli olan sürüm kontrolünü gerçekleştirir. Bu kod, `StockLevelRepository.removeReserved` metodunu kullanarak stok düzeylerini güncellemek için bir UPDATE sorgusu oluşturur ve bu işlem, stokta saklanan adetin kütüphaneden geri alınmasını sağlar. Bu kod, `ReservationRepository.settleIfPendingAndInTime` metodunu kullanarak bir talepın durumu ve tarih bilgilerini güncellemek için tasarlanmış ve bu işlemin tamamlanması veya iptal edilmesi önlenmek üzere yapılmıştır."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-auth-error-format",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Bu kod, `ReservationTransactions.rejection` metodunu kullanarak bir `ApiException` oluşturur ve bu hata, istemciye gönderilecek hata mesajı olarak `ErrorCode.RESERVATION_EXPIRED` veya `ErrorCode.RESERVATION_ALREADY_SETTLED` ile başlatılır. GlobalExceptionHandler.java adlı sınıfın handleIntegrity metodu bir veri uyumsallık ihlali durumunda bir hata oluşturur. Bu kodda, `ReservationTransactions.create` methodu, `productId` ürün bulunmadığında bir ApiException oluşturur ve bu hata, istemciden gönderilecektir. Bu kod, bir kullanıcıyı giriş yapmamış durumunda oluşturulan bir istemcinin işlemi gerçekleştirmesi izni olmadığını belirtir ve bu durumu 'You do not have permission to perform this action.' şeklinde bir hata mesajıyla gösterir. Bu kod, bir kullanıcı giriş yapmamış durumunda istemciye Bearer token gerektiği bilgilendirme mesajı ile yanıt verir. Bu kod, `CannotCreateTransactionException` veya `PessimisticLockingFailureException` ve `DataAccessResourceFailureException` türündeki hatalara yakalanın ardından, istemciye bir `ProblemDetail` nesnesi ile başarısız olma durumunu bildiren bir yan hatayı atar."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-error-status-map",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "GlobalExceptionHandler sınıfındaki `handleExceptionInternal` metodu, hata durumu kodu 400 olan bir hata ile ilişkilendirildiğinde, hata durumu kodunun adını problem detayının `code` özelliğine atar. ErrorCode enum içinde 'INSUFFICIENT_STOCK' durumu, stok yetersiz hata için kullanılan HTTP durum kodu olarak belirtilmiştir."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-lock-timeout-config",
+  "language": "tr",
+  "kind": "yaml",
+  "grade": "partial",
+  "answer": "Bu kod parçası overdue olan koltukları alır ve bu işlem için lock bekleme süresini ayarlamakta olduğunu gösterir. Bu kaynak, Spring DataSource yapılandırmasında `lock_timeout` ve `idle_in_transaction_session_timeout` değerlerini ayarlamak için SQL komutları içeriyor. Bu Java kodu, bir veritabanı tablosunda `status` sütunu 'PENDING' olan kaydın `settled_at` sütununa şu anda tarih ve saat değeri atamasını sağlar. Eğer kaydın `expires_at` zaman aşım süresi geçmişse, kaydı onaylamaz veya iptal etmez."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-neg-transfer",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "harmless",
+  "answer": "Bu kod, `StockLevelRepository.removeReserved` metodunu kullanarak bir ürünün tutulmuş miktarını kaldırır ve bu işlem, `stock_levels` tablosunda `total_quantity`, `reserved_quantity` sütunlarındaki değerleri günceller. Bu kod, `moveReservedToAvailable` metodunun bir ürünün id'si ve tutulmuş miktari belirten parametreleri alır ve bu ürünlerin tutulmuş miktari, kullanılabilecek miktara dönüştürülmesini sağlar."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-negative-stock-db",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "wrong",
+  "answer": "Bu sorgu, stok sayacıların pozitif olmalarını engelliyor ve bu sayacılar için database düzeyindeki kısıtlamaların bir parçasıdır. Bu kod parçası, `StockLevelRepository.moveAvailableToReserved` metodunu kullanarak stok katsayısını artırma işlemi gerçekleştirir ve bu işlemin sonuçlarını döndürür. Bu Java sınıfı, `StockLevelRepository.removeReserved` yöntemini kullanarak stok düzeylerini güncellemek için bir veritabanı sorgusu içerir ve bu işlem, belirli bir ürünün kalmış adet sayısını azaltır. Bu kod parçası, `consistency.check(product.getId())` fonksiyonunun sonucu olan `negativeCounters` değişkenini hesaplar. Bu değişkenin değeri, stok sayacıların eksiye düşmesi durumunu gösterir."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-reservation-defaults",
+  "language": "tr",
+  "kind": "yaml",
+  "grade": "partial",
+  "answer": "Source code shows that a reservation's default timeout is set to 15 minutes and it has an expiry schedule enabled with a batch size of 100."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-settled-immutable",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "partial",
+  "answer": "Bu kod, veritabanında `reservations` tablosunun güncellemelerini kontrol eden bir trigge oluşturur ve bu trigge `reservations_guard_update()` fonksiyonunu çağırır."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-simulation-limit",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Bu kod, `race` metodunda belirtilen `count` sayısı eşzamanlı istek gönderimi yapabildiği maksimum sayıyı gösterir. Bu kod parçası bir `SimulationController` sınıfının içinde bulunuyor ve bu controller, `/api/v1/simulations/reservations` endpointine yapılan POST isteklerini alır ve `simulation.run()` metodunu çağırır. Bu metod, isteklerin eşzamanlı olarak gönderileceği belirtilen sayıda istekteki ürün adedi ile bir simülasyonu başlatır. Bu kod parçası bir `SimulationService.run` metodunun içinde yer alır ve bu metod, `concurrentRequests` değişkenini audit işlemi için gönderilen isteklerin sayısı olarak kullanır. Bu kod parçası bir yarış simülasyonu için istek gönderme işlemi hakkında bilgi verir ve en fazla kaç eşzamanlı istekte bulunabilir olduğunu belirtir."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-sweep-index",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "partial",
+  "answer": "Varyantı olan `ix_reservations_pending_expiry` indeksini kullanır ve sadece 'PENDING' durumuna sahip satırları gözden geçirir. Veritabanında `ix_stock_movements_reservation` ismiyle bir indeks bulunuyor ve bu indeks, `reservation_id` sütununa göre stock_movements tablosundaki verileri filtreler."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-username-race",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Bu kod, aynı anda birden fazla kullanıcı adı oluşturmak için `INSERT INTO` sorgusunu kullanır ve bu sorgunun `ON CONFLICT (username) DO NOTHING` bölümü, aynı kullanıcı adı olan yeni kayıtları engeller. AuthService.login method catches AuthenticationException when authentication fails and throws an ApiException with ErrorCode.INVALID_CREDENTIALS if either the username or password is incorrect. AuthService.register methodunun amacı, belirli bir kullanıcı adı ve şifre ile yeni bir kayıtlı kullanıcının oluşturulmasını içerir."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sg-why-separate-stock",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "wrong",
+  "answer": "Bu kod parçası `StockLevelRepository.removeReserved` metodunu kullanarak ürün tablosundan tutulan stok sayacıları için güncelleme işlemi gerçekleştirir. Bu kod parçası, `StockLevelRepository.moveAvailableToReserved` metodunu kullanarak ürün stok düzeylerini kullanılabilir miktari ve saklanan miktari güncellemek için veritabanını günceller."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-account-lock",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Bu kod, kullanıcı adı ve şifre bilgileri doğrulanırken, kullanıcı hesabının başarısız giriş sayısını sıfırlar ve kilitlenme tarihi null yapar. Bu kod, bir kullanıcının giriş denemesi başarısız olursa, kullanıcı hesabını kilitleme işlemi gerçekleştirir ve bu işlem, belirlenen sayıda başarısız girişden sonra gerçekleşir. Bu kod, bir Redis baglantısının sağlıklı olup olmadığını kontrol eder ve bu durumda account üzerinde değişiklikler yapar. Bu kod bloğu, bir hesapta birden fazla yanlış girişten sonra `this.running = false;` satırıyla işlevsiz modda çalışmayı durdurur ve `return merged;` satırıyla `merged` değişkenini döndürür. Bu, hesabın durumu işlevsiz modda olduğunu belirtir."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-cookie-flags",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Bu kod csrfTokensMatch fonksiyonunu tanımlıyor ve bu fonksiyon cookieValue ve headerValue parametrelerini kontrol ediyor."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-cursor-color",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Bu kod, `CollaborationCaret.configure` fonksiyonunun içinde kullanılan `user.color` özelliğini kullanarak kullanıcıya özgü bir renk atadığı için, mouse buton rengini belirlemek için kod çalışıyor. colors.ts dosyasında tanımlanan renkler, kullanıcıya imleç rengini belirlemek için kullanılabilir."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-env-validation",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Bu kod, Redis bağlantısının sağlıklı olup olmadığını kontrol eder ve bu durumun değişikliklerini kaydeder. Bu dosyanın `DegradedReconcilerOptions` türü tanımlaması, uygulamanın açılışında yapılandırma değerlerini doğrulamak için kullanılan sorgu ve kontrol yöntemleri içerir."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-folder-delete",
+  "language": "tr",
+  "kind": "code",
+  "grade": "partial",
+  "answer": "Klasör içindeki notlar silinirken, `permissions.invalidate(event.noteId)` çağrısıyla notların izni kaldırılır ve bu durumda logger.log('note deleted', { noteId: event.noteId }) şeklinde bir log oluşturulur. Kod satırı `this.notes.remove(noteId);` notları silmektedir. Klasör içindeki notlar silinmeden kalmayı seçtiğimiz `ON DELETE SET NULL` durumunda kalıyor."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-health-redis",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "HealthExtension sınıfı, Redis hizmetinin durumu kontrol eder ve bu durum JSON olarak döndürülür. Redis bağlantısı sağlanıyorsa ve ping başarılıysa, HealthController 'check' yönteminden 'redis: up' döndürülür. Bu kod, Redis bağlantısının sağlandığı durumda `this.isHealthy()` fonksiyonunun döndürdüğü değer, sağlık kontrolüne uygun olup olmadığını belirtir. Bu kod parçası `ResilientRedisExtension` adlı sınıfın `isHealthy()` metodu, Redis pub ve sub statuslarının 'ready' olduğunu kontrol eder ve bu durumda sağlık kontrolü döndürür."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-logout-access-token",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Bu kod, giriş yapmış bir kullanıcının giriş süresi dolmuş olmasına rağmen çıkış işlemi gerçekleştirebilmesini sağlıyor."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-neg-invite-mail",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "fabricated",
+  "answer": "Bu kod, `MembersService.invite` metodunu kullanarak bir notun üyelerine davet e-postasını gönderir. E-posta adresi (`email`) ve kullanıcı adı (`user.email`) üzerinden üyelerin e-postalarına davet mesajı gönderilir. Bu kod, bir notun e-posta ile paylaşımı için kullanılır."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-neg-public-link",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "fabricated",
+  "answer": "Bu kod parçası bir notun herkese açık bağlantıyla paylaşılmasını sağlar."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-neg-tags",
+  "language": "tr",
+  "kind": "negative",
+  "grade": "fabricated",
+  "answer": "Bu kod bloğu notları (issues) için etiket eklemek için kullanılır ve bu işlemi gerçekleştirmek için `prisma.note.findMany` çağrısı ile notların bulunmasını sağlar."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-note-search",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Bu kod, `migration.sql` dosyasındaki `notes_updated_at_idx` oluşturucu çağrısının notlar tablosunun `updated_at` sütunuya göre ters sıralanmış bir indeks oluşturduğunu söylüyor. Source defines a query interface for searching notes with optional parameters such as `scope`, `folderId`, and `q`."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-one-owner",
+  "language": "tr",
+  "kind": "sql",
+  "grade": "partial",
+  "answer": "Bu notun sahibi olma durumu veritabanında bir invariant olarak tanımlanmış ve uygulama kodu tarafından sadece değil, veritabanı da (artial bir benzersiz indeks) tarafından engellenmektedir. Bu kod, bir notun iki sahibi olması durumunda, `permissions.invalidate(event.noteId)` çağrısı ile notun izinlerini null yapar ve bu durumu günlükleme yapar. Bu kod, bir notun iki sahibi olabileceği durumu veritabanında destekler. `note_members` tablosu, `notes` tablosuna ait `note_id` sütunuyla ilişkilendirilmekte ve bu ilişki silinmeden güncellenir. Bu kod parçası bir notun sahibi olma durumu kontrol eder ve `notes.remove` metodunu çağırır. Bu kod, bir notun iki sahibi olma durumunu kontrol eder ve bu durumu veritabanında nasıl yönetileceğini açıklar."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-redis-durability",
+  "language": "tr",
+  "kind": "yaml",
+  "grade": "wrong",
+  "answer": "Volumes ayarında `redisdata:/data` tanımlaması Redis verilerini `/data` dizininde saklar."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-theme-flash",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Bu kod, `BrowserRouter` içindeki `AuthProvider` altında `ThemedToaster` komutu ile temayı korurken, `ThemeProvider` içindeki `TooltipProvider` kullanılarak gizli bir zaman aşımı süresi (300 ms) verilir."
+ },
+ {
+  "run": "v2-ask-phase2-3b.json",
+  "question": "v2-sn-title-merge",
+  "language": "tr",
+  "kind": "code",
+  "grade": "wrong",
+  "answer": "Bu kod bloğu bir metin düzenleyicisindeki kullanıcıların değişikliklerini kaydeder ve bu değişiklikleri silmeyi engeller. Bu kaynak, `FEATURES` arrayinde her bir özellik nesnesinin `title` ve `text` alanlarının değiştirilebilir olduğunu gösterir. Bu kod parçası, `ACCESS_MESSAGES` dizisinin içindeki değişiklikleri korur ve kullanıcıların düzenlemeleri kaybolmamasını sağlar."
+ }
+]

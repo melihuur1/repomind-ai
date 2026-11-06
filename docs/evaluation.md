@@ -1,16 +1,173 @@
 # Evaluation
 
-The goal of this phase is to reach the right code reliably, and to know how far that goal has been met. This document reports what was measured, including what did not work.
+The goal is to reach the right code reliably, explain it correctly, and know how far that goal has been met. This document reports what was measured, including what did not work.
 
 ## Summary
 
 | Question | Answer |
 | --- | --- |
-| Does retrieval find the right code? | Often. On held-out questions at least one correct span is in the top 5 for 80 to 85% of English and 55 to 65% of Turkish questions. Recall@5 is moderate, at 0.59 to 0.62 and 0.43 to 0.48. |
+| Does retrieval find the right code? | Often. On the second question set, at least one correct span is in the top 5 for 85% of English and 69% of Turkish questions. |
+| Did phase 2 improve retrieval? | **Coverage yes, ranking no.** SQL and YAML became searchable. Results on code questions did not change, and Turkish MRR on the first set fell slightly. |
+| Is a reranker worth keeping? | **No.** No clear gain across both question sets, at about 1,000 times the latency. |
 | Is hybrid search better? | **Not demonstrably.** Most differences are within noise. |
-| Are citations real? | **Yes.** All 930 search results, and all 67 citations shown with answers to answerable questions, match Git at the indexed commit. |
-| Are AI answers reliable? | **No, not with this small local model.** On manual review, 5 of 27 answers were correct, 12 partly correct and 10 wrong. |
-| Does it refuse what it cannot answer? | **Mostly.** 7 of 8 fresh unanswerable questions were refused, at the cost of wrongly refusing about 10% of answerable Turkish questions. |
+| Are citations real? | **Yes.** Every search result and every citation shown with an answer matches Git at the indexed commit. |
+| Are AI answers reliable? | **No.** With `qwen2.5:3b`, 0 of 26 answers were fully correct. Refusals fell from 11 to 2, but on code questions wrong answers rose from 4 to 10. |
+| Does it refuse what it cannot answer? | **Not reliably.** 6 of 10 with `qwen2.5:3b`, up from 4 of 10. |
+| Is `qwen2.5:7b` better? | **Unknown.** Its independent run is `incomplete — interrupted due to memory pressure`. |
+
+## Phase 2
+
+Phase 2 set out to improve the answers. All of this was measured on a second question set, [`eval/questions_v2.yaml`](../eval/questions_v2.yaml): 26 answerable questions (15 on code, 11 on SQL or YAML) and 10 unanswerable ones, each in Turkish and English. It targets code that the first set did not use. It was committed before it was first run, and nothing was tuned on it. Phase 1 results come from the code at tag `phase1-baseline`, run on this set against its own database.
+
+### Phase 2 retrieval
+
+Hybrid search, phase 1 → phase 2:
+
+| Language | Scope | Recall@5 | Hit@5 | MRR | Paired difference in MRR |
+| --- | --- | --- | --- | --- | --- |
+| Turkish | All (26) | 0.327 → **0.673** | 0.346 → **0.692** | 0.268 → **0.592** | +0.324 [+0.151, +0.508] |
+| Turkish | Code (15) | 0.567 → 0.567 | 0.600 → 0.600 | 0.465 → 0.468 | +0.004 [-0.096, +0.100] |
+| Turkish | SQL, YAML (11) | 0.000 → 0.818 | 0.000 → 0.818 | 0.000 → 0.761 | +0.761 [+0.505, +1.000] |
+| English | All (26) | 0.481 → **0.827** | 0.500 → **0.846** | 0.335 → **0.629** | +0.294 [+0.145, +0.460] |
+| English | Code (15) | 0.833 → 0.833 | 0.867 → 0.867 | 0.581 → 0.583 | +0.002 [-0.010, +0.017] |
+| English | SQL, YAML (11) | 0.000 → 0.818 | 0.000 → 0.818 | 0.000 → 0.691 | +0.691 [+0.464, +0.909] |
+
+**Read the "All" rows with care.** Phase 1 could not index SQL or YAML, so 11 of these questions were out of its reach by construction, and the set was written to include them. The gain is entirely that new coverage. On code questions phase 2 changed nothing.
+
+Adding the new files also has a cost. On the old 31 questions, Turkish MRR fell from 0.604 to 0.549 (-0.055 [-0.119, -0.002]), and Recall@5 from 0.505 to 0.495. English did not change (MRR 0.687 to 0.689).
+
+Methods within phase 2, all 26 questions:
+
+| Language | Method | Recall@5 | Hit@5 | MRR | Median latency |
+| --- | --- | --- | --- | --- | --- |
+| Turkish | Keyword | 0.692 | 0.692 | 0.540 | 65 ms |
+| Turkish | Semantic | 0.712 | 0.731 | 0.522 | 24 ms |
+| Turkish | **Hybrid** | 0.673 | 0.692 | 0.592 | 23 ms |
+| English | Keyword | 0.654 | 0.692 | 0.597 | 2 ms |
+| English | Semantic | 0.788 | 0.808 | 0.583 | 12 ms |
+| English | **Hybrid** | 0.827 | 0.846 | 0.629 | 13 ms |
+
+Hybrid is clearly better than keyword only on English Recall@5 (+0.173 [+0.058, +0.308]). The other differences are within noise. All 780 citations in these results are valid.
+
+No gold span reached the top 5 for 8 Turkish questions (`sg-reservation-defaults`, `sg-two-instances`, `sg-auth-error-format`, `sg-simulation-limit`, `sn-cookie-flags`, `sn-env-validation`, `sn-folder-delete`, `sn-title-merge`) and 4 English ones (`sg-reservation-defaults`, `sg-two-instances`, `sg-add-stock-limits`, `sn-title-merge`).
+
+The index now holds 204 of 266 files and 1,184 chunks: StockGuard 81 files and 534 chunks, SyncNotes 123 files and 650 chunks. Four chunks of SyncNotes' `docker-compose.yml` were withheld for holding a credential.
+
+### Reranker
+
+Local cross-encoders reranked the top 50 hybrid results. On the first question set, four models were each tried alone and fused with hybrid by RRF. Results are [stored](../eval/results/reranker-dev).
+
+| Turkish and English, first set | Recall@5 | MRR | Median latency |
+| --- | --- | --- | --- |
+| Hybrid, no reranker | 0.495, 0.575 | 0.549, 0.689 | 13 to 23 ms |
+| `ms-marco-MiniLM-L-6-v2`, alone | 0.452, 0.505 | 0.579, 0.642 | about 1.8 s |
+| `ms-marco-MiniLM-L-12-v2`, alone | 0.452, 0.478 | 0.568, 0.639 | about 3.6 s |
+| `jina-reranker-v1-turbo-en`, alone | 0.435, 0.521 | 0.510, 0.660 | about 2.1 s |
+| `bge-reranker-v2-m3` int8, alone | 0.527, 0.624 | 0.543, 0.634 | about 21 s |
+
+Only `bge-reranker-v2-m3` looked worth checking on the second set, as was decided before running it:
+
+| Paired difference from hybrid | Scope | Recall@5 | MRR |
+| --- | --- | --- | --- |
+| Turkish | All (26) | +0.077 [-0.096, +0.250] | +0.133 [-0.032, +0.299] |
+| English | All (26) | +0.019 [-0.154, +0.192] | +0.116 [-0.064, +0.292] |
+| Turkish | Code (15) | +0.133 [-0.100, +0.367] | **+0.216 [+0.035, +0.415]** |
+| English | Code (15) | +0.100 [-0.067, +0.300] | **+0.203 [+0.033, +0.381]** |
+| Turkish | Code, both sets (46) | +0.065 [-0.040, +0.170] | +0.066 [-0.048, +0.180] |
+| English | Code, both sets (46) | +0.065 [-0.011, +0.152] | +0.029 [-0.054, +0.111] |
+
+**Rejected, though not because it does nothing.** On the code questions of the second set, MRR is clearly better. The same model was no better than hybrid on MRR on the first set, however, and pooled over both sets no difference is clear. So the gain does not repeat, and it costs about 21 seconds per query against about 25 milliseconds, plus 0.55 GB of disk. On a GPU, where the cost would be far lower, it would deserve another look.
+
+For answers, reading more results makes up for most of it: hybrid's top 8 reaches the Recall@5 of the reranker in Turkish (0.750 for both) and nearly in English (0.827 against 0.846). The rerank code was removed, and remains in the Git history at `438ae0c`.
+
+Symbol names, file paths, callers and callees were also tried as a fourth RRF list on the first set. None helped, and most made results worse (for example, callers alone: Turkish MRR 0.409, English 0.504). They were rejected there and never run on the second set.
+
+### Phase 2 answers
+
+**The change.** Phase 1 sent 8 sources in one prompt. A failure analysis showed that the model stitched real sources into plausible, unsupported claims. Now each source is read alone, and the model must return a statement and the lines that prove it. See [architecture.md](architecture.md#one-source-at-a-time).
+
+Answers with `qwen2.5:3b` in Turkish, graded with the run label hidden by [rules](../eval/tools/GRADING.md) fixed in advance:
+
+| Measure | Phase 1 | Phase 2 |
+| --- | --- | --- |
+| **Fully correct** | **0 / 26** | **0 / 26** |
+| Partly correct | 4 | 11 |
+| Wrong | 11 | 13 |
+| Refused | 11 | 2 |
+| Code questions (15): partly correct, wrong, refused | 4, 4, 7 | 5, 10, 0 |
+| SQL and YAML questions (11): partly correct, wrong, refused | 0, 7, 4 | 6, 3, 2 |
+| Unanswerable refused | 4 / 10 | 6 / 10 |
+| Unanswerable answered: fabricated, true but beside the point | 6, 0 | 3, 1 |
+| Answers citing a gold span | 5 of 15 | 15 of 24 |
+| Questions with gold among the sources read | 8 / 26 | 22 / 26 |
+| Citations rechecked against Git | 35 / 35 | 69 / 69 |
+| Mean seconds per question | 25.5 | 53.4 |
+| Input and output tokens | 48,822 and 4,734 | 155,267 and 18,489 |
+
+Compared fairly, phase 2 with this model is **not a clear win**. It reaches more of the right code, refuses less, and fabricates less, and on SQL and YAML it does much better. On code questions it trades refusals for wrong answers: 4 wrong became 10. An answer that is wrong is worse than a refusal, so this is a real cost. Grades are not comparable with the 5 of 27 reported for phase 1 below, which come from a different question set and looser rules.
+
+Phase 2 results, by question:
+
+| Grade | Questions |
+| --- | --- |
+| Partly correct (11) | `sg-add-stock-limits`, `sg-append-only`, `sg-auth-error-format`, `sg-lock-timeout-config`, `sg-reservation-defaults`, `sg-settled-immutable`, `sg-sweep-index`, `sg-username-race`, `sn-account-lock`, `sn-folder-delete`, `sn-one-owner` |
+| Wrong, gold never read (3) | `sn-cookie-flags`, `sn-env-validation`, `sn-title-merge` |
+| Wrong, gold read but judged not relevant (5) | `sg-why-separate-stock`, `sn-note-search`, `sn-logout-access-token`, `sn-cursor-color`, `sn-theme-flash` |
+| Wrong, gold read and used (5) | `sg-negative-stock-db`, `sg-simulation-limit`, `sg-error-status-map`, `sn-redis-durability`, `sn-health-redis` |
+| Falsely refused (2) | `sg-two-instances`, `sn-collab-instances` |
+| Fabricated (3) | `sn-neg-tags`, `sn-neg-public-link`, `sn-neg-invite-mail` |
+| True but beside the point (1) | `sg-neg-transfer` |
+
+**Why it fails.** Retrieval is now the smaller part: the right code was read in 10 of the 13 wrong answers.
+
+1. **The model misses concrete facts.** Asked which HTTP status is returned, or the maximum number of requests, it describes the code around the answer and never says 409 or 1000.
+2. **It calls too much relevant.** It accepted 19 of 27 gold sources, but also 50 of 181 others (28%). An answer holds 2.9 statements on average, so true claims end up next to off-topic ones, and this is why most answers are only partly correct.
+3. **It writes poor Turkish.** Some statements are garbled enough to change the meaning.
+4. **The quote check cannot catch any of this.** A real quote next to a wrong statement passes. Only 16 statements were discarded by the backend, 9 of them for too short a quote.
+5. **Features next to existing code still get through.** `MembersService.invite` exists, so "how are invitation emails sent?" gets a confident answer, although no email is sent.
+
+### `qwen2.5:7b`
+
+**Status: `incomplete — interrupted due to memory pressure`.** The independent run reached question 10 of 72 and saved nothing, because results were written only at the end at that time. It is left out of every comparison. The facts are in [its status file](../eval/results/v2-ask-phase2-7b.status.json).
+
+The only complete 7B result is on the first question set in Turkish, on which the prompt was tuned, and it was not graded. It proves little, and is reported only as the reason to try again:
+
+| 7B, first set, not independent | |
+| --- | --- |
+| Answerable questions answered | 22 / 31 |
+| Answers with evidence from a gold chunk | 20 |
+| Unanswerable refused | 14 / 14 |
+| Readings that produced a verified statement | 44 of 296 |
+| Mean seconds per question | 75.6 |
+
+### Resources
+
+| Resource | Measured |
+| --- | --- |
+| Ollama container, 3B, phase 1 | 2.83 GiB at peak |
+| Ollama container, 3B, phase 2 | 4.72 GiB at peak |
+| Ollama container, 7B, before the limits | 7.66 GiB at peak, 8 cores busy |
+| Ollama container, 3B, with the limits, one short test | 2.29 GiB |
+| Ollama container, 7B, with the limits | Not measured yet |
+| Python process, search with embedding and translation models | 1.0 GB at peak |
+| PostgreSQL container | about 0.1 GiB |
+| Disk: Ollama volume (3B 1.9 GB, 7B 4.7 GB) | 6.6 GB |
+| Disk: models in use (embedding, translation) | 0.6 GB |
+| Disk: unused candidate models still in the `.models` cache | 1.6 GB |
+| Disk: database volume | 0.1 GB |
+
+Container figures come from `docker stats`, sampled every 20 seconds, and may include file cache, which could explain why the same model reads differently between runs. Python memory during the answer runs was not captured, because the sampler measured a launcher process by mistake. It has been fixed in `resource_trial.ps1`.
+
+### Limits of these results
+
+- **Grading is one reviewer's judgement**, and the reviewer is Claude. Hiding the label does not hide style. The rules are strict: a true answer with an off-topic sentence counts as partly correct, which is part of why no answer is fully correct.
+- **26 questions leave wide intervals**, and the set was written by the same author as the first.
+- **Answers were graded in Turkish only.** The phase 1 English answers exist but were not graded, because phase 2 has no English 3B run to compare them with.
+- **The real-model injection test covers one scenario.** The model did not obey the hostile comment, but it did not answer the question either. Whether the comment caused that, or this was an ordinary false refusal, was not measured. An earlier version of this test never reached the model, because the refusal check stopped the question first. It now requires the model to have read the source.
+
+# Phase 1
+
+The rest of this document is the phase 1 evaluation, kept as the baseline. Its statements about what was planned next, such as a reranker being the most promising step, describe what was known at that time.
 
 ## Method
 
@@ -205,8 +362,22 @@ An integration test indexes a file whose comment orders the model to ignore its 
 ```bash
 python -m repomind index --path "<stockguard>" --name stockguard --ref b6698d81475232f2b8ca95af45336fae5665cd81
 python -m repomind index --path "<syncnotes>" --name syncnotes --ref bb217cddc89088f27b68715cf9585e94ce2fe3a6
-python -m repomind evaluate --output eval/results/final.json
-python -m repomind evaluate-ask --languages tr --output eval/results/ask.json
+python -m repomind evaluate --dataset eval/questions_v2.yaml --output eval/results/my-retrieval.json
+python -m repomind evaluate-ask --dataset eval/questions_v2.yaml --languages tr --output eval/results/my-answers.json
+python eval/tools/compare_retrieval.py
+python eval/tools/count_answers.py phase1=v2-ask-phase1-3b.json phase2=v2-ask-phase2-3b.json
 ```
 
-Stored results are in [`eval/results/`](../eval/results): `01-baseline-e5-small.json` is the first version, `final.json` the frozen configuration, and `ask-qwen2.5-3b-tr*.json` hold the answers before and after the checks.
+An existing result is not replaced without `--overwrite`. Phase 1 can be rerun from tag `phase1-baseline`, from its own folder and against its own database.
+
+Stored results are in [`eval/results/`](../eval/results):
+
+| Files | What they hold |
+| --- | --- |
+| `01-baseline-e5-small.json`, `final.json`, `ask-qwen2.5-3b-tr*.json` | Phase 1 on the first question set |
+| `v2-retrieval-phase1.json`, `v2-retrieval-phase2.json` | Retrieval on the second set |
+| `v2-retrieval-reranker-bge.json`, `reranker-dev/` | The reranker on both sets |
+| `v2-ask-phase1-3b.json`, `v2-ask-phase2-3b.json`, `v2-grades-3b-tr.json` | 3B answers on the second set and their grades |
+| `v2-ask-phase2-7b.status.json` | The interrupted 7B run, which saved no answers |
+| `dev-phase2-7b-tr.json`, `prompt-lab/` | Development runs on the first set, not independent |
+| `resources/` | Memory and CPU samples |

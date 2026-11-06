@@ -2,38 +2,44 @@
 
 **Intelligent GitHub repository analyzer.** Ask where and how something is done in a codebase, and get the code that answers it, with file and line citations verified against the exact Git commit.
 
-> **Status: first phase.** This is the retrieval and answering engine with a command line interface. It is measured on real repositories, and the results below are reported as they are, including where they are weak. There is no web application yet, by design.
+> **Status: second phase.** This is the retrieval and answering engine with a command line interface. It is measured on real repositories, and the results below are reported as they are, including where they are weak. **Search works and is useful. AI answers are not reliable yet.** There is no web application yet, by design.
 
 ## Results
 
-Measured on 31 questions, asked in Turkish and in English, over two real projects: [StockGuard](https://github.com/melihuur1/stockguard) (Java) and [SyncNotes](https://github.com/melihuur1/syncnotes) (TypeScript). The numbers come from the 20 held-out questions, which were not used for any tuning.
+Measured on two real projects: [StockGuard](https://github.com/melihuur1/stockguard) (Java) and [SyncNotes](https://github.com/melihuur1/syncnotes) (TypeScript). The numbers below come from a second question set of 26 answerable and 10 unanswerable questions, written and committed before it was first run, and not used for any tuning.
 
-| Questions in | Method | Recall@5 | Hit@5 | MRR |
+Hybrid search, first phase against current:
+
+| Questions in | Scope | Recall@5 | Hit@5 | MRR |
 | --- | --- | --- | --- | --- |
-| English | Keyword / symbol (BM25) | 0.617 | 0.850 | 0.663 |
-| English | Semantic (pgvector) | 0.592 | 0.850 | 0.703 |
-| English | Hybrid (RRF) | 0.592 | 0.800 | 0.674 |
-| Turkish | Keyword / symbol (BM25) | 0.450 | 0.650 | 0.476 |
-| Turkish | Semantic (pgvector) | 0.425 | 0.550 | 0.488 |
-| Turkish | Hybrid (RRF) | 0.475 | 0.650 | 0.562 |
+| Turkish | Code (15) | 0.567 → 0.567 | 0.600 → 0.600 | 0.465 → 0.468 |
+| Turkish | SQL and YAML (11) | 0.000 → 0.818 | 0.000 → 0.818 | 0.000 → 0.761 |
+| English | Code (15) | 0.833 → 0.833 | 0.867 → 0.867 | 0.581 → 0.583 |
+| English | SQL and YAML (11) | 0.000 → 0.818 | 0.000 → 0.818 | 0.000 → 0.691 |
 
 What these numbers say:
 
-- **Hybrid search is not clearly better than either method alone.** With 20 questions the differences are mostly within noise; the only significant one is Turkish MRR against semantic search (+0.074). Hybrid is still the default because it is never clearly worse and is the most stable across languages.
-- **Every citation was valid.** All 930 search results checked in the final run match the Git objects at the indexed commit.
-- **The largest gain came from failure analysis, not fusion.** Leaving test code out by default and translating Turkish queries raised held-out Turkish hybrid MRR from 0.307 to 0.562.
-- **Recall@5 is moderate.** Most missed code is ranked 6 to 50 rather than not found, which makes reranking the most promising next step.
+- **The gain is coverage, not better ranking.** SQL migrations and YAML configuration are now searchable, and that accounts for all of the improvement. Results on code questions did not change, and on the older question set Turkish MRR fell from 0.604 to 0.549, because the new chunks compete with code.
+- **A reranker was tested and rejected.** The best candidate gave no clear gain across both question sets and took about 21 seconds per query, against about 25 milliseconds for hybrid search. See [the details](docs/evaluation.md#reranker).
+- **Every citation was valid.** All search results and all citations shown with answers match the Git objects at the indexed commit.
 
-The optional answer layer is clearly weaker than retrieval. With a small local model (`qwen2.5:3b`, CPU, $0), a manual review of 27 answers found 5 correct, 12 partly correct and 10 wrong, while every citation shown was real. Of 8 fresh questions that the code cannot answer, 7 were refused; 4 of 31 answerable questions were wrongly refused or discarded. Details are in the [full evaluation](docs/evaluation.md#answer-layer).
+Answers on the same set, in Turkish, with the small local model `qwen2.5:3b` (CPU, $0), graded by one reviewer without knowing which version wrote each answer:
+
+| 26 answerable questions | Correct | Partly correct | Wrong | Refused |
+| --- | --- | --- | --- | --- |
+| First phase | 0 | 4 | 11 | 11 |
+| Current | **0** | 11 | 13 | 2 |
+
+Of the 10 unanswerable questions, the first phase refused 4 and the current version 6. Answers are grounded in real lines of code, and they are not accurate enough to trust: **no answer was fully correct**. The larger model `qwen2.5:7b` has no independent result, because its run was stopped by memory pressure with nothing saved. Details are in the [full evaluation](docs/evaluation.md#phase-2-answers).
 
 ## How it works
 
 1. **Read** a commit from Git's object database. Analyzed projects are never modified and their code is never executed.
-2. **Parse** Java, TypeScript and JavaScript with Tree-sitter into symbols, imports and syntax-aligned chunks. Large functions are split at statement boundaries.
-3. **Exclude** hidden files, dependency and build folders, generated code and anything containing credentials.
+2. **Parse** Java, TypeScript and JavaScript with Tree-sitter into symbols, imports and syntax-aligned chunks. SQL is split into statements and YAML into its structure, as text that is never run.
+3. **Exclude** hidden files, dependency and build folders, generated code, personal configuration and anything containing credentials.
 4. **Embed** chunks locally with `intfloat/multilingual-e5-small` (384 dimensions, no API cost), caching by content so unchanged code is never embedded twice.
 5. **Search** with BM25, pgvector, or both through Reciprocal Rank Fusion.
-6. **Answer** optionally through an LLM, verifying its citations in the backend.
+6. **Answer** optionally through an LLM, which reads one source at a time and has to quote the lines behind each statement. The backend finds those lines in Git and assembles the answer, or says it does not know.
 
 The design and its trade-offs are in [docs/architecture.md](docs/architecture.md).
 
@@ -49,7 +55,7 @@ cp .env.example .env
 docker compose up -d db          # PostgreSQL + pgvector on 127.0.0.1:55432
 ```
 
-The first indexing or semantic search downloads the local models into `.models/` (about 1.3 GB including the candidates used for evaluation, less for the default model alone).
+The first indexing or semantic search downloads the local models into `.models/` (about 0.6 GB for the embedding and translation models).
 
 ### Index and search
 
@@ -84,18 +90,24 @@ REPOMIND_LLM_BASE_URL=http://127.0.0.1:11535/v1
 REPOMIND_LLM_MODEL=qwen2.5:3b
 ```
 
-`qwen2.5:3b` is under the Qwen Research License rather than an open source license, so check that it suits your use. Any OpenAI-compatible endpoint works. Sending code to a remote endpoint must be enabled explicitly, and paid use needs prices and a budget in `.env`.
+`qwen2.5:3b` is under the Qwen Research License rather than an open source license, so check that it suits your use. `qwen2.5:7b` is Apache-2.0 licensed, used up to 7.7 GiB of memory before the current limits were set, and takes about 100 seconds per question on an 8-core CPU. Any OpenAI-compatible endpoint works. Sending code to a remote endpoint must be enabled explicitly, and paid use needs prices and a budget in `.env`.
 
-**Limits of answers.** Citations are verified to exist at the commit, and questions about things the code never mentions are refused. That does not make the sentences true: in the evaluation, the model often misdescribed real code. Use answers to find the relevant code, not as a replacement for reading it.
+The container keeps one model in memory at a time and is limited to 8 GB. To give the memory back when you are done, run `docker compose stop ollama`.
+
+**Limits of answers.** Each quote under a statement is checked against Git, and questions about things the code never mentions are refused. That does not make the statement true: in the evaluation, the model often misdescribed real code. Use answers to find the relevant code, not as a replacement for reading it.
 
 ### Evaluate
 
 ```bash
 python -m repomind index --path "<stockguard clone>" --name stockguard --ref b6698d81475232f2b8ca95af45336fae5665cd81
 python -m repomind index --path "<syncnotes clone>" --name syncnotes --ref bb217cddc89088f27b68715cf9585e94ce2fe3a6
-python -m repomind evaluate
-python -m repomind evaluate-ask      # requires a configured LLM
+python -m repomind evaluate --dataset eval/questions_v2.yaml
+python -m repomind evaluate-ask --dataset eval/questions_v2.yaml --output eval/results/my-run.json      # requires a configured LLM
 ```
+
+`evaluate-ask` saves every question as it finishes. If it is stopped, the same command continues from there, and its results say `incomplete` until every question is done. It does not start, and stops between questions, when less than 3 GB of memory is free. A finished result is never replaced without `--overwrite`.
+
+To try a local model at low risk, [`eval/tools/resource_trial.ps1`](eval/tools/resource_trial.ps1) runs 10 evenly spaced questions, records memory use, and refuses to start with less than 10 GB free.
 
 ### Test
 
@@ -108,18 +120,21 @@ Tests that need the database, the evaluation repositories or a running LLM skip 
 ## Evaluation discipline
 
 - Questions and gold labels were committed **before any search code existed**, as the Git history shows, and have not been changed since.
-- All tuning used a dev split derived from a hash of each question's id. The held-out split was run once, after the configuration was frozen.
+- All tuning used the first question set. The second set was committed before it was first run, and nothing was tuned on it.
 - Every gold span is checked by test against the pinned commit. Every "unanswerable" question has its absent terms verified the same way.
 - Results include 95% bootstrap confidence intervals and paired comparisons.
+- Answers are graded with the run label hidden, by [rules](eval/tools/GRADING.md) written before any of them was read.
 
 The full method, every stage of the investigation and the rejected ideas are in [docs/evaluation.md](docs/evaluation.md).
 
 ## Known limitations
 
-- Only Java, TypeScript and JavaScript are indexed. SQL migrations and YAML configuration are invisible.
-- Turkish retrieval depends on an imperfect local translator.
-- The evaluation is small, covers two repositories and was labelled by one person. The gold labels are not exhaustive, so some reasonable results count as misses.
-- Answer quality is limited by the small local model, as described above.
-- Secret detection recognizes known token formats, not arbitrary hardcoded passwords.
+- **AI answers are not reliable.** With `qwen2.5:3b`, none of 26 answers was fully correct, and 4 of 10 unanswerable questions were not refused.
+- **A verified quote does not prove the statement next to it.** Only the quote is checked against the code.
+- **`qwen2.5:7b` has not been evaluated independently.** It looks better on the questions the prompt was tuned on, which proves little.
+- Turkish retrieval is weaker than English (Hit@5 0.692 against 0.846) and depends on an imperfect local translator.
+- Answers are slow on a CPU: about 53 seconds per question with the small model.
+- The evaluation is small, covers two repositories and was labelled and graded by one reviewer. The gold labels are not exhaustive, so some reasonable results count as misses.
+- Secret detection recognizes known token formats and literal credential keys, not every hardcoded password.
 
 See [docs/architecture.md](docs/architecture.md#known-limitations) for the complete list.
