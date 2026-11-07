@@ -452,7 +452,8 @@ class FakeClient:
         return LLMResponse(text, self.input_tokens, self.output_tokens)
 
 
-LOCAL = LLMConfig("http://127.0.0.1:11535/v1", "local-model")
+# These tests cover choosing among all passages at once. Judging one at a time is in test_judge.py.
+LOCAL = LLMConfig("http://127.0.0.1:11535/v1", "local-model", selection="choose")
 FIRST = '{"chosen": ["P1"], "note": "It releases stock."}'
 NONE = '{"chosen": []}'
 

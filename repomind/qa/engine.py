@@ -9,6 +9,7 @@ from enum import Enum
 from repomind.errors import RepoMindError
 from repomind.evaluation.citations import CitationVerifier
 from repomind.ingest.git_source import GitRepository
+from repomind.qa.judge import Judgement, build_judge_prompt, parse_judgement
 from repomind.qa.llm import LLMClient, LLMConfig, cost_usd
 from repomind.qa.passages import Passage, is_evidence, select_passages
 from repomind.qa.project_name import Wording, counts_with_name, stands_alone, with_name_seat, without_project_name
@@ -20,7 +21,7 @@ from repomind.qa.prompt import (
     new_nonce,
 )
 from repomind.qa.sufficiency import check_sufficiency
-from repomind.qa.verification import VerifiedCitation, verify_selection
+from repomind.qa.verification import MAX_CHOSEN, VerifiedCitation, note_problem, verify_selection
 from repomind.search.engine import SearchEngine, SearchHit
 from repomind.search.translation import keep_technical_terms, looks_turkish
 from repomind.store.database import Store
@@ -33,6 +34,8 @@ _CHUNKS_WITHOUT_A_MODEL = 12
 _GLOSSARY_SEATS = 5
 _TRANSLATION_OUTPUT_TOKENS = 80
 _MAX_TRANSLATION_CHARACTERS = 400
+# A role and one sentence.
+_JUDGE_OUTPUT_TOKENS = 90
 
 
 @dataclass(frozen=True)
@@ -90,6 +93,8 @@ class AskResult:
     sources_sent: int = 0
     sources_dropped: int = 0
     cost_usd: float = 0.0
+    # Passage id and the role the model gave it, when it judges passages one at a time.
+    judgements: list[tuple[str, str]] = field(default_factory=list)
 
     @property
     def citations(self) -> list[VerifiedCitation]:
@@ -303,6 +308,8 @@ class QAEngine:
 
         if self.client is None or self.config is None:
             return result
+        if self.config.selection == "judge":
+            return self._judge_each(question, english, result, counts_as_evidence)
 
         nonce = new_nonce()
         offered, result.sources_dropped = fit_passages(
@@ -331,23 +338,63 @@ class QAEngine:
             result.rejected.append("the model chose lines that mention too little of the question")
         else:
             result.status = "answered"
-            result.evidence = [
-                Evidence(
-                    passage,
-                    VerifiedCitation(
-                        passage.id,
-                        passage.chunk.repo,
-                        passage.chunk.commit_sha,
-                        passage.path,
-                        passage.start_line,
-                        passage.end_line,
-                    ),
-                )
-                for passage in chosen
-            ]
+            result.evidence = _evidence(chosen)
             # A note was written about everything chosen, so it may describe lines that were just left out.
             complete = len(chosen) == len(selection.chosen)
             result.note = selection.note if complete else ""
             result.note_problem = selection.note_problem if complete else "it may describe lines that were left out"
             result.answer = assemble_answer(result.evidence, result.note)
         return result
+
+    def _judge_each(self, question: str, english: str | None, result: AskResult, counts_as_evidence) -> AskResult:
+        """One request per passage, so that neither the other passages nor their order sway a judgement."""
+        nonce = new_nonce()
+        result.model = self.config.model
+        judged: list[tuple[Passage, Judgement | None]] = []
+        for passage in result.passages:
+            prompt = build_judge_prompt(question, passage, nonce, english)
+            if prompt.estimated_input_tokens > self.config.max_input_tokens:
+                result.sources_dropped += 1
+                continue
+            reply = self._call(prompt, min(_JUDGE_OUTPUT_TOKENS, self.config.max_output_tokens), result)
+            judged.append((passage, parse_judgement(reply)))
+        result.sources_sent = len(judged)
+        result.judgements = [(passage.id, judgement.role if judgement else "invalid") for passage, judgement in judged]
+        if not judged:
+            result.status = "insufficient"
+            result.warnings.append("The passages do not fit within the input token limit, so the model was not called.")
+            return result
+        if all(judgement is None for _, judgement in judged):
+            result.status = "invalid_response"
+            result.rejected.append("no judgement had one of the four roles")
+            result.warnings.append("The model did not return the required JSON.")
+            return result
+
+        answering = [passage for passage, judgement in judged if judgement and judgement.role == "answers"]
+        # The model says these answer and the evidence rule does not: something to review, never an answer.
+        result.review_candidates = [passage for passage in answering if not counts_as_evidence(passage)]
+        chosen = [passage for passage in answering if counts_as_evidence(passage)][:MAX_CHOSEN]
+        if not chosen:
+            result.status = "insufficient"
+            if answering:
+                result.rejected.append("the model judged lines that mention too little of the question to answer it")
+            return result
+
+        result.status = "answered"
+        result.evidence = _evidence(chosen)
+        reason = next(judgement.reason for passage, judgement in judged if passage is chosen[0])
+        problem = note_problem(reason, chosen[:1], question) if reason else None
+        result.note = "" if problem else reason
+        result.note_problem = problem
+        result.answer = assemble_answer(result.evidence, result.note)
+        return result
+
+
+def _evidence(chosen: list[Passage]) -> list[Evidence]:
+    return [
+        Evidence(
+            passage,
+            VerifiedCitation(passage.id, passage.chunk.repo, passage.chunk.commit_sha, passage.path, passage.start_line, passage.end_line),
+        )
+        for passage in chosen
+    ]

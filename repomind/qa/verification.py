@@ -98,6 +98,11 @@ def _numbers(text: str) -> set[str]:
     return {_NUMBER_SEPARATORS.sub("", number) for number in _NUMBER.findall(text)}
 
 
+def note_problem(note: str, chosen: Sequence[Passage], question: str) -> str | None:
+    """Why a sentence from the model is not shown about these lines, or None."""
+    return _note_problem(note, chosen, question)
+
+
 def _note_problem(note: str, chosen: Sequence[Passage], question: str) -> str | None:
     lines = "\n".join(passage.text for passage in chosen)
     if len(note) > _MAX_NOTE_CHARACTERS:

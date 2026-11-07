@@ -1,7 +1,7 @@
 import { expect, test as base, type APIRequestContext, type Locator, type Page } from "@playwright/test";
 
 const HOSTILE = "<img src=x onerror=window.__xss=1>";
-const NOTHING_CHOSEN = { raw: '{"chosen": [], "note": ""}' };
+const NOTHING_CHOSEN = { choose: [] };
 
 /** Every test also fails if the page logged an error, broke its content policy, or ran anything it was shown. */
 const test = base.extend<{ watchdog: void }>({

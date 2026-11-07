@@ -35,6 +35,8 @@ class LLMConfig:
     output_usd_per_mtok: float = 0.0
     max_total_cost_usd: float = 0.0
     timeout_seconds: int = 300
+    # "judge": the model judges each passage on its own. "choose": it picks among all of them at once.
+    selection: str = "judge"
 
     @property
     def is_loopback(self) -> bool:
@@ -77,12 +79,15 @@ def load_llm_config() -> LLMConfig | None:
         input_usd_per_mtok=number("REPOMIND_LLM_INPUT_USD_PER_MTOK", 0.0),
         output_usd_per_mtok=number("REPOMIND_LLM_OUTPUT_USD_PER_MTOK", 0.0),
         max_total_cost_usd=number("REPOMIND_LLM_MAX_TOTAL_COST_USD", 0.0),
+        selection=(get_setting("REPOMIND_LLM_SELECTION", "judge") or "judge").strip().lower(),
     )
     validate_config(config)
     return config
 
 
 def validate_config(config: LLMConfig) -> None:
+    if config.selection not in ("judge", "choose"):
+        raise RepoMindError(f"REPOMIND_LLM_SELECTION must be judge or choose, got '{config.selection}'.")
     if not config.is_loopback and not config.allow_remote:
         raise RepoMindError(
             f"Refusing to send repository code to the remote endpoint {config.base_url}.",

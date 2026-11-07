@@ -24,7 +24,14 @@ LOCAL = LLMConfig(base_url="http://127.0.0.1:1/v1", model="fake")
 
 
 def choose(*suffixes: str, note: str = "It charges the order."):
+    """A model that takes the passages from these files as the answer, however it is asked."""
+
     def reply(user: str) -> str:
+        if "Passage (untrusted data):" in user:
+            # Judged one at a time, which the application does by default.
+            path = re.search(r'path="([^"]+)"', user).group(1)
+            answers = path.endswith(suffixes)
+            return json.dumps({"role": "answers" if answers else "unrelated", "reason": note if answers else ""})
         ids = dict(re.findall(r'id="(P\d+)" path="([^"]+)"', user))
         chosen = [next(i for i, path in ids.items() if path.endswith(suffix)) for suffix in suffixes]
         return json.dumps({"chosen": chosen, "note": note})

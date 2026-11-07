@@ -26,7 +26,8 @@ from repomind.search.engine import SearchEngine
 from tests.conftest import commit_all, git, write
 from tests.test_qa import chunk
 
-LOCAL = LLMConfig(base_url="http://127.0.0.1:1/v1", model="fake")
+# The rule is about which lines are offered, so these tests use the plainer way of choosing among them.
+LOCAL = LLMConfig(base_url="http://127.0.0.1:1/v1", model="fake", selection="choose")
 LEFT_OUT = "name was left out"
 NOTHING = '{"chosen": [], "note": ""}'
 

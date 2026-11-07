@@ -74,7 +74,7 @@ FILES = {
     ),
 }
 
-state: dict = {"ai": "ready", "reply": {"raw": '{"chosen": []}'}}
+state: dict = {"ai": "ready", "reply": {"choose": []}}
 
 
 class ScriptedModel:
@@ -82,6 +82,14 @@ class ScriptedModel:
         reply = state["reply"]
         if reply.get("fail"):
             raise RepoMindError("The model server went away.")
+        if "Passage (untrusted data):" in user:
+            # One passage judged at a time, which the application does by default.
+            if "raw" in reply:
+                return LLMResponse(reply["raw"], 10, 5)
+            path = re.search(r'path="([^"]+)"', user).group(1)
+            answers = any(path.endswith(suffix) for suffix in reply["choose"])
+            role = {"role": "answers", "reason": reply.get("note", "")} if answers else {"role": "unrelated", "reason": ""}
+            return LLMResponse(json.dumps(role), 10, 5)
         ids = re.findall(r'id="(P\d+)" path="([^"]+)"', user)
         if not ids:
             # With no passages, this is the engine asking it to translate a Turkish question before searching.
