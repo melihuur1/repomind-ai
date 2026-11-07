@@ -170,6 +170,45 @@ A second rule looks at the lines themselves: a passage counts as evidence only i
 
 Thresholds on similarity, or on the share of question terms, do not work: on the second question set, unanswerable questions scored as high as answerable ones.
 
+### A question that names its repository
+
+Asked inside one repository, people often name it: "How does StockGuard prevent negative stock?" That says nothing about where to look, and it did harm. Search favoured whatever was named after the project, and those lines passed the evidence rule on the project's name alone. `repomind/qa/project_name.py` handles this, for any repository, when `ask` is given exactly one. It knows no repository's name and no word list.
+
+| The name in the question | What happens |
+| --- | --- |
+| Stands alone: `StockGuard`, `StockGuard'ın`, `in StockGuard` | It leaves the search and the ranking of lines |
+| Inside an identifier, key, path or quotes: `StockGuardProperties`, `stockguard.security`, `STOCKGUARD_JWT_SECRET`, `` `stockguard` `` | Nothing changes, because that is the topic |
+| Fewer than 2 words would be left: "What is StockGuard?" | Nothing changes |
+
+Three things keep the name from being lost, or from weakening anything:
+
+- **One seat.** The best passage found by the question as asked, whose own lines name the project, such as `name: stockguard`, takes the last place. `import com.stockguard.x` does not count as naming it.
+- **Evidence.** Such lines count the name as one shared word, and still need another. They must also pass the evidence rule for the question as asked, so this can never accept lines that the rule would have turned down with the name in the search.
+- **Refusal.** The check for what the code never mentions always reads the question as asked. Without the name in front, a word such as `Kafka` would be first in the sentence, and would no longer look like a proper noun.
+
+The model still reads the whole question, and the passages stay in their ranked order, with the seat last. The code search tab is not affected: what people type there is searched as typed.
+
+Measured with no model on the 147 stored questions, 101 answerable and 46 unanswerable, in Turkish / English. These questions had all been read, so this is development data and proves nothing independent. "Name added" means the repository's name was added mechanically to each stored question, with no new questions or labels. The scripts were for this one comparison and are not kept.
+
+| | Right code in candidates | In the passages | Passing the evidence rule | Unanswerable reaching the model |
+| --- | --- | --- | --- | --- |
+| As stored | 90 / 90 | 78 / 71 | 65 / 67 | 19 / 19 |
+| Name added, before this rule | 80 / 85 | 64 / 64 | 58 / 59 | 34 / 23 |
+| Name added, with this rule | 89 / 89 | 76 / 72 | 65 / 66 | 23 / 20 |
+
+- **As stored,** 145 of the 147 questions got the same passages and the same outcome as before. The other 2 did not have the right lines in their passages either way.
+- **Against before, with the name added,** the right lines reached the passages for 14 more questions and 2 fewer in Turkish (`sn-viewer-readonly`, `v4-sg-db-port` lost), and for 10 more and 2 fewer in English (`sn-redis-outage`, `v3-sg-instance-header` lost). No unanswerable question newly reached the model, and 11 and 3 no longer do.
+- **The price:** simply removing the name, with no seat, does a little better on these questions, with 80 / 73 in the passages and 19 / 19 unanswerable reaching the model. But it lost what was really being asked about in 8 of 26 checks, against 1 with this rule. A question naming the project also searches twice, which adds up to about half a second.
+
+**What it still gets wrong.** There are 26 hand-written checks on questions really about the name, and these were run on the real code. The rule was corrected twice after looking at them, so they are not independent either.
+
+- **One is worse than before:** "Which class holds the StockGuard configuration?" no longer reaches `StockGuardProperties` in English. This is left as it is, because another rule for it would only fit this example.
+- **Two are no better than before:** asked for the compose project name of SyncNotes, the right line `name: syncnotes` is offered, and it cannot pass the evidence rule, with or without this change. In lower case the name stems differently from `SyncNotes` in the question, so the two do not match. If the model chooses that line, it is shown as a source to review.
+
+**Finding the source is not choosing it.** This fixes the first and not the second. On "StockGuard stok miktarının negatife düşmesini nasıl engelliyor?" and its English version, the database constraints in `V2__catalog_and_stock.sql:22-26` were not offered to the model before in Turkish, and now they always are. Asked 6 times each through `ask` with `qwen2.5:7b`, it still chose `SimulationService.java:196-200` 5 times in Turkish and all 6 times in English, and that code only detects negative counters after a run. The reason for the one different run was not found. The seat also leaves out `StockLevelRepository.java:52-56` on this question, and line 58 of that file, the condition that really prevents overselling, was outside those lines anyway.
+
+**Passage order was compared and left alone.** On 20 stored questions whose right lines were offered, sorting passages by file and line instead of rank gave 3 more correct choices and 2 fewer wrong ones. On 6 questions with this rule, it turned 2 correct choices wrong. The two results disagree on samples too small to settle it, so the ranked order stays.
+
 ### Verification
 
 `repomind/qa/verification.py` and `QAEngine` check everything before it can reach the user:
@@ -256,6 +295,7 @@ There is one worker thread and an `index_jobs` table, and no separate queue serv
 ## Known limitations
 
 - **The web application is for one person on one machine.** It has no accounts, quotas or sandbox. Nothing from a repository runs, so a sandbox has not been needed, but hosting it for others would need a different design.
+- **Naming the project in a question is handled, and it does not make answers right.** The right lines reach the model more often, and it can still choose others. One known case still loses its target. See [A question that names its repository](#a-question-that-names-its-repository).
 - **Removing a repository keeps its vectors.** They are a cache keyed by a hash of the text, hold no source text, and would be reused if the same text returned.
 - **A verified line is not a proven answer.** The lines are real, and choosing them is still a judgement. On the [final question set](evaluation.md#fifth-question-set), 4 of 16 answers did not touch the expected source, and 2 of 8 unanswerable questions got an answer.
 - **The right lines often never reach the model.** On that set, search missed them for 3 of 16 Turkish questions, and passage selection for 3 more. A short line that a question describes without naming, such as `token-ttl`, is still hard to find.

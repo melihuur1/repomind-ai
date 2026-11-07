@@ -11,6 +11,7 @@ from repomind.evaluation.citations import CitationVerifier
 from repomind.ingest.git_source import GitRepository
 from repomind.qa.llm import LLMClient, LLMConfig, cost_usd
 from repomind.qa.passages import Passage, is_evidence, select_passages
+from repomind.qa.project_name import Wording, counts_with_name, stands_alone, with_name_seat, without_project_name
 from repomind.qa.prompt import (
     PreparedPrompt,
     build_selection_prompt,
@@ -208,6 +209,25 @@ class QAEngine:
             return None
         return keep_technical_terms(question, english.strip())
 
+    def _with_name_seat(
+        self, repo: str, asked: Wording, passages: list[Passage], wording: str, asked_wording: str, chunk_limit: int
+    ) -> list[Passage]:
+        """Searches again with the question as asked, for lines that name the project."""
+        as_asked = self.search.search(
+            asked.question,
+            "hybrid",
+            [repo],
+            chunk_limit,
+            translated=asked.translated,
+            more_wordings=[asked.second] if asked.second else (),
+            glossary_seats=_GLOSSARY_SEATS,
+        )
+        queries = [text for text in (asked.question, as_asked.translated_query, asked.second) if text]
+        found = select_passages(
+            [hit.chunk for hit in as_asked.hits], queries, self.search.embedder, more_terms=as_asked.glossary_terms
+        )
+        return with_name_seat(repo, found, passages, wording, asked_wording)
+
     def ask(self, question: str, repos: list[str] | None = None) -> AskResult:
         chunk_limit = self.config.max_context_chunks if self.config else _CHUNKS_WITHOUT_A_MODEL
         result = AskResult(status="no_llm", question=question)
@@ -216,27 +236,38 @@ class QAEngine:
         english = self._translate_with_the_model(question, result)
         # A second translator's wording is searched too, so one wrong translation cannot decide alone.
         second = self.search.local_translation(question, result.warnings) if english else None
+
+        asked = searched = Wording(question, english, second)
+        # Asked about one repository, its name says nothing about where in it to look.
+        repo = repos[0] if repos and len(repos) == 1 else None
+        if repo and stands_alone(repo, question):
+            asked = Wording(question, english or self.search.local_translation(question, result.warnings), second)
+            searched = without_project_name(repo, asked) or asked
+        name_left_out = searched is not asked
+
         retrieved = self.search.search(
-            question,
+            searched.question,
             "hybrid",
             repos,
             chunk_limit,
-            translated=english,
-            more_wordings=[second] if second else (),
+            translated=searched.translated,
+            more_wordings=[searched.second] if searched.second else (),
             glossary_seats=_GLOSSARY_SEATS,
         )
+        asked_translation = asked.translated if name_left_out else retrieved.translated_query
         result.hits = retrieved.hits
-        result.translated_query = retrieved.translated_query
+        result.translated_query = asked_translation
         result.warnings.extend(retrieved.warnings)
         if not retrieved.hits:
             result.status = "no_results"
             return result
 
-        # Decided before any model call, which also spends nothing on such questions.
+        # Decided before any model call, which also spends nothing on such questions. Always on the
+        # question as asked: without its first word, a name such as Kafka would no longer look like one.
         sufficiency = check_sufficiency(
             question,
-            retrieved.translated_query,
-            self.search.vocabulary(question, retrieved.translated_query, repos),
+            asked_translation,
+            self.search.vocabulary(question, asked_translation, repos),
         )
         if sufficiency.message:
             result.warnings.append(sufficiency.message)
@@ -244,18 +275,28 @@ class QAEngine:
             result.status = "insufficient"
             return result
 
-        queries = [text for text in (question, retrieved.translated_query, second) if text]
+        queries = [text for text in (searched.question, retrieved.translated_query, searched.second) if text]
         found = select_passages(
             [hit.chunk for hit in retrieved.hits], queries, self.search.embedder, more_terms=retrieved.glossary_terms
         )
+        # Code is in English, so the English wording is what can be compared with it.
+        wording = retrieved.translated_query or searched.question
+        asked_wording = asked_translation or question
+
+        def counts_as_evidence(passage: Passage) -> bool:
+            if is_evidence(passage, wording):
+                return True
+            return name_left_out and counts_with_name(repo, passage, wording, asked_wording)
+
+        if name_left_out:
+            result.warnings.append("The repository's name was left out of the search, because every result is in this repository.")
+            found = self._with_name_seat(repo, asked, found, wording, asked_wording, chunk_limit)
         result.passages = self._verified_passages(found, result)
         if not result.passages:
             result.status = "insufficient"
             result.warnings.append("Search found code, but no lines that mention what the question asks about.")
             return result
-        # Code is in English, so the English wording is what can be compared with it.
-        wording = retrieved.translated_query or question
-        if not any(is_evidence(passage, wording) for passage in result.passages):
+        if not any(counts_as_evidence(passage) for passage in result.passages):
             result.status = "insufficient"
             result.warnings.append("The closest lines mention too little of the question to count as evidence.")
             return result
@@ -278,14 +319,14 @@ class QAEngine:
         reply = self._call(prompt, self.config.max_output_tokens, result)
         selection = verify_selection(reply, offered, question)
         # Without the model's note, which is the least trustworthy thing about a choice the rule turned down.
-        result.review_candidates = [passage for passage in selection.chosen if not is_evidence(passage, wording)]
+        result.review_candidates = [passage for passage in selection.chosen if not counts_as_evidence(passage)]
         if selection.outcome == "invalid":
             result.status = "invalid_response"
             result.rejected.append(selection.reason)
             result.warnings.append("The model did not return the required JSON.")
         elif selection.outcome == "none":
             result.status = "insufficient"
-        elif not (chosen := [passage for passage in selection.chosen if is_evidence(passage, wording)]):
+        elif not (chosen := [passage for passage in selection.chosen if counts_as_evidence(passage)]):
             result.status = "insufficient"
             result.rejected.append("the model chose lines that mention too little of the question")
         else:

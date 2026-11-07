@@ -231,6 +231,7 @@ The full method, every stage of the investigation and the rejected ideas are in 
 
 - **AI answers are not reliable.** On the final question set, `qwen2.5:7b` found the right source for 8 of 16 questions and showed a wrong one for 4. It refused 6 of 8 unanswerable ones. No configuration has passed its bar on any set.
 - **The right lines often never reach the model.** For 6 of those 16 questions, search or passage selection lost them.
+- **The model can pass over the right lines when they do reach it.** Asked how StockGuard stops stock going negative, `qwen2.5:7b` is now always offered the database constraints that do it, and it still mostly chooses code that only detects negative counters after a run. Finding a source and choosing it are separate problems, and [a question that names its repository](docs/architecture.md#a-question-that-names-its-repository) explains what was fixed and what was not.
 - **The model's notes can be false.** They are labelled as unverified, and one on the final set claimed a feature that does not exist.
 - **`qwen2.5:3b` does not decline.** Asked to choose lines or none, it chose every time, so with that model all refusals come from mechanical rules.
 - **A verified line is not a proven answer.** Lines are checked against Git. Whether they answer the question is not checked.
