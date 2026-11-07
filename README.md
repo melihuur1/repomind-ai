@@ -6,6 +6,15 @@ RepoMind indexes a GitHub repository locally and lets you browse, search and que
 
 > **Status: a working local web application for one person on one machine.** Searching and reading code are dependable. **The AI analysis is experimental and often wrong:** in the last measurement it pointed at the right source for 8 of 16 questions, and at a wrong one for 4. Read every line it points at. See [AI accuracy](#ai-accuracy).
 
+![RepoMind showing StockGuard's file tree and a Java file at the indexed commit, with a linked range of lines selected](docs/screenshots/repository-explorer.png)
+
+## Contents
+
+- [Why](#why) · [Features](#features) · [Screenshots](#screenshots) · [How it works](#how-it-works)
+- [Getting started on Windows](#getting-started-on-windows): [your first repository](#your-first-repository), [AI analysis](#ai-analysis-optional), [with or without a GPU](#with-or-without-a-gpu), [common problems](#common-problems)
+- [Using it](#using-it) · [AI accuracy](#ai-accuracy) · [Security](#security) · [Tests](#tests)
+- [Project structure](#project-structure) · [Known limitations](#known-limitations) · [Third-party software and models](#third-party-software-and-models) · [License](#license)
+
 ## Why
 
 Asking a chat model about an unfamiliar repository tends to produce confident answers that name files, functions and settings that do not exist. RepoMind turns this around: it searches first, and every answer is made of the repository's own lines. Each line is checked against Git, and a model, when one is used, only chooses among lines that were found. It never writes code or facts of its own into the answer. When the evidence is too thin, it says "I do not know".
@@ -24,14 +33,17 @@ Java, TypeScript (including TSX), JavaScript, SQL and YAML are indexed. Other fi
 
 ## Screenshots
 
-<!-- Add images to docs/screenshots/ and uncomment:
-![Repositories and adding a GitHub repository](docs/screenshots/repositories.png)
-![Code view with a pinned line range](docs/screenshots/code-view.png)
-![Hybrid search](docs/screenshots/search.png)
-![Experimental AI Analysis](docs/screenshots/ai-analysis.png)
--->
+Taken from the running application, on [StockGuard](https://github.com/melihuur1/stockguard) and the public [`expressjs/cors`](https://github.com/expressjs/cors). Nothing in them was edited.
 
-_Screenshots of the four screens go here: repositories, code view, search, and Experimental AI Analysis._
+**Hybrid search, asked in Turkish.** The question is also searched as its English translation, shown under the result count, and the first result is open at its lines.
+
+![Hybrid search for "Süresi dolan rezervasyonlar nasıl serbest bırakılıyor?", with ReservationExpiryService.java open at lines 14 to 48](docs/screenshots/hybrid-search.png)
+
+**Adding a public GitHub repository.** The page follows each step while the repository is cloned, with nothing from it run, and then parsed and embedded.
+
+![Adding https://github.com/expressjs/cors, shown while it is being cloned](docs/screenshots/github-import.png)
+
+The code view at the top of this page shows a Java file at the indexed commit, opened from a link that selects lines 50 to 61.
 
 ## How it works
 
