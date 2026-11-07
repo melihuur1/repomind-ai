@@ -303,8 +303,32 @@ class TestLocalServerSafety:
         assert response.json() == {"code": "internal_error", "message": "Something went wrong on the server."}
 
     def test_local_paths_do_not_reach_a_message(self):
-        assert "melih" not in public_message(r"Cannot read C:\Users\melih\repo\x.git today")
-        assert "melih" not in public_message("Cannot read /home/melih/repo today")
+        assert "someone" not in public_message(r"Cannot read C:\Users\someone\repo\x.git today")
+        assert "someone" not in public_message("Cannot read /home/someone/repo today")
+
+    def test_a_client_built_after_the_server_started_is_served(self, fake_embedder, tmp_path):
+        dist = tmp_path / "dist"
+        with TestClient(create_app(_services(fake_embedder, web_root=dist))) as client:
+            before = client.get("/")
+            assert before.status_code == 503
+            assert before.json()["code"] == "web_client_not_built"
+            assert client.get("/assets/app.js").status_code == 404
+
+            (dist / "assets").mkdir(parents=True)
+            (dist / "index.html").write_text('<!doctype html><script type="module" src="/assets/app.js"></script>')
+            (dist / "assets" / "app.js").write_text("console.log('built');")
+            script = client.get("/assets/app.js")
+            assert script.status_code == 200
+            assert "javascript" in script.headers["content-type"], "not the page, which leaves the browser blank"
+            assert client.get("/").status_code == 200
+
+    def test_an_unknown_asset_is_not_the_page(self, fake_embedder, tmp_path):
+        (tmp_path / "assets").mkdir()
+        (tmp_path / "index.html").write_text("<!doctype html>")
+        with TestClient(create_app(_services(fake_embedder, web_root=tmp_path))) as client:
+            missing = client.get("/assets/missing.js")
+            assert missing.status_code == 404
+            assert "doctype" not in missing.text
 
     def test_an_unknown_api_path_is_json_and_not_the_page(self, client):
         response = client.get("/api/nothing/here")

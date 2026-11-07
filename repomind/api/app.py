@@ -123,11 +123,25 @@ def create_app(services: Services, worker: IndexingWorker | None = None) -> Fast
     return app
 
 
+class _BuiltAssets(StaticFiles):
+    """Served from the moment the client is built, so building it after starting the server needs no restart.
+
+    Mounted only when the folder already existed, the scripts of a later build came back as the page
+    itself, and the browser showed a blank page.
+    """
+
+    async def __call__(self, scope, receive, send) -> None:
+        if not Path(self.directory).is_dir():
+            await _error(404, "web_client_not_built", "The web client is not built.")(scope, receive, send)
+            return
+        await super().__call__(scope, receive, send)
+
+
 def _serve_web_client(app: FastAPI, web_root: Path | None) -> None:
     """Any path that is not the API gets the same page, and the client's router takes it from there."""
     index = web_root / "index.html" if web_root else None
-    if web_root and (web_root / "assets").is_dir():
-        app.mount("/assets", StaticFiles(directory=web_root / "assets"), name="assets")
+    if web_root:
+        app.mount("/assets", _BuiltAssets(directory=web_root / "assets", check_dir=False), name="assets")
 
     @app.get("/api/{rest:path}", include_in_schema=False)
     def unknown_api(rest: str) -> JSONResponse:
