@@ -26,6 +26,11 @@ MAX_PASSAGES = 5
 # Neighbouring windows merge, so that a passage reads as one piece. On the earlier question sets,
 # 5 lines kept nearly all of what 7 or 9 reached, at about 21 lines per question in total.
 MAX_PASSAGE_LINES = 5
+# A chunk is one syntactic unit: a method, a SQL statement, a YAML block. Up to this size it is shown
+# whole, so that a signature, its condition and a constraint are not cut apart. Windows cut the right
+# lines for 43 of the 78 development questions whose lines they reached. Three quarters of chunks fit,
+# and five of them still fit the prompt's budget.
+UNIT_LINES = 16
 # So that one file cannot fill every passage. Limits per chunk and on near duplicates were
 # measured too, and they did not help.
 MAX_PASSAGES_PER_FILE = 3
@@ -109,9 +114,11 @@ def _lines(chunk: ChunkRow, start: int, end: int) -> str:
     return "\n".join(chunk.content.split("\n")[start - chunk.start_line : end - chunk.start_line + 1])
 
 
-def _merged(ordered: Sequence[_Window], terms: set[str], limit: int) -> list[Passage]:
+def _merged(ordered: Sequence[_Window], terms: set[str], limit: int, unit_lines: int = UNIT_LINES) -> list[Passage]:
     """Windows overlap, so each one either extends a passage it touches or adds what is new in it.
 
+    A window inside a short chunk brings the whole chunk instead, once. The windows still decide the
+    order, so this changes which lines a passage holds and not which code is chosen.
     No line is ever shown twice, because a repeated line would look like a second piece of evidence.
     """
     taken: list[list] = []  # chunk, start line, end line
@@ -131,6 +138,13 @@ def _merged(ordered: Sequence[_Window], terms: set[str], limit: int) -> list[Pas
 
     for window in ordered:
         chunk, start, end = window.chunk, window.start_line, window.end_line
+        if chunk.end_line - chunk.start_line + 1 <= unit_lines:
+            if any(item[0].id == chunk.id for item in taken):
+                continue
+            same_file = sum(item[0].path == chunk.path for item in taken)
+            if len(taken) < limit and same_file < MAX_PASSAGES_PER_FILE:
+                taken.append([chunk, chunk.start_line, chunk.end_line])
+            continue
         if extended(chunk, start, end):
             continue
         for other, first, last in taken:
