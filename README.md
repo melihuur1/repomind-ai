@@ -1,249 +1,300 @@
 # RepoMind AI
 
-**Intelligent GitHub repository analyzer.** Ask where and how something is done in a codebase, and get the code that answers it, with file and line citations verified against the exact Git commit.
+**Find where and how something is done in a codebase, and read the exact lines that do it.**
 
-> **Status: a working local web application, for one person on one machine.** Add a public GitHub repository by URL, browse it, search it, read its real lines at the indexed commit, and ask about it in Turkish or English. It is measured on real repositories, and the results below are reported as they are, including where they are weak. **Search and reading code are dependable. AI answers are experimental and not reliable, so every line they point at must be read.**
+RepoMind indexes a GitHub repository locally and lets you browse, search and question it in Turkish or English. Every result is a real range of lines, pinned to the Git commit it came from, so you can open it, link to it and check it yourself. It runs on your own machine, with no account and no paid API.
 
-## The web application
+> **Status: a working local web application for one person on one machine.** Searching and reading code are dependable. **The AI analysis is experimental and often wrong:** in the last measurement it pointed at the right source for 8 of 16 questions, and at a wrong one for 4. Read every line it points at. See [AI accuracy](#ai-accuracy).
 
-| Screen | What it does | Needs the model |
-| --- | --- | --- |
-| **Repositories** | Lists what is indexed, with commit, languages and counts. Adds a public GitHub repository by URL, with progress, readable errors and a retry. | No |
-| **Files** | The tree of indexed files, and each file's real lines with numbers, read from Git at the indexed commit. A link holds the exact commit and lines. | No |
-| **Search** | Keyword, semantic or hybrid, in Turkish or English, with the reason for each result. A result opens at its lines. | No |
-| **Experimental AI Analysis** | A question about one repository, in Turkish or English. Each source opens at its lines. | Only to choose among lines |
+## Why
 
-To start it, see [Getting started](#getting-started). Search, reading code and indexing keep working with the model off, and on a machine with no GPU.
+Asking a chat model about an unfamiliar repository tends to produce confident answers that name files, functions and settings that do not exist. RepoMind turns this around: it searches first, and every answer is made of the repository's own lines. Each line is checked against Git, and a model, when one is used, only chooses among lines that were found. It never writes code or facts of its own into the answer. When the evidence is too thin, it says "I do not know".
 
-### What an AI reply means
+## Features
 
-**In the final measurement the model found the right source for 8 of 16 questions and showed a wrong one for 4, and it answered 2 of 8 questions it should have refused.** The page says so next to every question, and it keeps apart what is checked and what is only the model's judgement:
+- **Add a public GitHub repository by URL.** It is cloned safely, parsed and indexed in the background, with progress, readable errors and a retry.
+- **Browse the code as committed.** A file tree and a code view with line numbers and syntax highlighting, read from Git at the indexed commit. Links such as `…/blob/<commit>/src/App.ts#L12-L20` always open the same lines, and for a repository added from GitHub, a button opens them there too.
+- **Search code three ways.** Keyword (BM25), semantic (vector search with pgvector), or hybrid, which fuses both with Reciprocal Rank Fusion. Each result shows why it was found and opens at its lines.
+- **Ask in Turkish or English.** Turkish questions are translated locally, and both wordings are searched. Code, identifiers and config keys stay unchanged.
+- **Experimental AI analysis.** A local model, `qwen2.5:7b` on Ollama, chooses among the lines found, or declines. Lines that exist in Git, lines that passed the evidence rule, and the model's own sentence are shown as separate, labelled things.
+- **Local and private by default.** It listens only on `127.0.0.1`, embeddings run on the CPU, and a GPU is optional.
+- **Treats repositories as hostile.** Code is never executed, secrets and credentials stay out of the index, prompt injection in code is contained, and everything is rendered as text.
 
-| Shown as | What it means | What it does not mean |
-| --- | --- | --- |
-| **In Git at `abc1234`** | These exact lines exist in that commit. This is checked. | That they answer the question |
-| **The model chose these lines** | The model picked them, and they share enough words with the question to pass the evidence rule | That they are right. This is its judgement, and it is often wrong |
-| **Model's reading** | One sentence from the model, collapsed by default and marked as unverified | That it is true. These sentences have claimed features that do not exist |
-| **Not enough evidence** | "I do not know": no lines passed | That the code certainly lacks it. Search misses things |
-| **Source to review** | The model pointed here and the evidence rule did not accept it | An answer. Nothing confirms that it answers the question |
-| **Closest lines found** | What search found, with no judgement from the model | An answer |
-| **AI unavailable** | The model is off or memory is low, so it was not asked. The closest lines are still shown | A failure of the application |
+Java, TypeScript (including TSX), JavaScript, SQL and YAML are indexed. Other files appear in counts but are not searched.
 
-### Adding a repository by URL
+## Screenshots
 
-The address and the repository's contents are both treated as hostile:
+<!-- Add images to docs/screenshots/ and uncomment:
+![Repositories and adding a GitHub repository](docs/screenshots/repositories.png)
+![Code view with a pinned line range](docs/screenshots/code-view.png)
+![Hybrid search](docs/screenshots/search.png)
+![Experimental AI Analysis](docs/screenshots/ai-analysis.png)
+-->
 
-- **Only `https://github.com/owner/name`.** The address is reduced to an owner and a name, and every request is rebuilt from those, so it cannot reach another host or a local service. Other hosts, credentials, ports, paths and other protocols are refused before any request.
-- **Only public repositories,** checked with GitHub's API, whose redirects are followed only within that API.
-- **Nothing from the repository runs.** The clone writes only Git's own objects: no working files, hooks, submodules, filters or LFS. Only HTTPS is allowed, Git redirects are off, and this machine's Git settings and stored credentials take no part.
-- **Limits, all [configurable](.env.example):** 300 MB on GitHub, 600 MB cloned, 20,000 files, 5,000 source files, 100 MB of source, 5 minutes to clone and 30 minutes in all. Indexing does not start, and stops, below 4 GB of free memory, and a retry continues from where it stopped.
-- **Secrets and generated files stay out,** through the same filters as the command line. In YAML, a line that may hold a credential is hidden.
-- **The same commit is not cloned or indexed twice.**
-
-One background thread does the work and the page follows its progress, so the page stays usable meanwhile. Only Java, TypeScript, JavaScript, SQL and YAML are read. Removing a repository deletes only RepoMind's index and clone, and only for repositories added by URL.
-
-## Results
-
-**The final measurement did not pass.** A last set of 24 questions, committed before any run and run once on the fixed system, gave:
-
-| Final set, Turkish, `qwen2.5:7b` | Result | Target |
-| --- | --- | --- |
-| Correct source, of 16 | 8 | at least 8 |
-| Wrong source, of 16 | **4** | at most 2 |
-| No answer, of 16 | 4 | |
-| Unanswerable refused, of 8 | **6** | at least 7 |
-| Invalid file or line references | 0 of 120 | 0 |
-| Graded correct, partly correct, wrong | 9, 1, 2 | |
-| Mean seconds per question | 6.6 | |
-
-Every line shown exists in Git, and that does not mean it answers the question. The same developer wrote these questions and the system, and one reviewer graded the answers, so this is not an independent external test. See [the details and the known problems](docs/evaluation.md#fifth-question-set).
-
-The rest of this section is how the project got there. Measured on two real projects: [StockGuard](https://github.com/melihuur1/stockguard) (Java) and [SyncNotes](https://github.com/melihuur1/syncnotes) (TypeScript). The numbers below come from a second question set of 26 answerable and 10 unanswerable questions, written and committed before it was first run, and not used for any tuning.
-
-Hybrid search, first phase against current:
-
-| Questions in | Scope | Recall@5 | Hit@5 | MRR |
-| --- | --- | --- | --- | --- |
-| Turkish | Code (15) | 0.567 → 0.567 | 0.600 → 0.600 | 0.465 → 0.468 |
-| Turkish | SQL and YAML (11) | 0.000 → 0.818 | 0.000 → 0.818 | 0.000 → 0.761 |
-| English | Code (15) | 0.833 → 0.833 | 0.867 → 0.867 | 0.581 → 0.583 |
-| English | SQL and YAML (11) | 0.000 → 0.818 | 0.000 → 0.818 | 0.000 → 0.691 |
-
-What these numbers say:
-
-- **The gain is coverage, not better ranking.** SQL migrations and YAML configuration are now searchable, and that accounts for all of the improvement. Results on code questions did not change, and on the older question set Turkish MRR fell from 0.604 to 0.549, because the new chunks compete with code.
-- **A reranker was tested and rejected.** The best candidate gave no clear gain across both question sets and took about 21 seconds per query, against about 25 milliseconds for hybrid search. See [the details](docs/evaluation.md#reranker).
-- **Every citation was valid.** All search results and all citations shown with answers match the Git objects at the indexed commit.
-
-Answers on the same set, in Turkish, with the small local model `qwen2.5:3b` (CPU, $0), graded by one reviewer without knowing which version wrote each answer:
-
-| 26 answerable questions | Correct | Partly correct | Wrong | Refused |
-| --- | --- | --- | --- | --- |
-| First phase | 0 | 4 | 11 | 11 |
-| Current | **0** | 11 | 13 | 2 |
-
-Of the 10 unanswerable questions, the first phase refused 4 and that version 6. **No answer was fully correct.** So the answer layer was redesigned: answers are now the code's own lines, and the model only chooses among them. A small pilot measured it against the same 18 new questions, with targets fixed in advance:
-
-| Pilot, Turkish | Previous version, 3B | Real lines, 3B | Real lines, 7B | Target |
-| --- | --- | --- | --- | --- |
-| Correct source, of 12 | 4 | 4 | 7 | at least 6 |
-| Wrong source, of 12 | 8 | 7 | **3** | at most 2 |
-| Unanswerable refused, of 6 | 3 | 4 | 6 | at least 5 |
-| Invalid file or line references | 0 | 0 | 0 | 0 |
-| Fully correct answers, of 12 | 1 | 3 | 6 | |
-| Mean seconds per question | 54 | 14 | 6 | |
-
-No configuration passed. `qwen2.5:7b` missed the bar by one question and did much better than `qwen2.5:3b`, but these questions had been used before, and the 7B column ran partly on a GPU. So `qwen2.5:7b` became the default, search was tuned on the earlier sets, and a new set of 24 questions, fixed before those changes, measured the result once:
-
-| New set, Turkish, `qwen2.5:7b` | Before the search changes | After | Target |
-| --- | --- | --- | --- |
-| Correct source, of 16 | 6 | 6 | at least 8 |
-| Wrong source, of 16 | 5 | 3 | at most 2 |
-| No answer, of 16 | 5 | 7 | |
-| Unanswerable refused, of 8 | 8 | 8 | at least 7 |
-| Invalid file or line references | 0 | 0 | 0 |
-| Fully correct answers, of 16 | 4 | 4 | |
-| Mean seconds per question | 6.0 | 5.7 | |
-
-**This did not pass, and the search changes showed no clear gain.** The system now rarely invents an answer and shows only real lines, but it finds the right source for fewer than half of the questions. The pilot had looked better than this. Search is the largest loss, on short configuration lines and through translation errors. The same developer wrote these questions, and 24 are too few to prove anything in general. Details are in the [full evaluation](docs/evaluation.md#fourth-question-set).
-
-Search was then worked on further, with no model, on these same questions and the earlier ones: the right code reaches the 5 passages for 65 to 68 of 85 Turkish questions, depending on the run of the translations, up from 61, and a named term such as `token-ttl` is shown for 277 of 288 lookups, up from 261. No more unanswerable questions get through. These questions had already been read, so this is not an independent result, and it has not yet been measured on answers. See [the details](docs/evaluation.md#search-work-after-the-fourth-set).
-
-A line existing in Git does not mean it answers the question, and the code keeps these two checks apart. When the model chooses lines that the evidence rule turns down, the answer stays "I do not know", and the lines are shown separately as a source to review, with their path, line numbers and code. See [how this works](docs/architecture.md#two-checks-that-must-not-be-confused).
+_Screenshots of the four screens go here: repositories, code view, search, and Experimental AI Analysis._
 
 ## How it works
 
-1. **Read** a commit from Git's object database. Analyzed projects are never modified and their code is never executed.
-2. **Parse** Java, TypeScript and JavaScript with Tree-sitter into symbols, imports and syntax-aligned chunks. SQL is split into statements and YAML into its structure, as text that is never run.
-3. **Exclude** hidden files, dependency and build folders, generated code, personal configuration and anything containing credentials.
-4. **Embed** chunks locally with `intfloat/multilingual-e5-small` (384 dimensions, no API cost), caching by content so unchanged code is never embedded twice.
-5. **Search** with BM25, pgvector, or both through Reciprocal Rank Fusion.
-6. **Answer** by narrowing search results to a few short passages, with no model. An optional LLM only chooses among them. The answer is the code's own lines, checked against Git, and any sentence from the model is shown apart and labelled as unverified.
+```mermaid
+flowchart LR
+    U[GitHub URL or local repository] --> G[Git objects at one commit]
+    G --> F[Filters: secrets, generated and vendored files]
+    F --> T[Tree-sitter syntax trees, SQL statements, YAML structure]
+    T --> C[Chunks, symbols, imports]
+    C --> E[Local embeddings]
+    C --> DB[(PostgreSQL + pgvector)]
+    E --> DB
+    Q[Question in Turkish or English] --> S[BM25 + vector search, fused with RRF]
+    DB --> S
+    S --> P[A few short passages, checked against Git]
+    P --> M[Optional local LLM: choose passages, or none]
+    M --> A[The repository's own lines, with labelled checks]
+```
 
-The design and its trade-offs are in [docs/architecture.md](docs/architecture.md).
+1. **Read** one commit from Git's object database. Analyzed repositories are never modified, checked out or executed.
+2. **Parse** Java, TypeScript and JavaScript with Tree-sitter into syntax-aligned chunks, with their symbols and imports. SQL is split into statements and YAML into its structure.
+3. **Exclude** hidden, generated, vendored and build files, and anything that looks like a credential.
+4. **Embed** chunks locally, caching by content so unchanged code is never embedded twice.
+5. **Search** with BM25 and pgvector, fused with Reciprocal Rank Fusion, and translate Turkish questions locally.
+6. **Answer** by narrowing results to a few short passages with no model, then let an optional LLM choose among them. Each passage is checked against Git, and lines that share too little with the question cannot count as evidence.
 
-## Getting started
+| Layer | Technology |
+| --- | --- |
+| Backend | Python 3.11+, FastAPI, Uvicorn |
+| Parsing | Tree-sitter syntax trees (AST) for Java, TypeScript, TSX and JavaScript, plus SQL statement and YAML structure chunking |
+| Storage | PostgreSQL 17 with pgvector, in Docker |
+| Embeddings | [`intfloat/multilingual-e5-small`](https://huggingface.co/intfloat/multilingual-e5-small), 384 dimensions, through fastembed and ONNX Runtime, on the CPU |
+| Search | BM25 and cosine similarity, fused with Reciprocal Rank Fusion |
+| Translation | Opus-MT Turkish to English through CTranslate2, on the CPU, and the LLM when it is running |
+| LLM, optional | `qwen2.5:7b` on Ollama in Docker, or any OpenAI-compatible endpoint |
+| Frontend | React 19, TypeScript, Vite, TanStack Query, React Router, highlight.js through lowlight |
+| Tests | pytest, Vitest, Playwright in Edge or Chrome |
 
-Requires Python 3.11+, Node.js 20+, Git and Docker. No GPU, account or paid service is needed.
+Design and trade-offs: [docs/architecture.md](docs/architecture.md). Measurements: [docs/evaluation.md](docs/evaluation.md).
 
-```bash
-python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
-cp .env.example .env
-docker compose up -d db          # PostgreSQL + pgvector on 127.0.0.1:55432
+## Getting started on Windows
+
+| You need | Version | Notes |
+| --- | --- | --- |
+| Windows 10 or 11 | | Developed and tested on Windows 11. macOS and Linux should work, but are untested |
+| [Python](https://www.python.org/downloads/) | 3.11 or newer | Tested with 3.13 |
+| [Node.js](https://nodejs.org/) | 20 or newer | Only to build the web client. Tested with 26 |
+| [Git](https://git-scm.com/download/win) | any recent | Tested with 2.51 |
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | with WSL 2 | Runs PostgreSQL, and optionally the LLM |
+| Memory | see notes | The RepoMind process used 1 to 1.9 GB here, besides Docker. The 7B model needs about 6.4 GB more |
+| GPU | none needed | An NVIDIA GPU can speed up the optional LLM |
+
+In PowerShell, from the folder where you keep projects:
+
+```powershell
+git clone https://github.com/melihuur1/repomind-ai.git
+cd repomind-ai
+
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+Copy-Item .env.example .env
+
+docker compose up -d db              # PostgreSQL + pgvector on 127.0.0.1:55432
+
 npm --prefix web ci
-npm --prefix web run build
-python -m repomind serve         # http://127.0.0.1:7321
+npm --prefix web run build           # builds the web client into web\dist
+
+.\.venv\Scripts\python.exe -m repomind serve
 ```
 
-The first indexing or semantic search downloads the local models into `.models/` (about 0.6 GB for the embedding and translation models).
+Open <http://127.0.0.1:7321>. The commands call the virtual environment's Python directly, so PowerShell's script policy does not get in the way of activating it. On macOS or Linux, use `python3 -m venv .venv`, `.venv/bin/python` and `cp .env.example .env`.
 
-It listens only on `127.0.0.1`, and has no accounts, so it is not meant to be hosted for others. If port 7321 cannot be used, pass `--port`. Windows reserves some ranges of ports. For development with hot reload, run `npm --prefix web run dev` next to it.
+### Your first repository
 
-To use AI analysis, start the local model as described in [Answering questions](#answering-questions). It can be started and stopped while the application runs.
+Paste a public repository's address, such as `https://github.com/expressjs/cors`, into **Analyze a public GitHub repository** and press **Analyze**. The page shows each step while you keep working, then offers **Open**.
 
-### Index and search from the command line
+The first indexing downloads the embedding and translation models into `.models\`, about 0.6 GB, once. After that, on a laptop CPU, a small repository took about 10 seconds, and one of 59 source files and 426 chunks took 27 seconds.
 
-```bash
-python -m repomind index --path "/path/to/repository"
-python -m repomind repos
+To index a repository you already have on disk instead, which can be private:
 
-python -m repomind search "Stok tutarlılığı nasıl sağlanıyor?"
-python -m repomind search "How is overselling prevented?" --repo stockguard --explain
-python -m repomind search "cancelReservation" --mode keyword
+```powershell
+.\.venv\Scripts\python.exe -m repomind index --path "C:\path\to\repository"
 ```
 
-Search needs no API key and no LLM. Test code is left out unless the query mentions tests or `--include-tests` is passed.
+### AI analysis, optional
 
-### Answering questions
+Search, the file tree and the code view need no model. To let a local model choose among the lines found, which needs no account or API key:
 
-```bash
-python -m repomind ask "Rezervasyon iptali nerede yönetiliyor?" --repo stockguard
-```
-
-Without a configured LLM, or with `--no-llm`, `ask` lists the closest lines and says plainly that this is not an AI answer. To let a free local model choose among them, which needs no account or API key:
-
-```bash
+```powershell
 docker compose --profile llm up -d ollama
-docker exec repomind-ollama ollama pull qwen2.5:7b
+docker exec repomind-ollama ollama pull qwen2.5:7b      # about 4.7 GB, once
 ```
 
-Then add to `.env`:
+Then remove the `#` from these two lines in `.env`, and restart `repomind serve`:
 
 ```bash
 REPOMIND_LLM_BASE_URL=http://127.0.0.1:11535/v1
 REPOMIND_LLM_MODEL=qwen2.5:7b
 ```
 
-`qwen2.5:7b` is the default, is Apache-2.0 licensed, and took about 6.4 GB across RAM and VRAM in the pilot. The smaller `qwen2.5:3b` also works, but it is under the Qwen Research License rather than an open source license, and it did worse in the pilot. Any OpenAI-compatible endpoint works. Sending code to a remote endpoint must be enabled explicitly, and paid use needs prices and a budget in `.env`.
+The model can be started and stopped while RepoMind runs, and the status in the top bar follows it. `docker compose stop ollama` gives its memory back. The container keeps one model loaded at a time and is limited to 8 GB.
 
-The container keeps one model in memory at a time and is limited to 8 GB. To give the memory back when you are done, run `docker compose stop ollama`.
+### With or without a GPU
 
-**A GPU is optional.** By default the model runs on the CPU, and nothing else in RepoMind uses a GPU. On a machine with an NVIDIA GPU, add this to `.env`, and then run `docker compose --profile llm up -d ollama`:
+**Without a GPU** nothing changes: this is the default, and only the optional LLM is slower. On the development machine one Turkish question took about 50 seconds on the CPU, including loading the model.
+
+**With an NVIDIA GPU**, add these two lines to `.env` and run `docker compose --profile llm up -d ollama` again. Layers that fit in the GPU's memory run there. On a 4 GB RTX 3050 the same question took about 12 seconds.
 
 ```bash
 COMPOSE_PATH_SEPARATOR=,
 COMPOSE_FILE=compose.yaml,compose.gpu.yaml
 ```
 
-On the development machine, one Turkish question through the web application took about 50 seconds on the CPU, including loading the model, against about 12 seconds partly on an RTX 3050. That is one question each, not a measurement.
+Those are single questions on one machine, not benchmarks.
 
-**Limits of answers.** Every line shown is checked against Git, and lines that mention too little of a question do not count as evidence. That does not make them the answer: choosing them is the model's judgement, and in the evaluation it often chose wrongly. A citation alone does not prove an answer. Use `ask` to find the relevant code, and read it.
+### Common problems
 
-### Evaluate
+| What you see | Why | What to do |
+| --- | --- | --- |
+| `Port 7321 cannot be used` | Another program holds it, or Windows reserves the range | Add `--port 7400` to `repomind serve`, or choose another free port |
+| `The web client is not built` | `web\dist` does not exist yet | `npm --prefix web ci`, then `npm --prefix web run build`. No restart is needed |
+| The page cannot load repositories, and `/api/health` reports `"database": false` | The database container is not running | `docker compose up -d db`, and check `docker compose ps` |
+| **AI not set up** in the top bar | No model is configured in `.env` | See [AI analysis](#ai-analysis-optional) |
+| **AI offline** | Ollama is not running | `docker compose --profile llm up -d ollama` |
+| **AI model missing** | The model was not pulled | `docker exec repomind-ollama ollama pull qwen2.5:7b` |
+| **AI paused** | Less than 4 GB of memory is free | Close something, and ask again |
+| `GitHub is limiting requests from this machine` | GitHub's anonymous API allows about 60 requests an hour | Wait, then press **Retry** |
+| `Git on Windows cannot write a clone this deep in the folder tree` | The clone's path would pass 260 characters | Set `REPOMIND_DATA_DIR=C:\repomind-data` in `.env`, or keep the project in a short path |
+| `npm warn install-scripts … esbuild` during `npm ci` | npm 11 does not run install scripts unless approved | Harmless: the build works without it |
+| A Hugging Face warning about symlinks | Windows without Developer Mode | Harmless. `HF_HUB_DISABLE_SYMLINKS_WARNING=1` silences it |
 
-```bash
-python -m repomind index --path "<stockguard clone>" --name stockguard --ref b6698d81475232f2b8ca95af45336fae5665cd81
-python -m repomind index --path "<syncnotes clone>" --name syncnotes --ref bb217cddc89088f27b68715cf9585e94ce2fe3a6
-python -m repomind evaluate --dataset eval/questions_v2.yaml
-python -m repomind evaluate-ask --dataset eval/questions_v2.yaml --output eval/results/my-run.json      # requires a configured LLM
+## Using it
+
+- **Repositories:** what is indexed, with commit, languages and counts. Repositories added by URL can be removed, which deletes only RepoMind's index and clone. To pick up new commits, add the same address again. The same commit is never indexed twice.
+- **Files:** click line numbers to select a range, with Shift for several lines, and copy the link. **GitHub** opens the same lines there.
+- **Search** (`/` focuses it): hybrid suits most questions, keyword suits exact names such as `cancelReservation` or `token-ttl`, and semantic suits descriptions. Test code is left out unless you tick **Tests** or the question mentions tests.
+- **Experimental AI Analysis:** ask about the open repository in Turkish or English. What each part of a reply means:
+
+| Shown as | What it means | What it does not mean |
+| --- | --- | --- |
+| **In Git at `abc1234`** | These exact lines exist in that commit. This is checked | That they answer the question |
+| **The model chose these lines** | The model picked them, and they share enough words with the question to pass the evidence rule | That they are right. It is the model's judgement, and often wrong |
+| **Model's reading** | One sentence from the model, collapsed and marked as unverified | That it is true. These sentences have described features that do not exist |
+| **Not enough evidence** | "I do not know": no lines passed | That the code certainly lacks it. Search misses things |
+| **Source to review** | The model pointed here, and the evidence rule did not accept it | An answer |
+| **Closest lines found** | What search found, with no judgement from a model | An answer |
+| **AI unavailable** | The model is off or memory is low, so it was not asked | A failure: everything else keeps working |
+
+## AI accuracy
+
+The answer layer was measured on two real projects, [StockGuard](https://github.com/melihuur1/stockguard) (Java) and [SyncNotes](https://github.com/melihuur1/syncnotes) (TypeScript). **The final measurement did not pass its own targets.** A set of 24 Turkish questions, fixed before the run and run once with `qwen2.5:7b`, gave:
+
+| Final set, Turkish, `qwen2.5:7b` | Result | Target set in advance |
+| --- | --- | --- |
+| Right source, of 16 answerable | 8 | at least 8 |
+| Wrong source, of 16 | **4** | at most 2 |
+| No answer, of 16 | 4 | |
+| Unanswerable questions refused, of 8 | **6** | at least 7 |
+| File or line references that do not exist | 0 of 120 | 0 |
+| Graded correct, partly correct, wrong | 9, 1, 2 | |
+| Mean time per question | 6.6 s | |
+
+- **Every line shown exists in Git, and that does not make it an answer.** Of the 16, the right lines never reached the model for 6, lost in search for 3 and in passage selection for 3, and the model chose other lines for 2.
+- **Finding a source and choosing it are separate problems.** Asked how StockGuard stops stock going negative, the model is now always offered the database constraints that do it, and it still mostly picks code that only detects negative counters after a run. A [later change](docs/architecture.md#a-question-that-names-its-repository) fixed what reaches the model when a question names its repository, not what the model chooses.
+- **This is not an independent test.** The same developer wrote the questions and the system, and one reviewer graded the answers. 24 questions are too few to generalize.
+
+Search itself was measured separately: the right code reaches the five passages for 65 to 68 of 85 Turkish development questions. How the project got here, including a rejected reranker, a pilot, and a fourth set that also did not pass, is in [docs/evaluation.md](docs/evaluation.md), with each result as it was.
+
+## Security
+
+RepoMind reads code written by strangers, so it treats both the repository and the address of it as hostile:
+
+- **Addresses:** only `https://github.com/owner/name` is accepted. Every request is rebuilt from the owner and name, so it cannot reach another host or a local service. Private repositories are refused.
+- **Cloning:** only Git's own objects are written, with no working files, hooks, submodules, filters or LFS. Only HTTPS is allowed, and Git redirects are off. This machine's Git settings and stored credentials take no part.
+- **Limits, all [configurable](.env.example):** 300 MB on GitHub, 600 MB cloned, 20,000 files, 5,000 source files, 100 MB of source, 5 minutes to clone and 30 minutes in all. Below 4 GB of free memory, indexing does not start.
+- **Secrets:** files and lines that look like credentials are never indexed or shown.
+- **Prompt injection:** code reaches the model inside tags it cannot close, the model only refers to passages by id, and its reply is checked.
+- **The browser:** everything from a repository is rendered as text, behind a strict content security policy. The server answers only to its own host names, and accepts changes only from its own pages, so another website cannot drive it.
+
+Details: [docs/architecture.md](docs/architecture.md#web-application).
+
+## Tests
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest        # about 900 tests: parsing, search, answers, API, indexing, security
+npm --prefix web test                       # the web client's own logic
+npm --prefix web run build
+npm --prefix web run test:e2e               # Playwright, in the installed Edge
 ```
 
-`evaluate-ask` saves every question as it finishes. If it is stopped, the same command continues from there, and its results say `incomplete` until every question is done. It does not start, and stops between questions, when less than 3 GB of memory is free. A finished result is never replaced without `--overwrite`.
+Tests that need the database, a running LLM or the evaluated repositories skip themselves without them. The browser tests drive the real API, database, Git and clone command on a fixture repository that holds secrets, prompt injection and markup in its file names, code and commit messages. Only the models and GitHub are stood in for, so they need no network, GPU or model. `REPOMIND_E2E_BROWSER=chrome` uses Chrome instead.
 
-To try a local model at low risk, [`eval/tools/resource_trial.ps1`](eval/tools/resource_trial.ps1) runs 10 evenly spaced questions, records memory use, and refuses to start with less than 12 GB free.
+<details>
+<summary>Command line, and reproducing the evaluation</summary>
 
-### Test
-
-```bash
-pytest
-npm --prefix web test            # the web client's own logic
-npm --prefix web run build       # the browser tests serve this build
-npm --prefix web run test:e2e    # a real browser against the real application
+```powershell
+.\.venv\Scripts\python.exe -m repomind repos
+.\.venv\Scripts\python.exe -m repomind search "Stok tutarlılığı nasıl sağlanıyor?" --repo stockguard
+.\.venv\Scripts\python.exe -m repomind search "cancelReservation" --mode keyword --explain
+.\.venv\Scripts\python.exe -m repomind ask "Rezervasyon iptali nerede yönetiliyor?" --repo stockguard
 ```
 
-Tests that need the database, the evaluation repositories or a running LLM skip themselves when those are unavailable. Set `REPOMIND_REPO_STOCKGUARD` and `REPOMIND_REPO_SYNCNOTES` to run the gold label checks.
+To reproduce the evaluation, clone the two repositories, set `REPOMIND_REPO_STOCKGUARD` and `REPOMIND_REPO_SYNCNOTES` in `.env`, and index the pinned commits:
 
-The browser tests use the real API, database, Git and clone command, in a database of their own, on a fixture repository holding secrets, prompt injection and markup in its file names, code and commit messages. Only the models and GitHub are stood in for, so they need no network, GPU or model. They use the installed Edge. Set `REPOMIND_E2E_BROWSER=chrome` to use Chrome.
+```powershell
+.\.venv\Scripts\python.exe -m repomind index --path "C:\path\to\stockguard" --name stockguard --ref b6698d81475232f2b8ca95af45336fae5665cd81
+.\.venv\Scripts\python.exe -m repomind index --path "C:\path\to\syncnotes" --name syncnotes --ref bb217cddc89088f27b68715cf9585e94ce2fe3a6
+.\.venv\Scripts\python.exe -m repomind evaluate --dataset eval/questions_v2.yaml
+.\.venv\Scripts\python.exe -m repomind evaluate-ask --dataset eval/questions_v5.yaml --output eval/results/my-run.json
+```
 
-## Evaluation discipline
+`evaluate-ask` needs a configured LLM. It saves each question as it finishes and continues from there if stopped, does not start with less than 3 GB of memory free, and never replaces a finished result without `--overwrite`. The questions and gold labels were committed before the code they measure, and every gold span is checked by test against the pinned commit. See [docs/evaluation.md](docs/evaluation.md#reproducing).
 
-- Questions and gold labels were committed **before any search code existed**, as the Git history shows, and have not been changed since.
-- All tuning used the first question set. The second set was committed before it was first run, and nothing was tuned on it.
-- Every gold span is checked by test against the pinned commit. Every "unanswerable" question has its absent terms verified the same way.
-- Results include 95% bootstrap confidence intervals and paired comparisons.
-- Answers are graded with the run label hidden, by [rules](eval/tools/GRADING.md) written before any of them was read.
+</details>
 
-The full method, every stage of the investigation and the rejected ideas are in [docs/evaluation.md](docs/evaluation.md).
+## Project structure
+
+```text
+repomind/          Python package
+  ingest/          Git reading, filters, safe GitHub cloning
+  parsing/         Tree-sitter, SQL and YAML chunking
+  embeddings/      local embedding models
+  search/          BM25, vector search, fusion, translation, glossary
+  qa/              passages, evidence rule, prompts, verification, the ask engine
+  store/           PostgreSQL schema and queries
+  api/             FastAPI application and background indexing
+  evaluation/      evaluation runners and metrics
+web/               React and TypeScript client, with Vitest and Playwright tests
+eval/              question sets, gold labels, results and tools
+docs/              architecture, evaluation and plans
+compose.yaml       PostgreSQL, and Ollama under the llm profile
+compose.gpu.yaml   optional NVIDIA GPU for Ollama
+```
 
 ## Known limitations
 
-- **AI answers are not reliable.** On the final question set, `qwen2.5:7b` found the right source for 8 of 16 questions and showed a wrong one for 4. It refused 6 of 8 unanswerable ones. No configuration has passed its bar on any set.
-- **The right lines often never reach the model.** For 6 of those 16 questions, search or passage selection lost them.
-- **The model can pass over the right lines when they do reach it.** Asked how StockGuard stops stock going negative, `qwen2.5:7b` is now always offered the database constraints that do it, and it still mostly chooses code that only detects negative counters after a run. Finding a source and choosing it are separate problems, and [a question that names its repository](docs/architecture.md#a-question-that-names-its-repository) explains what was fixed and what was not.
-- **The model's notes can be false.** They are labelled as unverified, and one on the final set claimed a feature that does not exist.
-- **`qwen2.5:3b` does not decline.** Asked to choose lines or none, it chose every time, so with that model all refusals come from mechanical rules.
-- **A verified line is not a proven answer.** Lines are checked against Git. Whether they answer the question is not checked.
-- The plan for improving answers is in [docs/answer-plan.md](docs/answer-plan.md).
-- Turkish retrieval is weaker than English (Hit@5 0.692 against 0.846) and depends on an imperfect translation, which on the pilot still changed some questions' meaning.
-- Answers took about 7 seconds per question with 7B partly on an RTX 3050, and about 14 with 3B on an 8-core CPU.
-- The evaluation is small, covers two repositories and was labelled and graded by one reviewer. The gold labels are not exhaustive, so some reasonable results count as misses.
-- Secret detection recognizes known token formats and literal credential keys, not every hardcoded password.
-- **The web application is for one person on one machine.** It has no accounts, quotas or sandbox, and must not be exposed beyond `127.0.0.1`.
-- **Adding repositories uses GitHub's anonymous API,** which allows about 60 requests an hour from one address. Past that, it says so and does not retry on its own. Private repositories are not supported.
-- **Only the default branch's latest commit is indexed,** and only one commit per repository is kept. To pick up new commits, add the same address again.
-- **Embeddings run on the CPU,** so a large repository can take many minutes. Adding by URL was tried by hand on two real public repositories: `expressjs/cors` (34 chunks, 9 seconds) and `spring-projects/spring-petclinic` (426 chunks, 27 seconds). Nothing larger has been tried this way.
-- **The layout is for a desktop window.** It works down to about 1000 pixels wide, where the code view becomes narrow unless the AI panel is closed. It is not designed for phones.
+- **AI answers are not reliable,** as [measured above](#ai-accuracy). Use them to find code, and read it.
+- **The model's sentences can be false.** They are labelled as unverified.
+- **A verified line is not a proven answer.** Lines are checked against Git. Whether they answer the question is not.
+- **Turkish is weaker than English** in search, and depends on an imperfect translation.
+- **For one person on one machine.** There are no accounts, quotas or sandbox, so it must not be exposed beyond `127.0.0.1`.
+- **Public GitHub repositories only** by URL, through GitHub's anonymous API, which allows about 60 requests an hour. Local repositories can be indexed from the command line.
+- **One commit per repository,** the default branch's latest.
+- **Five languages** are indexed: Java, TypeScript, JavaScript, SQL and YAML.
+- **Embeddings run on the CPU,** so a large repository takes a while. The largest added by URL so far had 426 chunks and took 27 seconds.
+- **Secret detection is pattern based.** It recognizes known token formats and credential keys, not every hardcoded password.
+- **The layout is for a desktop window,** down to about 1000 pixels wide.
+- **The evaluation is small:** two repositories, labelled and graded by one person.
 
-See [docs/architecture.md](docs/architecture.md#known-limitations) for the complete list.
+The complete list is in [docs/architecture.md](docs/architecture.md#known-limitations).
+
+## Third-party software and models
+
+Models are downloaded at run time and are never part of this repository:
+
+| Model | Used for | License |
+| --- | --- | --- |
+| [`intfloat/multilingual-e5-small`](https://huggingface.co/intfloat/multilingual-e5-small) | Embeddings | MIT |
+| [`gaudi/opus-mt-tr-en-ctranslate2`](https://huggingface.co/gaudi/opus-mt-tr-en-ctranslate2), from [Helsinki-NLP Opus-MT](https://huggingface.co/Helsinki-NLP/opus-mt-tr-en) | Turkish to English translation | Apache-2.0 |
+| [`qwen2.5:7b`](https://ollama.com/library/qwen2.5), optional | Choosing passages | Apache-2.0 |
+
+`qwen2.5:3b` also works, but it is under the Qwen Research License rather than an open source license. The Python and npm dependencies are under permissive licenses such as MIT, BSD, Apache-2.0 and ISC, except `psycopg` (LGPL-3.0) and `certifi` (MPL-2.0), which are used unmodified as libraries. The containers run [pgvector](https://github.com/pgvector/pgvector) on PostgreSQL and [Ollama](https://github.com/ollama/ollama).
+
+## License
+
+No license has been chosen yet. Until one is added, the default copyright rules apply, and others may not reuse this code.
