@@ -9,6 +9,7 @@ the whole form is rare, which is what lets BM25 find the one line that holds it.
 from __future__ import annotations
 
 import re
+import threading
 import unicodedata
 
 import snowballstemmer
@@ -17,6 +18,8 @@ _WORD = re.compile(r"[^\W_]+", re.UNICODE)
 _IDENTIFIER_PART = re.compile(r"[A-Z]+(?=[A-Z][a-z])|[A-Z]?[a-z]+|[A-Z]+|\d+")
 _JOINED_NAME = re.compile(r"[^\W_]+(?:[-_][^\W_]+)+", re.UNICODE)
 _STEMMER = snowballstemmer.stemmer("english")
+# The stemmer keeps state between calls, and the web server tokenizes from several threads.
+_STEMMER_LOCK = threading.Lock()
 _STEM_CACHE: dict[str, str] = {}
 
 _STOPWORDS = frozenset(
@@ -39,7 +42,8 @@ def fold(word: str) -> str:
 def _stem(word: str) -> str:
     stem = _STEM_CACHE.get(word)
     if stem is None:
-        stem = _STEMMER.stemWord(word)
+        with _STEMMER_LOCK:
+            stem = _STEMMER.stemWord(word)
         _STEM_CACHE[word] = stem
     return stem
 

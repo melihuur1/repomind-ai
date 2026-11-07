@@ -107,6 +107,15 @@ def find_config_secret(text: str) -> str | None:
     return None
 
 
+def credential_lines(text: str) -> list[int]:
+    """1-indexed lines of a configuration file holding a literal credential.
+
+    Such chunks are withheld from the index, but the file around them stays readable,
+    so anything that shows the whole file has to hide these lines too.
+    """
+    return [number for number, line in enumerate(text.split("\n"), start=1) if find_config_secret(line)]
+
+
 @dataclass(frozen=True)
 class PathDecision:
     language: str | None

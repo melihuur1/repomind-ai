@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol, Sequence
@@ -62,32 +63,36 @@ class FastEmbedProvider:
         self.batch_size = batch_size
         self._models_dir = models_dir
         self._model = None
+        self._load_lock = threading.Lock()
 
     def _load(self):
         if self._model is not None:
             return self._model
-        try:
-            from fastembed import TextEmbedding
-            from fastembed.common.model_description import ModelSource, PoolingType
+        with self._load_lock:
+            if self._model is not None:
+                return self._model
+            try:
+                from fastembed import TextEmbedding
+                from fastembed.common.model_description import ModelSource, PoolingType
 
-            if self.spec.hf_repo and not any(
-                entry["model"] == self.model_name for entry in TextEmbedding.list_supported_models()
-            ):
-                TextEmbedding.add_custom_model(
-                    model=self.model_name,
-                    pooling=PoolingType.MEAN,
-                    normalization=True,
-                    sources=ModelSource(hf=self.spec.hf_repo),
-                    dim=self.spec.dim,
-                    model_file=self.spec.model_file,
-                )
-            self._model = TextEmbedding(model_name=self.model_name, cache_dir=str(self._models_dir))
-        except Exception as exc:
-            raise RepoMindError(
-                f"Could not load embedding model {self.model_name}: {exc}",
-                hint="The first run needs internet access to download the model. Keyword search works without it.",
-            ) from exc
-        return self._model
+                if self.spec.hf_repo and not any(
+                    entry["model"] == self.model_name for entry in TextEmbedding.list_supported_models()
+                ):
+                    TextEmbedding.add_custom_model(
+                        model=self.model_name,
+                        pooling=PoolingType.MEAN,
+                        normalization=True,
+                        sources=ModelSource(hf=self.spec.hf_repo),
+                        dim=self.spec.dim,
+                        model_file=self.spec.model_file,
+                    )
+                self._model = TextEmbedding(model_name=self.model_name, cache_dir=str(self._models_dir))
+            except Exception as exc:
+                raise RepoMindError(
+                    f"Could not load embedding model {self.model_name}: {exc}",
+                    hint="The first run needs internet access to download the model. Keyword search works without it.",
+                ) from exc
+            return self._model
 
     def embed_passages(self, texts: Sequence[str]) -> list[np.ndarray]:
         prefixed = [self.spec.passage_prefix + text for text in texts]

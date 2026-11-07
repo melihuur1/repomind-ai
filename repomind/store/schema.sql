@@ -7,6 +7,9 @@ CREATE TABLE IF NOT EXISTS repositories (
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Set for repositories added by URL, which are the only ones RepoMind cloned itself and may remove.
+ALTER TABLE repositories ADD COLUMN IF NOT EXISTS origin_url TEXT;
+
 -- One indexed commit. Everything below it is replaced as a unit, in one transaction.
 CREATE TABLE IF NOT EXISTS snapshots (
     id               BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

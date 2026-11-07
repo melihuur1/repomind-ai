@@ -6,6 +6,7 @@ import argparse
 import json
 import os
 import re
+import socket
 import sys
 from pathlib import Path
 
@@ -321,6 +322,31 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
     return 0
 
 
+def command_serve(args: argparse.Namespace, settings: Settings) -> int:
+    import uvicorn
+
+    from repomind.api.app import create_app
+    from repomind.api.services import Services
+
+    # It has no accounts, so it must not listen on anything another machine can reach.
+    if args.host not in ("127.0.0.1", "localhost"):
+        raise RepoMindError(
+            f"Refusing to listen on {args.host}.",
+            hint="This version is for one person on their own machine, so it listens on 127.0.0.1 only.",
+        )
+    with socket.socket() as probe:
+        try:
+            probe.bind((args.host, args.port))
+        except OSError as exc:
+            raise RepoMindError(
+                f"Port {args.port} cannot be used.",
+                hint="Another program holds it, or Windows reserves it. Choose another with --port.",
+            ) from exc
+    _emit(f"RepoMind AI is running at http://{args.host}:{args.port}  (press Ctrl+C to stop)")
+    uvicorn.run(create_app(Services.production(settings)), host=args.host, port=args.port, log_level="warning")
+    return 0
+
+
 def _memory_guard(minimum_gb: float):
     """Stops a run between questions, while it can still save its work and leave the machine usable."""
     from repomind.evaluation.memory import available_memory_gb
@@ -460,6 +486,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="do not start, and stop between questions, when less than this much memory is free (default: 3, 0 turns it off)",
     )
     evaluate_ask.set_defaults(handler=command_evaluate_ask)
+
+    serve = commands.add_parser("serve", help="start the web application")
+    serve.add_argument("--host", default="127.0.0.1")
+    serve.add_argument("--port", type=int, default=7321)
+    serve.set_defaults(handler=command_serve)
 
     return parser
 

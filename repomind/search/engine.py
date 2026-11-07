@@ -61,12 +61,15 @@ class SearchEngine:
         embedder: Embedder | None = None,
         config: SearchConfig = SearchConfig(),
         translator: QueryTranslator | None = None,
+        keyword_indexes: dict[tuple, KeywordIndex] | None = None,
     ) -> None:
         self.store = store
         self.embedder = embedder
         self.config = config
         self.translator = translator
-        self._indexes: dict[tuple, KeywordIndex] = {}
+        # Shared by a long-running server, whose engines live for one request. Keys hold snapshot ids,
+        # so a new commit never reads an old index.
+        self._indexes: dict[tuple, KeywordIndex] = {} if keyword_indexes is None else keyword_indexes
         self._translations: dict[str, str | None] = {}
 
     def _snapshot_ids(self, repos: list[str] | None) -> list[int]:

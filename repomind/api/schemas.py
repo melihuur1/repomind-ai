@@ -1,0 +1,152 @@
+"""What the API sends and accepts. The web client's types are generated from these."""
+
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Literal
+
+from pydantic import BaseModel, Field
+
+MAX_QUESTION_CHARACTERS = 1000
+MAX_QUERY_CHARACTERS = 500
+MAX_PATH_CHARACTERS = 1024
+MAX_REPOSITORY_NAME_CHARACTERS = 200
+
+
+class ApiErrorBody(BaseModel):
+    code: str
+    message: str
+
+
+AiState = Literal["ready", "offline", "model_missing", "not_configured", "low_memory"]
+
+
+class AiStatus(BaseModel):
+    state: AiState
+    model: str | None = None
+    detail: str
+
+
+class Health(BaseModel):
+    status: Literal["ok", "degraded"]
+    database: bool
+    ai: AiStatus
+    free_memory_gb: float | None
+    ui_built: bool
+
+
+class Repository(BaseModel):
+    name: str
+    commit: str
+    committed_at: datetime
+    subject: str
+    indexed_at: datetime
+    files_in_commit: int
+    files_indexed: int
+    chunks: int
+    symbols: int
+    languages: dict[str, int]
+    skipped: dict[str, int]
+    embedded_chunks: int
+    origin_url: str | None = None
+
+
+class TreeEntry(BaseModel):
+    path: str
+    language: str
+    line_count: int
+    has_syntax_errors: bool
+    is_test: bool
+
+
+class Tree(BaseModel):
+    repo: str
+    commit: str
+    files: list[TreeEntry]
+    files_in_commit: int
+    skipped: dict[str, int]
+
+
+class FileContent(BaseModel):
+    repo: str
+    commit: str
+    path: str
+    language: str
+    lines: list[str]
+    hidden_lines: list[int] = Field(description="Lines hidden because they may hold a credential. Their text is empty.")
+    has_syntax_errors: bool
+    origin_url: str | None = None
+
+
+SearchMode = Literal["keyword", "semantic", "hybrid"]
+
+
+class SearchResultItem(BaseModel):
+    rank: int
+    score: float
+    path: str
+    language: str
+    kind: str
+    symbol: str | None
+    start_line: int
+    end_line: int
+    is_test: bool
+    preview: str
+    reasons: dict
+
+
+class SearchResponse(BaseModel):
+    repo: str
+    commit: str
+    query: str
+    mode: SearchMode
+    translated_query: str | None
+    results: list[SearchResultItem]
+    warnings: list[str]
+    seconds: float
+
+
+class AskRequest(BaseModel):
+    repo: str = Field(min_length=1, max_length=MAX_REPOSITORY_NAME_CHARACTERS)
+    question: str = Field(min_length=1, max_length=MAX_QUESTION_CHARACTERS)
+
+
+SourceRole = Literal["answer", "review_candidate", "closest"]
+AnswerCheck = Literal["passed", "failed", "not_made"]
+
+
+class AskSource(BaseModel):
+    """Two checks that must not be confused. ``exists_in_git`` does not mean the lines answer the question."""
+
+    role: SourceRole
+    repo: str
+    commit: str
+    path: str
+    language: str
+    symbol: str | None
+    start_line: int
+    end_line: int
+    text: str
+    exists_in_git: bool
+    answer_check: AnswerCheck
+
+
+Verdict = Literal["lines_chosen", "not_enough_evidence", "invalid_response", "ai_unavailable"]
+
+
+class AskResponse(BaseModel):
+    experimental: Literal[True] = True
+    verdict: Verdict
+    message: str
+    ai_used: bool
+    ai: AiStatus
+    model_reading: str | None = Field(description="The model's own sentence. It is unverified, and may be false.")
+    model_reading_removed_because: str | None
+    sources: list[AskSource]
+    translated_query: str | None
+    warnings: list[str]
+    discarded: list[str]
+    model: str | None
+    input_tokens: int
+    output_tokens: int
+    seconds: float

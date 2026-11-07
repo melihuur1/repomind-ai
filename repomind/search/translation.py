@@ -8,6 +8,7 @@ imperfect, which is why the translated query is added to the original, never rep
 from __future__ import annotations
 
 import re
+import threading
 from pathlib import Path
 from typing import Protocol
 
@@ -65,21 +66,26 @@ class LocalTurkishTranslator:
         self._translator = None
         self._source = None
         self._target = None
+        self._load_lock = threading.Lock()
 
     def _load(self) -> None:
         if self._translator is not None:
             return
-        try:
-            import ctranslate2
-            import sentencepiece
-            from huggingface_hub import snapshot_download
+        with self._load_lock:
+            if self._translator is not None:
+                return
+            try:
+                import ctranslate2
+                import sentencepiece
+                from huggingface_hub import snapshot_download
 
-            path = snapshot_download(MODEL_REPOSITORY, revision=MODEL_REVISION, cache_dir=str(self._models_dir))
-            self._translator = ctranslate2.Translator(path, device="cpu", compute_type="int8")
-            self._source = sentencepiece.SentencePieceProcessor(model_file=f"{path}/source.spm")
-            self._target = sentencepiece.SentencePieceProcessor(model_file=f"{path}/target.spm")
-        except Exception as exc:
-            raise RepoMindError(f"Could not load the translation model: {exc}") from exc
+                path = snapshot_download(MODEL_REPOSITORY, revision=MODEL_REVISION, cache_dir=str(self._models_dir))
+                self._source = sentencepiece.SentencePieceProcessor(model_file=f"{path}/source.spm")
+                self._target = sentencepiece.SentencePieceProcessor(model_file=f"{path}/target.spm")
+                # Last, because a thread that sees it set does not wait for this lock.
+                self._translator = ctranslate2.Translator(path, device="cpu", compute_type="int8")
+            except Exception as exc:
+                raise RepoMindError(f"Could not load the translation model: {exc}") from exc
 
     def translate(self, text: str) -> str:
         self._load()

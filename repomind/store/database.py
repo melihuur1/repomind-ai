@@ -61,10 +61,12 @@ class SnapshotInfo:
     commit_subject: str
     stats: dict
     indexed_at: object
+    origin_url: str | None = None
 
 
 class Store:
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, apply_schema: bool = True) -> None:
+        """``apply_schema`` can be off for a short-lived connection, once something has applied it."""
         try:
             # Autocommit makes every `connection.transaction()` block a real transaction.
             # Otherwise an earlier SELECT opens an implicit one, the block degrades to a
@@ -78,7 +80,8 @@ class Store:
                     "and check REPOMIND_DATABASE_URL."
                 ),
             ) from exc
-        self.connection.execute(_SCHEMA_PATH.read_text(encoding="utf-8"))
+        if apply_schema:
+            self.connection.execute(_SCHEMA_PATH.read_text(encoding="utf-8"))
         register_vector(self.connection)
 
     def close(self) -> None:
@@ -186,7 +189,7 @@ class Store:
         rows = self.connection.execute(
             """
             SELECT s.id, r.name AS repo, r.source_path, s.commit_sha, s.committed_at, s.commit_subject,
-                   s.stats, s.indexed_at
+                   s.stats, s.indexed_at, r.origin_url
               FROM snapshots s JOIN repositories r ON r.id = s.repository_id
              WHERE s.is_active AND (%(names)s::text[] IS NULL OR r.name = ANY(%(names)s))
              ORDER BY r.name
@@ -206,6 +209,21 @@ class Store:
             {"id": snapshot_id},
         ).fetchone()
         return dict(row)
+
+    # -------------------------------------------------------------------- files
+
+    def indexed_files(self, snapshot_id: int) -> list[dict]:
+        """Only files that passed every filter are here, so this is what may be shown."""
+        return self.connection.execute(
+            "SELECT path, language, line_count, has_syntax_errors FROM files WHERE snapshot_id = %s ORDER BY path",
+            (snapshot_id,),
+        ).fetchall()
+
+    def indexed_file(self, snapshot_id: int, path: str) -> dict | None:
+        return self.connection.execute(
+            "SELECT path, language, line_count, has_syntax_errors FROM files WHERE snapshot_id = %s AND path = %s",
+            (snapshot_id, path),
+        ).fetchone()
 
     # ------------------------------------------------------------------- chunks
 
