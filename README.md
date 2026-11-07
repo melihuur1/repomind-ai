@@ -297,4 +297,4 @@ Models are downloaded at run time and are never part of this repository:
 
 ## License
 
-No license has been chosen yet. Until one is added, the default copyright rules apply, and others may not reuse this code.
+[MIT](LICENSE), © 2026 Melih Uğur. This covers RepoMind's own code. The dependencies and models above keep their own licenses.
