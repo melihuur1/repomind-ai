@@ -36,9 +36,7 @@ services:
       OLLAMA_KEEP_ALIVE: "2m"
     # A model too big for this limit fails inside this container instead of squeezing other programs.
     mem_limit: 8g
-    # Layers that fit in the GPU's memory run there, and the rest on the CPU.
-    # Needs an NVIDIA GPU. On a machine without one, remove this line and it runs on the CPU.
-    gpus: all
+    # This runs on the CPU. compose.gpu.yaml adds an NVIDIA GPU for machines that have one.
     ports:
       - "127.0.0.1:${REPOMIND_OLLAMA_PORT:-11535}:11434"
     volumes:

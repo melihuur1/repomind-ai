@@ -1,6 +1,6 @@
 # Architecture
 
-RepoMind is so far a retrieval and answering engine with a command line interface. There is deliberately no web application, user management, GitHub API integration or job queue yet: those come only after the core is shown to find the right code and explain it correctly.
+RepoMind is a retrieval and answering engine, with a command line and a [local web application](#web-application) over it. Both call the same code, and the web layer adds no search or answer logic. There are deliberately no accounts or separate job services: it is for one person on one machine.
 
 ```mermaid
 flowchart LR
@@ -214,13 +214,49 @@ A run with the 7B model was once stopped because the machine ran critically low 
 | `OLLAMA_MAX_LOADED_MODELS=1` | Two models loaded together were measured at 8.7 GiB |
 | `OLLAMA_NUM_PARALLEL=1` | Ollama's default reserved twice the context (`--parallel 2 --ctx-size 16384`), although RepoMind sends one request at a time |
 | `OLLAMA_KEEP_ALIVE=2m` and `mem_limit: 8g` | A model is released soon after use, and a model that does not fit fails inside its container |
-| `gpus: all` | Layers that fit in VRAM leave physical RAM and run faster. Through WSL they still use Windows commit space, about as much as the model's size |
+| `gpus: all`, in the optional `compose.gpu.yaml` | Layers that fit in VRAM leave physical RAM and run faster. Through WSL they still use Windows commit space, about as much as the model's size |
 | `evaluate-ask` | Saves each question to a checkpoint as it finishes, does not start with less than 3 GB free, and stops between questions if free memory falls below that |
+| The web application | Below 4 GB free, it does not call the model, and indexing does not start and stops at its next batch. One question runs at a time, and a second gets `429` |
 
 Free memory here means the smaller of free physical memory and free commit space, because Windows can run out of commit space while physical memory is still free. A checkpoint records the model, question set and prompts, and refuses to continue a run if any of them changed. The memory check runs between questions, so it cannot catch a spike during one, which is why [`resource_trial.ps1`](../eval/tools/resource_trial.ps1) asks for 12 GB before it loads a model.
 
+## Web application
+
+`repomind/api` is a thin FastAPI layer over the same `SearchEngine`, `QAEngine` and `index_repository` that the command line uses. `web/` is a React and TypeScript client, whose types are generated from the API's OpenAPI document, and a test fails if the two drift apart. `python -m repomind serve` runs both in one process.
+
+Routes are synchronous and run in FastAPI's thread pool, because the engine is. Each request has its own `Store`, and they share the embedder, translator, LLM client and keyword index cache. The model's state is checked at most every 5 seconds. If it is off, or dies during a question, a question still returns the closest lines and says the model was not used.
+
+### What the browser can reach
+
+| Risk | What stands in the way |
+| --- | --- |
+| Reading outside the repository | A path is served only if it exactly matches a row of the `files` table for that snapshot, and its content comes from Git objects, not from the disk. Traversal and excluded files get `404` |
+| Secrets | Excluded files are not in that table. In YAML, lines that `credential_lines` flags are replaced before they leave the server |
+| Script in a file name, code, commit message or model reply | All of it is rendered as text. The highlighter returns tokens, and `dangerouslySetInnerHTML` is not used. A content policy with no inline script is a second layer, and a browser test shows that it stops an inline handler |
+| Another website calling this local server | It answers only to its own host names, and a request that changes something must come from its own origin and be JSON. It refuses to listen beyond loopback |
+| Local details in an error | Paths are removed from messages, and an unexpected error says only that something went wrong |
+
+Commit-pinned links ask for an exact commit. A commit that is not the indexed one gets `409`, and the page offers the current one, because only one commit per repository is kept.
+
+### Adding a repository by URL
+
+`repomind/ingest/github.py` treats both the address and the repository as hostile, and `repomind/api/jobs.py` runs the work.
+
+| Step | How it is made safe |
+| --- | --- |
+| Address | One strict pattern gives an owner and a name, and every later request is rebuilt from those. No user text reaches a URL or a command line |
+| Is it public? | `GET api.github.com/repos/{owner}/{name}`, unauthenticated, with redirects followed only within that host. A missing `private` field is not taken to mean public. The size and default branch come from here, and the branch name is checked before use |
+| Which commit? | `git ls-remote`. If this commit is already fully indexed, the job ends here |
+| Clone | `--no-checkout --depth=1 --single-branch --no-tags --no-recurse-submodules --template=`, with `protocol.allow=never` except HTTPS, `core.hooksPath` emptied, `http.followRedirects=false`, no credential helper, and `GIT_CONFIG_GLOBAL` and `GIT_CONFIG_NOSYSTEM` keeping this machine's Git settings out. It is watched for time and size, and into a temporary folder that is renamed only on success |
+| Before indexing | File count, source file count and source size are checked. A refused repository leaves no clone behind |
+| Indexing | The existing `index_repository`, with its filters. Time and memory are checked after each batch of embeddings. A repository stopped partway stays listed with what it has, and a retry continues |
+
+There is one worker thread and an `index_jobs` table, and no separate queue service. A partial unique index keeps a repository from having two unfinished jobs, and a restart marks running jobs as failed so that they can be retried.
+
 ## Known limitations
 
+- **The web application is for one person on one machine.** It has no accounts, quotas or sandbox. Nothing from a repository runs, so a sandbox has not been needed, but hosting it for others would need a different design.
+- **Removing a repository keeps its vectors.** They are a cache keyed by a hash of the text, hold no source text, and would be reused if the same text returned.
 - **A verified line is not a proven answer.** The lines are real, and choosing them is still a judgement. On the [final question set](evaluation.md#fifth-question-set), 4 of 16 answers did not touch the expected source, and 2 of 8 unanswerable questions got an answer.
 - **The right lines often never reach the model.** On that set, search missed them for 3 of 16 Turkish questions, and passage selection for 3 more. A short line that a question describes without naming, such as `token-ttl`, is still hard to find.
 - **The evidence rule counts words, not meaning.** It asks for 2 words shared with the question, which a short line often does not have. For 12 of 85 questions already read it would drop the right lines if the model chose them, although it wrongly rejected none on the final set.

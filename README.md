@@ -2,7 +2,45 @@
 
 **Intelligent GitHub repository analyzer.** Ask where and how something is done in a codebase, and get the code that answers it, with file and line citations verified against the exact Git commit.
 
-> **Status: the engine is finished and measured, and the product phase is next.** This is the retrieval and answering engine with a command line interface. It is measured on real repositories, and the results below are reported as they are, including where they are weak. **Search works and is useful. AI answers are not reliable, and every line must be read.** The web application is [planned](docs/product-plan.md), and not built yet.
+> **Status: a working local web application, for one person on one machine.** Add a public GitHub repository by URL, browse it, search it, read its real lines at the indexed commit, and ask about it in Turkish or English. It is measured on real repositories, and the results below are reported as they are, including where they are weak. **Search and reading code are dependable. AI answers are experimental and not reliable, so every line they point at must be read.**
+
+## The web application
+
+| Screen | What it does | Needs the model |
+| --- | --- | --- |
+| **Repositories** | Lists what is indexed, with commit, languages and counts. Adds a public GitHub repository by URL, with progress, readable errors and a retry. | No |
+| **Files** | The tree of indexed files, and each file's real lines with numbers, read from Git at the indexed commit. A link holds the exact commit and lines. | No |
+| **Search** | Keyword, semantic or hybrid, in Turkish or English, with the reason for each result. A result opens at its lines. | No |
+| **Experimental AI Analysis** | A question about one repository, in Turkish or English. Each source opens at its lines. | Only to choose among lines |
+
+To start it, see [Getting started](#getting-started). Search, reading code and indexing keep working with the model off, and on a machine with no GPU.
+
+### What an AI reply means
+
+**In the final measurement the model found the right source for 8 of 16 questions and showed a wrong one for 4, and it answered 2 of 8 questions it should have refused.** The page says so next to every question, and it keeps apart what is checked and what is only the model's judgement:
+
+| Shown as | What it means | What it does not mean |
+| --- | --- | --- |
+| **In Git at `abc1234`** | These exact lines exist in that commit. This is checked. | That they answer the question |
+| **The model chose these lines** | The model picked them, and they share enough words with the question to pass the evidence rule | That they are right. This is its judgement, and it is often wrong |
+| **Model's reading** | One sentence from the model, collapsed by default and marked as unverified | That it is true. These sentences have claimed features that do not exist |
+| **Not enough evidence** | "I do not know": no lines passed | That the code certainly lacks it. Search misses things |
+| **Source to review** | The model pointed here and the evidence rule did not accept it | An answer. Nothing confirms that it answers the question |
+| **Closest lines found** | What search found, with no judgement from the model | An answer |
+| **AI unavailable** | The model is off or memory is low, so it was not asked. The closest lines are still shown | A failure of the application |
+
+### Adding a repository by URL
+
+The address and the repository's contents are both treated as hostile:
+
+- **Only `https://github.com/owner/name`.** The address is reduced to an owner and a name, and every request is rebuilt from those, so it cannot reach another host or a local service. Other hosts, credentials, ports, paths and other protocols are refused before any request.
+- **Only public repositories,** checked with GitHub's API, whose redirects are followed only within that API.
+- **Nothing from the repository runs.** The clone writes only Git's own objects: no working files, hooks, submodules, filters or LFS. Only HTTPS is allowed, Git redirects are off, and this machine's Git settings and stored credentials take no part.
+- **Limits, all [configurable](.env.example):** 300 MB on GitHub, 600 MB cloned, 20,000 files, 5,000 source files, 100 MB of source, 5 minutes to clone and 30 minutes in all. Indexing does not start, and stops, below 4 GB of free memory, and a retry continues from where it stopped.
+- **Secrets and generated files stay out,** through the same filters as the command line. In YAML, a line that may hold a credential is hidden.
+- **The same commit is not cloned or indexed twice.**
+
+One background thread does the work and the page follows its progress, so the page stays usable meanwhile. Only Java, TypeScript, JavaScript, SQL and YAML are read. Removing a repository deletes only RepoMind's index and clone, and only for repositories added by URL.
 
 ## Results
 
@@ -86,7 +124,7 @@ The design and its trade-offs are in [docs/architecture.md](docs/architecture.md
 
 ## Getting started
 
-Requires Python 3.11+, Git and Docker.
+Requires Python 3.11+, Node.js 20+, Git and Docker. No GPU, account or paid service is needed.
 
 ```bash
 python -m venv .venv
@@ -94,11 +132,18 @@ source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 cp .env.example .env
 docker compose up -d db          # PostgreSQL + pgvector on 127.0.0.1:55432
+npm --prefix web ci
+npm --prefix web run build
+python -m repomind serve         # http://127.0.0.1:7321
 ```
 
 The first indexing or semantic search downloads the local models into `.models/` (about 0.6 GB for the embedding and translation models).
 
-### Index and search
+It listens only on `127.0.0.1`, and has no accounts, so it is not meant to be hosted for others. If port 7321 cannot be used, pass `--port`. Windows reserves some ranges of ports. For development with hot reload, run `npm --prefix web run dev` next to it.
+
+To use AI analysis, start the local model as described in [Answering questions](#answering-questions). It can be started and stopped while the application runs.
+
+### Index and search from the command line
 
 ```bash
 python -m repomind index --path "/path/to/repository"
@@ -133,7 +178,16 @@ REPOMIND_LLM_MODEL=qwen2.5:7b
 
 `qwen2.5:7b` is the default, is Apache-2.0 licensed, and took about 6.4 GB across RAM and VRAM in the pilot. The smaller `qwen2.5:3b` also works, but it is under the Qwen Research License rather than an open source license, and it did worse in the pilot. Any OpenAI-compatible endpoint works. Sending code to a remote endpoint must be enabled explicitly, and paid use needs prices and a budget in `.env`.
 
-The container keeps one model in memory at a time, is limited to 8 GB, and uses an NVIDIA GPU through `gpus: all` in `compose.yaml`. On a machine without one, remove that line and it runs on the CPU. To give the memory back when you are done, run `docker compose stop ollama`.
+The container keeps one model in memory at a time and is limited to 8 GB. To give the memory back when you are done, run `docker compose stop ollama`.
+
+**A GPU is optional.** By default the model runs on the CPU, and nothing else in RepoMind uses a GPU. On a machine with an NVIDIA GPU, add this to `.env`, and then run `docker compose --profile llm up -d ollama`:
+
+```bash
+COMPOSE_PATH_SEPARATOR=,
+COMPOSE_FILE=compose.yaml,compose.gpu.yaml
+```
+
+On the development machine, one Turkish question through the web application took about 50 seconds on the CPU, including loading the model, against about 12 seconds partly on an RTX 3050. That is one question each, not a measurement.
 
 **Limits of answers.** Every line shown is checked against Git, and lines that mention too little of a question do not count as evidence. That does not make them the answer: choosing them is the model's judgement, and in the evaluation it often chose wrongly. A citation alone does not prove an answer. Use `ask` to find the relevant code, and read it.
 
@@ -154,9 +208,14 @@ To try a local model at low risk, [`eval/tools/resource_trial.ps1`](eval/tools/r
 
 ```bash
 pytest
+npm --prefix web test            # the web client's own logic
+npm --prefix web run build       # the browser tests serve this build
+npm --prefix web run test:e2e    # a real browser against the real application
 ```
 
 Tests that need the database, the evaluation repositories or a running LLM skip themselves when those are unavailable. Set `REPOMIND_REPO_STOCKGUARD` and `REPOMIND_REPO_SYNCNOTES` to run the gold label checks.
+
+The browser tests use the real API, database, Git and clone command, in a database of their own, on a fixture repository holding secrets, prompt injection and markup in its file names, code and commit messages. Only the models and GitHub are stood in for, so they need no network, GPU or model. They use the installed Edge. Set `REPOMIND_E2E_BROWSER=chrome` to use Chrome.
 
 ## Evaluation discipline
 
@@ -180,5 +239,10 @@ The full method, every stage of the investigation and the rejected ideas are in 
 - Answers took about 7 seconds per question with 7B partly on an RTX 3050, and about 14 with 3B on an 8-core CPU.
 - The evaluation is small, covers two repositories and was labelled and graded by one reviewer. The gold labels are not exhaustive, so some reasonable results count as misses.
 - Secret detection recognizes known token formats and literal credential keys, not every hardcoded password.
+- **The web application is for one person on one machine.** It has no accounts, quotas or sandbox, and must not be exposed beyond `127.0.0.1`.
+- **Adding repositories uses GitHub's anonymous API,** which allows about 60 requests an hour from one address. Past that, it says so and does not retry on its own. Private repositories are not supported.
+- **Only the default branch's latest commit is indexed,** and only one commit per repository is kept. To pick up new commits, add the same address again.
+- **Embeddings run on the CPU,** so a large repository can take many minutes. Adding by URL was tried by hand on two real public repositories: `expressjs/cors` (34 chunks, 9 seconds) and `spring-projects/spring-petclinic` (426 chunks, 27 seconds). Nothing larger has been tried this way.
+- **The layout is for a desktop window.** It works down to about 1000 pixels wide, where the code view becomes narrow unless the AI panel is closed. It is not designed for phones.
 
 See [docs/architecture.md](docs/architecture.md#known-limitations) for the complete list.

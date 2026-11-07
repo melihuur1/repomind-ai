@@ -1,0 +1,8 @@
+# Optional. Lets the local model use an NVIDIA GPU: layers that fit in its memory run there,
+# and the rest on the CPU. Without this file everything runs on the CPU.
+#
+# Turn it on with COMPOSE_FILE in .env (see .env.example), or pass it each time:
+#   docker compose -f compose.yaml -f compose.gpu.yaml --profile llm up -d ollama
+services:
+  ollama:
+    gpus: all
