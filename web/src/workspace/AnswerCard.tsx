@@ -124,7 +124,7 @@ export function AnswerCard({ response }: { response: AskResponse }) {
       <div className="answer-meta muted">
         {response.translated_query ? <span title="Translations can be wrong.">Searched as “{response.translated_query}”</span> : null}
         <span>
-          {response.model ?? "no model"} · {response.seconds.toFixed(1)} s
+          {response.model ?? "model not asked"} · {response.seconds.toFixed(1)} s
         </span>
       </div>
     </div>

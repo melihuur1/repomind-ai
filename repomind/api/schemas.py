@@ -51,6 +51,26 @@ class Repository(BaseModel):
     origin_url: str | None = None
 
 
+class AddRepositoryRequest(BaseModel):
+    url: str = Field(min_length=1, max_length=200)
+
+
+class IndexJob(BaseModel):
+    id: int
+    repo: str
+    url: str
+    status: Literal["queued", "running", "done", "failed"]
+    phase: str
+    done: int
+    total: int
+    outcome: str | None
+    commit_sha: str | None
+    error_code: str | None
+    message: str | None
+    created_at: datetime
+    updated_at: datetime
+
+
 class TreeEntry(BaseModel):
     path: str
     language: str

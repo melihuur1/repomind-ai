@@ -36,6 +36,11 @@ def public_message(text: str) -> str:
     return _LOCAL_PATH.sub("<local path>", text)
 
 
+def data_directory() -> Path:
+    """Where clones of repositories added by URL live. Nothing outside it is ever written or removed."""
+    return Path(get_setting("REPOMIND_DATA_DIR", str(PROJECT_ROOT / ".data")))
+
+
 class LLMUnavailable(RepoMindError):
     """The model could not be reached. It is not a problem with the question."""
 

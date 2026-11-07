@@ -38,7 +38,7 @@ function Row({ node, depth, repo, commit, currentPath, closed, opened, toggle }:
       </li>
     );
   }
-  const open = isOpen(node, closed, opened, currentPath);
+  const open = isOpen(node, depth, closed, opened, currentPath);
   return (
     <li>
       <button type="button" className="tree-row tree-folder" style={indent} aria-expanded={open} onClick={() => toggle(node, !open)} title={node.path}>

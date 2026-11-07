@@ -210,6 +210,67 @@ class Store:
         ).fetchone()
         return dict(row)
 
+    def find_snapshot_is_current(self, snapshot_id: int, pipeline_version: str) -> bool:
+        row = self.connection.execute("SELECT pipeline_version FROM snapshots WHERE id = %s", (snapshot_id,)).fetchone()
+        return bool(row) and row["pipeline_version"] == pipeline_version
+
+    def set_origin_url(self, name: str, url: str) -> None:
+        self.connection.execute("UPDATE repositories SET origin_url = %s WHERE name = %s", (url, name))
+
+    def delete_repository(self, name: str) -> None:
+        """Removes what RepoMind stored about it. Embeddings stay, because they are a cache keyed by text."""
+        self.connection.execute("DELETE FROM repositories WHERE name = %s", (name,))
+
+    # ----------------------------------------------------------------- index jobs
+
+    def create_job(self, repo: str, url: str) -> tuple[dict, bool]:
+        """The job and whether it is new. A repository with an unfinished job keeps that one."""
+        created = self.connection.execute(
+            """
+            INSERT INTO index_jobs (repo, url, status, phase) VALUES (%s, %s, 'queued', 'queued')
+            ON CONFLICT (repo) WHERE status IN ('queued', 'running') DO NOTHING RETURNING *
+            """,
+            (repo, url),
+        ).fetchone()
+        return (created, True) if created else (self.active_job(repo), False)
+
+    _JOB_FIELDS = frozenset({"repo", "url", "status", "phase", "done", "total", "outcome", "commit_sha", "error_code", "message"})
+
+    def update_job(self, job_id: int, **fields: object) -> None:
+        unknown = set(fields) - self._JOB_FIELDS
+        if unknown:
+            raise ValueError(f"Unknown job fields: {unknown}")
+        assignments = ", ".join(f"{name} = %s" for name in fields)
+        self.connection.execute(
+            f"UPDATE index_jobs SET {assignments}, updated_at = now() WHERE id = %s",
+            (*fields.values(), job_id),
+        )
+
+    def job(self, job_id: int) -> dict | None:
+        return self.connection.execute("SELECT * FROM index_jobs WHERE id = %s", (job_id,)).fetchone()
+
+    def active_job(self, repo: str) -> dict | None:
+        return self.connection.execute(
+            "SELECT * FROM index_jobs WHERE repo = %s AND status IN ('queued', 'running')", (repo,)
+        ).fetchone()
+
+    def count_active_jobs(self) -> int:
+        return self.connection.execute(
+            "SELECT COUNT(*) AS count FROM index_jobs WHERE status IN ('queued', 'running')"
+        ).fetchone()["count"]
+
+    def recent_jobs(self, limit: int = 20) -> list[dict]:
+        return self.connection.execute("SELECT * FROM index_jobs ORDER BY id DESC LIMIT %s", (limit,)).fetchall()
+
+    def fail_unfinished_jobs(self, message: str) -> None:
+        self.connection.execute(
+            """
+            UPDATE index_jobs SET status = 'failed', phase = 'failed', error_code = 'interrupted', message = %s, updated_at = now()
+             WHERE status IN ('queued', 'running')
+            """,
+            (message,),
+        )
+
     # -------------------------------------------------------------------- files
 
     def indexed_files(self, snapshot_id: int) -> list[dict]:

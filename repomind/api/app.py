@@ -20,6 +20,7 @@ from starlette.exceptions import HTTPException
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from repomind.api.errors import ApiError
+from repomind.api.jobs import IndexingWorker
 from repomind.api.routes import router
 from repomind.api.services import Services, public_message
 from repomind.errors import RepoMindError
@@ -46,15 +47,21 @@ def _same_origin(request: Request) -> bool:
     return urlparse(origin).netloc == request.headers.get("host", "")
 
 
-def create_app(services: Services) -> FastAPI:
+def create_app(services: Services, worker: IndexingWorker | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(_app: FastAPI):
+        started = False
         try:
             services.prepare_database()
+            if worker:
+                worker.start()
+                started = True
         except RepoMindError as exc:
             # Stay up, so that the page can say what is wrong.
             logger.warning("Database not ready: %s", public_message(str(exc)))
         yield
+        if started:
+            worker.stop()
 
     app = FastAPI(
         title="RepoMind AI",
@@ -65,6 +72,7 @@ def create_app(services: Services) -> FastAPI:
         lifespan=lifespan,
     )
     app.state.services = services
+    app.state.worker = worker
 
     @app.middleware("http")
     async def guard(request: Request, call_next):

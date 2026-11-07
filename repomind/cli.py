@@ -326,7 +326,9 @@ def command_serve(args: argparse.Namespace, settings: Settings) -> int:
     import uvicorn
 
     from repomind.api.app import create_app
-    from repomind.api.services import Services
+    from repomind.api.jobs import IndexingWorker
+    from repomind.api.services import Services, data_directory
+    from repomind.ingest.github import GitHubSource, IndexLimits
 
     # It has no accounts, so it must not listen on anything another machine can reach.
     if args.host not in ("127.0.0.1", "localhost"):
@@ -343,7 +345,9 @@ def command_serve(args: argparse.Namespace, settings: Settings) -> int:
                 hint="Another program holds it, or Windows reserves it. Choose another with --port.",
             ) from exc
     _emit(f"RepoMind AI is running at http://{args.host}:{args.port}  (press Ctrl+C to stop)")
-    uvicorn.run(create_app(Services.production(settings)), host=args.host, port=args.port, log_level="warning")
+    services = Services.production(settings)
+    worker = IndexingWorker(services, GitHubSource(), data_directory(), IndexLimits.load())
+    uvicorn.run(create_app(services, worker), host=args.host, port=args.port, log_level="warning")
     return 0
 
 

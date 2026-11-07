@@ -62,7 +62,7 @@ def store():
     except RepoMindError:
         pytest.skip("RepoMind PostgreSQL is not reachable")
     database.connection.execute(
-        "TRUNCATE repositories, snapshots, files, chunks, symbols, imports, embeddings, llm_usage RESTART IDENTITY CASCADE"
+        "TRUNCATE repositories, snapshots, files, chunks, symbols, imports, embeddings, llm_usage, index_jobs RESTART IDENTITY CASCADE"
     )
     yield database
     database.close()

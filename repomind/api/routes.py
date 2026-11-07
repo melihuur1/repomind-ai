@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 from typing import Annotated
 
-from fastapi import APIRouter, Query, Request
+from fastapi import APIRouter, Query, Request, Response
 
 from repomind.api import schemas
 from repomind.api.errors import ApiError
@@ -13,6 +13,7 @@ from repomind.api.services import Services, public_message
 from repomind.errors import RepoMindError
 from repomind.ingest.filters import credential_lines, is_test_path, normalize_source
 from repomind.ingest.git_source import GitRepository
+from repomind.ingest.github import IndexFailure
 from repomind.qa.engine import AnswerCheck, AskResult
 from repomind.store.database import ChunkRow, SnapshotInfo, Store
 
@@ -98,6 +99,62 @@ def list_repositories(request: Request) -> list[schemas.Repository]:
     model = services.embedder.model_name if services.embedder else None
     with services.store() as store:
         return [_repository(store, snapshot, model) for snapshot in store.active_snapshots()]
+
+
+def _worker(request: Request):
+    worker = request.app.state.worker
+    if worker is None:
+        raise ApiError(503, "indexing_unavailable", "Adding repositories is not available right now.")
+    return worker
+
+
+@router.post("/repositories", response_model=schemas.IndexJob, status_code=202)
+def add_repository(request: Request, body: schemas.AddRepositoryRequest) -> schemas.IndexJob:
+    """Returns straight away. The page follows the job, and search and browsing keep working meanwhile."""
+    try:
+        return schemas.IndexJob(**_worker(request).submit(body.url))
+    except IndexFailure as exc:
+        raise ApiError(422, exc.code, str(exc)) from exc
+
+
+@router.delete("/repositories", status_code=204)
+def remove_repository(request: Request, repo: RepoName) -> Response:
+    """Only for a repository added by URL. A local one's files are the user's own, and are never touched."""
+    services = _services(request)
+    with services.store() as store:
+        snapshot = _snapshot(store, repo)
+        if not snapshot.origin_url:
+            raise ApiError(403, "local_repository", "This repository was indexed from a local folder, and cannot be removed here.")
+        store.delete_repository(snapshot.repo)
+    services.keyword_indexes.clear()
+    _worker(request).remove_clone(snapshot.repo)
+    return Response(status_code=204)
+
+
+@router.get("/jobs", response_model=list[schemas.IndexJob])
+def list_jobs(request: Request) -> list[schemas.IndexJob]:
+    with _services(request).store() as store:
+        return [schemas.IndexJob(**job) for job in store.recent_jobs()]
+
+
+@router.get("/jobs/{job_id}", response_model=schemas.IndexJob)
+def get_job(request: Request, job_id: int) -> schemas.IndexJob:
+    with _services(request).store() as store:
+        job = store.job(job_id)
+    if job is None:
+        raise ApiError(404, "job_not_found", "There is no such job.")
+    return schemas.IndexJob(**job)
+
+
+@router.post("/jobs/{job_id}/retry", response_model=schemas.IndexJob, status_code=202)
+def retry_job(request: Request, job_id: int) -> schemas.IndexJob:
+    with _services(request).store() as store:
+        job = store.job(job_id)
+    if job is None:
+        raise ApiError(404, "job_not_found", "There is no such job.")
+    if job["status"] != "failed":
+        raise ApiError(409, "job_not_failed", "Only a failed job can be retried.")
+    return schemas.IndexJob(**_worker(request).submit(job["url"]))
 
 
 @router.get("/tree", response_model=schemas.Tree)

@@ -452,6 +452,171 @@ textarea {
   font-weight: 650;
 }
 
+.add-form {
+  display: flex;
+  gap: 8px;
+  max-width: 720px;
+}
+
+.add-input {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 11px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--muted);
+}
+
+.add-input:focus-within {
+  border-color: var(--accent);
+}
+
+.add-input input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-code);
+  font-size: 12.5px;
+}
+
+.btn-tall {
+  height: 38px;
+  padding: 0 18px;
+  font-weight: 600;
+}
+
+.add-hint {
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.add-repo .note {
+  max-width: 720px;
+  margin-top: 10px;
+}
+
+.job-list {
+  display: grid;
+  gap: 8px;
+  max-width: 720px;
+  margin-top: 12px;
+}
+
+.job {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.job-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 24px;
+}
+
+.job-done .job-head svg {
+  color: var(--ok);
+}
+
+.job-failed .job-head svg {
+  color: var(--danger);
+}
+
+.job-actions {
+  margin-left: auto;
+}
+
+.job-actions .btn {
+  height: 24px;
+}
+
+.job-message {
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.job-failed .job-message {
+  color: var(--danger);
+}
+
+.progress {
+  overflow: hidden;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--panel-hover);
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent-strong);
+  transition: width 0.3s;
+}
+
+.progress-unknown {
+  width: 35%;
+  animation: sweep 1.3s ease-in-out infinite;
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+.repo-card-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.repo-card-link {
+  color: inherit;
+}
+
+/* The whole card opens the repository, while the button in it stays its own control. */
+.repo-card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+}
+
+.repo-card-link:focus-visible {
+  outline: 0;
+}
+
+.repo-card-link:focus-visible::after {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.repo-remove {
+  position: relative;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+}
+
+.repo-remove:hover:not(:disabled) {
+  color: var(--danger);
+}
+
 .repo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));

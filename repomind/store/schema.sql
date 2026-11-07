@@ -96,6 +96,25 @@ CREATE TABLE IF NOT EXISTS embeddings (
     PRIMARY KEY (text_hash, model)
 );
 
+-- Repositories being added by URL. One job per repository can be unfinished at a time.
+CREATE TABLE IF NOT EXISTS index_jobs (
+    id         BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    repo       TEXT NOT NULL,
+    url        TEXT NOT NULL,
+    status     TEXT NOT NULL CHECK (status IN ('queued', 'running', 'done', 'failed')),
+    phase      TEXT NOT NULL,
+    done       INTEGER NOT NULL DEFAULT 0,
+    total      INTEGER NOT NULL DEFAULT 0,
+    outcome    TEXT,
+    commit_sha TEXT,
+    error_code TEXT,
+    message    TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS one_unfinished_job_per_repository
+    ON index_jobs (repo) WHERE status IN ('queued', 'running');
+
 CREATE TABLE IF NOT EXISTS llm_usage (
     id            BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),

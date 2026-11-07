@@ -48,8 +48,9 @@ export function ancestors(path: string): string[] {
   return parts.slice(0, -1).map((_, index) => parts.slice(0, index + 1).join("/"));
 }
 
-export function isOpen(node: TreeNode, closed: Set<string>, opened: Set<string>, current: string | null): boolean {
+/** Top-level folders start open, so that a repository shows something, and a file's folders open with it. */
+export function isOpen(node: TreeNode, depth: number, closed: Set<string>, opened: Set<string>, current: string | null): boolean {
   if (closed.has(node.path)) return false;
-  if (opened.has(node.path)) return true;
-  return current !== null && (current === node.path || current.startsWith(`${node.path}/`));
+  if (opened.has(node.path) || depth === 0) return true;
+  return current !== null && current.startsWith(`${node.path}/`);
 }
