@@ -211,7 +211,8 @@ def folder_size_mb(path: Path) -> float:
 
 def run_clone(command: list[str], target: Path, limits: IndexLimits, env: dict[str, str] | None = None) -> None:
     """Watches the clone, and stops it if it takes too long or grows too large."""
-    process = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL, env=env or git_environment())
+    # Nothing reads Git's messages, and an unread pipe could fill up and hang the clone.
+    process = subprocess.Popen(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL, env=env or git_environment())
     deadline = time.monotonic() + limits.clone_seconds
     failure: IndexFailure | None = None
     while process.poll() is None:

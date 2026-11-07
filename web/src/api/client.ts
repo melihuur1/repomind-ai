@@ -64,6 +64,7 @@ export const api = {
   removeRepository: (repo: string) => request<null>(query("/api/repositories", { repo }), { method: "DELETE" }),
   jobs: () => request<IndexJob[]>("/api/jobs"),
   retryJob: (id: number) => request<IndexJob>(`/api/jobs/${id}/retry`, sendJson({})),
+  dismissJob: (id: number) => request<null>(`/api/jobs/${id}`, { method: "DELETE" }),
   tree: (repo: string) => request<Tree>(query("/api/tree", { repo })),
   file: (repo: string, path: string, commit?: string) => request<FileContent>(query("/api/file", { repo, path, commit })),
   search: (repo: string, q: string, mode: SearchMode, includeTests: boolean) =>

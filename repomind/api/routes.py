@@ -126,6 +126,7 @@ def remove_repository(request: Request, repo: RepoName) -> Response:
         if not snapshot.origin_url:
             raise ApiError(403, "local_repository", "This repository was indexed from a local folder, and cannot be removed here.")
         store.delete_repository(snapshot.repo)
+        store.forget_finished_jobs(snapshot.repo)
     services.keyword_indexes.clear()
     _worker(request).remove_clone(snapshot.repo)
     return Response(status_code=204)
@@ -144,6 +145,19 @@ def get_job(request: Request, job_id: int) -> schemas.IndexJob:
     if job is None:
         raise ApiError(404, "job_not_found", "There is no such job.")
     return schemas.IndexJob(**job)
+
+
+@router.delete("/jobs/{job_id}", status_code=204)
+def dismiss_job(request: Request, job_id: int) -> Response:
+    """Clears a finished job's repository from the list. Whatever was indexed stays indexed."""
+    with _services(request).store() as store:
+        job = store.job(job_id)
+        if job is None:
+            raise ApiError(404, "job_not_found", "There is no such job.")
+        if job["status"] not in ("done", "failed"):
+            raise ApiError(409, "job_not_finished", "This job is still running.")
+        store.forget_finished_jobs(job["repo"])
+    return Response(status_code=204)
 
 
 @router.post("/jobs/{job_id}/retry", response_model=schemas.IndexJob, status_code=202)

@@ -262,6 +262,9 @@ class Store:
     def recent_jobs(self, limit: int = 20) -> list[dict]:
         return self.connection.execute("SELECT * FROM index_jobs ORDER BY id DESC LIMIT %s", (limit,)).fetchall()
 
+    def forget_finished_jobs(self, repo: str) -> None:
+        self.connection.execute("DELETE FROM index_jobs WHERE repo = %s AND status IN ('done', 'failed')", (repo,))
+
     def fail_unfinished_jobs(self, message: str) -> None:
         self.connection.execute(
             """

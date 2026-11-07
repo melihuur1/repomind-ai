@@ -1001,6 +1001,37 @@
    }
   },
   "/api/jobs/{job_id}": {
+   "delete": {
+    "description": "Clears a finished job's repository from the list. Whatever was indexed stays indexed.",
+    "operationId": "dismiss_job_api_jobs__job_id__delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Dismiss Job"
+   },
    "get": {
     "operationId": "get_job_api_jobs__job_id__get",
     "parameters": [

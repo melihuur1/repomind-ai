@@ -96,7 +96,10 @@ export function FileTree({ repo, commit, currentPath }: { repo: string; commit: 
                 <li key={file.path}>
                   <Link to={blobUrl(repo, commit, file.path)} className={`tree-row tree-file tree-flat${file.path === currentPath ? " active" : ""}`} title={file.path} data-testid="tree-file">
                     <FileCode2 size={14} className={`file-icon language-text-${file.language}`} aria-hidden />
-                    <span className="tree-name">{file.path}</span>
+                    <span className="tree-name">
+                      {/* The name first: a long folder path would otherwise cut off the very thing being looked for. */}
+                      <strong>{file.path.split("/").pop()}</strong> <span className="muted">{file.path.split("/").slice(0, -1).join("/")}</span>
+                    </span>
                   </Link>
                 </li>
               ))}

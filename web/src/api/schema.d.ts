@@ -86,7 +86,11 @@ export interface paths {
         get: operations["get_job_api_jobs__job_id__get"];
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * Dismiss Job
+         * @description Clears a finished job's repository from the list. Whatever was indexed stays indexed.
+         */
+        delete: operations["dismiss_job_api_jobs__job_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -615,6 +619,35 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["IndexJob"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    dismiss_job_api_jobs__job_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

@@ -351,6 +351,29 @@ class TestJobs:
             assert response.json()["code"] == "invalid_url"
             assert client.get("/api/jobs").json() == []
 
+    def test_a_refused_repository_leaves_no_clone_behind(self, app_with_worker, tmp_path):
+        _, _, app = app_with_worker(limits=IndexLimits(max_files=2))
+        with app as client:
+            _finish(client, _add(client)["id"])
+        assert list((tmp_path / "data" / "repos" / "octo__shop").iterdir()) == []
+
+    def test_a_repository_stopped_partway_stays_marked_as_added_by_url_and_can_be_removed(self, app_with_worker, tmp_path):
+        _, _, app = app_with_worker(limits=IndexLimits(total_seconds=-1))
+        with app as client:
+            assert _finish(client, _add(client)["id"])["error_code"] == "timeout"
+            listed = {item["name"]: item for item in client.get("/api/repositories").json()}
+            assert listed["octo/shop"]["origin_url"] == URL
+            assert client.delete("/api/repositories", params={"repo": "octo/shop"}).status_code == 204
+        assert not (tmp_path / "data" / "repos" / "octo__shop").exists()
+
+    def test_indexing_stops_if_memory_runs_low_partway(self, app_with_worker):
+        readings = iter([20.0])
+        _, _, app = app_with_worker(free_memory=lambda: next(readings, 1.0))
+        with app as client:
+            job = _finish(client, _add(client)["id"])
+        assert job["error_code"] == "low_memory"
+        assert "continues" in job["message"]
+
     def test_a_repository_with_nothing_to_read_says_so(self, app_with_worker, store, tmp_path, source):
         for path in source.path.rglob("*"):
             if path.is_file() and ".git" not in path.parts:
@@ -418,14 +441,35 @@ class TestJobs:
             assert (shown["status"], shown["error_code"], shown["message"]) == ("failed", "interrupted", INTERRUPTED)
             assert _finish(client, client.post(f"/api/jobs/{job['id']}/retry", json={}).json()["id"])["status"] == "done"
 
-    def test_removing_deletes_the_index_and_the_clone(self, app_with_worker, tmp_path):
+    def test_removing_deletes_the_index_the_clone_and_its_jobs(self, app_with_worker, tmp_path):
         _, _, app = app_with_worker()
         with app as client:
             _finish(client, _add(client)["id"])
             assert (tmp_path / "data" / "repos" / "octo__shop").is_dir()
             assert client.delete("/api/repositories", params={"repo": "octo/shop"}).status_code == 204
             assert client.get("/api/repositories").json() == []
+            assert client.get("/api/jobs").json() == [], "a job left behind would offer to open what is gone"
         assert not (tmp_path / "data" / "repos" / "octo__shop").exists()
+
+    def test_clearing_a_finished_job_leaves_what_it_indexed(self, app_with_worker):
+        _, _, app = app_with_worker()
+        with app as client:
+            job = _finish(client, _add(client)["id"])
+            assert client.delete(f"/api/jobs/{job['id']}").status_code == 204
+            assert client.get("/api/jobs").json() == []
+            assert [item["name"] for item in client.get("/api/repositories").json()] == ["octo/shop"]
+            assert client.delete("/api/jobs/999").status_code == 404
+
+    def test_a_running_job_cannot_be_cleared(self, app_with_worker, source):
+        source.hold = threading.Event()
+        _, _, app = app_with_worker()
+        with app as client:
+            job = _add(client)
+            assert source.holding.wait(10)
+            response = client.delete(f"/api/jobs/{job['id']}")
+            source.hold.set()
+            assert response.status_code == 409
+            assert _finish(client, job["id"])["status"] == "done"
 
     def test_a_repository_from_a_local_folder_cannot_be_removed_and_its_files_stay(self, app_with_worker, store, sample_repo, fake_embedder):
         from repomind.indexing import index_repository

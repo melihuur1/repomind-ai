@@ -115,17 +115,28 @@ class IndexingWorker:
                 return
 
         target = self._clone(job_id, store, facts, head)
-        self._check_contents(target, head)
+        try:
+            self._check_contents(target, head)
+        except IndexFailure:
+            # A retry would be refused the same way, so a refused repository leaves nothing on disk.
+            remove_tree(target)
+            raise
 
         def progress(done: int, total: int) -> None:
             if time.monotonic() - started > self.limits.total_seconds:
                 raise IndexFailure("timeout", f"Indexing took longer than {self.limits.total_seconds // 60} minutes, so it was stopped. Retrying continues from where it stopped.")
+            free_now = self.services.free_memory()
+            if free_now is not None and free_now < self.services.limits.min_free_memory_gb:
+                raise IndexFailure("low_memory", f"Indexing stopped with only {free_now:.1f} GB of memory free. Retrying continues from where it stopped.")
             store.update_job(job_id, phase="embedding", done=done, total=total)
 
         store.update_job(job_id, phase="indexing")
-        report = index_repository(store, str(target), embedder, name=name, ref=head, progress=progress)
-        store.set_origin_url(name, facts.repo.web_url)
-        self.services.keyword_indexes.clear()
+        try:
+            report = index_repository(store, str(target), embedder, name=name, ref=head, progress=progress)
+        finally:
+            # The repository is already listed if embedding stops partway, and it must still be removable.
+            store.set_origin_url(name, facts.repo.web_url)
+            self.services.keyword_indexes.clear()
         self._remove_older_clones(facts.repo, head)
         store.update_job(
             job_id,

@@ -69,7 +69,10 @@ export function AiPanel({ repo, turns, setTurns, closeButton }: Props) {
       </p>
       {health && !ready ? (
         <div className="note" data-testid="ai-unavailable">
-          <strong>AI is unavailable.</strong> {health.ai.detail} Search and the code view keep working, and a question will return the closest lines without a model.
+          <p>
+            <strong>AI is unavailable.</strong> {health.ai.detail}
+          </p>
+          <p>Search and the code view keep working, and a question will return the closest lines without a model.</p>
         </div>
       ) : null}
       <div className="ai-conversation" ref={scroller} data-testid="ai-conversation">

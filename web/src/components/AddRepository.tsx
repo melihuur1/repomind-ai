@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, CheckCircle2, GitBranchPlus, Loader2, RotateCcw } from "lucide-react";
+import { AlertTriangle, CheckCircle2, GitBranchPlus, Loader2, RotateCcw, X } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { api, ApiError, type IndexJob } from "../api/client";
@@ -20,6 +20,10 @@ function JobRow({ job }: { job: IndexJob }) {
     mutationFn: () => api.retryJob(job.id),
     onSuccess: () => client.invalidateQueries({ queryKey: ["jobs"] }),
   });
+  const dismiss = useMutation({
+    mutationFn: () => api.dismissJob(job.id),
+    onSuccess: () => client.invalidateQueries({ queryKey: ["jobs"] }),
+  });
   const active = job.status === "queued" || job.status === "running";
   const percent = job.total > 0 ? Math.round((job.done / job.total) * 100) : null;
   return (
@@ -38,6 +42,19 @@ function JobRow({ job }: { job: IndexJob }) {
           {job.status === "failed" ? (
             <button type="button" className="btn btn-ghost" onClick={() => retry.mutate()} disabled={retry.isPending} data-testid="job-retry">
               <RotateCcw size={13} aria-hidden /> Retry
+            </button>
+          ) : null}
+          {!active ? (
+            <button
+              type="button"
+              className="btn btn-ghost btn-icon"
+              onClick={() => dismiss.mutate()}
+              disabled={dismiss.isPending}
+              title="Clear from this list"
+              aria-label={`Clear ${job.repo} from this list`}
+              data-testid="job-dismiss"
+            >
+              <X size={13} aria-hidden />
             </button>
           ) : null}
         </span>
@@ -99,7 +116,12 @@ export function AddRepository() {
     if (value) add.mutate(value);
   };
 
-  const recent = (jobs.data ?? []).slice(0, 5);
+  // The newest job for each repository: an older attempt says nothing that still matters.
+  const latest = new Map<string, IndexJob>();
+  for (const job of jobs.data ?? []) {
+    if (!latest.has(job.repo)) latest.set(job.repo, job);
+  }
+  const recent = [...latest.values()].slice(0, 5);
   return (
     <section className="add-repo" aria-labelledby="add-heading">
       <h2 id="add-heading">Analyze a public GitHub repository</h2>
