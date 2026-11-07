@@ -112,9 +112,12 @@ a {
   text-decoration: none;
 }
 
+/* Code is shown exactly as committed, so no font ligature may turn ">=" into a single "≥". */
 code,
 kbd {
   font-family: var(--font-code);
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
 }
 
 button,
