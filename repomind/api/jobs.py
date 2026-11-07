@@ -21,6 +21,7 @@ from repomind.indexing import index_repository
 from repomind.ingest.filters import classify_path
 from repomind.ingest.git_source import GitRepository
 from repomind.ingest.github import (
+    PATH_TOO_LONG,
     GitHubRepo,
     IndexFailure,
     IndexLimits,
@@ -28,6 +29,7 @@ from repomind.ingest.github import (
     RepositorySource,
     parse_github_url,
     remove_tree,
+    too_deep_for_git,
 )
 from repomind.store.database import Store
 
@@ -154,6 +156,9 @@ class IndexingWorker:
         target = folder / head
         if (target / ".git").is_dir():
             return target
+        # Said before cloning, and not after Git fails with a message about something else.
+        if too_deep_for_git(target):
+            raise IndexFailure("path_too_long", PATH_TOO_LONG)
         store.update_job(job_id, phase="cloning")
         folder.mkdir(parents=True, exist_ok=True)
         temporary = folder / f"tmp-{uuid.uuid4().hex}"

@@ -35,6 +35,10 @@ _BRANCH = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9._/-]{0,200}$", re.ASCII)
 _API_HOST = "api.github.com"
 _API_TIMEOUT_SECONDS = 15
 _POLL_SECONDS = 0.5
+# Git for Windows cannot write a repository whose files would pass 260 characters, even with
+# core.longpaths. The longest file a shallow clone writes is .git\objects\pack\pack-<40>.idx.
+_WINDOWS_PATH_LIMIT = 260
+_LONGEST_GIT_FILE = len("\\.git\\objects\\pack\\pack-") + 40 + len(".idx")
 
 
 class IndexFailure(RepoMindError):
@@ -226,7 +230,19 @@ def run_clone(command: list[str], target: Path, limits: IndexLimits, env: dict[s
             raise failure
         time.sleep(_POLL_SECONDS)
     if process.returncode != 0:
+        if too_deep_for_git(target):
+            raise IndexFailure("path_too_long", PATH_TOO_LONG)
         raise IndexFailure("clone_failed", "Git could not clone this repository. It may be empty, or GitHub may be unreachable.")
+
+
+PATH_TOO_LONG = (
+    "Git on Windows cannot write a clone this deep in the folder tree. "
+    "Set REPOMIND_DATA_DIR in .env to a short folder, such as C:\\repomind-data, then retry."
+)
+
+
+def too_deep_for_git(target: Path) -> bool:
+    return sys.platform == "win32" and len(str(target.absolute())) + _LONGEST_GIT_FILE > _WINDOWS_PATH_LIMIT
 
 
 class GitHubSource:

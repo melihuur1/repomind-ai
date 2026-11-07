@@ -26,6 +26,7 @@ from repomind.ingest.github import (
     parse_github_url,
     remove_tree,
     run_clone,
+    too_deep_for_git,
 )
 from tests.conftest import commit_all, git, write
 from tests.test_api import _services
@@ -150,6 +151,23 @@ class TestCloning:
         assert "protocol.allow=never" in joined and "protocol.https.allow=always" in joined
         assert "core.hooksPath=" in joined and "http.followRedirects=false" in joined
         assert command.index("--") < command.index("https://github.com/o/r.git")
+
+    @pytest.mark.skipif(sys.platform != "win32", reason="the 260 character limit is Windows' own")
+    def test_a_clone_too_deep_for_git_on_windows_says_what_to_do(self, sample_repo, tmp_path):
+        # Git for Windows fails here even with core.longpaths, with messages about something else.
+        target = tmp_path / ("d" * 70) / ("e" * 70) / ("f" * 70) / "clone"
+        try:
+            target.parent.mkdir(parents=True)
+        except OSError:
+            pytest.skip("this machine cannot create long paths at all")
+        assert too_deep_for_git(target)
+        with pytest.raises(IndexFailure) as caught:
+            run_clone(clone_command(_local_url(sample_repo), "main", target, allowed_protocol="file"), target, IndexLimits(), env=_file_env())
+        assert caught.value.code == "path_too_long"
+        assert "REPOMIND_DATA_DIR" in str(caught.value)
+
+    def test_an_ordinary_clone_folder_is_not_too_deep(self, tmp_path):
+        assert not too_deep_for_git(tmp_path / "data" / "repos" / "owner__name" / ("0" * 40))
 
     def test_stored_credentials_and_local_git_settings_take_no_part(self):
         env = git_environment()
@@ -403,6 +421,17 @@ class TestJobs:
         with app as client:
             assert _finish(client, _add(client)["id"])["error_code"] == "low_memory"
         assert source.clones == 0
+
+    @pytest.mark.skipif(sys.platform != "win32", reason="the 260 character limit is Windows' own")
+    def test_a_data_folder_too_deep_for_git_is_explained_before_cloning(self, store, source, fake_embedder, tmp_path):
+        deep = tmp_path / ("d" * 90) / ("e" * 90)
+        services = _services(fake_embedder)
+        with TestClient(create_app(services, IndexingWorker(services, source, deep, IndexLimits()))) as client:
+            job = _finish(client, _add(client)["id"])
+        assert job["error_code"] == "path_too_long"
+        assert "REPOMIND_DATA_DIR" in job["message"]
+        assert source.clones == 0
+        assert not deep.exists(), "nothing was written"
 
     def test_too_long_an_indexing_stops_and_a_retry_continues(self, app_with_worker, source, fake_embedder):
         _, _, app = app_with_worker(limits=IndexLimits(total_seconds=-1))
