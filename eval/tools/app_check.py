@@ -168,7 +168,7 @@ def github_answers(urls: set[str]) -> dict[str, int | str]:
     return status
 
 
-def ask(model: str, output: Path) -> int:
+def ask(model: str, output: Path, translations: bool = True) -> int:
     if output.exists():
         print(f"{output} already exists, and is not overwritten.")
         return 2
@@ -245,7 +245,7 @@ def ask(model: str, output: Path) -> int:
         engine = QAEngine(store, None, config, OpenAICompatibleClient(config))
         stored = shared.stored_translations()
         try:
-            for question, _negative in shared.questions():
+            for question, _negative in shared.questions() if translations else ():
                 started = time.perf_counter()
                 translated = engine._translate_with_the_model(question.tr, AskResult(status="trial", question=question.tr))
                 record["translations"][question.id] = {"asked": question.tr, "model": translated, "qwen2.5:7b_stored": stored.get(question.id),
@@ -311,11 +311,12 @@ def main() -> int:
     one = commands.add_parser("ask")
     one.add_argument("--model", required=True)
     one.add_argument("--output", type=Path, required=True)
+    one.add_argument("--no-translations", action="store_true", help="ask the questions only, without translating the development questions")
     two = commands.add_parser("retrieval")
     two.add_argument("record", type=Path)
     arguments = parser.parse_args()
     if arguments.command == "ask":
-        return ask(arguments.model, arguments.output)
+        return ask(arguments.model, arguments.output, translations=not arguments.no_translations)
     return retrieval(arguments.record)
 
 
