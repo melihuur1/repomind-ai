@@ -37,6 +37,7 @@ from repomind.evaluation.dataset import (  # noqa: E402
 )
 from repomind.evaluation.metrics import overlaps, touches  # noqa: E402
 from repomind.qa.passages import is_evidence, select_passages  # noqa: E402
+from repomind.qa.prompt import build_selection_prompt  # noqa: E402
 from repomind.qa.sufficiency import check_sufficiency  # noqa: E402
 from repomind.search.engine import SearchConfig, SearchEngine  # noqa: E402
 from repomind.search.translation import LocalTurkishTranslator  # noqa: E402
@@ -94,6 +95,7 @@ def peak_memory_mb() -> float | None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--chunks", type=int, default=CHUNKS, help=f"chunks search hands to passage selection (default {CHUNKS})")
     arguments = parser.parse_args()
     if arguments.output and arguments.output.exists():
         parser.error(f"{arguments.output} already exists, and is not overwritten.")
@@ -116,14 +118,16 @@ def main() -> int:
                     else:
                         asked, english, second = question.en, None, None
                     searching = time.perf_counter()
-                    found = engine.search(asked, "hybrid", [question.repo], CHUNKS, translated=english, more_wordings=[second] if second else (), glossary_seats=SEATS)
+                    found = engine.search(asked, "hybrid", [question.repo], arguments.chunks, translated=english, more_wordings=[second] if second else (), glossary_seats=SEATS)
                     search_seconds = time.perf_counter() - searching
                     vocabulary = engine.vocabulary(asked, found.translated_query, [question.repo])
                     gate = check_sufficiency(asked, found.translated_query, vocabulary).insufficient
                     wording = found.translated_query or asked
                     queries = [text for text in (asked, found.translated_query, second) if text]
                     chunks = [hit.chunk for hit in found.hits]
+                    selecting = time.perf_counter()
                     passages = [] if gate else select_passages(chunks, queries, embedder, more_terms=found.glossary_terms)
+                    selection_seconds = time.perf_counter() - selecting
                     good = [p for p in passages if is_evidence(p, wording)]
                     row = {
                         "language": language,
@@ -133,6 +137,9 @@ def main() -> int:
                         "gate": gate,
                         "reaches_model": not gate and bool(good),
                         "search_seconds": round(search_seconds, 4),
+                        "selection_seconds": round(selection_seconds, 4),
+                        # What choosing at once would send, as estimated before every request.
+                        "prompt_tokens": build_selection_prompt(asked, passages, "0" * 16, found.translated_query).estimated_input_tokens if not gate and good else 0,
                         "passages_offered": len(passages),
                         "lines_shown": sum(p.end_line - p.start_line + 1 for p in passages),
                         "offered": [[p.path, p.start_line, p.end_line, is_evidence(p, wording)] for p in passages],
@@ -165,6 +172,9 @@ def main() -> int:
             "unanswerable_reaching_model": sum(r["reaches_model"] for r in negatives),
             "mean_lines_shown": round(sum(r["lines_shown"] for r in answerable) / max(1, len(answerable)), 1),
             "mean_search_ms": round(1000 * sum(r.get("search_seconds", 0) for r in group) / max(1, len(group)), 1),
+            "mean_selection_ms": round(1000 * sum(r.get("selection_seconds", 0) for r in group) / max(1, len(group)), 1),
+            "max_prompt_tokens": max((r.get("prompt_tokens", 0) for r in group), default=0),
+            "mean_prompt_tokens": round(sum(r.get("prompt_tokens", 0) for r in group if r.get("prompt_tokens")) / max(1, sum(bool(r.get("prompt_tokens")) for r in group))),
         }
 
     by_language: dict[str, list[dict]] = defaultdict(list)
@@ -179,6 +189,8 @@ def main() -> int:
         )
     peak = peak_memory_mb()
     print(f"{time.perf_counter() - started:.0f} s; search {', '.join(f'{language} {item['mean_search_ms']} ms' for language, item in report.items())} per question; peak memory {peak} MB")
+    print("selection " + ", ".join(f"{language} {item['mean_selection_ms']} ms" for language, item in report.items())
+          + "; prompt tokens mean/max " + ", ".join(f"{language} {item['mean_prompt_tokens']}/{item['max_prompt_tokens']}" for language, item in report.items()))
     if arguments.output:
         report["peak_memory_mb"] = peak
         arguments.output.write_text(json.dumps({"summary": report, "questions": rows}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
