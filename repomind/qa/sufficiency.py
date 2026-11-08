@@ -29,6 +29,13 @@ _CONTRACTIONS = frozenset(
     "doesn don isn aren wasn weren won hasn haven hadn couldn shouldn wouldn didn".split()
 )
 _INTERNAL_CAPITAL = re.compile(r"[a-z0-9][A-Z]|[A-Z]{2}")
+# Words that ask for a limit. Code writes a limit as max or min, as in @Max(3600) or MaxLength(100), so
+# such a word is known when the code uses max or min. The Turkish glossary maps "en fazla" and "en az"
+# the same way. On the development sets no unanswerable question was refused only for one of these.
+_LIMIT_SENSES = {
+    "max": frozenset({"longest", "largest", "biggest", "highest", "greatest", "maximum", "maximal"}),
+    "min": frozenset({"shortest", "smallest", "lowest", "fewest", "minimum", "minimal"}),
+}
 
 
 @dataclass(frozen=True)
@@ -54,7 +61,10 @@ class Sufficiency:
 def _known(word: str, vocabulary) -> bool:
     """A compound such as GraphQL counts as known only as a whole: "graph" alone says nothing."""
     tokens = tokenize(word)
-    return not tokens or tokens[-1] in vocabulary
+    if not tokens or tokens[-1] in vocabulary:
+        return True
+    lowered = word.lower()
+    return any(lowered in words and sense in vocabulary for sense, words in _LIMIT_SENSES.items())
 
 
 def _looks_like_a_name(word: str, position: int) -> bool:

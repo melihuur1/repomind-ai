@@ -39,6 +39,26 @@ def test_two_unknown_ordinary_words_refuse():
     assert set(result.missing_words) == {"emails", "delivered"}
 
 
+class TestWordsThatAskForALimit:
+    LIMITED = set(tokenize("class ListNotesQueryDto { @MaxLength(100) q; } @Min(1) Integer quantity;"))
+
+    def test_they_are_known_where_the_code_writes_max_or_min(self):
+        result = check_sufficiency("What is the longest search text accepted when listing notes?", None, self.LIMITED | {"search", "text", "list", "note"})
+        assert result.missing_words == ("accepted",)
+        assert not result.insufficient
+        assert check_sufficiency("What is the minimum quantity?", None, self.LIMITED).missing_words == ()
+
+    def test_they_are_still_unknown_where_the_code_has_no_limit(self):
+        result = check_sufficiency("What is the longest search text accepted?", None, {"search", "text"})
+        assert set(result.missing_words) == {"longest", "accepted"}
+        assert result.insufficient
+
+    def test_a_topic_the_code_never_mentions_is_still_refused_beside_one(self):
+        result = check_sufficiency("What is the largest refund processed?", None, self.LIMITED)
+        assert set(result.missing_words) == {"refund", "processed"}
+        assert result.insufficient
+
+
 def test_a_single_unknown_ordinary_word_only_warns():
     result = check_sufficiency("How is cancel prevented?", None, VOCABULARY)
     assert not result.insufficient
