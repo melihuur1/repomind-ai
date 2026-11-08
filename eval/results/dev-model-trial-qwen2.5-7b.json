@@ -1,0 +1,920 @@
+{
+ "model": "qwen2.5:7b",
+ "settings": {
+  "max_output_tokens": 250,
+  "max_input_tokens": 4000,
+  "temperature": 0,
+  "selection": "choose"
+ },
+ "memory_at_start": "physical 15.19 GB, commit 22.52 GB; physical 15.21 GB, commit 22.54 GB",
+ "placement": {
+  "size_mib": 6082,
+  "in_gpu_mib": 3282
+ },
+ "rows": [
+  {
+   "id": "v5-sg-jwt-secret-length",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/common/config/StockGuardProperties.java:21-25"
+   ],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/security/SecurityConfig.java:98-101",
+    "src/main/java/com/stockguard/security/SecurityConfig.java:84-87",
+    "src/main/java/com/stockguard/security/SecurityConfig.java:89-96",
+    "src/main/resources/application.yml:54-60",
+    "src/main/java/com/stockguard/common/config/StockGuardProperties.java:21-25"
+   ],
+   "note": "`@Size(min = 32)` jwtSecret minimumu 32 karakter olmalıdır.",
+   "prompts": [
+    "bc81df6040df33d825c88f99d3ff2fd20b179c6635b3749bd464d04631d847c1"
+   ],
+   "requests": 1,
+   "input_tokens": 1007,
+   "output_tokens": 32,
+   "seconds": 12.27,
+   "peak_gpu_mib": 2808,
+   "min_free_physical_gb": 8.9,
+   "min_free_commit_gb": 13.45
+  },
+  {
+   "id": "v5-sg-sku-locked",
+   "negative": false,
+   "status": "answered",
+   "outcome": "wrong",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:1-12"
+   ],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/catalog/Product.java:63-67",
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:1-12",
+    "src/main/java/com/stockguard/catalog/ProductService.java:29-36",
+    "src/main/java/com/stockguard/catalog/ProductController.java:118-121",
+    "src/main/java/com/stockguard/catalog/Product.java:25-29"
+   ],
+   "note": "`sku` sütunu UNIQUE kısıtlaması ile korunuyor, bu da SKU kodunun oluşturulduktan sonra değiştirilememesini gösteriyor.",
+   "prompts": [
+    "b604303965044689bf3d7c7d4493a2168f503084b95d8a4b4bbab6080d7e8af1"
+   ],
+   "requests": 1,
+   "input_tokens": 957,
+   "output_tokens": 48,
+   "seconds": 6.72,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 8.9,
+   "min_free_commit_gb": 13.45
+  },
+  {
+   "id": "v5-sg-page-envelope",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/common/web/PageResponse.java:7-18"
+   ],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/common/web/PageResponse.java:7-18",
+    "src/main/resources/application.yml:26-29",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:144-156",
+    "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java:17-21",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:70-77"
+   ],
+   "note": "`PageResponse` sınıfı, Spring Data'nın iç yapısını bağımsız tutar ve API sözleşmesinistabilize etmek için kendi sayfa modelini doğrudan dönmez.",
+   "prompts": [
+    "f603b3d5c31abb00565200294bb1bf8a69e3c0c00948df01af60122aaf69ad77"
+   ],
+   "requests": 1,
+   "input_tokens": 1185,
+   "output_tokens": 57,
+   "seconds": 7.56,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 8.9,
+   "min_free_commit_gb": 13.43
+  },
+  {
+   "id": "v5-sg-root-redirect",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/user/AppUserRepository.java:10-14",
+    "src/main/java/com/stockguard/user/AuthService.java:91-93",
+    "src/main/java/com/stockguard/reservation/ReservationService.java:54-61",
+    "src/main/java/com/stockguard/user/AppUserDetails.java:33-37",
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:102-107"
+   ],
+   "note": "",
+   "prompts": [
+    "a5c059d0c363cc064f1f690495bc636599a0a8dcf27c3e48767406a33cddabf9"
+   ],
+   "requests": 1,
+   "input_tokens": 978,
+   "output_tokens": 10,
+   "seconds": 3.11,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 8.97,
+   "min_free_commit_gb": 13.6
+  },
+  {
+   "id": "v5-sg-movements-order",
+   "negative": false,
+   "status": "invalid_response",
+   "outcome": "invalid",
+   "gold_offered": true,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/inventory/StockLedger.java:22-25",
+    "src/main/resources/db/migration/V4__ledger_and_audit.sql:1-5",
+    "src/main/java/com/stockguard/inventory/StockMovementRepository.java:8-13",
+    "src/main/java/com/stockguard/inventory/InventoryController.java:51-58",
+    "src/main/java/com/stockguard/inventory/InventoryService.java:55-61"
+   ],
+   "note": "",
+   "prompts": [
+    "d9f62e87b0348d5b4a1ce2916a3eca7ca522b516bee16e76805f61fd3433351a"
+   ],
+   "requests": 1,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 8.46,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 8.86,
+   "min_free_commit_gb": 13.48
+  },
+  {
+   "id": "v5-sg-zero-quantity",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:126-127",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:105-108",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:109-111",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:15-19",
+    "src/main/resources/db/migration/V3__reservations.sql:23-23"
+   ],
+   "note": "",
+   "prompts": [
+    "654ec11e33350af8544b0a74edbbb55359a101007865a3ca00d14238158bf704"
+   ],
+   "requests": 1,
+   "input_tokens": 843,
+   "output_tokens": 10,
+   "seconds": 2.79,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 8.85,
+   "min_free_commit_gb": 13.42
+  },
+  {
+   "id": "v5-sg-api-language",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/resources/application.yml:26-29"
+   ],
+   "review": [],
+   "offered": [
+    "src/main/resources/application.yml:26-29",
+    "src/main/java/com/stockguard/common/error/ApiException.java:9-13",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:44-47",
+    "src/main/java/com/stockguard/common/error/ApiException.java:5-8",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:128-132"
+   ],
+   "note": "`spring.web.locale` ayarlı olarak `en` olarak belirlendi ve `locale-resolver` de sabit olarak yapılandırıldı.",
+   "prompts": [
+    "6462ed79bd7e1480d5f670f147eee12aa8c37e77e15fee4c545d495a372e6e8b"
+   ],
+   "requests": 1,
+   "input_tokens": 914,
+   "output_tokens": 42,
+   "seconds": 6.24,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 8.72,
+   "min_free_commit_gb": 13.27
+  },
+  {
+   "id": "v5-sg-simulation-default",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/resources/application.yml:67-70"
+   ],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/simulation/SimulationService.java:118-120",
+    "src/main/resources/application.yml:67-70",
+    "src/main/java/com/stockguard/simulation/SimulationController.java:31-35",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:140-144",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:98-102"
+   ],
+   "note": "`enabled: ${STOCKGUARD_SIMULATION_ENABLED:false}` varsayilan olarak `false` oldugu icin yarış simülasyonu kapalı gelmektedir.",
+   "prompts": [
+    "93a1194698c5aed0b16c47dce59ba6bd40cfa42ef3a87520e6e13e3822d1aa5c"
+   ],
+   "requests": 1,
+   "input_tokens": 1007,
+   "output_tokens": 52,
+   "seconds": 6.89,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 8.69,
+   "min_free_commit_gb": 13.26
+  },
+  {
+   "id": "v5-sn-logout-expired",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "apps/api/src/auth/auth.controller.ts:87-101"
+   ],
+   "review": [],
+   "offered": [
+    "apps/api/src/auth/auth.controller.ts:87-101",
+    "apps/collab/src/permissions.ts:9-22",
+    "apps/api/src/common/guards/jwt-auth.guard.ts:16-24",
+    "apps/collab/src/extensions/resilient-redis.ts:34-38",
+    "apps/api/src/auth/token.service.ts:32-36"
+   ],
+   "note": "`AuthController.logout` metodu belirtilen erişim anahtarı süresi dolmuş olmasına rağmen kullanıcının çıkış yapabileceğini gösterir.",
+   "prompts": [
+    "bdbd24ff7c8da311a70cc1bcf7bda9e7a25b423f542f2b8eb9f279fafb900a0c"
+   ],
+   "requests": 1,
+   "input_tokens": 1289,
+   "output_tokens": 48,
+   "seconds": 6.94,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.72,
+   "min_free_commit_gb": 13.29
+  },
+  {
+   "id": "v5-sn-nonmember-status",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "apps/api/src/common/note-access/note-access.service.ts:25-29"
+   ],
+   "review": [],
+   "offered": [
+    "apps/api/src/common/note-access/note-access.service.ts:25-29",
+    "apps/api/src/notes/notes.service.ts:93-100",
+    "apps/api/src/common/note-access/note-access.service.ts:15-19",
+    "apps/api/src/common/note-access/note-access.service.ts:11-14",
+    "apps/api/src/notes/notes.controller.ts:137-141"
+   ],
+   "note": "`404 when the caller is not a member (do not reveal that the note exists)`",
+   "prompts": [
+    "174baf5f57a27ebe04fdc46f5e2695febf3e1688a4169c641428b2bde39946b5"
+   ],
+   "requests": 1,
+   "input_tokens": 1015,
+   "output_tokens": 32,
+   "seconds": 5.79,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.73,
+   "min_free_commit_gb": 13.28
+  },
+  {
+   "id": "v5-sn-version-list-limit",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "apps/api/src/notes/versions.service.ts:15-30"
+   ],
+   "review": [],
+   "offered": [
+    "apps/api/src/notes/notes.controller.ts:150-154",
+    "apps/api/src/notes/versions.service.ts:15-30",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:110-111",
+    "apps/web/src/hooks/queries.ts:33-39",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87"
+   ],
+   "note": "`take: 100` limitler listelenen sürüm sayısını 100'a kadar ayarlar.",
+   "prompts": [
+    "e635d04bf211d883f29fbbec559c869f8205925544681e7019a27dfba1b7f871"
+   ],
+   "requests": 1,
+   "input_tokens": 1083,
+   "output_tokens": 40,
+   "seconds": 5.67,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.73,
+   "min_free_commit_gb": 13.32
+  },
+  {
+   "id": "v5-sn-version-viewer",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "apps/api/src/notes/notes.controller.ts:148-152",
+    "apps/api/src/notes/notes.controller.ts:154-158",
+    "apps/api/src/notes/notes.controller.ts:144-147",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:1-2",
+    "apps/api/src/common/decorators.ts:21-25"
+   ],
+   "note": "",
+   "prompts": [
+    "27024cf91436dd4c6c6c59bca4287914fe474d5a6ba5faafe054f945a8a65ef4"
+   ],
+   "requests": 1,
+   "input_tokens": 918,
+   "output_tokens": 10,
+   "seconds": 3.58,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.78,
+   "min_free_commit_gb": 13.43
+  },
+  {
+   "id": "v5-sn-log-format",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": true,
+   "chosen": [],
+   "review": [
+    "apps/collab/src/logger.ts:12-25"
+   ],
+   "offered": [
+    "apps/collab/src/server.ts:112-116",
+    "apps/collab/src/server.ts:33-35",
+    "apps/collab/src/server.ts:27-31",
+    "packages/shared/src/collab.ts:25-29",
+    "apps/collab/src/logger.ts:12-25"
+   ],
+   "note": "",
+   "prompts": [
+    "1bf9a5a2891f6401cb2fa28845bf91d867d53bc3cb16f68fbf8b6afab1361aac"
+   ],
+   "requests": 1,
+   "input_tokens": 1080,
+   "output_tokens": 35,
+   "seconds": 4.52,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.74,
+   "min_free_commit_gb": 13.32
+  },
+  {
+   "id": "v5-sn-email-unique",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "apps/api/src/auth/auth.service.ts:75-79"
+   ],
+   "review": [],
+   "offered": [
+    "apps/api/src/auth/auth.service.ts:75-79",
+    "apps/api/src/notes/members.service.ts:46-50",
+    "apps/api/src/auth/auth.service.ts:63-67",
+    "apps/web/src/pages/auth-pages.tsx:198-200",
+    "apps/api/src/auth/dto.ts:8-23"
+   ],
+   "note": "`AuthService.register` throws an exception if an account with the same e-mail already exists.",
+   "prompts": [
+    "62177ce72af21174e903af5e8192634b49896f5f984bd2be14aff9c9e751e1e2"
+   ],
+   "requests": 1,
+   "input_tokens": 1004,
+   "output_tokens": 30,
+   "seconds": 4.71,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.73,
+   "min_free_commit_gb": 13.28
+  },
+  {
+   "id": "v5-sn-version-kinds",
+   "negative": false,
+   "status": "answered",
+   "outcome": "wrong",
+   "gold_offered": false,
+   "chosen": [
+    "apps/collab/src/versions.ts:7-7"
+   ],
+   "review": [],
+   "offered": [
+    "apps/web/src/hooks/queries.ts:33-39",
+    "packages/shared/src/collab.ts:35-42",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+    "apps/collab/src/versions.ts:7-7",
+    "apps/api/src/notes/versions.service.ts:15-30"
+   ],
+   "note": "`VersionKind` türlerine 'MANUAL', 'AUTO' ve 'RESTORE' olabilir.",
+   "prompts": [
+    "f9bfa50290557425a81f5f1b65e22ff5453af9b5a2d6d99bdcb890aab9692767"
+   ],
+   "requests": 1,
+   "input_tokens": 1088,
+   "output_tokens": 35,
+   "seconds": 5.13,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.7,
+   "min_free_commit_gb": 13.29
+  },
+  {
+   "id": "v5-sn-migrate-first",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [
+    "docker-compose.yml:33-35"
+   ],
+   "offered": [
+    "packages/db/src/index.ts:11-21",
+    "docker-compose.yml:33-35",
+    "packages/db/prisma.config.ts:5-18",
+    "apps/web/vite.config.ts:6-9",
+    "apps/collab/src/config.ts:9-13"
+   ],
+   "note": "",
+   "prompts": [
+    "daf8c343e7ba1dbeec6b0046847ac78284b5500d35139d8c14d35b48f6059436"
+   ],
+   "requests": 1,
+   "input_tokens": 1123,
+   "output_tokens": 50,
+   "seconds": 6.53,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.66,
+   "min_free_commit_gb": 13.23
+  },
+  {
+   "id": "v5-sg-neg-price",
+   "negative": true,
+   "status": "answered",
+   "outcome": "wrong",
+   "gold_offered": false,
+   "chosen": [
+    "src/main/java/com/stockguard/catalog/ProductController.java:57-63"
+   ],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/catalog/ProductController.java:118-121",
+    "src/main/java/com/stockguard/catalog/ProductController.java:90-94",
+    "src/main/java/com/stockguard/catalog/ProductController.java:57-63",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:76-87",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:39-48"
+   ],
+   "note": "`ProductController.update` metodu ürün bilgilerini günceller.",
+   "prompts": [
+    "83ef89de87b968c9719b266626a8321878d65909d8fabb89e5bcefd9a335354d"
+   ],
+   "requests": 1,
+   "input_tokens": 1127,
+   "output_tokens": 27,
+   "seconds": 5.13,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.7,
+   "min_free_commit_gb": 13.3
+  },
+  {
+   "id": "v5-sg-neg-invoice",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationService.java:37-40",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:85-90",
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:126-127",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:113-117",
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:79-83"
+   ],
+   "note": "",
+   "prompts": [
+    "0990a996b08b1ad904696b56e278e37f6811313fd96691f6f3567d90fb9e4da3"
+   ],
+   "requests": 1,
+   "input_tokens": 996,
+   "output_tokens": 10,
+   "seconds": 3.44,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.73,
+   "min_free_commit_gb": 13.41
+  },
+  {
+   "id": "v5-sg-neg-category",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:83-87",
+    "src/main/java/com/stockguard/catalog/Product.java:47-48",
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:88-89",
+    "src/main/java/com/stockguard/catalog/ProductController.java:43-46",
+    "src/main/java/com/stockguard/catalog/ProductController.java:71-80"
+   ],
+   "note": "",
+   "prompts": [
+    "6e925f9d6ab4121684462fd63a9c514bc754ed2dc198ce627b090d59321360d3"
+   ],
+   "requests": 1,
+   "input_tokens": 987,
+   "output_tokens": 10,
+   "seconds": 3.29,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.71,
+   "min_free_commit_gb": 13.36
+  },
+  {
+   "id": "v5-sg-neg-shipping",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:82-90",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:85-90",
+    "src/main/java/com/stockguard/reservation/ReservationService.java:37-40",
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:79-83",
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:87-91"
+   ],
+   "note": "",
+   "prompts": [
+    "a275d4f48d91e2d1d83a54058c9acb4e5f21e6635335653de1d6c8b2d035267f"
+   ],
+   "requests": 1,
+   "input_tokens": 1174,
+   "output_tokens": 10,
+   "seconds": 3.52,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.66,
+   "min_free_commit_gb": 13.23
+  },
+  {
+   "id": "v5-sn-neg-google",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [
+    "apps/web/src/pages/auth-pages.tsx:105-107"
+   ],
+   "offered": [
+    "apps/web/src/pages/auth-pages.tsx:243-250",
+    "apps/web/scripts/screenshots.ts:14-21",
+    "apps/collab/src/permissions.ts:9-22",
+    "apps/web/src/pages/auth-pages.tsx:163-165",
+    "apps/web/src/pages/auth-pages.tsx:105-107"
+   ],
+   "note": "",
+   "prompts": [
+    "59843c2028cf8957f6b64686cb07e72957510bc95bdc2bc509f41d4facc7bc96"
+   ],
+   "requests": 1,
+   "input_tokens": 1004,
+   "output_tokens": 25,
+   "seconds": 3.93,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.71,
+   "min_free_commit_gb": 13.36
+  },
+  {
+   "id": "v5-sn-neg-photo",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "apps/web/src/pages/auth-pages.tsx:10-14",
+    "apps/api/src/auth/auth.service.ts:42-44",
+    "apps/api/src/auth/auth.service.ts:28-32",
+    "apps/api/src/common/decorators.ts:16-19",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:7-19"
+   ],
+   "note": "",
+   "prompts": [],
+   "requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.49,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.74,
+   "min_free_commit_gb": 13.41
+  },
+  {
+   "id": "v5-sn-neg-reminder",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "apps/web/src/pages/note-page.tsx:133-142",
+    "apps/api/src/common/decorators.ts:10-14",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:47-60",
+    "apps/api/src/notes/notes.controller.ts:53-56",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:62-73"
+   ],
+   "note": "",
+   "prompts": [
+    "ecf09b677eafda7b3e7421c4308b4d79072600924ac03474ea7c6aa6008dcbbe"
+   ],
+   "requests": 1,
+   "input_tokens": 1093,
+   "output_tokens": 10,
+   "seconds": 3.41,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.69,
+   "min_free_commit_gb": 13.27
+  },
+  {
+   "id": "v5-sn-neg-workspace",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [
+    "apps/web/src/pages/note-page.tsx:75-79"
+   ],
+   "offered": [
+    "apps/web/src/pages/note-page.tsx:75-79",
+    "apps/web/src/pages/note-page.tsx:44-56",
+    "apps/web/src/pages/note-page.tsx:133-142",
+    "apps/web/src/editor/collaborative-editor.tsx:25-29",
+    "apps/web/src/components/share-dialog.tsx:127-131"
+   ],
+   "note": "",
+   "prompts": [
+    "18e27814950ac6c09352b09ddbafc5ee1a41dbd2c32ea75664c3211db71eff88"
+   ],
+   "requests": 1,
+   "input_tokens": 1017,
+   "output_tokens": 43,
+   "seconds": 6.34,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.64,
+   "min_free_commit_gb": 13.27
+  },
+  {
+   "id": "sg-db-connection-error",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:82-95",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:71-80"
+   ],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationService.java:16-25",
+    "src/main/resources/application.yml:4-14",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:82-95",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:71-80",
+    "compose.yaml:38-41"
+   ],
+   "note": "`isLostConnection` metodunun ve `handleJpaSystem` hatayı yönetme fonksiyonunun kodları, PostgreSQL bağlantısı kaybını tespit etmek ve hata yönetimi için nasıl yakalanacağını gösteriyor.",
+   "prompts": [
+    "42c6f44ff1c3f819c76b18e8b11f1b48daa23a1af70c58aa5fe2b0d6314f7e7d"
+   ],
+   "requests": 1,
+   "input_tokens": 1228,
+   "output_tokens": 69,
+   "seconds": 8.93,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.33,
+   "min_free_commit_gb": 12.88
+  },
+  {
+   "id": "sg-oversell",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": true,
+   "chosen": [],
+   "review": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27"
+   ],
+   "offered": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:31-35",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:98-102",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:39-43"
+   ],
+   "note": "",
+   "prompts": [
+    "f268b85c3ba10207ac4a8517eab7cfd33f44302fc50c84d401af90e7f531c118"
+   ],
+   "requests": 1,
+   "input_tokens": 1257,
+   "output_tokens": 38,
+   "seconds": 6.04,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.42,
+   "min_free_commit_gb": 13.02
+  },
+  {
+   "id": "v2-sg-error-status-map",
+   "negative": false,
+   "status": "answered",
+   "outcome": "wrong",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:28-32",
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:23-27"
+   ],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:28-32",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:144-156",
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:23-27",
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:13-17",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:115-124"
+   ],
+   "note": "",
+   "prompts": [
+    "ff0c453d2a0eb0f78d3eb168051480359a787c41fbea43030ca866144d28ea6a"
+   ],
+   "requests": 1,
+   "input_tokens": 1070,
+   "output_tokens": 36,
+   "seconds": 5.97,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.49,
+   "min_free_commit_gb": 13.13
+  },
+  {
+   "id": "v2-sn-redis-durability",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": true,
+   "chosen": [],
+   "review": [
+    "apps/collab/src/extensions/resilient-redis.ts:34-38"
+   ],
+   "offered": [
+    "docker-compose.yml:42-53",
+    "apps/collab/src/extensions/resilient-redis.ts:34-38",
+    "apps/collab/src/extensions/resilient-redis.ts:100-104",
+    "apps/collab/src/extensions/resilient-redis.ts:92-96",
+    "apps/api/src/app.setup.ts:8-12"
+   ],
+   "note": "",
+   "prompts": [
+    "cfd6c2dc0103a3da236ca8ba7a9a3a102b5b0bb4f9e48878b9bc26d7efc0bee3"
+   ],
+   "requests": 1,
+   "input_tokens": 1007,
+   "output_tokens": 35,
+   "seconds": 5.71,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.55,
+   "min_free_commit_gb": 13.14
+  },
+  {
+   "id": "v2-sg-neg-transfer",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:63-74",
+    "src/main/java/com/stockguard/inventory/StockLedger.java:10-20",
+    "src/main/java/com/stockguard/inventory/StockMovement.java:73-75",
+    "src/main/java/com/stockguard/inventory/StockMovementRepository.java:8-13",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:29-33"
+   ],
+   "note": "",
+   "prompts": [
+    "12bd00a7ce24b346822258d3f16f91db543ba4e2527bcca528e91c432e5484ae"
+   ],
+   "requests": 1,
+   "input_tokens": 1073,
+   "output_tokens": 10,
+   "seconds": 3.6,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.48,
+   "min_free_commit_gb": 13.12
+  },
+  {
+   "id": "v4-sg-neg-wishlist",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/catalog/ProductController.java:71-80",
+    "src/main/java/com/stockguard/catalog/ProductService.java:62-65",
+    "src/main/java/com/stockguard/catalog/ProductController.java:35-41",
+    "src/main/java/com/stockguard/catalog/Product.java:47-48",
+    "src/main/java/com/stockguard/inventory/InventoryController.java:41-49"
+   ],
+   "note": "",
+   "prompts": [
+    "c1dbe46801ef5cbd35220c93390192825dbe3c1c50bdaba1212d3b65ea48743f"
+   ],
+   "requests": 1,
+   "input_tokens": 1030,
+   "output_tokens": 10,
+   "seconds": 3.31,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.47,
+   "min_free_commit_gb": 13.03
+  },
+  {
+   "id": "v4-sg-neg-reduce-quantity",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:116-124",
+    "src/main/resources/db/migration/V3__reservations.sql:25-39",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:86-90",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:63-74",
+    "src/main/resources/db/migration/V3__reservations.sql:41-43"
+   ],
+   "note": "",
+   "prompts": [
+    "845556db0f3875bc5ce42264f0f049a203440a4b2e465430656c782e24cec368"
+   ],
+   "requests": 1,
+   "input_tokens": 1270,
+   "output_tokens": 10,
+   "seconds": 4.29,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.48,
+   "min_free_commit_gb": 13.04
+  },
+  {
+   "id": "manual-negative-stock",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27"
+   ],
+   "review": [],
+   "offered": [
+    "src/main/java/com/stockguard/simulation/SimulationService.java:196-200",
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:222-226",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61",
+    "src/main/java/com/stockguard/common/config/StockGuardProperties.java:13-17"
+   ],
+   "note": "`ck_stock_available_non_negative` ve `ck_stock_reserved_non_negative` kısıtlamaları stok miktarlarının negatif olmamasını sağlar.",
+   "prompts": [
+    "5d7a13d3e98cb1994198465bfa0c01f8eeb7a3c99bbab75bf284bf2a7c662452"
+   ],
+   "requests": 1,
+   "input_tokens": 1210,
+   "output_tokens": 46,
+   "seconds": 7.8,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.54,
+   "min_free_commit_gb": 13.13
+  }
+ ]
+}
