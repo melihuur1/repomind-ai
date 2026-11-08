@@ -63,7 +63,7 @@ Content rules then reject binary files, non-UTF-8 files, minified code, and file
 
 Two more file types need rules of their own:
 
-- **YAML** files with a personal or secret marker in the name (`application-local.yml`, `*-override.yml`, `vault.yml`, `kubeconfig.yml`) and lock files are skipped. In the rest, a chunk holding a literal credential, such as a password key or a URL with a password, is withheld on its own and reported, so that one development password does not hide a whole compose file.
+- **YAML** files with a personal or secret marker in the name (`application-local.yml`, `*-override.yml`, `vault.yml`, `kubeconfig.yml`) and lock files are skipped. In the rest, a chunk holding a literal credential, such as a password key or a URL with a password, is withheld on its own and reported, so that one development password does not hide a whole compose file. An entry holding one is taken apart down to the flat list of settings that holds it, such as a service's `environment`, which is withheld whole, so the same service's `build` and `depends_on` stay searchable.
 - **SQL** files with a literal `PASSWORD '...'` or `IDENTIFIED BY '...'` are rejected.
 
 ## Parsing and chunking

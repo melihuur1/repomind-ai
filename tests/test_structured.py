@@ -7,7 +7,7 @@ import textwrap
 import pytest
 
 from repomind.indexing import index_repository
-from repomind.ingest.filters import classify_content, classify_path, find_config_secret
+from repomind.ingest.filters import classify_content, classify_path, credential_lines, find_config_secret
 from repomind.parsing.chunker import parse_source
 from tests.conftest import commit_all, git, write
 
@@ -227,6 +227,59 @@ class TestSecretsInConfig:
         joined = "\n".join(c.content for c in parsed.chunks)
         assert "CHUNK_SECRET" not in joined
         assert "--appendonly" in joined
+        assert "image: postgres" in joined, "the credential's own service stays searchable too"
+
+    SHORT_SERVICES = (
+        "services:\n"
+        "  migrate:\n"
+        "    build: { context: ., target: migrate }\n"
+        "    environment:\n"
+        "      DATABASE_URL: postgresql://app:URL_SECRET@db:5432/app\n"
+        "    depends_on:\n"
+        "      db: { condition: service_healthy }\n"
+        "  api:\n"
+        "    image: app/api\n"
+        "    environment:\n"
+        "      PORT: 4000\n"
+        "      JWT_SECRET: ${JWT_SECRET:-DEFAULT_SECRET}\n"
+        "      ORIGIN: http://localhost:8080\n"
+        "    depends_on:\n"
+        "      migrate: { condition: service_completed_successfully }\n"
+    )
+
+    def test_a_short_service_keeps_every_entry_but_the_one_with_the_credential(self):
+        parsed = parse_source("docker-compose.yml", "yaml", self.SHORT_SERVICES)
+        joined = "\n".join(c.content for c in parsed.chunks)
+        assert "URL_SECRET" not in joined and "DEFAULT_SECRET" not in joined
+        assert parsed.withheld_chunks == 2
+        waits = next(c for c in parsed.chunks if "service_completed_successfully" in c.content)
+        assert waits.symbol.startswith("services.api"), "the chunk still says which service waits"
+        assert "target: migrate" in joined and "service_healthy" in joined
+
+    def test_a_flat_list_of_settings_with_a_credential_is_withheld_whole_and_not_in_pieces(self):
+        parsed = parse_source("docker-compose.yml", "yaml", self.SHORT_SERVICES)
+        joined = "\n".join(c.content for c in parsed.chunks)
+        assert "PORT: 4000" not in joined, "one variable alone says little, and would only crowd search"
+        assert not any((c.symbol or "").endswith("environment") for c in parsed.chunks)
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            SHORT_SERVICES,
+            "db:\n  # password: COMMENT_SECRET\n  pool:\n    size: 5\n  host: h\n",
+            "a:\n  b:\n    c:\n      token: DEEP_SECRET\n      d: 1\n    e: 2\n  f: 3\n",
+            "list:\n  - password: ITEM_SECRET\n    name: x\n  - name: y\n",
+            "x: 1\npassword: TOP_SECRET\ny: 2\n",
+        ],
+    )
+    def test_no_chunk_holds_a_line_with_a_credential(self, text):
+        parsed = parse_source("config.yml", "yaml", text)
+        flagged = set(credential_lines(text))
+        assert flagged, "each text here holds a credential"
+        for chunk in parsed.chunks:
+            assert find_config_secret(chunk.content) is None
+            assert not flagged & set(range(chunk.start_line, chunk.end_line + 1)), f"{chunk.symbol} holds a credential line"
+        assert "_SECRET" not in "\n".join(c.content for c in parsed.chunks)
 
 
 @pytest.mark.parametrize(

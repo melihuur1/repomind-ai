@@ -9,7 +9,9 @@ YAML goes through Tree-sitter, which yields syntax nodes only. Tags such as
 ``!!python/object`` remain plain text, unlike with a loader that constructs objects.
 
 A YAML chunk holding a literal credential is withheld on its own, so that a compose file
-with one development password does not hide everything else in the file.
+with one development password does not hide everything else in the file. An entry holding one
+is taken apart down to the smallest entry that does, so that a service's ``depends_on`` is not
+withheld because its ``environment`` holds a password.
 """
 
 from __future__ import annotations
@@ -229,6 +231,15 @@ def _block_mapping(node: Node | None) -> Node | None:
     return None
 
 
+def _flat(mapping: Node) -> bool:
+    """Whether no entry of this mapping holds entries of its own."""
+    return all(
+        _block_mapping(child.child_by_field_name("value")) is None
+        for child in mapping.named_children
+        if child.type == "block_mapping_pair"
+    )
+
+
 def _yaml_key(pair: Node, source: bytes) -> str:
     key = pair.child_by_field_name("key")
     if key is None:
@@ -286,7 +297,18 @@ class _YamlChunker:
             qualified = f"{parent}.{name}" if parent else name
             nested = _block_mapping(child.child_by_field_name("value"))
             size = end - start + 1
-            if nested is not None and size > _YAML_SPLIT_LINES:
+            if find_config_secret("\n".join(self.builder.lines[start - 1 : end])):
+                # Only the part holding it is withheld. Its neighbours stay out of any group with it,
+                # and an entry with nested entries is taken apart until the part holding it is a flat
+                # list of settings, such as `environment`, which is withheld whole: one variable alone
+                # says little, and would only crowd search. The check goes line by line, so each line
+                # is judged the same in any chunk.
+                flush()
+                if nested is not None and not _flat(nested):
+                    self.mapping(nested, qualified)
+                else:
+                    self._emit(start, end, qualified, parent)
+            elif nested is not None and size > _YAML_SPLIT_LINES:
                 flush()
                 self.mapping(nested, qualified)
             elif size <= _YAML_SCALAR_GROUP_LINES and parent is not None:
