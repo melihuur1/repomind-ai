@@ -9,6 +9,7 @@ from enum import Enum
 from repomind.errors import RepoMindError
 from repomind.evaluation.citations import CitationVerifier
 from repomind.ingest.git_source import GitRepository
+from repomind.qa.completion import Completion, SnapshotSources, complete, unshown_values
 from repomind.qa.judge import Judgement, build_judge_prompt, parse_judgement
 from repomind.qa.llm import LLMClient, LLMConfig, cost_usd
 from repomind.qa.passages import Passage, is_evidence, select_passages
@@ -95,6 +96,8 @@ class AskResult:
     cost_usd: float = 0.0
     # Passage id and the role the model gave it, when it judges passages one at a time.
     judgements: list[tuple[str, str]] = field(default_factory=list)
+    # Declarations of constants the passages use, added from the syntax tree, and the ones that were not.
+    completions: list[Completion] = field(default_factory=list)
 
     @property
     def citations(self) -> list[VerifiedCitation]:
@@ -143,6 +146,19 @@ class QAEngine:
             snapshot = next(s for s in self.store.active_snapshots([repo]) if s.commit_sha == commit)
             self._verifiers[key] = CitationVerifier(GitRepository(snapshot.source_path), commit)
         return self._verifiers[key]
+
+    def _completed(self, passages: list[Passage], result: AskResult) -> list[Passage]:
+        """The passages with the declarations of constants they use, when all come from one commit."""
+        commits = {(p.chunk.repo, p.chunk.commit_sha) for p in passages}
+        if len(commits) != 1:
+            return passages
+        repo, commit = next(iter(commits))
+        snapshot = next((s for s in self.store.active_snapshots([repo]) if s.commit_sha == commit), None)
+        if snapshot is None:
+            return passages
+        sources = SnapshotSources(self.store, snapshot.id, self._verifier(repo, commit).git, commit)
+        completed, result.completions = complete(passages, sources)
+        return completed
 
     def _verified_passages(self, passages: list[Passage], result: AskResult) -> list[Passage]:
         """Against Git rather than RepoMind's database, so a tampered row is never shown."""
@@ -296,6 +312,8 @@ class QAEngine:
         if name_left_out:
             result.warnings.append("The repository's name was left out of the search, because every result is in this repository.")
             found = self._with_name_seat(repo, asked, found, wording, asked_wording, chunk_limit)
+        if found:
+            found = self._completed(found, result)
         result.passages = self._verified_passages(found, result)
         if not result.passages:
             result.status = "insufficient"
@@ -339,6 +357,8 @@ class QAEngine:
         else:
             result.status = "answered"
             result.evidence = _evidence(chosen)
+            # A value the chosen lines only name, and do not show, is not to be taken for granted.
+            result.warnings.extend(unshown_values(chosen, result.completions))
             # A note was written about everything chosen, so it may describe lines that were just left out.
             complete = len(chosen) == len(selection.chosen)
             result.note = selection.note if complete else ""
@@ -382,6 +402,7 @@ class QAEngine:
 
         result.status = "answered"
         result.evidence = _evidence(chosen)
+        result.warnings.extend(unshown_values(chosen, result.completions))
         reason = next(judgement.reason for passage, judgement in judged if passage is chosen[0])
         problem = note_problem(reason, chosen[:1], question) if reason else None
         result.note = "" if problem else reason

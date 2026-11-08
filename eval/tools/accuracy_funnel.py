@@ -36,6 +36,8 @@ from repomind.evaluation.dataset import (  # noqa: E402
     load_holdout_unanswerable,
 )
 from repomind.evaluation.metrics import overlaps, touches  # noqa: E402
+from repomind.ingest.git_source import GitRepository  # noqa: E402
+from repomind.qa.completion import SnapshotSources, complete  # noqa: E402
 from repomind.qa.passages import is_evidence, select_passages  # noqa: E402
 from repomind.qa.prompt import build_selection_prompt  # noqa: E402
 from repomind.qa.sufficiency import check_sufficiency  # noqa: E402
@@ -96,6 +98,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--chunks", type=int, default=CHUNKS, help=f"chunks search hands to passage selection (default {CHUNKS})")
+    parser.add_argument("--complete", action="store_true", help="add the declarations of constants the passages use, as ask does")
     arguments = parser.parse_args()
     if arguments.output and arguments.output.exists():
         parser.error(f"{arguments.output} already exists, and is not overwritten.")
@@ -107,6 +110,15 @@ def main() -> int:
     started = time.perf_counter()
     with Store(settings.database_url, apply_schema=False) as store:
         engine = SearchEngine(store, embedder, SearchConfig(), LocalTurkishTranslator(settings.models_dir))
+        snapshots = {s.repo: s for s in store.active_snapshots()}
+        cached: dict[str, SnapshotSources] = {}
+
+        def sources(repo: str) -> SnapshotSources:
+            if repo not in cached:
+                snapshot = snapshots[repo]
+                cached[repo] = SnapshotSources(store, snapshot.id, GitRepository(snapshot.source_path), snapshot.commit_sha)
+            return cached[repo]
+
         engine.search("warm up", "hybrid", ["stockguard"], 1)
         for language in ("tr", "en"):
             for set_name, (answerable, negatives) in question_sets().items():
@@ -128,6 +140,13 @@ def main() -> int:
                     selecting = time.perf_counter()
                     passages = [] if gate else select_passages(chunks, queries, embedder, more_terms=found.glossary_terms)
                     selection_seconds = time.perf_counter() - selecting
+                    completed: list[str] = []
+                    completion_seconds = 0.0
+                    if arguments.complete and passages:
+                        completing = time.perf_counter()
+                        passages, record = complete(passages, sources(question.repo))
+                        completion_seconds = time.perf_counter() - completing
+                        completed = [f"{c.name} -> {c.declaration.path}:{c.declaration.start_line}" for c in record if c.declaration and not c.reason]
                     good = [p for p in passages if is_evidence(p, wording)]
                     row = {
                         "language": language,
@@ -138,6 +157,8 @@ def main() -> int:
                         "reaches_model": not gate and bool(good),
                         "search_seconds": round(search_seconds, 4),
                         "selection_seconds": round(selection_seconds, 4),
+                        "completion_seconds": round(completion_seconds, 4),
+                        "completed": completed,
                         # What choosing at once would send, as estimated before every request.
                         "prompt_tokens": build_selection_prompt(asked, passages, "0" * 16, found.translated_query).estimated_input_tokens if not gate and good else 0,
                         "passages_offered": len(passages),
@@ -173,6 +194,9 @@ def main() -> int:
             "mean_lines_shown": round(sum(r["lines_shown"] for r in answerable) / max(1, len(answerable)), 1),
             "mean_search_ms": round(1000 * sum(r.get("search_seconds", 0) for r in group) / max(1, len(group)), 1),
             "mean_selection_ms": round(1000 * sum(r.get("selection_seconds", 0) for r in group) / max(1, len(group)), 1),
+            "mean_completion_ms": round(1000 * sum(r.get("completion_seconds", 0) for r in group) / max(1, len(group)), 1),
+            "questions_completed": sum(bool(r.get("completed")) for r in group),
+            "declarations_added": sum(len(r.get("completed", [])) for r in group),
             "max_prompt_tokens": max((r.get("prompt_tokens", 0) for r in group), default=0),
             "mean_prompt_tokens": round(sum(r.get("prompt_tokens", 0) for r in group if r.get("prompt_tokens")) / max(1, sum(bool(r.get("prompt_tokens")) for r in group))),
         }
@@ -189,6 +213,7 @@ def main() -> int:
         )
     peak = peak_memory_mb()
     print(f"{time.perf_counter() - started:.0f} s; search {', '.join(f'{language} {item['mean_search_ms']} ms' for language, item in report.items())} per question; peak memory {peak} MB")
+    print("completion " + ", ".join(f"{language}: {item['declarations_added']} declarations in {item['questions_completed']} questions, {item['mean_completion_ms']} ms" for language, item in report.items()))
     print("selection " + ", ".join(f"{language} {item['mean_selection_ms']} ms" for language, item in report.items())
           + "; prompt tokens mean/max " + ", ".join(f"{language} {item['mean_prompt_tokens']}/{item['max_prompt_tokens']}" for language, item in report.items()))
     if arguments.output:

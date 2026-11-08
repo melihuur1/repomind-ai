@@ -289,6 +289,32 @@ class Store:
             (snapshot_id, path),
         ).fetchone()
 
+    def file_chunks(self, snapshot_id: int, path: str) -> list[ChunkRow]:
+        """Every indexed chunk of one file, by line. Withheld lines are in none of them."""
+        rows = self.connection.execute(
+            f"SELECT {_CHUNK_COLUMNS} {_CHUNK_SOURCE} WHERE c.snapshot_id = %s AND c.path = %s ORDER BY c.start_line",
+            (snapshot_id, path),
+        ).fetchall()
+        return [ChunkRow(**row) for row in rows]
+
+    def file_imports(self, snapshot_id: int, path: str) -> list[tuple[str, list[str]]]:
+        rows = self.connection.execute(
+            "SELECT module, names FROM imports WHERE snapshot_id = %s AND path = %s ORDER BY line", (snapshot_id, path)
+        ).fetchall()
+        return [(row["module"], list(row["names"])) for row in rows]
+
+    def type_paths(self, snapshot_id: int, name: str) -> list[str]:
+        """Files declaring a class, interface, enum or record called ``name``."""
+        rows = self.connection.execute(
+            """
+            SELECT DISTINCT path FROM symbols
+             WHERE snapshot_id = %s AND name = %s AND kind IN ('class', 'interface', 'enum', 'record')
+             ORDER BY path
+            """,
+            (snapshot_id, name),
+        ).fetchall()
+        return [row["path"] for row in rows]
+
     # ------------------------------------------------------------------- chunks
 
     def load_chunks(self, snapshot_ids: Sequence[int], include_tests: bool = True) -> list[ChunkRow]:
