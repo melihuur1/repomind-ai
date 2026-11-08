@@ -1,0 +1,2400 @@
+{
+ "rows": [
+  {
+   "id": "v5-sg-jwt-secret-length",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/common/config/StockGuardProperties.java:21-25"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/security/SecurityConfig.java:98-101",
+    "src/main/java/com/stockguard/security/SecurityConfig.java:84-87",
+    "src/main/java/com/stockguard/security/SecurityConfig.java:89-96",
+    "src/main/resources/application.yml:54-60",
+    "src/main/java/com/stockguard/common/config/StockGuardProperties.java:21-25"
+   ],
+   "note": "`@Size(min = 32)` gizli anahtar için en az karakter sayısını belirtiyor.",
+   "requests": 1,
+   "input_tokens": 1007,
+   "output_tokens": 37,
+   "seconds": 14.91,
+   "peak_gpu_mib": 2808,
+   "min_free_physical_gb": 5.82,
+   "min_free_commit_gb": 8.16
+  },
+  {
+   "id": "v5-sg-jwt-secret-length",
+   "selection": "judge",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/common/config/StockGuardProperties.java:21-25"
+   ],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "answers"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/security/SecurityConfig.java:98-101",
+    "src/main/java/com/stockguard/security/SecurityConfig.java:84-87",
+    "src/main/java/com/stockguard/security/SecurityConfig.java:89-96",
+    "src/main/resources/application.yml:54-60",
+    "src/main/java/com/stockguard/common/config/StockGuardProperties.java:21-25"
+   ],
+   "note": "HS256 için gizli anahtar en az 32 karakter olmalıdır.",
+   "requests": 5,
+   "input_tokens": 2991,
+   "output_tokens": 215,
+   "seconds": 23.58,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 5.46,
+   "min_free_commit_gb": 7.67
+  },
+  {
+   "id": "v5-sg-sku-locked",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "wrong",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:1-12"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/catalog/Product.java:63-67",
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:1-12",
+    "src/main/java/com/stockguard/catalog/ProductService.java:29-36",
+    "src/main/java/com/stockguard/catalog/ProductController.java:118-121",
+    "src/main/java/com/stockguard/catalog/Product.java:25-29"
+   ],
+   "note": "`sku` sütunu UNIQUE kısıtlamasıyla birlikte olduğu için, SKU kodu oluşturulduktan sonra değiştirilemez.",
+   "requests": 1,
+   "input_tokens": 967,
+   "output_tokens": 41,
+   "seconds": 7.08,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 5.45,
+   "min_free_commit_gb": 7.68
+  },
+  {
+   "id": "v5-sg-sku-locked",
+   "selection": "judge",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": true,
+   "chosen": [],
+   "review": [
+    "src/main/java/com/stockguard/catalog/Product.java:25-29"
+   ],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "answers"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/catalog/Product.java:63-67",
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:1-12",
+    "src/main/java/com/stockguard/catalog/ProductService.java:29-36",
+    "src/main/java/com/stockguard/catalog/ProductController.java:118-121",
+    "src/main/java/com/stockguard/catalog/Product.java:25-29"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 2947,
+   "output_tokens": 199,
+   "seconds": 21.59,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 5.55,
+   "min_free_commit_gb": 7.73
+  },
+  {
+   "id": "v5-sg-page-envelope",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/common/web/PageResponse.java:7-18"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/common/web/PageResponse.java:7-18",
+    "src/main/resources/application.yml:26-29",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:144-156",
+    "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java:17-21",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:70-77"
+   ],
+   "note": "`PageResponse` sınıfı, Spring Data'nın iç yapısını bağımsız tutar ve API sözleşmesinistabilize etmek için kullanılır.",
+   "requests": 1,
+   "input_tokens": 1165,
+   "output_tokens": 48,
+   "seconds": 7.23,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 5.6,
+   "min_free_commit_gb": 7.88
+  },
+  {
+   "id": "v5-sg-page-envelope",
+   "selection": "judge",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/common/web/PageResponse.java:7-18"
+   ],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "answers"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/common/web/PageResponse.java:7-18",
+    "src/main/resources/application.yml:26-29",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:144-156",
+    "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java:17-21",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:70-77"
+   ],
+   "note": "Sayfalı verileri API yanıtlarında kullanmak için Spring'in iç çubukları bağımsız hale getirenstabil bir sayfa kapsül oluşturuyor.",
+   "requests": 5,
+   "input_tokens": 3199,
+   "output_tokens": 218,
+   "seconds": 24.22,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 5.08,
+   "min_free_commit_gb": 7.22
+  },
+  {
+   "id": "v5-sg-root-redirect",
+   "selection": "choose",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/user/AppUserRepository.java:10-14",
+    "src/main/java/com/stockguard/user/AuthService.java:91-93",
+    "src/main/java/com/stockguard/reservation/ReservationService.java:54-61",
+    "src/main/java/com/stockguard/user/AppUserDetails.java:33-37",
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:102-107"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 988,
+   "output_tokens": 10,
+   "seconds": 3.58,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 5.11,
+   "min_free_commit_gb": 7.4
+  },
+  {
+   "id": "v5-sg-root-redirect",
+   "selection": "judge",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/user/AppUserRepository.java:10-14",
+    "src/main/java/com/stockguard/user/AuthService.java:91-93",
+    "src/main/java/com/stockguard/reservation/ReservationService.java:54-61",
+    "src/main/java/com/stockguard/user/AppUserDetails.java:33-37",
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:102-107"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 3010,
+   "output_tokens": 179,
+   "seconds": 17.26,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 5.62,
+   "min_free_commit_gb": 7.86
+  },
+  {
+   "id": "v5-sg-movements-order",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/inventory/InventoryService.java:55-61"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/inventory/StockLedger.java:22-25",
+    "src/main/resources/db/migration/V4__ledger_and_audit.sql:1-5",
+    "src/main/java/com/stockguard/inventory/StockMovementRepository.java:8-13",
+    "src/main/java/com/stockguard/inventory/InventoryController.java:51-58",
+    "src/main/java/com/stockguard/inventory/InventoryService.java:55-61"
+   ],
+   "note": "`movements` method by ascending `id` returns stock movements in descending order.",
+   "requests": 1,
+   "input_tokens": 1039,
+   "output_tokens": 29,
+   "seconds": 5.66,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.79,
+   "min_free_commit_gb": 8.04
+  },
+  {
+   "id": "v5-sg-movements-order",
+   "selection": "judge",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/inventory/InventoryController.java:51-58"
+   ],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "answers"
+    ],
+    [
+     "P5",
+     "calls"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/inventory/StockLedger.java:22-25",
+    "src/main/resources/db/migration/V4__ledger_and_audit.sql:1-5",
+    "src/main/java/com/stockguard/inventory/StockMovementRepository.java:8-13",
+    "src/main/java/com/stockguard/inventory/InventoryController.java:51-58",
+    "src/main/java/com/stockguard/inventory/InventoryService.java:55-61"
+   ],
+   "note": "API en yeni kayıtlardan eski kayıtlara doğru sırayla ürünün stok hareketlerini getirir.",
+   "requests": 5,
+   "input_tokens": 3053,
+   "output_tokens": 193,
+   "seconds": 19.0,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.82,
+   "min_free_commit_gb": 8.04
+  },
+  {
+   "id": "v5-sg-zero-quantity",
+   "selection": "choose",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:126-127",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:105-108",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:109-111",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:15-19",
+    "src/main/resources/db/migration/V3__reservations.sql:23-23"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 843,
+   "output_tokens": 10,
+   "seconds": 3.31,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.27,
+   "min_free_commit_gb": 8.47
+  },
+  {
+   "id": "v5-sg-zero-quantity",
+   "selection": "judge",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:126-127",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:105-108",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:109-111",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:15-19",
+    "src/main/resources/db/migration/V3__reservations.sql:23-23"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 2837,
+   "output_tokens": 179,
+   "seconds": 18.13,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.18,
+   "min_free_commit_gb": 8.39
+  },
+  {
+   "id": "v5-sg-api-language",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/resources/application.yml:26-29"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/resources/application.yml:26-29",
+    "src/main/java/com/stockguard/common/error/ApiException.java:9-13",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:44-47",
+    "src/main/java/com/stockguard/common/error/ApiException.java:5-8",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:128-132"
+   ],
+   "note": "`spring.web.locale` ayarlı olarak `en` olarak belirlendi ve `locale-resolver` de sabit olarak yapılandırıldı.",
+   "requests": 1,
+   "input_tokens": 904,
+   "output_tokens": 42,
+   "seconds": 6.95,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.18,
+   "min_free_commit_gb": 8.39
+  },
+  {
+   "id": "v5-sg-api-language",
+   "selection": "judge",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": true,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "observes"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "observes"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/resources/application.yml:26-29",
+    "src/main/java/com/stockguard/common/error/ApiException.java:9-13",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:44-47",
+    "src/main/java/com/stockguard/common/error/ApiException.java:5-8",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:128-132"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 2944,
+   "output_tokens": 175,
+   "seconds": 18.76,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.2,
+   "min_free_commit_gb": 8.37
+  },
+  {
+   "id": "v5-sg-simulation-default",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/resources/application.yml:67-70"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/simulation/SimulationService.java:118-120",
+    "src/main/resources/application.yml:67-70",
+    "src/main/java/com/stockguard/simulation/SimulationController.java:31-35",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:140-144",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:98-102"
+   ],
+   "note": "`simulation.enabled: ${STOCKGUARD_SIMULATION_ENABLED:false}` varsayilan olarak devre dışı kalır.",
+   "requests": 1,
+   "input_tokens": 1007,
+   "output_tokens": 36,
+   "seconds": 5.69,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.2,
+   "min_free_commit_gb": 8.42
+  },
+  {
+   "id": "v5-sg-simulation-default",
+   "selection": "judge",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": true,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "invalid"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/simulation/SimulationService.java:118-120",
+    "src/main/resources/application.yml:67-70",
+    "src/main/java/com/stockguard/simulation/SimulationController.java:31-35",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:140-144",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:98-102"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 2965,
+   "output_tokens": 205,
+   "seconds": 20.19,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.21,
+   "min_free_commit_gb": 8.43
+  },
+  {
+   "id": "v5-sn-logout-expired",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "apps/api/src/auth/auth.controller.ts:87-101"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "apps/api/src/auth/auth.controller.ts:87-101",
+    "apps/collab/src/permissions.ts:9-22",
+    "apps/api/src/common/guards/jwt-auth.guard.ts:16-24",
+    "apps/collab/src/extensions/resilient-redis.ts:34-38",
+    "apps/api/src/auth/token.service.ts:32-36"
+   ],
+   "note": "`Public()` olarak işaretlendiği için erişim anahtarının süresi dolmuş bir kullanıcı da çıkış yapabilir.",
+   "requests": 1,
+   "input_tokens": 1299,
+   "output_tokens": 39,
+   "seconds": 7.26,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.22,
+   "min_free_commit_gb": 8.46
+  },
+  {
+   "id": "v5-sn-logout-expired",
+   "selection": "judge",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "apps/api/src/auth/auth.controller.ts:87-101"
+   ],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "answers"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "apps/api/src/auth/auth.controller.ts:87-101",
+    "apps/collab/src/permissions.ts:9-22",
+    "apps/api/src/common/guards/jwt-auth.guard.ts:16-24",
+    "apps/collab/src/extensions/resilient-redis.ts:34-38",
+    "apps/api/src/auth/token.service.ts:32-36"
+   ],
+   "note": "Kullanıcı bir erişim anahtarı süresi dolmuş olmasına rağmen, hala temiz bir şekilde çıkış yapabilir.",
+   "requests": 5,
+   "input_tokens": 3283,
+   "output_tokens": 199,
+   "seconds": 20.35,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.18,
+   "min_free_commit_gb": 8.41
+  },
+  {
+   "id": "v5-sn-nonmember-status",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "apps/api/src/common/note-access/note-access.service.ts:25-29"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "apps/api/src/common/note-access/note-access.service.ts:25-29",
+    "apps/api/src/notes/notes.service.ts:93-100",
+    "apps/api/src/common/note-access/note-access.service.ts:15-19",
+    "apps/api/src/common/note-access/note-access.service.ts:11-14",
+    "apps/api/src/notes/notes.controller.ts:137-141"
+   ],
+   "note": "`404 when the caller is not a member (do not reveal that the note exists)`",
+   "requests": 1,
+   "input_tokens": 1045,
+   "output_tokens": 32,
+   "seconds": 6.99,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.22,
+   "min_free_commit_gb": 8.46
+  },
+  {
+   "id": "v5-sn-nonmember-status",
+   "selection": "judge",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "apps/api/src/common/note-access/note-access.service.ts:25-29"
+   ],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "answers"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "apps/api/src/common/note-access/note-access.service.ts:25-29",
+    "apps/api/src/notes/notes.service.ts:93-100",
+    "apps/api/src/common/note-access/note-access.service.ts:15-19",
+    "apps/api/src/common/note-access/note-access.service.ts:11-14",
+    "apps/api/src/notes/notes.controller.ts:137-141"
+   ],
+   "note": "Notun varlığı saklanmak için 404 durum kodu dönüyor.",
+   "requests": 5,
+   "input_tokens": 3091,
+   "output_tokens": 212,
+   "seconds": 23.26,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.79,
+   "min_free_commit_gb": 8.02
+  },
+  {
+   "id": "v5-sn-version-list-limit",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "apps/api/src/notes/versions.service.ts:15-30"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "apps/api/src/notes/notes.controller.ts:150-154",
+    "apps/api/src/notes/versions.service.ts:15-30",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:110-111",
+    "apps/web/src/hooks/queries.ts:33-39",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87"
+   ],
+   "note": "`take: 100` limitler versiyonları listelenmesini ilk 100'e kadar yapar.",
+   "requests": 1,
+   "input_tokens": 1053,
+   "output_tokens": 40,
+   "seconds": 7.41,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.64,
+   "min_free_commit_gb": 7.89
+  },
+  {
+   "id": "v5-sn-version-list-limit",
+   "selection": "judge",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "apps/api/src/notes/versions.service.ts:15-30"
+   ],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "calls"
+    ],
+    [
+     "P2",
+     "answers"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "apps/api/src/notes/notes.controller.ts:150-154",
+    "apps/api/src/notes/versions.service.ts:15-30",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:110-111",
+    "apps/web/src/hooks/queries.ts:33-39",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87"
+   ],
+   "note": "En fazla 100 sürüm listelenir.",
+   "requests": 5,
+   "input_tokens": 3031,
+   "output_tokens": 175,
+   "seconds": 19.69,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.61,
+   "min_free_commit_gb": 7.83
+  },
+  {
+   "id": "v5-sn-version-viewer",
+   "selection": "choose",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "apps/api/src/notes/notes.controller.ts:148-152",
+    "apps/api/src/notes/notes.controller.ts:154-158",
+    "apps/api/src/notes/notes.controller.ts:144-147",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:1-2",
+    "apps/api/src/common/decorators.ts:21-25"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 898,
+   "output_tokens": 10,
+   "seconds": 4.33,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.74,
+   "min_free_commit_gb": 8.03
+  },
+  {
+   "id": "v5-sn-version-viewer",
+   "selection": "judge",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "observes"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "apps/api/src/notes/notes.controller.ts:148-152",
+    "apps/api/src/notes/notes.controller.ts:154-158",
+    "apps/api/src/notes/notes.controller.ts:144-147",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:1-2",
+    "apps/api/src/common/decorators.ts:21-25"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 2916,
+   "output_tokens": 179,
+   "seconds": 18.65,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.85,
+   "min_free_commit_gb": 8.08
+  },
+  {
+   "id": "v5-sn-log-format",
+   "selection": "choose",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": true,
+   "chosen": [],
+   "review": [
+    "apps/collab/src/logger.ts:12-25"
+   ],
+   "judgements": [],
+   "offered": [
+    "apps/collab/src/server.ts:112-116",
+    "apps/collab/src/server.ts:33-35",
+    "apps/collab/src/server.ts:27-31",
+    "packages/shared/src/collab.ts:25-29",
+    "apps/collab/src/logger.ts:12-25"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 1060,
+   "output_tokens": 35,
+   "seconds": 5.54,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.93,
+   "min_free_commit_gb": 8.15
+  },
+  {
+   "id": "v5-sn-log-format",
+   "selection": "judge",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": true,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "observes"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "observes"
+    ]
+   ],
+   "offered": [
+    "apps/collab/src/server.ts:112-116",
+    "apps/collab/src/server.ts:33-35",
+    "apps/collab/src/server.ts:27-31",
+    "packages/shared/src/collab.ts:25-29",
+    "apps/collab/src/logger.ts:12-25"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 3028,
+   "output_tokens": 141,
+   "seconds": 14.14,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.94,
+   "min_free_commit_gb": 8.17
+  },
+  {
+   "id": "v5-sn-email-unique",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "apps/api/src/auth/auth.service.ts:75-79"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "apps/api/src/auth/auth.service.ts:75-79",
+    "apps/api/src/notes/members.service.ts:46-50",
+    "apps/api/src/auth/auth.service.ts:63-67",
+    "apps/web/src/pages/auth-pages.tsx:198-200",
+    "apps/api/src/auth/dto.ts:8-23"
+   ],
+   "note": "`AuthService.register` kontrol eder ve aynı e-posta adresiyle daha önce bir hesap oluşturulmuş olup olmadığını.",
+   "requests": 1,
+   "input_tokens": 984,
+   "output_tokens": 38,
+   "seconds": 5.95,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.19,
+   "min_free_commit_gb": 8.45
+  },
+  {
+   "id": "v5-sn-email-unique",
+   "selection": "judge",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "apps/api/src/auth/auth.service.ts:75-79"
+   ],
+   "review": [
+    "apps/api/src/auth/auth.service.ts:63-67"
+   ],
+   "judgements": [
+    [
+     "P1",
+     "answers"
+    ],
+    [
+     "P2",
+     "observes"
+    ],
+    [
+     "P3",
+     "answers"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "apps/api/src/auth/auth.service.ts:75-79",
+    "apps/api/src/notes/members.service.ts:46-50",
+    "apps/api/src/auth/auth.service.ts:63-67",
+    "apps/web/src/pages/auth-pages.tsx:198-200",
+    "apps/api/src/auth/dto.ts:8-23"
+   ],
+   "note": "E-posta adresiyle hesap açılmaya çalışıldığında benzersiz ihlal varsa hata fırlatır.",
+   "requests": 5,
+   "input_tokens": 2940,
+   "output_tokens": 244,
+   "seconds": 26.47,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.54,
+   "min_free_commit_gb": 7.75
+  },
+  {
+   "id": "v5-sn-version-kinds",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "wrong",
+   "gold_offered": false,
+   "chosen": [
+    "apps/collab/src/versions.ts:7-7"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "apps/web/src/hooks/queries.ts:33-39",
+    "packages/shared/src/collab.ts:35-42",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+    "apps/collab/src/versions.ts:7-7",
+    "apps/api/src/notes/versions.service.ts:15-30"
+   ],
+   "note": "`VersionKind` türlerini 'MANUAL', 'AUTO' ve 'RESTORE' olarak gösteriyor.",
+   "requests": 1,
+   "input_tokens": 1088,
+   "output_tokens": 36,
+   "seconds": 6.18,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.58,
+   "min_free_commit_gb": 7.81
+  },
+  {
+   "id": "v5-sn-version-kinds",
+   "selection": "judge",
+   "negative": false,
+   "status": "answered",
+   "outcome": "wrong",
+   "gold_offered": false,
+   "chosen": [
+    "packages/shared/src/collab.ts:35-42",
+    "apps/collab/src/versions.ts:7-7"
+   ],
+   "review": [
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87"
+   ],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "answers"
+    ],
+    [
+     "P3",
+     "answers"
+    ],
+    [
+     "P4",
+     "answers"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "apps/web/src/hooks/queries.ts:33-39",
+    "packages/shared/src/collab.ts:35-42",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+    "apps/collab/src/versions.ts:7-7",
+    "apps/api/src/notes/versions.service.ts:15-30"
+   ],
+   "note": "Not sürümleri `versions.changed`, `version.restored` ve `access.changed` mesaj türlerinde belirtilmiştir.",
+   "requests": 5,
+   "input_tokens": 3044,
+   "output_tokens": 184,
+   "seconds": 19.45,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.59,
+   "min_free_commit_gb": 7.81
+  },
+  {
+   "id": "v5-sn-migrate-first",
+   "selection": "choose",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [
+    "docker-compose.yml:33-35"
+   ],
+   "judgements": [],
+   "offered": [
+    "packages/db/src/index.ts:11-21",
+    "docker-compose.yml:33-35",
+    "packages/db/prisma.config.ts:5-18",
+    "apps/web/vite.config.ts:6-9",
+    "apps/collab/src/config.ts:9-13"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 1133,
+   "output_tokens": 47,
+   "seconds": 7.43,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.76,
+   "min_free_commit_gb": 8.0
+  },
+  {
+   "id": "v5-sn-migrate-first",
+   "selection": "judge",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "calls"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "packages/db/src/index.ts:11-21",
+    "docker-compose.yml:33-35",
+    "packages/db/prisma.config.ts:5-18",
+    "apps/web/vite.config.ts:6-9",
+    "apps/collab/src/config.ts:9-13"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 3129,
+   "output_tokens": 212,
+   "seconds": 22.8,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.78,
+   "min_free_commit_gb": 7.95
+  },
+  {
+   "id": "v5-sg-neg-price",
+   "selection": "choose",
+   "negative": true,
+   "status": "answered",
+   "outcome": "wrong",
+   "gold_offered": false,
+   "chosen": [
+    "src/main/java/com/stockguard/catalog/ProductController.java:57-63"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/catalog/ProductController.java:118-121",
+    "src/main/java/com/stockguard/catalog/ProductController.java:90-94",
+    "src/main/java/com/stockguard/catalog/ProductController.java:57-63",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:76-87",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:39-48"
+   ],
+   "note": "`ProductController.update` metodu ürün bilgilerini günceller.",
+   "requests": 1,
+   "input_tokens": 1137,
+   "output_tokens": 27,
+   "seconds": 6.02,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.84,
+   "min_free_commit_gb": 7.95
+  },
+  {
+   "id": "v5-sg-neg-price",
+   "selection": "judge",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "calls"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/catalog/ProductController.java:118-121",
+    "src/main/java/com/stockguard/catalog/ProductController.java:90-94",
+    "src/main/java/com/stockguard/catalog/ProductController.java:57-63",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:76-87",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:39-48"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 3075,
+   "output_tokens": 162,
+   "seconds": 19.38,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.61,
+   "min_free_commit_gb": 7.72
+  },
+  {
+   "id": "v5-sg-neg-invoice",
+   "selection": "choose",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationService.java:37-40",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:85-90",
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:126-127",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:113-117",
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:79-83"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 1016,
+   "output_tokens": 10,
+   "seconds": 3.94,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.74,
+   "min_free_commit_gb": 7.91
+  },
+  {
+   "id": "v5-sg-neg-invoice",
+   "selection": "judge",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationService.java:37-40",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:85-90",
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:126-127",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:113-117",
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:79-83"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 2986,
+   "output_tokens": 182,
+   "seconds": 18.83,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.78,
+   "min_free_commit_gb": 7.9
+  },
+  {
+   "id": "v5-sg-neg-category",
+   "selection": "choose",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [
+    "src/main/java/com/stockguard/catalog/ProductController.java:71-80"
+   ],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:83-87",
+    "src/main/java/com/stockguard/catalog/Product.java:47-48",
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:88-89",
+    "src/main/java/com/stockguard/catalog/ProductController.java:43-46",
+    "src/main/java/com/stockguard/catalog/ProductController.java:71-80"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 967,
+   "output_tokens": 32,
+   "seconds": 5.16,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.9,
+   "min_free_commit_gb": 8.03
+  },
+  {
+   "id": "v5-sg-neg-category",
+   "selection": "judge",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:83-87",
+    "src/main/java/com/stockguard/catalog/Product.java:47-48",
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:88-89",
+    "src/main/java/com/stockguard/catalog/ProductController.java:43-46",
+    "src/main/java/com/stockguard/catalog/ProductController.java:71-80"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 2933,
+   "output_tokens": 212,
+   "seconds": 20.14,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.89,
+   "min_free_commit_gb": 8.02
+  },
+  {
+   "id": "v5-sg-neg-shipping",
+   "selection": "choose",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:82-90",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:85-90",
+    "src/main/java/com/stockguard/reservation/ReservationService.java:37-40",
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:79-83",
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:87-91"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 1124,
+   "output_tokens": 10,
+   "seconds": 4.14,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.98,
+   "min_free_commit_gb": 8.17
+  },
+  {
+   "id": "v5-sg-neg-shipping",
+   "selection": "judge",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "calls"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:82-90",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:85-90",
+    "src/main/java/com/stockguard/reservation/ReservationService.java:37-40",
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:79-83",
+    "src/main/java/com/stockguard/inventory/ConsistencyService.java:87-91"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 3134,
+   "output_tokens": 201,
+   "seconds": 21.28,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.59,
+   "min_free_commit_gb": 7.76
+  },
+  {
+   "id": "v5-sn-neg-google",
+   "selection": "choose",
+   "negative": true,
+   "status": "answered",
+   "outcome": "wrong",
+   "gold_offered": false,
+   "chosen": [
+    "apps/web/src/pages/auth-pages.tsx:243-250"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "apps/web/src/pages/auth-pages.tsx:243-250",
+    "apps/web/scripts/screenshots.ts:14-21",
+    "apps/collab/src/permissions.ts:9-22",
+    "apps/web/src/pages/auth-pages.tsx:163-165",
+    "apps/web/src/pages/auth-pages.tsx:105-107"
+   ],
+   "note": "`Sign in` linki Google hesabınızı kullanarak giriş yapmanıza yönlendirir.",
+   "requests": 1,
+   "input_tokens": 1014,
+   "output_tokens": 34,
+   "seconds": 5.55,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.79,
+   "min_free_commit_gb": 7.93
+  },
+  {
+   "id": "v5-sn-neg-google",
+   "selection": "judge",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "calls"
+    ]
+   ],
+   "offered": [
+    "apps/web/src/pages/auth-pages.tsx:243-250",
+    "apps/web/scripts/screenshots.ts:14-21",
+    "apps/collab/src/permissions.ts:9-22",
+    "apps/web/src/pages/auth-pages.tsx:163-165",
+    "apps/web/src/pages/auth-pages.tsx:105-107"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 2920,
+   "output_tokens": 168,
+   "seconds": 18.45,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.72,
+   "min_free_commit_gb": 7.84
+  },
+  {
+   "id": "v5-sn-neg-photo",
+   "selection": "choose",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "apps/web/src/pages/auth-pages.tsx:10-14",
+    "apps/api/src/auth/auth.service.ts:42-44",
+    "apps/api/src/auth/auth.service.ts:28-32",
+    "apps/api/src/common/decorators.ts:16-19",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:7-19"
+   ],
+   "note": "",
+   "requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.53,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.82,
+   "min_free_commit_gb": 8.02
+  },
+  {
+   "id": "v5-sn-neg-photo",
+   "selection": "judge",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "apps/web/src/pages/auth-pages.tsx:10-14",
+    "apps/api/src/auth/auth.service.ts:42-44",
+    "apps/api/src/auth/auth.service.ts:28-32",
+    "apps/api/src/common/decorators.ts:16-19",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:7-19"
+   ],
+   "note": "",
+   "requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.45,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.83,
+   "min_free_commit_gb": 8.02
+  },
+  {
+   "id": "v5-sn-neg-reminder",
+   "selection": "choose",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "apps/web/src/pages/note-page.tsx:133-142",
+    "apps/api/src/common/decorators.ts:10-14",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:47-60",
+    "apps/api/src/notes/notes.controller.ts:53-56",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:62-73"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 1103,
+   "output_tokens": 10,
+   "seconds": 4.13,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.83,
+   "min_free_commit_gb": 8.0
+  },
+  {
+   "id": "v5-sn-neg-reminder",
+   "selection": "judge",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "apps/web/src/pages/note-page.tsx:133-142",
+    "apps/api/src/common/decorators.ts:10-14",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:47-60",
+    "apps/api/src/notes/notes.controller.ts:53-56",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:62-73"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 3009,
+   "output_tokens": 168,
+   "seconds": 18.29,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.84,
+   "min_free_commit_gb": 7.97
+  },
+  {
+   "id": "v5-sn-neg-workspace",
+   "selection": "choose",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "apps/web/src/pages/note-page.tsx:75-79",
+    "apps/web/src/pages/note-page.tsx:44-56",
+    "apps/web/src/pages/note-page.tsx:133-142",
+    "apps/web/src/editor/collaborative-editor.tsx:25-29",
+    "apps/web/src/components/share-dialog.tsx:127-131"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 987,
+   "output_tokens": 10,
+   "seconds": 3.94,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.85,
+   "min_free_commit_gb": 7.98
+  },
+  {
+   "id": "v5-sn-neg-workspace",
+   "selection": "judge",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "calls"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "apps/web/src/pages/note-page.tsx:75-79",
+    "apps/web/src/pages/note-page.tsx:44-56",
+    "apps/web/src/pages/note-page.tsx:133-142",
+    "apps/web/src/editor/collaborative-editor.tsx:25-29",
+    "apps/web/src/components/share-dialog.tsx:127-131"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 2957,
+   "output_tokens": 178,
+   "seconds": 17.52,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.87,
+   "min_free_commit_gb": 8.0
+  },
+  {
+   "id": "sg-db-connection-error",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:82-95",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:71-80"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationService.java:16-25",
+    "src/main/resources/application.yml:4-14",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:82-95",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:71-80",
+    "compose.yaml:38-41"
+   ],
+   "note": "`isLostConnection` metodunun ve `handleJpaSystem` hatayı yönetme fonksiyonunun kodları, PostgreSQL bağlantısı kaybına nasıl karar verildiğini ve ne tür hatalara nasıl yanıt verildiğini gösteriyor.",
+   "requests": 1,
+   "input_tokens": 1228,
+   "output_tokens": 75,
+   "seconds": 9.3,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.99,
+   "min_free_commit_gb": 8.15
+  },
+  {
+   "id": "sg-db-connection-error",
+   "selection": "judge",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:71-80"
+   ],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "observes"
+    ],
+    [
+     "P4",
+     "answers"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationService.java:16-25",
+    "src/main/resources/application.yml:4-14",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:82-95",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:71-80",
+    "compose.yaml:38-41"
+   ],
+   "note": "PostgreSQL bağlantı kaybı durumunda geçici bir hata olarak ele alınır.",
+   "requests": 5,
+   "input_tokens": 3152,
+   "output_tokens": 189,
+   "seconds": 18.3,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.99,
+   "min_free_commit_gb": 8.14
+  },
+  {
+   "id": "sg-oversell",
+   "selection": "choose",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": true,
+   "chosen": [],
+   "review": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61"
+   ],
+   "judgements": [],
+   "offered": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:31-35",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:98-102",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:39-43"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 1247,
+   "output_tokens": 58,
+   "seconds": 8.02,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.35,
+   "min_free_commit_gb": 8.51
+  },
+  {
+   "id": "sg-oversell",
+   "selection": "judge",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": true,
+   "chosen": [],
+   "review": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:31-35",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61"
+   ],
+   "judgements": [
+    [
+     "P1",
+     "answers"
+    ],
+    [
+     "P2",
+     "answers"
+    ],
+    [
+     "P3",
+     "answers"
+    ],
+    [
+     "P4",
+     "calls"
+    ],
+    [
+     "P5",
+     "observes"
+    ]
+   ],
+   "offered": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:31-35",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:98-102",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:39-43"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 3207,
+   "output_tokens": 152,
+   "seconds": 15.51,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.28,
+   "min_free_commit_gb": 8.43
+  },
+  {
+   "id": "v2-sg-error-status-map",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "wrong",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:28-32",
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:23-27"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:28-32",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:144-156",
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:23-27",
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:13-17",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:115-124"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 1060,
+   "output_tokens": 33,
+   "seconds": 6.33,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.3,
+   "min_free_commit_gb": 8.45
+  },
+  {
+   "id": "v2-sg-error-status-map",
+   "selection": "judge",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:13-17"
+   ],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "answers"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:28-32",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:144-156",
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:23-27",
+    "src/main/java/com/stockguard/common/error/ErrorCode.java:13-17",
+    "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:115-124"
+   ],
+   "note": "Yetersiz stok hatası için HTTP durum kodu `HttpStatus.CONFLICT` atanıyor.",
+   "requests": 5,
+   "input_tokens": 3016,
+   "output_tokens": 218,
+   "seconds": 23.42,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.89,
+   "min_free_commit_gb": 8.33
+  },
+  {
+   "id": "v2-sn-redis-durability",
+   "selection": "choose",
+   "negative": false,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": true,
+   "chosen": [],
+   "review": [
+    "apps/collab/src/extensions/resilient-redis.ts:34-38"
+   ],
+   "judgements": [],
+   "offered": [
+    "docker-compose.yml:42-53",
+    "apps/collab/src/extensions/resilient-redis.ts:34-38",
+    "apps/collab/src/extensions/resilient-redis.ts:100-104",
+    "apps/collab/src/extensions/resilient-redis.ts:92-96",
+    "apps/api/src/app.setup.ts:8-12"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 997,
+   "output_tokens": 35,
+   "seconds": 5.61,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.91,
+   "min_free_commit_gb": 8.34
+  },
+  {
+   "id": "v2-sn-redis-durability",
+   "selection": "judge",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "docker-compose.yml:42-53"
+   ],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "answers"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "docker-compose.yml:42-53",
+    "apps/collab/src/extensions/resilient-redis.ts:34-38",
+    "apps/collab/src/extensions/resilient-redis.ts:100-104",
+    "apps/collab/src/extensions/resilient-redis.ts:92-96",
+    "apps/api/src/app.setup.ts:8-12"
+   ],
+   "note": "appendonly yes ayarla yazıyor Redis verilerini diske.",
+   "requests": 5,
+   "input_tokens": 2967,
+   "output_tokens": 160,
+   "seconds": 16.52,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.9,
+   "min_free_commit_gb": 8.33
+  },
+  {
+   "id": "v2-sg-neg-transfer",
+   "selection": "choose",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:63-74",
+    "src/main/java/com/stockguard/inventory/StockLedger.java:10-20",
+    "src/main/java/com/stockguard/inventory/StockMovement.java:73-75",
+    "src/main/java/com/stockguard/inventory/StockMovementRepository.java:8-13",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:29-33"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 1093,
+   "output_tokens": 10,
+   "seconds": 4.09,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.93,
+   "min_free_commit_gb": 8.43
+  },
+  {
+   "id": "v2-sg-neg-transfer",
+   "selection": "judge",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:63-74",
+    "src/main/java/com/stockguard/inventory/StockLedger.java:10-20",
+    "src/main/java/com/stockguard/inventory/StockMovement.java:73-75",
+    "src/main/java/com/stockguard/inventory/StockMovementRepository.java:8-13",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:29-33"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 3043,
+   "output_tokens": 169,
+   "seconds": 19.41,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.74,
+   "min_free_commit_gb": 8.19
+  },
+  {
+   "id": "v4-sg-neg-wishlist",
+   "selection": "choose",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/catalog/ProductController.java:71-80",
+    "src/main/java/com/stockguard/catalog/ProductService.java:62-65",
+    "src/main/java/com/stockguard/catalog/ProductController.java:35-41",
+    "src/main/java/com/stockguard/catalog/Product.java:47-48",
+    "src/main/java/com/stockguard/inventory/InventoryController.java:41-49"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 1020,
+   "output_tokens": 10,
+   "seconds": 3.95,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 6.08,
+   "min_free_commit_gb": 8.43
+  },
+  {
+   "id": "v4-sg-neg-wishlist",
+   "selection": "judge",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/catalog/ProductController.java:71-80",
+    "src/main/java/com/stockguard/catalog/ProductService.java:62-65",
+    "src/main/java/com/stockguard/catalog/ProductController.java:35-41",
+    "src/main/java/com/stockguard/catalog/Product.java:47-48",
+    "src/main/java/com/stockguard/inventory/InventoryController.java:41-49"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 3002,
+   "output_tokens": 188,
+   "seconds": 22.16,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.97,
+   "min_free_commit_gb": 8.36
+  },
+  {
+   "id": "v4-sg-neg-reduce-quantity",
+   "selection": "choose",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:116-124",
+    "src/main/resources/db/migration/V3__reservations.sql:25-39",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:86-90",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:63-74",
+    "src/main/resources/db/migration/V3__reservations.sql:41-43"
+   ],
+   "note": "",
+   "requests": 1,
+   "input_tokens": 1250,
+   "output_tokens": 10,
+   "seconds": 5.28,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.92,
+   "min_free_commit_gb": 8.33
+  },
+  {
+   "id": "v4-sg-neg-reduce-quantity",
+   "selection": "judge",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "unrelated"
+    ],
+    [
+     "P2",
+     "unrelated"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "unrelated"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:116-124",
+    "src/main/resources/db/migration/V3__reservations.sql:25-39",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:86-90",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:63-74",
+    "src/main/resources/db/migration/V3__reservations.sql:41-43"
+   ],
+   "note": "",
+   "requests": 5,
+   "input_tokens": 3250,
+   "output_tokens": 195,
+   "seconds": 22.51,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.88,
+   "min_free_commit_gb": 8.22
+  },
+  {
+   "id": "manual-negative-stock",
+   "selection": "choose",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27"
+   ],
+   "review": [],
+   "judgements": [],
+   "offered": [
+    "src/main/java/com/stockguard/simulation/SimulationService.java:196-200",
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:222-226",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61",
+    "src/main/java/com/stockguard/common/config/StockGuardProperties.java:13-17"
+   ],
+   "note": "`ck_stock_available_non_negative` ve benzeri kısıtlamalar stok miktarının negatif olmamasını sağlar.",
+   "requests": 1,
+   "input_tokens": 1220,
+   "output_tokens": 41,
+   "seconds": 9.03,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.86,
+   "min_free_commit_gb": 8.15
+  },
+  {
+   "id": "manual-negative-stock",
+   "selection": "judge",
+   "negative": false,
+   "status": "answered",
+   "outcome": "correct",
+   "gold_offered": true,
+   "chosen": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61"
+   ],
+   "review": [],
+   "judgements": [
+    [
+     "P1",
+     "observes"
+    ],
+    [
+     "P2",
+     "answers"
+    ],
+    [
+     "P3",
+     "unrelated"
+    ],
+    [
+     "P4",
+     "answers"
+    ],
+    [
+     "P5",
+     "unrelated"
+    ]
+   ],
+   "offered": [
+    "src/main/java/com/stockguard/simulation/SimulationService.java:196-200",
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:222-226",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61",
+    "src/main/java/com/stockguard/common/config/StockGuardProperties.java:13-17"
+   ],
+   "note": "Negatif değerleri engelleyen kısıtlamaları tanımlıyor.",
+   "requests": 5,
+   "input_tokens": 3188,
+   "output_tokens": 177,
+   "seconds": 20.96,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 5.74,
+   "min_free_commit_gb": 8.09
+  }
+ ]
+}

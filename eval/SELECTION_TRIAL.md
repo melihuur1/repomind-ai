@@ -51,3 +51,43 @@ A first run stopped after 15 questions, and its rows are in [`dev-selection-part
 ## Safety
 
 The trial starts only when two readings a second apart each show at least 12 GB of free physical memory and 12 GB of free commit space, and prints both. It stops between questions below 4 GB, and saves every finished question.
+
+## Result, added after the run
+
+The rules above are as they were. Rows: [`dev-selection-trial.json`](results/dev-selection-trial.json). It started at 12.06 and 12.07 GB of free physical memory and 17.07 GB of commit space, and finished all 32 questions. The passages were the same for both ways on every question.
+
+| Of 20 answerable, 11 unanswerable | choose | judge |
+|---|---|---|
+| Correct source | 10 | 10 |
+| Wrong source | 3 | 1 |
+| No answer | 7 | 9 |
+| Refused while the right lines were offered (of 15) | 3 | 5 |
+| Unanswerable given a source | 2 | 0 |
+| Wrong in all | 5 | 1 |
+| Invalid replies | 0 | 0 |
+| Seconds per question, median (mean, highest) | 5.7 (5.9, 14.9) | 19.4 (19.3, 26.5) |
+| Model requests per question | 0.97 | 4.84 |
+| Input / output tokens per question | 1023 / 29 | 2937 / 182 |
+| Peak GPU memory in use | 2814 MiB | 2814 MiB |
+| Lowest free physical memory / commit space | 5.11 / 7.40 GB | 5.08 / 7.22 GB |
+
+| Rule | |
+|---|---|
+| 1. Correct sources: judge ≥ choose | holds, 10 = 10 |
+| 2. Wrong in all: judge ≤ choose − 2 | holds, 1 against 5 |
+| 3. Refusals while the right lines were offered: judge ≤ choose | **fails**, 5 against 3 |
+| 4. Invalid replies: judge ≤ choose + 1 | holds, 0 = 0 |
+| 5. Cost: median ≤ 2 × choose, GPU under 4096 MiB | **fails**, 3.4 times as long |
+
+**Choose stays the default, and judge stays experimental.**
+
+Where they differ, on development questions that were read before:
+
+- **Judge removed wrong sources:** two unanswerable questions (`v5-sg-neg-price`, `v5-sn-neg-google`), where it labelled the lines choose picked as only calling the feature; and `v5-sg-sku-locked`, where it labelled the right lines as answering but the evidence rule turned them down, so it said it does not know.
+- **Judge found right lines choose missed:** `v2-sg-error-status-map` and `v2-sn-redis-durability`.
+- **Judge lost right answers choose gave:** `v5-sg-api-language`, whose YAML lines it labelled as observing, and `v5-sg-simulation-default`, where its one unreadable reply of 155 was for the passage with the answer. On the partial run that question was correct, so judge is not stable from run to run either.
+- **The evidence rule turned down right lines** that the model picked, with no correct answer left: 2 questions for each way (`v5-sn-log-format` and `sg-oversell` for choose, `v5-sg-sku-locked` and `sg-oversell` for judge).
+
+The negative-stock question, apart from the totals: both ways chose the CHECK constraints in `V2__catalog_and_stock.sql:14-27`, which now reaches the model as the whole `CREATE TABLE`, and neither chose `SimulationService`. Judge also chose the guard in `StockLevelRepository.java:50-61`, which was offered to both. This is one question with a fixed English wording, and does not show a general gain.
+
+The fifth set's choose rows beside the recorded run with the older windows, descriptive only: right lines offered 10 to 11 of 16, correct 8 to 9, wrong 4 to 2, no answer 4 to 5, unanswerable given a source 2 to 2 of 8.
