@@ -1,0 +1,530 @@
+{
+ "model": {
+  "candidates": 18,
+  "passages": 14,
+  "evidence": 12,
+  "answerable_reaching_model": 20,
+  "unanswerable_reaching_model": 9
+ },
+ "rows": [
+  {
+   "id": "v5-sg-jwt-secret-length",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sg-sku-locked",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sg-page-envelope",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sg-root-redirect",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sg-movements-order",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sg-zero-quantity",
+   "negative": false,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sg-api-language",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sg-simulation-default",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sn-logout-expired",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sn-nonmember-status",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sn-version-list-limit",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sn-version-viewer",
+   "negative": false,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sn-log-format",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sn-email-unique",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sn-version-kinds",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": false
+   }
+  },
+  {
+   "id": "v5-sn-migrate-first",
+   "negative": false,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sg-neg-price",
+   "negative": true,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sg-neg-invoice",
+   "negative": true,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sg-neg-category",
+   "negative": true,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sg-neg-shipping",
+   "negative": true,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sn-neg-google",
+   "negative": true,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sn-neg-photo",
+   "negative": true,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": false
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": false
+   }
+  },
+  {
+   "id": "v5-sn-neg-reminder",
+   "negative": true,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v5-sn-neg-workspace",
+   "negative": true,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "sg-db-connection-error",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "sg-oversell",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v2-sg-error-status-map",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v2-sn-redis-durability",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v2-sg-neg-transfer",
+   "negative": true,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": false
+   }
+  },
+  {
+   "id": "v4-sg-neg-wishlist",
+   "negative": true,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "v4-sg-neg-reduce-quantity",
+   "negative": true,
+   "stored": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": false,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   }
+  },
+  {
+   "id": "manual-negative-stock",
+   "negative": false,
+   "stored": {
+    "candidates": true,
+    "passages": false,
+    "evidence": false,
+    "reaches_model": true
+   },
+   "model": {
+    "candidates": true,
+    "passages": true,
+    "evidence": true,
+    "reaches_model": true
+   }
+  }
+ ],
+ "stored": {
+  "candidates": 18,
+  "passages": 15,
+  "evidence": 12,
+  "answerable_reaching_model": 21,
+  "unanswerable_reaching_model": 10
+ }
+}
