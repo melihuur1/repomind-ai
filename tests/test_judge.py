@@ -17,7 +17,7 @@ from repomind.search.engine import SearchEngine
 from tests.conftest import commit_all, write
 from tests.test_qa import passage
 
-JUDGING = LLMConfig("http://127.0.0.1:11535/v1", "local-model")
+JUDGING = LLMConfig("http://127.0.0.1:11535/v1", "local-model", selection="judge")
 
 
 class TestThePrompt:
@@ -64,13 +64,28 @@ class TestTheReply:
 
 
 class TestTheSetting:
-    def test_judging_is_the_default_and_choosing_can_be_set(self, monkeypatch):
+    def test_choosing_at_once_is_the_default_and_judging_must_be_asked_for(self, monkeypatch):
         monkeypatch.setenv("REPOMIND_LLM_BASE_URL", "http://127.0.0.1:11535/v1")
         monkeypatch.setenv("REPOMIND_LLM_MODEL", "m")
         monkeypatch.delenv("REPOMIND_LLM_SELECTION", raising=False)
-        assert load_llm_config().selection == "judge"
-        monkeypatch.setenv("REPOMIND_LLM_SELECTION", "choose")
         assert load_llm_config().selection == "choose"
+        assert LLMConfig("http://127.0.0.1:11535/v1", "m").selection == "choose"
+        monkeypatch.setenv("REPOMIND_LLM_SELECTION", " Judge ")
+        assert load_llm_config().selection == "judge"
+        monkeypatch.setenv("REPOMIND_LLM_SELECTION", "")
+        assert load_llm_config().selection == "choose"
+
+    def test_the_web_application_uses_the_same_default(self, monkeypatch):
+        # The command line reads the same load_llm_config, and the browser only calls the API.
+        import repomind.api.services as services
+        from repomind.config import Settings
+
+        monkeypatch.setattr(services, "FastEmbedProvider", lambda *_args, **_kwargs: None)  # Nothing is loaded.
+        monkeypatch.setattr(services, "LocalTurkishTranslator", lambda *_args, **_kwargs: None)
+        monkeypatch.setenv("REPOMIND_LLM_BASE_URL", "http://127.0.0.1:11535/v1")
+        monkeypatch.setenv("REPOMIND_LLM_MODEL", "m")
+        monkeypatch.delenv("REPOMIND_LLM_SELECTION", raising=False)
+        assert services.Services.production(Settings.load()).llm_config.selection == "choose"
 
     def test_an_unknown_way_of_selecting_is_refused(self, monkeypatch):
         monkeypatch.setenv("REPOMIND_LLM_BASE_URL", "http://127.0.0.1:11535/v1")

@@ -35,8 +35,9 @@ class LLMConfig:
     output_usd_per_mtok: float = 0.0
     max_total_cost_usd: float = 0.0
     timeout_seconds: int = 300
-    # "judge": the model judges each passage on its own. "choose": it picks among all of them at once.
-    selection: str = "judge"
+    # "choose": the model picks among all passages at once, the measured way and the default.
+    # "judge": it judges each passage on its own. Experimental, and not shown to be better.
+    selection: str = "choose"
 
     @property
     def is_loopback(self) -> bool:
@@ -79,7 +80,7 @@ def load_llm_config() -> LLMConfig | None:
         input_usd_per_mtok=number("REPOMIND_LLM_INPUT_USD_PER_MTOK", 0.0),
         output_usd_per_mtok=number("REPOMIND_LLM_OUTPUT_USD_PER_MTOK", 0.0),
         max_total_cost_usd=number("REPOMIND_LLM_MAX_TOTAL_COST_USD", 0.0),
-        selection=(get_setting("REPOMIND_LLM_SELECTION", "judge") or "judge").strip().lower(),
+        selection=(get_setting("REPOMIND_LLM_SELECTION", "choose") or "choose").strip().lower(),
     )
     validate_config(config)
     return config

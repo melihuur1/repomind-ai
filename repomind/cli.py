@@ -385,6 +385,17 @@ def command_evaluate_ask(args: argparse.Namespace, settings: Settings) -> int:
     should_stop = _memory_guard(args.min_free_memory_gb)
     # Before any model is loaded, because loading is when memory runs out fastest.
     reason = should_stop()
+    if not reason and not args.no_llm:
+        from repomind.evaluation.memory import START_MINIMUM_GB, check_before_loading
+
+        check = check_before_loading()
+        _emit(f"Free memory before the model loads: {check.describe()}")
+        reason = check.refusal
+        if reason:
+            raise RepoMindError(
+                f"Not starting: {reason}. Nothing was loaded.",
+                hint=f"A run that loads the model needs {START_MINIMUM_GB:.0f} GB of free physical memory and of commit space.",
+            )
     if reason:
         raise RepoMindError(f"Not starting: {reason}.", hint="Close other programs, or set --min-free-memory-gb.")
     with _store(settings) as store:
