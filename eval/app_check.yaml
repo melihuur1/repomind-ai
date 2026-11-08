@@ -1,0 +1,97 @@
+# A small check of the real `ask` flow through the API, with a chosen model. See eval/APP_CHECK.md.
+#
+# Six new questions, three in Turkish and three in English, written by reading the code at the
+# pinned commits, in regions no earlier question accepts. Fixed before any run, and not changed
+# after one. This is a small check, not an evaluation: six questions prove nothing statistically.
+# The negative-stock question, which has been read many times, is asked as well and reported apart.
+
+version: 1
+
+repositories:
+  stockguard:
+    commit: b6698d81475232f2b8ca95af45336fae5665cd81
+  syncnotes:
+    commit: bb217cddc89088f27b68715cf9585e94ce2fe3a6
+
+questions:
+  - id: app-sg-ttl-max
+    repo: stockguard
+    language: tr
+    question: Rezervasyon oluşturulurken istenebilecek en uzun bekletme süresi kaç saniye?
+    expected: 3600 seconds. The request accepts 1 to 3600, and without one the configured default of 15 minutes is used.
+    accepted:
+      - path: src/main/java/com/stockguard/reservation/ReservationController.java
+        start_line: 99
+        end_line: 103
+        anchor: "@Max(3600) Integer ttlSeconds"
+
+  - id: app-sn-title-length
+    repo: syncnotes
+    language: tr
+    question: Bir notun başlığı en fazla kaç karakter olarak kaydediliyor?
+    expected: 200 characters. The title is trimmed and cut to MAX_TITLE_LENGTH.
+    accepted:
+      - path: apps/collab/src/ydoc.ts
+        start_line: 4
+        end_line: 4
+        anchor: "MAX_TITLE_LENGTH = 200"
+      - path: apps/collab/src/ydoc.ts
+        start_line: 29
+        end_line: 36
+        anchor: ".slice(0, MAX_TITLE_LENGTH)"
+
+  - id: app-sg-barcode
+    repo: stockguard
+    language: tr
+    question: Bir ürün için barkod nasıl oluşturuluyor?
+    expected: Not in the code. StockGuard has no barcodes.
+    absent: [barkod, barcode]
+
+  - id: app-sg-sim-timeout
+    repo: stockguard
+    language: en
+    question: In the stock simulation, how long may a single HTTP request take before it times out?
+    expected: 60 seconds, REQUEST_TIMEOUT, set on each reservation request. Connecting has its own limit of 5 seconds.
+    accepted:
+      - path: src/main/java/com/stockguard/simulation/SimulationService.java
+        start_line: 49
+        end_line: 49
+        anchor: "REQUEST_TIMEOUT = Duration.ofSeconds(60)"
+      - path: src/main/java/com/stockguard/simulation/SimulationService.java
+        start_line: 150
+        end_line: 150
+        anchor: ".timeout(REQUEST_TIMEOUT)"
+
+  - id: app-sn-search-length
+    repo: syncnotes
+    language: en
+    question: What is the longest search text accepted when listing notes?
+    expected: 100 characters, by @MaxLength(100) on the q parameter.
+    accepted:
+      - path: apps/api/src/notes/dto.ts
+        start_line: 16
+        end_line: 19
+        anchor: "@MaxLength(100)"
+
+  - id: app-sn-webhook
+    repo: syncnotes
+    language: en
+    question: How does SyncNotes send a webhook when a note changes?
+    expected: Not in the code. SyncNotes has no webhooks.
+    absent: [webhook]
+
+apart:
+  - id: manual-negative-stock
+    repo: stockguard
+    language: tr
+    question: StockGuard stok miktarının negatife düşmesini nasıl engelliyor?
+    expected: A CHECK constraint keeps available stock at zero or more, and the reserving UPDATE only matches while enough is available.
+    accepted:
+      - path: src/main/resources/db/migration/V2__catalog_and_stock.sql
+        start_line: 23
+        end_line: 25
+        anchor: "ck_stock_available_non_negative"
+      - path: src/main/java/com/stockguard/inventory/StockLevelRepository.java
+        start_line: 57
+        end_line: 58
+        anchor: "AND available_quantity >= :quantity"

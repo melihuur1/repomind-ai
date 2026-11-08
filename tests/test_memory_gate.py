@@ -133,6 +133,28 @@ class TestEveryWayOfLoadingTheModel:
         assert "qwen2.5:7b is still in memory" in capsys.readouterr().out
         assert not (tmp_path / "rows.json").exists()
 
+    def test_the_app_check(self, monkeypatch, tmp_path, low_memory, capsys):
+        tool = load_tool(monkeypatch, "app_check")
+        monkeypatch.setattr(tool, "problems_with_the_questions", lambda data: [])
+        for name in ("load_llm_config", "OpenAICompatibleClient", "loaded_models", "start_server"):
+            monkeypatch.setattr(tool, name, no_model)
+        assert tool.ask("qwen2.5-coder:7b", tmp_path / "check.json") == 3
+        assert "Not started: free physical memory is 9.70 GB" in capsys.readouterr().out
+        assert not (tmp_path / "check.json").exists()
+
+    def test_the_app_check_never_starts_beside_another_model(self, monkeypatch, tmp_path, capsys):
+        from repomind.qa.llm import LLMConfig
+
+        tool = load_tool(monkeypatch, "app_check")
+        monkeypatch.setattr(memory, "read_memory", lambda: PLENTY)
+        monkeypatch.setattr(memory.time, "sleep", lambda _s: None)
+        monkeypatch.setattr(tool, "problems_with_the_questions", lambda data: [])
+        monkeypatch.setattr(tool, "load_llm_config", lambda: LLMConfig("http://127.0.0.1:11535/v1", "qwen2.5:7b"))
+        monkeypatch.setattr(tool, "loaded_models", lambda server: [{"name": "qwen2.5:7b"}])
+        monkeypatch.setattr(tool, "start_server", no_model)
+        assert tool.ask("qwen2.5-coder:7b", tmp_path / "check.json") == 3
+        assert "qwen2.5:7b is still in memory" in capsys.readouterr().out
+
     def test_the_answer_evaluation_command(self, monkeypatch, tmp_path, low_memory, capsys):
         import repomind.cli as cli
 
