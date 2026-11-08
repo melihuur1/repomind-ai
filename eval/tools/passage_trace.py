@@ -49,9 +49,9 @@ def window_order(chunks, queries, embedder, more_terms):
         return terms, [], [], {}
     lists = {
         "terms": selection._by_shared_terms(windows, terms),
+        "search": sorted(range(len(windows)), key=lambda i: (windows[i].chunk_rank, i)),
         "meaning": selection._by_meaning(windows, queries, embedder),
     }
-    lists["search"] = selection._by_search(windows, lists)
     ordered = [windows[item.key] for item in reciprocal_rank_fusion(lists, k=selection._WINDOW_RRF_K)]
     closest = windows[lists["meaning"][0]]
     ordered = [closest, *(w for w in ordered if w is not closest)]
