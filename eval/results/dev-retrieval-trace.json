@@ -1,0 +1,1773 @@
+{
+ "v5-sg-root-redirect": {
+  "as_asked": {
+   "asked": "Uygulamanın kök adresine gidildiğinde kullanıcı nereye yönlendiriliyor?",
+   "translation": "When the root address of the application is accessed, where is the user redirected?",
+   "second_wording": "Where is the user directed when you go to the root address of the application?",
+   "chunks_searched": 534,
+   "glossary_terms": [
+    "url",
+    "user",
+    "redirect"
+   ],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.796,
+    "semantic (translation)": 0.8374,
+    "semantic (second wording)": 0.8305
+   },
+   "candidates": [
+    "src/main/java/com/stockguard/user/AuthService.java:91-93",
+    "src/main/java/com/stockguard/reservation/ReservationService.java:54-61",
+    "src/main/resources/application.yml:31-32",
+    "src/main/java/com/stockguard/user/AppUserRepository.java:10-26",
+    "src/main/java/com/stockguard/user/Role.java:3-6",
+    "src/main/java/com/stockguard/user/AppUserDetails.java:13-47",
+    "src/main/java/com/stockguard/security/SecurityConfig.java:108-113",
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:102-107",
+    "src/main/java/com/stockguard/user/AuthController.java:57-58",
+    "src/main/java/com/stockguard/user/AuthService.java:95-96",
+    "src/main/java/com/stockguard/security/Actor.java:7-21",
+    "src/main/java/com/stockguard/reservation/ReservationService.java:47-52",
+    "src/main/java/com/stockguard/common/config/WebConfig.java:7-15",
+    "src/main/resources/application.yml:4-14",
+    "compose.yaml:19-28",
+    "src/main/resources/db/migration/V1__users.sql:1-11"
+   ],
+   "passages": [
+    "src/main/java/com/stockguard/user/AppUserRepository.java:10-14",
+    "src/main/java/com/stockguard/user/AuthService.java:91-93",
+    "src/main/java/com/stockguard/reservation/ReservationService.java:54-61",
+    "src/main/java/com/stockguard/user/AppUserDetails.java:33-37",
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:102-107"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "src/main/java/com/stockguard/common/config/WebConfig.java:7-15",
+     "kind": "class",
+     "symbol": "WebConfig",
+     "lines": 9,
+     "is_test": false,
+     "keyword_rank": 2,
+     "keyword_matched": {
+      "redirect": 7.277
+     },
+     "semantic (asked)_rank": 167,
+     "semantic (translation)_rank": 45,
+     "semantic (second wording)_rank": 105,
+     "semantic (asked)_similarity": 0.7717422476930099,
+     "semantic (translation)_similarity": 0.8191141134236493,
+     "semantic (second wording)_similarity": 0.7992061376571655,
+     "fused_rank": 26,
+     "candidate_rank": 13,
+     "question_terms_in_chunk": [
+      "redirect"
+     ],
+     "question_terms_missing": [
+      "root",
+      "address",
+      "applic",
+      "access",
+      "user",
+      "direct",
+      "go",
+      "uygulamanin",
+      "kok",
+      "adresin",
+      "gidildigind",
+      "kullanici",
+      "nerey",
+      "yonlendiriliyor"
+     ]
+    }
+   ]
+  },
+  "with_the_set_english": {
+   "asked": "Uygulamanın kök adresine gidildiğinde kullanıcı nereye yönlendiriliyor?",
+   "translation": "Where is a user redirected when they open the application's root address?",
+   "second_wording": "Where is the user directed when you go to the root address of the application?",
+   "chunks_searched": 534,
+   "glossary_terms": [
+    "url",
+    "user",
+    "redirect"
+   ],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.796,
+    "semantic (translation)": 0.8355,
+    "semantic (second wording)": 0.8305
+   },
+   "candidates": [
+    "src/main/java/com/stockguard/user/AuthService.java:91-93",
+    "src/main/resources/application.yml:31-32",
+    "src/main/java/com/stockguard/user/AppUserRepository.java:10-26",
+    "src/main/java/com/stockguard/user/AppUserDetails.java:13-47",
+    "src/main/java/com/stockguard/reservation/ReservationService.java:54-61",
+    "src/main/java/com/stockguard/user/Role.java:3-6",
+    "src/main/java/com/stockguard/security/SecurityConfig.java:108-113",
+    "src/main/java/com/stockguard/user/AuthService.java:95-96",
+    "src/main/resources/db/migration/V1__users.sql:1-11",
+    "src/main/java/com/stockguard/user/AuthService.java:34-45",
+    "src/main/java/com/stockguard/user/AuthController.java:57-58",
+    "src/main/java/com/stockguard/user/AuthController.java:45-52",
+    "src/main/java/com/stockguard/common/config/WebConfig.java:7-15",
+    "src/main/resources/application.yml:4-14",
+    "compose.yaml:19-28"
+   ],
+   "passages": [
+    "src/main/java/com/stockguard/user/AppUserRepository.java:10-14",
+    "src/main/java/com/stockguard/user/AuthService.java:91-93",
+    "src/main/java/com/stockguard/user/AppUserDetails.java:33-37",
+    "src/main/java/com/stockguard/user/AppUserRepository.java:16-18",
+    "src/main/java/com/stockguard/user/AppUserDetails.java:13-15"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "src/main/java/com/stockguard/common/config/WebConfig.java:7-15",
+     "kind": "class",
+     "symbol": "WebConfig",
+     "lines": 9,
+     "is_test": false,
+     "keyword_rank": 4,
+     "keyword_matched": {
+      "redirect": 7.277
+     },
+     "semantic (asked)_rank": 167,
+     "semantic (translation)_rank": 43,
+     "semantic (second wording)_rank": 105,
+     "semantic (asked)_similarity": 0.7717422476930099,
+     "semantic (translation)_similarity": 0.8148953914642334,
+     "semantic (second wording)_similarity": 0.7992061376571655,
+     "fused_rank": 28,
+     "candidate_rank": 13,
+     "question_terms_in_chunk": [
+      "redirect"
+     ],
+     "question_terms_missing": [
+      "user",
+      "open",
+      "applic",
+      "s",
+      "root",
+      "address",
+      "direct",
+      "go",
+      "uygulamanin",
+      "kok",
+      "adresin",
+      "gidildigind",
+      "kullanici",
+      "nerey",
+      "yonlendiriliyor"
+     ]
+    }
+   ]
+  },
+  "english_question": {
+   "asked": "Where is a user redirected when they open the application's root address?",
+   "translation": null,
+   "second_wording": null,
+   "chunks_searched": 534,
+   "glossary_terms": [],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.8355
+   },
+   "candidates": [
+    "src/main/java/com/stockguard/user/AuthService.java:91-93",
+    "src/main/java/com/stockguard/user/AppUserRepository.java:10-26",
+    "src/main/java/com/stockguard/user/AppUserDetails.java:13-47",
+    "src/main/resources/db/migration/V1__users.sql:1-11",
+    "src/main/java/com/stockguard/common/config/OpenApiConfig.java:11-34",
+    "src/main/resources/application.yml:15-22",
+    "src/main/java/com/stockguard/common/config/WebConfig.java:7-15",
+    "src/main/java/com/stockguard/user/AuthService.java:95-96",
+    "src/main/resources/application.yml:31-32",
+    "src/main/resources/application.yml:61-66",
+    "src/main/java/com/stockguard/inventory/StockLedger.java:27-29",
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:102-107"
+   ],
+   "passages": [
+    "src/main/java/com/stockguard/user/AppUserRepository.java:10-14",
+    "src/main/java/com/stockguard/user/AuthService.java:91-93",
+    "src/main/java/com/stockguard/user/AppUserDetails.java:33-37",
+    "src/main/java/com/stockguard/user/AppUserRepository.java:16-18",
+    "src/main/java/com/stockguard/user/AppUserDetails.java:13-15"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "src/main/java/com/stockguard/common/config/WebConfig.java:7-15",
+     "kind": "class",
+     "symbol": "WebConfig",
+     "lines": 9,
+     "is_test": false,
+     "keyword_rank": 4,
+     "keyword_matched": {
+      "redirect": 7.277
+     },
+     "semantic (asked)_rank": 43,
+     "semantic (asked)_similarity": 0.8148953914642334,
+     "fused_rank": 7,
+     "candidate_rank": 7,
+     "question_terms_in_chunk": [
+      "redirect"
+     ],
+     "question_terms_missing": [
+      "user",
+      "open",
+      "applic",
+      "s",
+      "root",
+      "address"
+     ]
+    }
+   ]
+  }
+ },
+ "v5-sg-zero-quantity": {
+  "as_asked": {
+   "asked": "Veritabanı miktarı sıfır olan bir rezervasyon kaydını kabul eder mi?",
+   "translation": "Does it accept a reservation record with a database amount of zero?",
+   "second_wording": "Would the database accept a reservation with a zero amount?",
+   "chunks_searched": 534,
+   "glossary_terms": [
+    "database",
+    "db",
+    "quantity",
+    "reservation",
+    "register",
+    "registration",
+    "record",
+    "log"
+   ],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.8006,
+    "semantic (translation)": 0.8711,
+    "semantic (second wording)": 0.8576
+   },
+   "candidates": [
+    "src/main/resources/db/migration/V3__reservations.sql:23-23",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:105-126",
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:126-127",
+    "src/main/resources/db/migration/V3__reservations.sql:22-22",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:15-19",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:70-77",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:99-103",
+    "src/main/resources/db/migration/V3__reservations.sql:41-43",
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/resources/db/migration/V3__reservations.sql:20-21",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:39-41",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:79-83",
+    "src/main/java/com/stockguard/user/AuthService.java:47-55",
+    "src/main/java/com/stockguard/user/AuthController.java:45-52",
+    "src/main/java/com/stockguard/user/AuthService.java:95-96",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:281-303"
+   ],
+   "passages": [
+    "src/main/java/com/stockguard/reservation/ReservationTransactions.java:126-127",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:105-108",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:109-111",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:15-19",
+    "src/main/resources/db/migration/V3__reservations.sql:23-23"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "src/main/resources/db/migration/V3__reservations.sql:1-18",
+     "kind": "table",
+     "symbol": "reservations",
+     "lines": 18,
+     "is_test": false,
+     "keyword_rank": 67,
+     "keyword_matched": {
+      "reserv": 1.943
+     },
+     "semantic (asked)_rank": 5,
+     "semantic (translation)_rank": 29,
+     "semantic (second wording)_rank": 11,
+     "semantic (asked)_similarity": 0.7918076155128368,
+     "semantic (translation)_similarity": 0.8397429835719763,
+     "semantic (second wording)_similarity": 0.8429289366560541,
+     "fused_rank": 13,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "reserv"
+     ],
+     "question_terms_missing": [
+      "accept",
+      "record",
+      "databas",
+      "amount",
+      "zero",
+      "veritabani",
+      "miktari",
+      "sifir",
+      "olan",
+      "rezervasyon",
+      "kaydini",
+      "kabul",
+      "eder"
+     ]
+    }
+   ]
+  },
+  "with_the_set_english": {
+   "asked": "Veritabanı miktarı sıfır olan bir rezervasyon kaydını kabul eder mi?",
+   "translation": "Does the database accept a reservation row whose quantity is zero?",
+   "second_wording": "Would the database accept a reservation with a zero amount?",
+   "chunks_searched": 534,
+   "glossary_terms": [
+    "database",
+    "db",
+    "quantity",
+    "reservation",
+    "register",
+    "registration",
+    "record",
+    "log"
+   ],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.8006,
+    "semantic (translation)": 0.8714,
+    "semantic (second wording)": 0.8576
+   },
+   "candidates": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/resources/db/migration/V3__reservations.sql:1-18",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:105-126",
+    "src/main/resources/db/migration/V3__reservations.sql:23-23",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:70-77",
+    "src/main/resources/db/migration/V3__reservations.sql:25-39",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:70-90",
+    "src/main/resources/db/migration/V3__reservations.sql:20-21",
+    "src/main/resources/db/migration/V3__reservations.sql:22-22",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:15-19",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:92-100",
+    "src/main/java/com/stockguard/user/AuthService.java:47-55",
+    "src/main/java/com/stockguard/user/AuthController.java:45-52",
+    "src/main/java/com/stockguard/user/AuthService.java:95-96",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:281-303"
+   ],
+   "passages": [
+    "src/main/resources/db/migration/V3__reservations.sql:3-7",
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/resources/db/migration/V3__reservations.sql:1-2",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:70-74",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:105-109"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "src/main/resources/db/migration/V3__reservations.sql:1-18",
+     "kind": "table",
+     "symbol": "reservations",
+     "lines": 18,
+     "is_test": false,
+     "keyword_rank": 27,
+     "keyword_matched": {
+      "reserv": 1.943,
+      "quantiti": 2.473
+     },
+     "semantic (asked)_rank": 5,
+     "semantic (translation)_rank": 2,
+     "semantic (second wording)_rank": 11,
+     "semantic (asked)_similarity": 0.7918076155128368,
+     "semantic (translation)_similarity": 0.8580121057633197,
+     "semantic (second wording)_similarity": 0.8429289366560541,
+     "fused_rank": 2,
+     "candidate_rank": 2,
+     "question_terms_in_chunk": [
+      "reserv",
+      "quantiti"
+     ],
+     "question_terms_missing": [
+      "databas",
+      "accept",
+      "row",
+      "whose",
+      "zero",
+      "amount",
+      "veritabani",
+      "miktari",
+      "sifir",
+      "olan",
+      "rezervasyon",
+      "kaydini",
+      "kabul",
+      "eder"
+     ]
+    }
+   ]
+  },
+  "english_question": {
+   "asked": "Does the database accept a reservation row whose quantity is zero?",
+   "translation": null,
+   "second_wording": null,
+   "chunks_searched": 534,
+   "glossary_terms": [],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.8714
+   },
+   "candidates": [
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:70-90",
+    "src/main/resources/db/migration/V3__reservations.sql:1-18",
+    "src/main/resources/db/migration/V3__reservations.sql:25-39",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:14-23",
+    "src/main/java/com/stockguard/reservation/ReservationController.java:105-126",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:15-19",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:63-74",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:92-100",
+    "src/main/java/com/stockguard/simulation/SimulationService.java:281-303",
+    "src/main/java/com/stockguard/reservation/ReservationExpiryService.java:14-48"
+   ],
+   "passages": [
+    "src/main/resources/db/migration/V3__reservations.sql:3-7",
+    "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:70-74",
+    "src/main/java/com/stockguard/reservation/ReservationRepository.java:86-90",
+    "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "src/main/resources/db/migration/V3__reservations.sql:1-18",
+     "kind": "table",
+     "symbol": "reservations",
+     "lines": 18,
+     "is_test": false,
+     "keyword_rank": 27,
+     "keyword_matched": {
+      "reserv": 1.943,
+      "quantiti": 2.473
+     },
+     "semantic (asked)_rank": 2,
+     "semantic (asked)_similarity": 0.8580121057633197,
+     "fused_rank": 4,
+     "candidate_rank": 4,
+     "question_terms_in_chunk": [
+      "reserv",
+      "quantiti"
+     ],
+     "question_terms_missing": [
+      "databas",
+      "accept",
+      "row",
+      "whose",
+      "zero"
+     ]
+    }
+   ]
+  }
+ },
+ "v5-sn-version-viewer": {
+  "as_asked": {
+   "asked": "Görüntüleyici rolündeki bir kullanıcı not için sürüm oluşturabilir mi?",
+   "translation": "Can a user with viewer role create a version for a pull request comment?",
+   "second_wording": "Can a user in the role of the viewer create versions for a note?",
+   "chunks_searched": 650,
+   "glossary_terms": [
+    "view",
+    "role",
+    "user",
+    "note",
+    "version",
+    "create"
+   ],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.8251,
+    "semantic (translation)": 0.8501,
+    "semantic (second wording)": 0.869
+   },
+   "candidates": [
+    "apps/api/src/notes/notes.controller.ts:144-163",
+    "apps/api/src/notes/members.service.ts:12-12",
+    "apps/web/src/collab/use-collaboration.ts:111-139",
+    "packages/shared/src/roles.ts:1-1",
+    "packages/shared/src/roles.ts:8-12",
+    "apps/api/src/common/decorators.ts:10-14",
+    "apps/api/src/common/decorators.ts:21-25",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:1-2",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+    "apps/api/src/common/note-access/note-access.service.ts:11-38",
+    "apps/api/src/notes/notes.controller.ts:58-62",
+    "apps/collab/src/permissions.ts:9-22",
+    "apps/web/src/lib/api.ts:151-172",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:137-138",
+    "apps/collab/src/extensions/persistence.ts:103-127",
+    "apps/collab/src/versions.ts:24-44",
+    "apps/collab/src/versions.ts:46-64"
+   ],
+   "passages": [
+    "apps/api/src/notes/notes.controller.ts:148-152",
+    "apps/api/src/notes/notes.controller.ts:154-158",
+    "apps/api/src/notes/notes.controller.ts:144-147",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:1-2",
+    "apps/api/src/common/decorators.ts:21-25"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "apps/collab/src/extensions/versions-handler.ts:35-56",
+     "kind": "method",
+     "symbol": "VersionsHandlerExtension.onStateless",
+     "lines": 22,
+     "is_test": false,
+     "keyword_rank": 34,
+     "keyword_matched": {
+      "user": 1.198,
+      "role": 2.742,
+      "creat": 1.538,
+      "version": 4.025
+     },
+     "semantic (asked)_rank": 83,
+     "semantic (translation)_rank": 1,
+     "semantic (second wording)_rank": 78,
+     "semantic (asked)_similarity": 0.8016343116760254,
+     "semantic (translation)_similarity": 0.8501328229904175,
+     "semantic (second wording)_similarity": 0.8317566514015198,
+     "fused_rank": 18,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "user",
+      "role",
+      "creat",
+      "version"
+     ],
+     "question_terms_missing": [
+      "viewer",
+      "pull",
+      "request",
+      "comment",
+      "note",
+      "goruntuleyici",
+      "rolundeki",
+      "kullanici",
+      "not",
+      "surum",
+      "olusturabilir"
+     ]
+    },
+    {
+     "chunk": "apps/web/src/components/history-panel.tsx:134-154",
+     "kind": "function",
+     "symbol": "HistoryPanel",
+     "lines": 21,
+     "is_test": false,
+     "keyword_rank": 188,
+     "keyword_matched": {
+      "version": 3.316
+     },
+     "semantic (asked)_rank": 176,
+     "semantic (translation)_rank": 31,
+     "semantic (second wording)_rank": 135,
+     "semantic (asked)_similarity": 0.789862871170044,
+     "semantic (translation)_similarity": 0.8309034109115601,
+     "semantic (second wording)_similarity": 0.8193265199661255,
+     "fused_rank": 72,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "version"
+     ],
+     "question_terms_missing": [
+      "user",
+      "viewer",
+      "role",
+      "creat",
+      "pull",
+      "request",
+      "comment",
+      "note",
+      "goruntuleyici",
+      "rolundeki",
+      "kullanici",
+      "not",
+      "surum",
+      "olusturabilir"
+     ]
+    }
+   ]
+  },
+  "with_the_set_english": {
+   "asked": "Görüntüleyici rolündeki bir kullanıcı not için sürüm oluşturabilir mi?",
+   "translation": "Can a user with the viewer role create a version of a note?",
+   "second_wording": "Can a user in the role of the viewer create versions for a note?",
+   "chunks_searched": 650,
+   "glossary_terms": [
+    "view",
+    "role",
+    "user",
+    "note",
+    "version",
+    "create"
+   ],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.8251,
+    "semantic (translation)": 0.8703,
+    "semantic (second wording)": 0.869
+   },
+   "candidates": [
+    "apps/api/src/notes/notes.controller.ts:144-163",
+    "packages/shared/src/roles.ts:8-12",
+    "packages/shared/src/roles.ts:1-1",
+    "apps/api/src/notes/notes.controller.ts:58-62",
+    "apps/web/src/collab/use-collaboration.ts:111-139",
+    "apps/api/src/notes/members.service.ts:12-12",
+    "apps/api/src/common/note-access/note-access.service.ts:11-38",
+    "apps/api/src/notes/notes.controller.ts:64-72",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:1-2",
+    "apps/api/src/common/decorators.ts:10-14",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:62-73",
+    "apps/web/src/lib/api.ts:151-172",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:137-138",
+    "apps/collab/src/extensions/persistence.ts:103-127",
+    "apps/collab/src/versions.ts:24-44",
+    "apps/collab/src/versions.ts:46-64"
+   ],
+   "passages": [
+    "apps/api/src/notes/notes.controller.ts:148-152",
+    "apps/api/src/notes/notes.controller.ts:154-158",
+    "apps/api/src/notes/notes.controller.ts:58-62",
+    "packages/shared/src/roles.ts:8-12",
+    "packages/shared/src/roles.ts:1-1"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "apps/collab/src/extensions/versions-handler.ts:35-56",
+     "kind": "method",
+     "symbol": "VersionsHandlerExtension.onStateless",
+     "lines": 22,
+     "is_test": false,
+     "keyword_rank": 29,
+     "keyword_matched": {
+      "user": 1.198,
+      "role": 2.742,
+      "creat": 1.538,
+      "version": 4.025
+     },
+     "semantic (asked)_rank": 83,
+     "semantic (translation)_rank": 79,
+     "semantic (second wording)_rank": 78,
+     "semantic (asked)_similarity": 0.8016343116760254,
+     "semantic (translation)_similarity": 0.8327645559766639,
+     "semantic (second wording)_similarity": 0.8317566514015198,
+     "fused_rank": 67,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "user",
+      "role",
+      "creat",
+      "version"
+     ],
+     "question_terms_missing": [
+      "viewer",
+      "note",
+      "goruntuleyici",
+      "rolundeki",
+      "kullanici",
+      "not",
+      "surum",
+      "olusturabilir"
+     ]
+    },
+    {
+     "chunk": "apps/web/src/components/history-panel.tsx:134-154",
+     "kind": "function",
+     "symbol": "HistoryPanel",
+     "lines": 21,
+     "is_test": false,
+     "keyword_rank": 171,
+     "keyword_matched": {
+      "version": 3.316
+     },
+     "semantic (asked)_rank": 176,
+     "semantic (translation)_rank": 113,
+     "semantic (second wording)_rank": 135,
+     "semantic (asked)_similarity": 0.789862871170044,
+     "semantic (translation)_similarity": 0.824757386729563,
+     "semantic (second wording)_similarity": 0.8193265199661255,
+     "fused_rank": null,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "version"
+     ],
+     "question_terms_missing": [
+      "user",
+      "viewer",
+      "role",
+      "creat",
+      "note",
+      "goruntuleyici",
+      "rolundeki",
+      "kullanici",
+      "not",
+      "surum",
+      "olusturabilir"
+     ]
+    }
+   ]
+  },
+  "english_question": {
+   "asked": "Can a user with the viewer role create a version of a note?",
+   "translation": null,
+   "second_wording": null,
+   "chunks_searched": 650,
+   "glossary_terms": [],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.8703
+   },
+   "candidates": [
+    "apps/api/src/notes/notes.controller.ts:144-163",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:1-2",
+    "apps/web/src/collab/use-collaboration.ts:111-139",
+    "apps/api/src/notes/notes.controller.ts:58-62",
+    "apps/api/src/notes/notes.controller.ts:81-90",
+    "packages/shared/src/roles.ts:1-1",
+    "packages/shared/src/roles.ts:8-12",
+    "apps/api/src/notes/notes.controller.ts:92-102",
+    "apps/api/src/notes/notes.controller.ts:64-72",
+    "apps/web/src/lib/api.ts:151-172",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:110-111",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:137-138"
+   ],
+   "passages": [
+    "apps/api/src/notes/notes.controller.ts:148-152",
+    "apps/api/src/notes/notes.controller.ts:154-158",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:1-2",
+    "apps/api/src/notes/notes.controller.ts:58-62",
+    "packages/shared/src/roles.ts:8-12"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "apps/collab/src/extensions/versions-handler.ts:35-56",
+     "kind": "method",
+     "symbol": "VersionsHandlerExtension.onStateless",
+     "lines": 22,
+     "is_test": false,
+     "keyword_rank": 19,
+     "keyword_matched": {
+      "user": 1.198,
+      "role": 2.742,
+      "creat": 1.538,
+      "version": 4.025
+     },
+     "semantic (asked)_rank": 79,
+     "semantic (asked)_similarity": 0.8327645559766639,
+     "fused_rank": 41,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "user",
+      "role",
+      "creat",
+      "version"
+     ],
+     "question_terms_missing": [
+      "viewer",
+      "note"
+     ]
+    },
+    {
+     "chunk": "apps/web/src/components/history-panel.tsx:134-154",
+     "kind": "function",
+     "symbol": "HistoryPanel",
+     "lines": 21,
+     "is_test": false,
+     "keyword_rank": 160,
+     "keyword_matched": {
+      "version": 3.316
+     },
+     "semantic (asked)_rank": 113,
+     "semantic (asked)_similarity": 0.824757386729563,
+     "fused_rank": null,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "version"
+     ],
+     "question_terms_missing": [
+      "user",
+      "viewer",
+      "role",
+      "creat",
+      "note"
+     ]
+    }
+   ]
+  }
+ },
+ "v5-sn-version-kinds": {
+  "as_asked": {
+   "asked": "Not sürümleri hangi türlerde olabilir?",
+   "translation": "What types of versions can be available?",
+   "second_wording": "What species could note versions be?",
+   "chunks_searched": 650,
+   "glossary_terms": [
+    "note",
+    "version"
+   ],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.7909,
+    "semantic (translation)": 0.8308,
+    "semantic (second wording)": 0.8141
+   },
+   "candidates": [
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+    "apps/api/src/notes/versions.service.ts:15-30",
+    "packages/shared/src/collab.ts:35-42",
+    "apps/web/src/hooks/queries.ts:33-39",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:110-111",
+    "apps/api/src/notes/notes.controller.ts:144-163",
+    "apps/collab/src/versions.ts:9-9",
+    "apps/api/src/notes/versions.service.ts:32-48",
+    "apps/collab/src/versions.ts:7-7",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:134-135",
+    "packages/shared/src/api-types.ts:52-59",
+    "packages/shared/src/api-types.ts:61-64",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:137-138"
+   ],
+   "passages": [
+    "apps/web/src/hooks/queries.ts:33-39",
+    "packages/shared/src/collab.ts:35-42",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+    "apps/collab/src/versions.ts:7-7",
+    "apps/api/src/notes/versions.service.ts:15-30"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "packages/db/prisma/migrations/20261104110838_init/migration.sql:4-5",
+     "kind": "type",
+     "symbol": "VersionKind",
+     "lines": 2,
+     "is_test": false,
+     "keyword_rank": 11,
+     "keyword_matched": {
+      "type": 2.59,
+      "version": 4.442
+     },
+     "semantic (asked)_rank": 192,
+     "semantic (translation)_rank": 7,
+     "semantic (second wording)_rank": 31,
+     "semantic (asked)_similarity": 0.7526838183403015,
+     "semantic (translation)_similarity": 0.8138960599899292,
+     "semantic (second wording)_similarity": 0.7831636667251587,
+     "fused_rank": 14,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "type",
+      "version"
+     ],
+     "question_terms_missing": [
+      "avail",
+      "speci",
+      "note",
+      "not",
+      "surumleri",
+      "turlerd",
+      "olabilir"
+     ]
+    },
+    {
+     "chunk": "packages/shared/src/api-types.ts:52-59",
+     "kind": "interface",
+     "symbol": "VersionSummaryDto",
+     "lines": 8,
+     "is_test": false,
+     "keyword_rank": 12,
+     "keyword_matched": {
+      "type": 2.623,
+      "version": 4.275
+     },
+     "semantic (asked)_rank": 22,
+     "semantic (translation)_rank": 10,
+     "semantic (second wording)_rank": 33,
+     "semantic (asked)_similarity": 0.7745497226715088,
+     "semantic (translation)_similarity": 0.8119351863861084,
+     "semantic (second wording)_similarity": 0.7821463346481323,
+     "fused_rank": 11,
+     "candidate_rank": 11,
+     "question_terms_in_chunk": [
+      "type",
+      "version"
+     ],
+     "question_terms_missing": [
+      "avail",
+      "speci",
+      "note",
+      "not",
+      "surumleri",
+      "turlerd",
+      "olabilir"
+     ]
+    }
+   ]
+  },
+  "with_the_set_english": {
+   "asked": "Not sürümleri hangi türlerde olabilir?",
+   "translation": "What kinds of note versions are there?",
+   "second_wording": "What species could note versions be?",
+   "chunks_searched": 650,
+   "glossary_terms": [
+    "note",
+    "version"
+   ],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.7909,
+    "semantic (translation)": 0.8364,
+    "semantic (second wording)": 0.8141
+   },
+   "candidates": [
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+    "apps/api/src/notes/versions.service.ts:15-30",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:110-111",
+    "apps/api/src/notes/notes.controller.ts:144-163",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:134-135",
+    "apps/api/src/notes/versions.service.ts:32-48",
+    "apps/web/src/hooks/queries.ts:33-39",
+    "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql:8-9",
+    "apps/web/src/hooks/queries.ts:5-12",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:47-60",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:137-138",
+    "apps/collab/src/versions.ts:66-76"
+   ],
+   "passages": [
+    "apps/api/src/notes/notes.controller.ts:150-154",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+    "apps/api/src/notes/versions.service.ts:15-30",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:110-111",
+    "apps/api/src/notes/notes.controller.ts:144-148"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "packages/db/prisma/migrations/20261104110838_init/migration.sql:4-5",
+     "kind": "type",
+     "symbol": "VersionKind",
+     "lines": 2,
+     "is_test": false,
+     "keyword_rank": 5,
+     "keyword_matched": {
+      "kind": 7.006,
+      "version": 4.442
+     },
+     "semantic (asked)_rank": 192,
+     "semantic (translation)_rank": 105,
+     "semantic (second wording)_rank": 31,
+     "semantic (asked)_similarity": 0.7526838183403015,
+     "semantic (translation)_similarity": 0.7859868407249451,
+     "semantic (second wording)_similarity": 0.7831636667251587,
+     "fused_rank": 29,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "kind",
+      "version"
+     ],
+     "question_terms_missing": [
+      "note",
+      "speci",
+      "not",
+      "surumleri",
+      "turlerd",
+      "olabilir"
+     ]
+    },
+    {
+     "chunk": "packages/shared/src/api-types.ts:52-59",
+     "kind": "interface",
+     "symbol": "VersionSummaryDto",
+     "lines": 8,
+     "is_test": false,
+     "keyword_rank": 14,
+     "keyword_matched": {
+      "kind": 3.909,
+      "version": 4.275
+     },
+     "semantic (asked)_rank": 22,
+     "semantic (translation)_rank": 83,
+     "semantic (second wording)_rank": 33,
+     "semantic (asked)_similarity": 0.7745497226715088,
+     "semantic (translation)_similarity": 0.7911973595619202,
+     "semantic (second wording)_similarity": 0.7821463346481323,
+     "fused_rank": 24,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "kind",
+      "version"
+     ],
+     "question_terms_missing": [
+      "note",
+      "speci",
+      "not",
+      "surumleri",
+      "turlerd",
+      "olabilir"
+     ]
+    }
+   ]
+  },
+  "english_question": {
+   "asked": "What kinds of note versions are there?",
+   "translation": null,
+   "second_wording": null,
+   "chunks_searched": 650,
+   "glossary_terms": [],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.8364
+   },
+   "candidates": [
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:110-111",
+    "apps/api/src/notes/versions.service.ts:15-30",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:134-135",
+    "apps/api/src/notes/notes.controller.ts:144-163",
+    "apps/collab/src/versions.ts:24-44",
+    "apps/api/src/notes/versions.service.ts:32-48",
+    "apps/web/src/hooks/queries.ts:33-39",
+    "apps/collab/src/versions.ts:7-7",
+    "apps/web/src/hooks/queries.ts:5-12",
+    "apps/collab/src/versions.ts:46-64",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:137-138"
+   ],
+   "passages": [
+    "apps/api/src/notes/notes.controller.ts:150-154",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:110-111",
+    "apps/api/src/notes/versions.service.ts:15-30",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:134-135"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "packages/db/prisma/migrations/20261104110838_init/migration.sql:4-5",
+     "kind": "type",
+     "symbol": "VersionKind",
+     "lines": 2,
+     "is_test": false,
+     "keyword_rank": 2,
+     "keyword_matched": {
+      "kind": 7.006,
+      "version": 4.442
+     },
+     "semantic (asked)_rank": 105,
+     "semantic (asked)_similarity": 0.7859868407249451,
+     "fused_rank": 13,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "kind",
+      "version"
+     ],
+     "question_terms_missing": [
+      "note"
+     ]
+    },
+    {
+     "chunk": "packages/shared/src/api-types.ts:52-59",
+     "kind": "interface",
+     "symbol": "VersionSummaryDto",
+     "lines": 8,
+     "is_test": false,
+     "keyword_rank": 12,
+     "keyword_matched": {
+      "kind": 3.909,
+      "version": 4.275
+     },
+     "semantic (asked)_rank": 83,
+     "semantic (asked)_similarity": 0.7911973595619202,
+     "fused_rank": 24,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "kind",
+      "version"
+     ],
+     "question_terms_missing": [
+      "note"
+     ]
+    }
+   ]
+  }
+ },
+ "v5-sn-migrate-first": {
+  "as_asked": {
+   "asked": "Docker ile başlatırken API açılmadan önce veritabanı şeması nasıl güncelleniyor?",
+   "translation": "How is the database schema updated before the API starts when starting with Docker?",
+   "second_wording": "How do you update database schematics before API opens when you start with Docker?",
+   "chunks_searched": 650,
+   "glossary_terms": [
+    "start",
+    "init",
+    "bootstrap",
+    "database",
+    "db",
+    "update"
+   ],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.8357,
+    "semantic (translation)": 0.8589,
+    "semantic (second wording)": 0.8578
+   },
+   "candidates": [
+    "docker-compose.yml:26-26",
+    "docker-compose.yml:36-40",
+    "docker-compose.yml:90-99",
+    "docker-compose.yml:33-35",
+    "packages/db/prisma.config.ts:5-18",
+    "docker-compose.yml:1-1",
+    "apps/collab/src/config.ts:3-21",
+    "packages/db/src/index.ts:11-21",
+    "apps/api/src/notes/versions.service.ts:6-12",
+    "apps/web/vite.config.ts:6-9",
+    "docker-compose.yml:31-32",
+    "apps/api/src/config/env.ts:7-31",
+    "apps/web/src/lib/offline-store.ts:15-32",
+    "apps/api/src/main.ts:8-14",
+    "infra/postgres/init/01-create-test-db.sql:1-2",
+    "apps/api/src/main.ts:16-16",
+    "apps/api/src/prisma/prisma.service.ts:5-21"
+   ],
+   "passages": [
+    "packages/db/src/index.ts:11-21",
+    "docker-compose.yml:33-35",
+    "packages/db/prisma.config.ts:5-18",
+    "apps/web/vite.config.ts:6-9",
+    "apps/collab/src/config.ts:9-13"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "docker-compose.yml:16-22",
+     "kind": "config",
+     "symbol": "x-collab",
+     "lines": 7,
+     "is_test": false,
+     "keyword_rank": 40,
+     "keyword_matched": {
+      "docker": 4.808
+     },
+     "semantic (asked)_rank": 70,
+     "semantic (translation)_rank": 83,
+     "semantic (second wording)_rank": 106,
+     "semantic (asked)_similarity": 0.803877258416333,
+     "semantic (translation)_similarity": 0.8320013880729675,
+     "semantic (second wording)_similarity": 0.8274540305137634,
+     "fused_rank": 89,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "docker"
+     ],
+     "question_terms_missing": [
+      "databas",
+      "schema",
+      "updat",
+      "befor",
+      "api",
+      "start",
+      "schemat",
+      "open",
+      "baslatirken",
+      "acilmadan",
+      "onc",
+      "veritabani",
+      "semasi",
+      "guncelleniyor"
+     ]
+    }
+   ]
+  },
+  "with_the_set_english": {
+   "asked": "Docker ile başlatırken API açılmadan önce veritabanı şeması nasıl güncelleniyor?",
+   "translation": "When starting with Docker, how is the database schema updated before the API opens?",
+   "second_wording": "How do you update database schematics before API opens when you start with Docker?",
+   "chunks_searched": 650,
+   "glossary_terms": [
+    "start",
+    "init",
+    "bootstrap",
+    "database",
+    "db",
+    "update"
+   ],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.8357,
+    "semantic (translation)": 0.8548,
+    "semantic (second wording)": 0.8578
+   },
+   "candidates": [
+    "docker-compose.yml:26-26",
+    "docker-compose.yml:36-40",
+    "docker-compose.yml:90-99",
+    "packages/db/prisma.config.ts:5-18",
+    "docker-compose.yml:1-1",
+    "apps/collab/src/config.ts:3-21",
+    "docker-compose.yml:33-35",
+    "apps/api/src/notes/versions.service.ts:6-12",
+    "packages/db/src/index.ts:11-21",
+    "apps/web/vite.config.ts:6-9",
+    "docker-compose.yml:31-32",
+    "apps/api/src/config/env.ts:7-31",
+    "apps/web/src/lib/offline-store.ts:15-32",
+    "apps/api/src/main.ts:8-14",
+    "infra/postgres/init/01-create-test-db.sql:1-2",
+    "apps/api/src/main.ts:16-16",
+    "apps/api/src/prisma/prisma.service.ts:5-21"
+   ],
+   "passages": [
+    "packages/db/src/index.ts:11-21",
+    "packages/db/prisma.config.ts:5-18",
+    "docker-compose.yml:33-35",
+    "apps/collab/src/config.ts:9-13",
+    "apps/web/vite.config.ts:6-9"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "docker-compose.yml:16-22",
+     "kind": "config",
+     "symbol": "x-collab",
+     "lines": 7,
+     "is_test": false,
+     "keyword_rank": 40,
+     "keyword_matched": {
+      "docker": 4.808
+     },
+     "semantic (asked)_rank": 70,
+     "semantic (translation)_rank": 103,
+     "semantic (second wording)_rank": 106,
+     "semantic (asked)_similarity": 0.803877258416333,
+     "semantic (translation)_similarity": 0.8297757506370544,
+     "semantic (second wording)_similarity": 0.8274540305137634,
+     "fused_rank": 90,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "docker"
+     ],
+     "question_terms_missing": [
+      "start",
+      "databas",
+      "schema",
+      "updat",
+      "befor",
+      "api",
+      "open",
+      "schemat",
+      "baslatirken",
+      "acilmadan",
+      "onc",
+      "veritabani",
+      "semasi",
+      "guncelleniyor"
+     ]
+    }
+   ]
+  },
+  "english_question": {
+   "asked": "When starting with Docker, how is the database schema updated before the API opens?",
+   "translation": null,
+   "second_wording": null,
+   "chunks_searched": 650,
+   "glossary_terms": [],
+   "top_semantic_similarity": {
+    "semantic (asked)": 0.8548
+   },
+   "candidates": [
+    "packages/db/prisma.config.ts:5-18",
+    "apps/collab/src/config.ts:3-21",
+    "packages/db/src/index.ts:11-21",
+    "docker-compose.yml:90-99",
+    "docker-compose.yml:36-40",
+    "docker-compose.yml:26-26",
+    "docker-compose.yml:33-35",
+    "apps/web/vite.config.ts:6-9",
+    "infra/postgres/init/01-create-test-db.sql:1-2",
+    "apps/api/src/config/env.ts:7-31",
+    "apps/api/src/notes/versions.service.ts:6-12",
+    "docker-compose.yml:1-1"
+   ],
+   "passages": [
+    "packages/db/src/index.ts:11-21",
+    "packages/db/prisma.config.ts:5-18",
+    "apps/collab/src/config.ts:9-13",
+    "apps/web/vite.config.ts:6-9",
+    "apps/collab/src/config.ts:3-7"
+   ],
+   "right_lines_in_passages": false,
+   "gold_chunks": [
+    {
+     "chunk": "docker-compose.yml:16-22",
+     "kind": "config",
+     "symbol": "x-collab",
+     "lines": 7,
+     "is_test": false,
+     "keyword_rank": 38,
+     "keyword_matched": {
+      "docker": 4.808
+     },
+     "semantic (asked)_rank": 103,
+     "semantic (asked)_similarity": 0.8297757506370544,
+     "fused_rank": 61,
+     "candidate_rank": null,
+     "question_terms_in_chunk": [
+      "docker"
+     ],
+     "question_terms_missing": [
+      "start",
+      "databas",
+      "schema",
+      "updat",
+      "befor",
+      "api",
+      "open"
+     ]
+    }
+   ]
+  },
+  "after_the_change": {
+   "as_asked": {
+    "asked": "Docker ile başlatırken API açılmadan önce veritabanı şeması nasıl güncelleniyor?",
+    "translation": "How is the database schema updated before the API starts when starting with Docker?",
+    "second_wording": "How do you update database schematics before API opens when you start with Docker?",
+    "chunks_searched": 654,
+    "glossary_terms": [
+     "start",
+     "init",
+     "bootstrap",
+     "database",
+     "db",
+     "update"
+    ],
+    "top_semantic_similarity": {
+     "semantic (asked)": 0.8399,
+     "semantic (translation)": 0.8589,
+     "semantic (second wording)": 0.8579
+    },
+    "candidates": [
+     "docker-compose.yml:65-67",
+     "docker-compose.yml:36-40",
+     "docker-compose.yml:26-26",
+     "docker-compose.yml:60-62",
+     "docker-compose.yml:90-99",
+     "packages/db/prisma.config.ts:5-18",
+     "docker-compose.yml:74-76",
+     "docker-compose.yml:33-35",
+     "docker-compose.yml:1-1",
+     "apps/collab/src/config.ts:3-21",
+     "packages/db/src/index.ts:11-21",
+     "apps/api/src/notes/versions.service.ts:6-12",
+     "apps/web/src/lib/offline-store.ts:15-32",
+     "apps/api/src/main.ts:8-14",
+     "infra/postgres/init/01-create-test-db.sql:1-2",
+     "apps/api/src/main.ts:16-16",
+     "apps/api/src/prisma/prisma.service.ts:5-21"
+    ],
+    "passages": [
+     "packages/db/src/index.ts:11-21",
+     "packages/db/prisma.config.ts:5-18",
+     "docker-compose.yml:33-35",
+     "docker-compose.yml:65-67",
+     "apps/collab/src/config.ts:9-13"
+    ],
+    "right_lines_in_passages": false,
+    "gold_chunks": [
+     {
+      "chunk": "docker-compose.yml:16-22",
+      "kind": "config",
+      "symbol": "x-collab",
+      "lines": 7,
+      "is_test": false,
+      "keyword_rank": 50,
+      "keyword_matched": {
+       "docker": 4.496
+      },
+      "semantic (asked)_rank": 74,
+      "semantic (translation)_rank": 87,
+      "semantic (second wording)_rank": 110,
+      "semantic (asked)_similarity": 0.803877258416333,
+      "semantic (translation)_similarity": 0.8320013880729675,
+      "semantic (second wording)_similarity": 0.8274540305137634,
+      "fused_rank": 102,
+      "candidate_rank": null,
+      "question_terms_in_chunk": [
+       "docker"
+      ],
+      "question_terms_missing": [
+       "databas",
+       "schema",
+       "updat",
+       "befor",
+       "api",
+       "start",
+       "schemat",
+       "open",
+       "baslatirken",
+       "acilmadan",
+       "onc",
+       "veritabani",
+       "semasi",
+       "guncelleniyor"
+      ]
+     },
+     {
+      "chunk": "docker-compose.yml:60-62",
+      "kind": "config",
+      "symbol": "services.migrate",
+      "lines": 3,
+      "is_test": false,
+      "keyword_rank": 34,
+      "keyword_matched": {
+       "docker": 5.142
+      },
+      "semantic (asked)_rank": 8,
+      "semantic (translation)_rank": 3,
+      "semantic (second wording)_rank": 4,
+      "semantic (asked)_similarity": 0.8222092635097884,
+      "semantic (translation)_similarity": 0.8546971082687378,
+      "semantic (second wording)_similarity": 0.8572558164596558,
+      "fused_rank": 4,
+      "candidate_rank": 4,
+      "question_terms_in_chunk": [
+       "docker"
+      ],
+      "question_terms_missing": [
+       "databas",
+       "schema",
+       "updat",
+       "befor",
+       "api",
+       "start",
+       "schemat",
+       "open",
+       "baslatirken",
+       "acilmadan",
+       "onc",
+       "veritabani",
+       "semasi",
+       "guncelleniyor"
+      ]
+     },
+     {
+      "chunk": "docker-compose.yml:74-76",
+      "kind": "config",
+      "symbol": "services.api.depends_on",
+      "lines": 3,
+      "is_test": false,
+      "keyword_rank": 7,
+      "keyword_matched": {
+       "api": 3.909,
+       "docker": 4.725
+      },
+      "semantic (asked)_rank": 10,
+      "semantic (translation)_rank": 9,
+      "semantic (second wording)_rank": 12,
+      "semantic (asked)_similarity": 0.8178869729604419,
+      "semantic (translation)_similarity": 0.8487834930419922,
+      "semantic (second wording)_similarity": 0.8475731611251831,
+      "fused_rank": 7,
+      "candidate_rank": 7,
+      "question_terms_in_chunk": [
+       "api",
+       "docker"
+      ],
+      "question_terms_missing": [
+       "databas",
+       "schema",
+       "updat",
+       "befor",
+       "start",
+       "schemat",
+       "open",
+       "baslatirken",
+       "acilmadan",
+       "onc",
+       "veritabani",
+       "semasi",
+       "guncelleniyor"
+      ]
+     }
+    ]
+   },
+   "with_the_set_english": {
+    "asked": "Docker ile başlatırken API açılmadan önce veritabanı şeması nasıl güncelleniyor?",
+    "translation": "When starting with Docker, how is the database schema updated before the API opens?",
+    "second_wording": "How do you update database schematics before API opens when you start with Docker?",
+    "chunks_searched": 654,
+    "glossary_terms": [
+     "start",
+     "init",
+     "bootstrap",
+     "database",
+     "db",
+     "update"
+    ],
+    "top_semantic_similarity": {
+     "semantic (asked)": 0.8399,
+     "semantic (translation)": 0.8552,
+     "semantic (second wording)": 0.8579
+    },
+    "candidates": [
+     "docker-compose.yml:65-67",
+     "docker-compose.yml:36-40",
+     "docker-compose.yml:26-26",
+     "docker-compose.yml:90-99",
+     "docker-compose.yml:60-62",
+     "packages/db/prisma.config.ts:5-18",
+     "apps/collab/src/config.ts:3-21",
+     "docker-compose.yml:74-76",
+     "docker-compose.yml:1-1",
+     "docker-compose.yml:33-35",
+     "packages/db/src/index.ts:11-21",
+     "apps/api/src/notes/versions.service.ts:6-12",
+     "apps/web/src/lib/offline-store.ts:15-32",
+     "apps/api/src/main.ts:8-14",
+     "infra/postgres/init/01-create-test-db.sql:1-2",
+     "apps/api/src/main.ts:16-16",
+     "apps/api/src/prisma/prisma.service.ts:5-21"
+    ],
+    "passages": [
+     "packages/db/src/index.ts:11-21",
+     "packages/db/prisma.config.ts:5-18",
+     "docker-compose.yml:33-35",
+     "docker-compose.yml:65-67",
+     "apps/collab/src/config.ts:9-13"
+    ],
+    "right_lines_in_passages": false,
+    "gold_chunks": [
+     {
+      "chunk": "docker-compose.yml:16-22",
+      "kind": "config",
+      "symbol": "x-collab",
+      "lines": 7,
+      "is_test": false,
+      "keyword_rank": 50,
+      "keyword_matched": {
+       "docker": 4.496
+      },
+      "semantic (asked)_rank": 74,
+      "semantic (translation)_rank": 107,
+      "semantic (second wording)_rank": 110,
+      "semantic (asked)_similarity": 0.803877258416333,
+      "semantic (translation)_similarity": 0.8297757506370544,
+      "semantic (second wording)_similarity": 0.8274540305137634,
+      "fused_rank": 102,
+      "candidate_rank": null,
+      "question_terms_in_chunk": [
+       "docker"
+      ],
+      "question_terms_missing": [
+       "start",
+       "databas",
+       "schema",
+       "updat",
+       "befor",
+       "api",
+       "open",
+       "schemat",
+       "baslatirken",
+       "acilmadan",
+       "onc",
+       "veritabani",
+       "semasi",
+       "guncelleniyor"
+      ]
+     },
+     {
+      "chunk": "docker-compose.yml:60-62",
+      "kind": "config",
+      "symbol": "services.migrate",
+      "lines": 3,
+      "is_test": false,
+      "keyword_rank": 34,
+      "keyword_matched": {
+       "docker": 5.142
+      },
+      "semantic (asked)_rank": 8,
+      "semantic (translation)_rank": 4,
+      "semantic (second wording)_rank": 4,
+      "semantic (asked)_similarity": 0.8222092635097884,
+      "semantic (translation)_similarity": 0.8514764308929443,
+      "semantic (second wording)_similarity": 0.8572558164596558,
+      "fused_rank": 5,
+      "candidate_rank": 5,
+      "question_terms_in_chunk": [
+       "docker"
+      ],
+      "question_terms_missing": [
+       "start",
+       "databas",
+       "schema",
+       "updat",
+       "befor",
+       "api",
+       "open",
+       "schemat",
+       "baslatirken",
+       "acilmadan",
+       "onc",
+       "veritabani",
+       "semasi",
+       "guncelleniyor"
+      ]
+     },
+     {
+      "chunk": "docker-compose.yml:74-76",
+      "kind": "config",
+      "symbol": "services.api.depends_on",
+      "lines": 3,
+      "is_test": false,
+      "keyword_rank": 7,
+      "keyword_matched": {
+       "docker": 4.725,
+       "api": 3.909
+      },
+      "semantic (asked)_rank": 10,
+      "semantic (translation)_rank": 12,
+      "semantic (second wording)_rank": 12,
+      "semantic (asked)_similarity": 0.8178869729604419,
+      "semantic (translation)_similarity": 0.846992552280426,
+      "semantic (second wording)_similarity": 0.8475731611251831,
+      "fused_rank": 8,
+      "candidate_rank": 8,
+      "question_terms_in_chunk": [
+       "docker",
+       "api"
+      ],
+      "question_terms_missing": [
+       "start",
+       "databas",
+       "schema",
+       "updat",
+       "befor",
+       "open",
+       "schemat",
+       "baslatirken",
+       "acilmadan",
+       "onc",
+       "veritabani",
+       "semasi",
+       "guncelleniyor"
+      ]
+     }
+    ]
+   },
+   "english_question": {
+    "asked": "When starting with Docker, how is the database schema updated before the API opens?",
+    "translation": null,
+    "second_wording": null,
+    "chunks_searched": 654,
+    "glossary_terms": [],
+    "top_semantic_similarity": {
+     "semantic (asked)": 0.8552
+    },
+    "candidates": [
+     "docker-compose.yml:65-67",
+     "apps/collab/src/config.ts:3-21",
+     "packages/db/prisma.config.ts:5-18",
+     "packages/db/src/index.ts:11-21",
+     "docker-compose.yml:90-99",
+     "docker-compose.yml:74-76",
+     "docker-compose.yml:36-40",
+     "docker-compose.yml:60-62",
+     "docker-compose.yml:26-26",
+     "docker-compose.yml:33-35",
+     "apps/api/src/config/env.ts:7-31",
+     "apps/web/vite.config.ts:6-9"
+    ],
+    "passages": [
+     "packages/db/src/index.ts:11-21",
+     "packages/db/prisma.config.ts:5-18",
+     "apps/collab/src/config.ts:9-13",
+     "apps/collab/src/config.ts:3-7",
+     "docker-compose.yml:65-67"
+    ],
+    "right_lines_in_passages": false,
+    "gold_chunks": [
+     {
+      "chunk": "docker-compose.yml:16-22",
+      "kind": "config",
+      "symbol": "x-collab",
+      "lines": 7,
+      "is_test": false,
+      "keyword_rank": 48,
+      "keyword_matched": {
+       "docker": 4.496
+      },
+      "semantic (asked)_rank": 107,
+      "semantic (asked)_similarity": 0.8297757506370544,
+      "fused_rank": 74,
+      "candidate_rank": null,
+      "question_terms_in_chunk": [
+       "docker"
+      ],
+      "question_terms_missing": [
+       "start",
+       "databas",
+       "schema",
+       "updat",
+       "befor",
+       "api",
+       "open"
+      ]
+     },
+     {
+      "chunk": "docker-compose.yml:60-62",
+      "kind": "config",
+      "symbol": "services.migrate",
+      "lines": 3,
+      "is_test": false,
+      "keyword_rank": 33,
+      "keyword_matched": {
+       "docker": 5.142
+      },
+      "semantic (asked)_rank": 4,
+      "semantic (asked)_similarity": 0.8514764308929443,
+      "fused_rank": 8,
+      "candidate_rank": 8,
+      "question_terms_in_chunk": [
+       "docker"
+      ],
+      "question_terms_missing": [
+       "start",
+       "databas",
+       "schema",
+       "updat",
+       "befor",
+       "api",
+       "open"
+      ]
+     },
+     {
+      "chunk": "docker-compose.yml:74-76",
+      "kind": "config",
+      "symbol": "services.api.depends_on",
+      "lines": 3,
+      "is_test": false,
+      "keyword_rank": 7,
+      "keyword_matched": {
+       "docker": 4.725,
+       "api": 3.909
+      },
+      "semantic (asked)_rank": 12,
+      "semantic (asked)_similarity": 0.846992552280426,
+      "fused_rank": 6,
+      "candidate_rank": 6,
+      "question_terms_in_chunk": [
+       "docker",
+       "api"
+      ],
+      "question_terms_missing": [
+       "start",
+       "databas",
+       "schema",
+       "updat",
+       "befor",
+       "open"
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

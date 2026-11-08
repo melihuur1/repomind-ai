@@ -68,6 +68,29 @@ def squeeze(text: str) -> str:
     return re.sub(r"\s+", "", text).casefold()
 
 
+def peak_memory_mb() -> float | None:
+    """The most memory this process has held, on Windows, where the measurements run."""
+    if sys.platform != "win32":
+        return None
+    import ctypes
+    from ctypes import wintypes
+
+    class Counters(ctypes.Structure):
+        _fields_ = [("cb", wintypes.DWORD), ("PageFaultCount", wintypes.DWORD), ("PeakWorkingSetSize", ctypes.c_size_t), ("WorkingSetSize", ctypes.c_size_t),
+                    ("QuotaPeakPagedPoolUsage", ctypes.c_size_t), ("QuotaPagedPoolUsage", ctypes.c_size_t), ("QuotaPeakNonPagedPoolUsage", ctypes.c_size_t),
+                    ("QuotaNonPagedPoolUsage", ctypes.c_size_t), ("PagefileUsage", ctypes.c_size_t), ("PeakPagefileUsage", ctypes.c_size_t)]
+
+    counters = Counters()
+    counters.cb = ctypes.sizeof(counters)
+    current = ctypes.windll.kernel32.GetCurrentProcess
+    current.restype = wintypes.HANDLE
+    info = ctypes.windll.psapi.GetProcessMemoryInfo
+    info.argtypes = [wintypes.HANDLE, ctypes.POINTER(Counters), wintypes.DWORD]
+    if not info(current(), ctypes.byref(counters), counters.cb):
+        return None
+    return round(counters.PeakWorkingSetSize / 1024**2, 1)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path)
@@ -92,7 +115,9 @@ def main() -> int:
                             english, second = second, None
                     else:
                         asked, english, second = question.en, None, None
+                    searching = time.perf_counter()
                     found = engine.search(asked, "hybrid", [question.repo], CHUNKS, translated=english, more_wordings=[second] if second else (), glossary_seats=SEATS)
+                    search_seconds = time.perf_counter() - searching
                     vocabulary = engine.vocabulary(asked, found.translated_query, [question.repo])
                     gate = check_sufficiency(asked, found.translated_query, vocabulary).insufficient
                     wording = found.translated_query or asked
@@ -107,6 +132,7 @@ def main() -> int:
                         "negative": not hasattr(question, "accepted"),
                         "gate": gate,
                         "reaches_model": not gate and bool(good),
+                        "search_seconds": round(search_seconds, 4),
                         "passages_offered": len(passages),
                         "lines_shown": sum(p.end_line - p.start_line + 1 for p in passages),
                         "offered": [[p.path, p.start_line, p.end_line, is_evidence(p, wording)] for p in passages],
@@ -138,6 +164,7 @@ def main() -> int:
             "unanswerable": len(negatives),
             "unanswerable_reaching_model": sum(r["reaches_model"] for r in negatives),
             "mean_lines_shown": round(sum(r["lines_shown"] for r in answerable) / max(1, len(answerable)), 1),
+            "mean_search_ms": round(1000 * sum(r.get("search_seconds", 0) for r in group) / max(1, len(group)), 1),
         }
 
     by_language: dict[str, list[dict]] = defaultdict(list)
@@ -150,8 +177,10 @@ def main() -> int:
             f"{language:<4}{item['answerable']:>5}{item['candidates']:>6}{item['passages']:>6}{item['whole']:>7}{item['anchor']:>6}{item['evidence']:>6}"
             f"{item['refused']:>9}{item['unanswerable_reaching_model']:>8}/{item['unanswerable']:<3}{item['mean_lines_shown']:>7}"
         )
-    print(f"{time.perf_counter() - started:.0f} s")
+    peak = peak_memory_mb()
+    print(f"{time.perf_counter() - started:.0f} s; search {', '.join(f'{language} {item['mean_search_ms']} ms' for language, item in report.items())} per question; peak memory {peak} MB")
     if arguments.output:
+        report["peak_memory_mb"] = peak
         arguments.output.write_text(json.dumps({"summary": report, "questions": rows}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     return 0
 
