@@ -111,6 +111,28 @@ class TestEveryWayOfLoadingTheModel:
         assert tool.run(*arguments) == 3
         assert "Not started" in capsys.readouterr().out
 
+    def test_the_model_trial(self, monkeypatch, tmp_path, low_memory, capsys):
+        tool = load_tool(monkeypatch, "model_trial")
+        monkeypatch.setattr(tool, "load_llm_config", no_model)
+        monkeypatch.setattr(tool, "OpenAICompatibleClient", no_model)
+        monkeypatch.setattr(tool, "loaded_models", no_model)
+        assert tool.run("qwen2.5-coder:7b", tmp_path / "rows.json") == 3
+        assert "Not started: free physical memory is 9.70 GB" in capsys.readouterr().out
+        assert not (tmp_path / "rows.json").exists()
+
+    def test_the_model_trial_never_loads_a_second_model_beside_another(self, monkeypatch, tmp_path, capsys):
+        from repomind.qa.llm import LLMConfig
+
+        tool = load_tool(monkeypatch, "model_trial")
+        monkeypatch.setattr(memory, "read_memory", lambda: PLENTY)
+        monkeypatch.setattr(memory.time, "sleep", lambda _s: None)
+        monkeypatch.setattr(tool, "load_llm_config", lambda: LLMConfig("http://127.0.0.1:11535/v1", "qwen2.5:7b"))
+        monkeypatch.setattr(tool, "OpenAICompatibleClient", no_model)
+        monkeypatch.setattr(tool, "loaded_models", lambda server: [{"name": "qwen2.5:7b"}])
+        assert tool.run("qwen2.5-coder:7b", tmp_path / "rows.json") == 3
+        assert "qwen2.5:7b is still in memory" in capsys.readouterr().out
+        assert not (tmp_path / "rows.json").exists()
+
     def test_the_answer_evaluation_command(self, monkeypatch, tmp_path, low_memory, capsys):
         import repomind.cli as cli
 
@@ -152,6 +174,18 @@ class TestEveryWayOfLoadingTheModel:
         monkeypatch.setattr(real.urllib.request, "urlopen", no_model)
         with pytest.raises(pytest.skip.Exception, match="free physical memory is 9.70 GB"):
             real._running_llm()
+
+
+def test_the_model_comparison_refuses_runs_that_saw_different_prompts(monkeypatch):
+    tool = load_tool(monkeypatch, "model_trial")
+    assert tool.fixed_nonce("q1") == tool.fixed_nonce("q1") != tool.fixed_nonce("q2")
+    row = {"id": "q1", "negative": False, "outcome": "correct", "gold_offered": True, "offered": ["a.java:1-2"], "chosen": [], "prompts": ["same"]}
+    first = {"model": "a", "rows": [row], "placement": None, "memory_at_start": ""}
+    second = {"model": "b", "rows": [{**row, "prompts": ["other"]}], "placement": None, "memory_at_start": ""}
+    with pytest.raises(SystemExit, match="not shown the same prompts"):
+        tool.compare(first, second)
+    with pytest.raises(SystemExit, match="not shown the same prompts"):
+        tool.compare(first, {**second, "rows": [{**row, "offered": ["b.java:1-2"]}]})
 
 
 def test_the_trial_summary_keeps_the_negative_stock_question_out_of_the_totals(monkeypatch):
