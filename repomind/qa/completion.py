@@ -23,11 +23,12 @@ from __future__ import annotations
 import posixpath
 import re
 from dataclasses import dataclass, replace
-from typing import Protocol, Sequence
+from typing import Callable, Protocol, Sequence
 
 from repomind.ingest.filters import find_config_secret, find_secret_rules
 from repomind.parsing.languages import parser_for
 from repomind.qa.passages import Passage
+from repomind.search.tokenizer import tokenize
 from repomind.store.database import ChunkRow
 
 CONSTANT = re.compile(r"\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+\b")
@@ -232,6 +233,68 @@ def complete(passages: Sequence[Passage], sources: Sources, limit: int = MAX_COM
             record.append(Completion(name, where, declaration))
     ordered = [item for index, passage in enumerate(passages) for item in (passage, *added.get(index, []))]
     return [replace(item, id=f"P{number}") for number, item in enumerate(ordered, start=1)], record
+
+
+def _key(passage: Passage) -> str:
+    return f"{passage.path}:{passage.start_line}-{passage.end_line}"
+
+
+def linked_use(declaration: Passage, record: Sequence[Completion], offered: Sequence[Passage]) -> tuple[Passage, str] | None:
+    """The offered passage that uses the constant this passage declares, when completion added it for that use.
+
+    Only a declaration completion itself added has one: it resolved to exactly one declaration, inside
+    an indexed chunk, checked for a credential. Both have to be from the same repository and commit.
+    """
+    for item in record:
+        found = item.declaration
+        if found is None or item.reason or (found.path, found.start_line, found.end_line) != (declaration.path, declaration.start_line, declaration.end_line):
+            continue
+        use = next((p for p in offered if _key(p) == item.used_in and p is not declaration), None)
+        if use is not None and (use.chunk.repo, use.chunk.commit_sha) == (declaration.chunk.repo, declaration.chunk.commit_sha):
+            return use, item.name
+    return None
+
+
+def linked_evidence(
+    chosen: Sequence[Passage],
+    offered: Sequence[Passage],
+    record: Sequence[Completion],
+    wording: str,
+    counts_as_evidence: Callable[[Passage], bool],
+) -> tuple[list[Passage], list[Passage], list[str]]:
+    """Which of the model's choices are evidence, with the use shown before a declaration accepted through it.
+
+    A choice is evidence when it passes the evidence rule, as before. A declaration that does not is
+    evidence only as a pair: the line that uses it was offered, passes the rule itself, and the
+    declaration shares at least one word with the question, so that a constant beside the point is not
+    taken in with a line that is. Returns the evidence, the choices turned down, and what to tell the
+    reader. A use the model chose never brings in its declaration unasked.
+    """
+    terms = set(tokenize(wording))
+    accepted: list[Passage] = []
+    turned_down: list[Passage] = []
+    notes: list[str] = []
+
+    def add(passage: Passage) -> None:
+        if passage not in accepted:
+            accepted.append(passage)
+
+    for passage in chosen:
+        if counts_as_evidence(passage):
+            add(passage)
+            continue
+        link = linked_use(passage, record, offered)
+        if link is not None and counts_as_evidence(link[0]) and terms & set(tokenize(passage.text)):
+            use, name = link
+            add(use)
+            add(passage)
+            notes.append(
+                f"{_key(passage)} declares {name}, which {_key(use)} uses, so both are shown. "
+                "They exist in Git at this commit. Whether they answer the question is the model's reading."
+            )
+        else:
+            turned_down.append(passage)
+    return accepted, turned_down, notes
 
 
 # Unresolved for these reasons, the constant is real and its value unknown. "No declaration" is left

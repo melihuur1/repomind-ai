@@ -9,7 +9,7 @@ from enum import Enum
 from repomind.errors import RepoMindError
 from repomind.evaluation.citations import CitationVerifier
 from repomind.ingest.git_source import GitRepository
-from repomind.qa.completion import Completion, SnapshotSources, complete, unshown_values
+from repomind.qa.completion import Completion, SnapshotSources, complete, linked_evidence, unshown_values
 from repomind.qa.judge import Judgement, build_judge_prompt, parse_judgement
 from repomind.qa.llm import LLMClient, LLMConfig, cost_usd
 from repomind.qa.passages import Passage, is_evidence, select_passages
@@ -343,24 +343,27 @@ class QAEngine:
         prompt = build_selection_prompt(question, offered, nonce, english)
         reply = self._call(prompt, self.config.max_output_tokens, result)
         selection = verify_selection(reply, offered, question)
+        # A declaration completion added counts only beside a use that passes the rule. See linked_evidence.
+        chosen, turned_down, linked = linked_evidence(selection.chosen, offered, result.completions, wording, counts_as_evidence)
         # Without the model's note, which is the least trustworthy thing about a choice the rule turned down.
-        result.review_candidates = [passage for passage in selection.chosen if not counts_as_evidence(passage)]
+        result.review_candidates = turned_down
         if selection.outcome == "invalid":
             result.status = "invalid_response"
             result.rejected.append(selection.reason)
             result.warnings.append("The model did not return the required JSON.")
         elif selection.outcome == "none":
             result.status = "insufficient"
-        elif not (chosen := [passage for passage in selection.chosen if counts_as_evidence(passage)]):
+        elif not chosen:
             result.status = "insufficient"
             result.rejected.append("the model chose lines that mention too little of the question")
         else:
             result.status = "answered"
             result.evidence = _evidence(chosen)
+            result.warnings.extend(linked)
             # A value the chosen lines only name, and do not show, is not to be taken for granted.
             result.warnings.extend(unshown_values(chosen, result.completions))
             # A note was written about everything chosen, so it may describe lines that were just left out.
-            complete = len(chosen) == len(selection.chosen)
+            complete = not turned_down
             result.note = selection.note if complete else ""
             result.note_problem = selection.note_problem if complete else "it may describe lines that were left out"
             result.answer = assemble_answer(result.evidence, result.note)

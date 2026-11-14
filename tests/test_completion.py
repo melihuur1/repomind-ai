@@ -7,7 +7,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from repomind.qa.completion import MAX_COMPLETIONS, SnapshotSources, complete, declarations, resolve, unshown_values
+from dataclasses import replace
+
+from repomind.qa.completion import MAX_COMPLETIONS, SnapshotSources, complete, declarations, linked_evidence, resolve, unshown_values
 from repomind.qa.passages import Passage
 
 JAVA = """package shop;
@@ -222,6 +224,77 @@ class TestTellingTheReader:
         assert unshown_values([enum_like], complete([enum_like], Files({"B.java": ("java", "class B {}\n")}))[1]) == []
 
 
+class TestLinkedEvidence:
+    """A declaration completion added counts as evidence only beside a use that does."""
+
+    WORDING = "How long may a simulation request take before its timeout?"
+
+    def pair(self, **declaration_changes):
+        use = passage(JAVA_PATH, 7, 10, JAVA)
+        completed, record = complete([use], java_files())
+        use, declaration = completed
+        if declaration_changes:
+            declaration = Passage(declaration.id, SimpleNamespace(**{**vars(declaration.chunk), **declaration_changes}), declaration.start_line, declaration.end_line, declaration.text)
+        return use, declaration, record
+
+    @staticmethod
+    def rule(*passing):
+        return lambda p: any(p is item for item in passing)
+
+    def test_a_declaration_chosen_alone_is_shown_after_the_use_that_passes_the_rule(self):
+        use, declaration, record = self.pair()
+        accepted, turned_down, notes = linked_evidence([declaration], [use, declaration], record, self.WORDING, self.rule(use))
+        assert accepted == [use, declaration] and turned_down == []
+        assert len(notes) == 1 and "declares REQUEST_TIMEOUT" in notes[0]
+        assert "exist in Git" in notes[0] and "the model's reading" in notes[0], "the lines are checked, not what they mean"
+
+    def test_a_use_chosen_alone_does_not_bring_its_declaration_in(self):
+        use, declaration, record = self.pair()
+        accepted, turned_down, notes = linked_evidence([use], [use, declaration], record, self.WORDING, self.rule(use))
+        assert accepted == [use] and turned_down == [] and notes == []
+
+    @pytest.mark.parametrize("order", ["use first", "declaration first"])
+    def test_both_chosen_are_shown_once_each_use_first(self, order):
+        use, declaration, record = self.pair()
+        chosen = [use, declaration] if order == "use first" else [declaration, use]
+        accepted, _, _ = linked_evidence(chosen, [use, declaration], record, self.WORDING, self.rule(use))
+        assert accepted == [use, declaration]
+
+    def test_a_use_that_fails_the_rule_lets_neither_in(self):
+        use, declaration, record = self.pair()
+        accepted, turned_down, _ = linked_evidence([declaration, use], [use, declaration], record, self.WORDING, self.rule())
+        assert accepted == [] and turned_down == [declaration, use]
+
+    def test_a_declaration_sharing_no_word_with_the_question_is_turned_down(self):
+        use, declaration, record = self.pair()
+        accepted, turned_down, _ = linked_evidence([declaration], [use, declaration], record, "Which prefix names the simulated users?", self.rule(use))
+        assert accepted == [] and turned_down == [declaration]
+
+    def test_a_use_that_was_not_offered_links_nothing(self):
+        use, declaration, record = self.pair()
+        accepted, turned_down, _ = linked_evidence([declaration], [declaration], record, self.WORDING, self.rule(use))
+        assert accepted == [] and turned_down == [declaration]
+
+    def test_a_declaration_from_another_commit_links_nothing(self):
+        use, declaration, record = self.pair(commit_sha="c2")
+        accepted, _, _ = linked_evidence([declaration], [use, declaration], record, self.WORDING, self.rule(use))
+        assert accepted == []
+
+    def test_a_same_named_declaration_search_found_elsewhere_links_nothing(self):
+        use, _, record = self.pair()
+        elsewhere = passage("src/Other.java", 4, 4, "class Other {\n\n\n    static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(5);\n}")
+        accepted, turned_down, _ = linked_evidence([elsewhere], [use, elsewhere], record, self.WORDING, self.rule(use))
+        assert accepted == [] and turned_down == [elsewhere]
+
+    @pytest.mark.parametrize("reason", ["REQUEST_TIMEOUT is declared 2 times in src/Simulation.java", "the declaration may hold a credential",
+                                        "the declaration is not in the index", "already shown"])
+    def test_a_declaration_completion_did_not_add_links_nothing(self, reason):
+        use, declaration, record = self.pair()
+        refused = [replace(item, reason=reason) for item in record]
+        accepted, _, _ = linked_evidence([declaration], [use, declaration], refused, self.WORDING, self.rule(use))
+        assert accepted == []
+
+
 @pytest.mark.db
 def test_in_ask_the_declaration_is_offered_checked_against_git_and_named_when_not_chosen(store, tmp_path, fake_embedder):
     import json
@@ -258,3 +331,115 @@ def test_in_ask_the_declaration_is_offered_checked_against_git_and_named_when_no
     assert result.status == "answered"
     assert any("HTTP_LIMIT, whose value is at src/Client.java:2, which was not chosen" in w for w in result.warnings)
     assert [(c.name, c.reason) for c in result.completions if c.declaration] == [("HTTP_LIMIT", "")]
+    assert [c.start_line for c in result.citations] == [use_line(result)], "the use only: its declaration is not brought in unasked"
+
+
+def use_line(result) -> int:
+    return next(p.start_line for p in result.passages if ".timeout(HTTP_LIMIT)" in p.text)
+
+
+LINKED = (
+    "class Client {\n"
+    "    private static final Duration REQUEST_LIMIT = Duration.ofSeconds(60);\n"  # line 2: shares one word, "request"
+    + "".join(f"    void helper{n}() {{ log(\"step {n}\"); }}\n" for n in range(25))
+    + "    /** The simulation uses this timeout for each reserve request. */\n"  # line 28
+    "    Result reserve(String target) {\n"
+    "        return http.send(request(target).timeout(REQUEST_LIMIT));\n"  # line 30: passes the rule
+    "    }\n"
+    "    /** Sends one step. */\n"  # line 32
+    "    void step() { http.send(REQUEST_LIMIT); }\n"  # line 33: shares one word, "request", from the constant's name
+    "}\n"
+)
+
+
+@pytest.fixture
+def linked(store, tmp_path, fake_embedder, monkeypatch):
+    """A repository with a constant, a use that passes the rule and one that does not, and a way to choose what search offers."""
+    from repomind.indexing import index_repository
+    from repomind.qa import engine as engine_module
+    from tests.conftest import commit_all, git, write
+
+    root = tmp_path / "linked"
+    root.mkdir()
+    git(root, "init", "-b", "main")
+    write(root, "src/Client.java", LINKED)
+    commit_all(root, "linked")
+    index_repository(store, str(root), fake_embedder, name="linked")
+    snapshot = store.active_snapshots(["linked"])[0]
+    chunks = store.file_chunks(snapshot.id, "src/Client.java")
+
+    def offer(*spans):
+        found = []
+        for number, (start, end) in enumerate(spans, start=1):
+            owner = next(c for c in chunks if c.start_line <= start and end <= c.end_line)
+            found.append(Passage(f"P{number}", owner, start, end, "\n".join(owner.content.split("\n")[start - owner.start_line : end - owner.start_line + 1])))
+        # Search and passage selection stay real everywhere else. Here they offer exactly these lines.
+        monkeypatch.setattr(engine_module, "select_passages", lambda *args, **kwargs: found)
+
+    return offer
+
+
+def choose(*patterns: str):
+    import json
+
+    def reply(user: str) -> str:
+        ids = [m.group(1) for pattern in patterns if (m := re.search(rf'id="(P\d+)"[^>]*>[^<]*{pattern}', user))]
+        return json.dumps({"chosen": ids, "note": "Sixty seconds."})
+
+    return reply
+
+
+QUESTION = "Which timeout does the simulation use for each reserve request?"
+
+
+@pytest.mark.db
+class TestLinkedEvidenceInAsk:
+    def ask(self, store, fake_embedder, model, question=QUESTION):
+        from repomind.qa.engine import QAEngine
+        from repomind.search.engine import SearchEngine
+        from tests.test_qa import LOCAL
+
+        return QAEngine(store, SearchEngine(store, fake_embedder), LOCAL, model).ask(question, ["linked"])
+
+    def test_the_declaration_chosen_alone_is_shown_with_the_use_both_checked_against_git(self, store, fake_embedder, linked):
+        from tests.test_qa import FakeClient
+
+        linked((28, 31))
+        result = self.ask(store, fake_embedder, FakeClient(choose("REQUEST_LIMIT = Duration")))
+        assert result.status == "answered", f"{result.warnings} {result.rejected}"
+        assert [(c.start_line, c.end_line) for c in result.citations] == [(28, 31), (2, 2)]
+        assert result.review_candidates == []
+        assert all(source.exists_in_git for source in result.sources())
+        assert any("declares REQUEST_LIMIT" in w and "the model's reading" in w for w in result.warnings)
+
+    def test_a_use_that_fails_the_rule_does_not_carry_its_declaration(self, store, fake_embedder, linked):
+        from tests.test_qa import FakeClient
+
+        linked((28, 31), (32, 33))  # the first passes the rule, so the model is asked; the second uses the constant weakly
+        result = self.ask(store, fake_embedder, FakeClient(choose("REQUEST_LIMIT = Duration")))
+        added = [c for c in result.completions if c.declaration and not c.reason]
+        assert [c.used_in for c in added] == ["src/Client.java:28-31"], "completion links the declaration to the first use it met"
+        linked((32, 33), (28, 31))  # now the weak use comes first, and the declaration is added for it
+        result = self.ask(store, fake_embedder, FakeClient(choose("REQUEST_LIMIT = Duration")))
+        assert [c.used_in for c in result.completions if c.declaration and not c.reason] == ["src/Client.java:32-33"]
+        assert result.status == "insufficient"
+        assert result.citations == []
+        assert [(p.start_line, p.end_line) for p in result.review_candidates] == [(2, 2)]
+
+    def test_a_declaration_beside_the_point_of_the_question_is_not_taken_in(self, store, fake_embedder, linked):
+        from tests.test_qa import FakeClient
+
+        linked((28, 31))
+        result = self.ask(store, fake_embedder, FakeClient(choose("REQUEST_LIMIT = Duration")), "Which timeout does the simulation use for each reserve?")
+        assert result.status == "insufficient", "the declaration shares no word with this question"
+        assert [(p.start_line, p.end_line) for p in result.review_candidates] == [(2, 2)]
+
+    def test_both_chosen_are_shown_once_and_the_use_alone_stays_alone(self, store, fake_embedder, linked):
+        from tests.test_qa import FakeClient
+
+        linked((28, 31))
+        both = self.ask(store, fake_embedder, FakeClient(choose("REQUEST_LIMIT = Duration", r"\.timeout\(REQUEST_LIMIT")))
+        assert [(c.start_line, c.end_line) for c in both.citations] == [(28, 31), (2, 2)]
+        alone = self.ask(store, fake_embedder, FakeClient(choose(r"\.timeout\(REQUEST_LIMIT")))
+        assert [(c.start_line, c.end_line) for c in alone.citations] == [(28, 31)]
+        assert any("REQUEST_LIMIT, whose value is at src/Client.java:2, which was not chosen" in w for w in alone.warnings)
