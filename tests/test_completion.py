@@ -141,6 +141,22 @@ class TestComplete:
         assert len(completed) == 1 and "hunter2" not in "\n".join(p.text for p in completed)
         assert ("DB_URL_VALUE", "the declaration may hold a credential") in [(c.name, c.reason) for c in record]
 
+    @pytest.mark.parametrize(
+        ("language", "source", "use_line"),
+        [
+            ("java", 'class A {\n    private static final String JWT_SECRET = "fake-signing-value";\n    String sign(String u) { return signWith(u, JWT_SECRET); }\n}\n', 3),
+            ("typescript", "export const API_TOKEN = 'fake-token-value';\nexport function call() {\n  return send(API_TOKEN);\n}\n", 3),
+            ("typescript", "const DB_PASSWORD =\n  'fake-password-value';\nexport const pool = () => connect(DB_PASSWORD);\n", 3),
+        ],
+    )
+    def test_a_credential_named_constant_given_a_literal_is_never_added(self, language, source, use_line):
+        path = "A.java" if language == "java" else "a.ts"
+        files = Files({path: (language, source)}, chunks={path: [chunk(path, 1, len(source.split("\n")) - 1, source, language)]})
+        completed, record = complete([passage(path, use_line, use_line, source, language)], files)
+        assert len(completed) == 1 and "fake-" not in "\n".join(p.text for p in completed)
+        assert [c.reason for c in record if c.declaration] == ["the declaration may hold a credential"]
+        assert "fake-" not in " ".join(f"{c.name} {c.used_in} {c.reason}" for c in record), "what is recorded names it, and never quotes it"
+
     def test_at_most_two_declarations_are_added(self):
         names = [f"LIMIT_{n}" for n in range(4)]
         source = "class A {\n" + "".join(f"    static final int {name} = {n};\n" for n, name in enumerate(names)) + f"    int f() {{ return {' + '.join(names)}; }}\n}}\n"

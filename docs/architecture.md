@@ -59,12 +59,16 @@ A `.env` that *was* committed is still reachable through Git, so the filters bel
 - files whose name starts with the word `secret`, `secrets`, `credential`, `credentials` or `creds` (so `secrets.ts`, but not `SecretRotationService.java`), or that carry an `.env.` segment (`prod.env.js`);
 - generated files (`*.d.ts`, `*.min.js`, bundles), files over 1 MB, and unsupported languages.
 
-Content rules then reject binary files, non-UTF-8 files, minified code, and files matching high-confidence credential patterns (private keys and AWS, GitHub, OpenAI, Anthropic, Google and Slack tokens). The report names such a file but never its secret. This scan does not catch generic values such as `password = "..."` in code; see [limitations](#known-limitations).
+Content rules then reject binary files, non-UTF-8 files, minified code, and files matching high-confidence credential patterns (private keys and AWS, GitHub, OpenAI, Anthropic, Google and Slack tokens). The report names such a file but never its secret.
 
-Two more file types need rules of their own:
+Every language then has rules of its own for a credential that is not in a known format:
+
+- **Code** (Java, JavaScript, TypeScript, TSX): a statement in which a credential-named variable, property or setter is given a quoted literal, such as `JWT_SECRET = "..."`, `password: "..."` or `setApiKey("...")`, is left out of the chunk around it, and the rest of the chunk stays. The name has to hold a word such as password, secret, token or api key, and not end in a word that says it only describes one, such as header, prefix, name or length. A value from elsewhere (`process.env.X`, a call, a placeholder) is not a literal, and a literal with spaces is taken for prose. A URL with a password in it is left out in any language. Tree-sitter widens the place to the whole statement, so the second half of a value written over two lines goes too. See [limitations](#known-limitations) for what this cannot see.
 
 - **YAML** files with a personal or secret marker in the name (`application-local.yml`, `*-override.yml`, `vault.yml`, `kubeconfig.yml`) and lock files are skipped. In the rest, a chunk holding a literal credential, such as a password key or a URL with a password, is withheld on its own and reported, so that one development password does not hide a whole compose file. An entry holding one is taken apart down to the flat list of settings that holds it, such as a service's `environment`, which is withheld whole, so the same service's `build` and `depends_on` stay searchable.
 - **SQL** files with a literal `PASSWORD '...'` or `IDENTIFIED BY '...'` are rejected.
+
+The same rules run again when something is asked, because an index made by an older version may still hold such lines. Search leaves out any chunk that holds a credential, so no result, passage or prompt starts from one. Before lines are checked against Git and offered to a model, each passage is checked once more, which also covers a declaration that [completion](#known-limitations) fetched. The file view hides the same statements in every language.
 
 ## Parsing and chunking
 
@@ -270,7 +274,7 @@ Routes are synchronous and run in FastAPI's thread pool, because the engine is. 
 | Risk | What stands in the way |
 | --- | --- |
 | Reading outside the repository | A path is served only if it exactly matches a row of the `files` table for that snapshot, and its content comes from Git objects, not from the disk. Traversal and excluded files get `404` |
-| Secrets | Excluded files are not in that table. In YAML, lines that `credential_lines` flags are replaced before they leave the server |
+| Secrets | Excluded files are not in that table. In every language, the lines `hidden_lines` flags are replaced before they leave the server |
 | Script in a file name, code, commit message or model reply | All of it is rendered as text. The highlighter returns tokens, and `dangerouslySetInnerHTML` is not used. A content policy with no inline script is a second layer, and a browser test shows that it stops an inline handler |
 | Another website calling this local server | It answers only to its own host names, and a request that changes something must come from its own origin and be JSON. It refuses to listen beyond loopback |
 | Local details in an error | Paths are removed from messages, and an unexpected error says only that something went wrong |
@@ -307,7 +311,7 @@ There is one worker thread and an `index_jobs` table, and no separate queue serv
 - **Turkish depends on an imperfect translator**, and detection relies on Turkish letters or common function words, so a bare `stok rezervasyon` is not translated.
 - **Adding SQL and YAML cost some Turkish ranking on code questions**, because the new chunks compete with code.
 - **2.4% of the code chunks exceed the model's 512-token window** (26 of 1,106, longest 623). Their tails are not embedded, although keyword search still covers them.
-- **Secret detection is pattern based.** It catches known token formats and literal credential keys, not every hardcoded password.
+- **Secret detection is pattern based.** It catches known token formats, literal credential keys in configuration, and credential-named variables given a literal in code. It does not catch a credential under a name that says nothing (`const x = "..."`), one built from pieces under other names, a passphrase with spaces, or one passed as a plain argument to a call not named for it. Python, JSON and `.properties` files are not indexed at all.
 - **Only the latest indexed commit is kept per repository.**
 - **The keyword index is rebuilt in memory per process.**
 - **The evaluation has 85 answerable questions on two repositories**, labelled and graded by one reviewer, so intervals are wide and results may not generalize.

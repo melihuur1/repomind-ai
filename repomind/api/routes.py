@@ -11,7 +11,8 @@ from repomind.api import schemas
 from repomind.api.errors import ApiError
 from repomind.api.services import Services, public_message
 from repomind.errors import RepoMindError
-from repomind.ingest.filters import credential_lines, is_test_path, normalize_source
+from repomind.ingest.filters import is_test_path, normalize_source
+from repomind.parsing.credentials import hidden_lines
 from repomind.ingest.git_source import GitRepository
 from repomind.ingest.github import IndexFailure
 from repomind.qa.engine import AnswerCheck, AskResult
@@ -209,7 +210,7 @@ def file_content(request: Request, repo: RepoName, path: FilePath, commit: str |
     lines = text.split("\n")
     if lines and lines[-1] == "":
         lines.pop()
-    hidden = credential_lines(text) if entry["language"] == "yaml" else []
+    hidden = hidden_lines(entry["language"], text)
     for number in hidden:
         lines[number - 1] = ""
     return schemas.FileContent(

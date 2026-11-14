@@ -93,7 +93,7 @@ def command_index(args: argparse.Namespace, settings: Settings) -> int:
     if report.skipped_for_secrets:
         _emit(f"  WARNING     skipped because they appear to contain secrets: {report.skipped_for_secrets}")
     if report.config_chunks_withheld:
-        _emit(f"  withheld    configuration chunks holding a credential: {report.config_chunks_withheld}")
+        _emit(f"  withheld    chunks holding a credential, in configuration or code: {report.config_chunks_withheld}")
     if report.files_with_syntax_errors:
         _emit(f"  syntax      {len(report.files_with_syntax_errors)} file(s) with parse errors were kept: {report.files_with_syntax_errors}")
     if report.embedding:

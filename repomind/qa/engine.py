@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from enum import Enum
 
 from repomind.errors import RepoMindError
 from repomind.evaluation.citations import CitationVerifier
+from repomind.ingest.filters import find_credential
 from repomind.ingest.git_source import GitRepository
 from repomind.qa.completion import Completion, SnapshotSources, complete, linked_evidence, unshown_values
 from repomind.qa.judge import Judgement, build_judge_prompt, parse_judgement
@@ -159,6 +160,23 @@ class QAEngine:
         sources = SnapshotSources(self.store, snapshot.id, self._verifier(repo, commit).git, commit)
         completed, result.completions = complete(passages, sources)
         return completed
+
+    @staticmethod
+    def _without_credentials(passages: list[Passage], result: AskResult) -> list[Passage]:
+        """The last check before lines are verified, offered to a model or shown: none may hold a credential.
+
+        Search already leaves such chunks out. This is for whatever reaches the passages another way,
+        as a completed declaration does. What is left out is named by its place, never by its text.
+        """
+        kept = []
+        for passage in passages:
+            if find_credential(passage.text, passage.chunk.language):
+                result.rejected.append(f"{passage.path}:{passage.start_line}-{passage.end_line}: left out, because it may hold a credential")
+            else:
+                kept.append(passage)
+        if len(kept) == len(passages):
+            return passages
+        return [replace(passage, id=f"P{number}") for number, passage in enumerate(kept, start=1)]
 
     def _verified_passages(self, passages: list[Passage], result: AskResult) -> list[Passage]:
         """Against Git rather than RepoMind's database, so a tampered row is never shown."""
@@ -314,6 +332,7 @@ class QAEngine:
             found = self._with_name_seat(repo, asked, found, wording, asked_wording, chunk_limit)
         if found:
             found = self._completed(found, result)
+        found = self._without_credentials(found, result)
         result.passages = self._verified_passages(found, result)
         if not result.passages:
             result.status = "insufficient"

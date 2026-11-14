@@ -25,7 +25,7 @@ import re
 from dataclasses import dataclass, replace
 from typing import Callable, Protocol, Sequence
 
-from repomind.ingest.filters import find_config_secret, find_secret_rules
+from repomind.ingest.filters import find_credential
 from repomind.parsing.languages import parser_for
 from repomind.qa.passages import Passage
 from repomind.search.tokenizer import tokenize
@@ -224,7 +224,7 @@ def complete(passages: Sequence[Passage], sources: Sources, limit: int = MAX_COM
                 record.append(Completion(name, where, declaration, "the declaration is not in the index"))
                 continue
             text = _lines(chunk, declaration.start_line, declaration.end_line)
-            if find_config_secret(text) or find_secret_rules(text):
+            if find_credential(text, chunk.language):
                 record.append(Completion(name, where, declaration, "the declaration may hold a credential"))
                 continue
             completion = Passage("", chunk, declaration.start_line, declaration.end_line, text)
