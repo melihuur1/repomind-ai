@@ -38,6 +38,9 @@ class LLMConfig:
     # "choose": the model picks among all passages at once, the measured way and the default.
     # "judge": it judges each passage on its own. Experimental, and not shown to be better.
     selection: str = "choose"
+    # Experimental, and off: a constant's declaration the model chose counts as evidence beside the line
+    # that uses it. The link shows that one line refers to the other, not that either answers the question.
+    linked_evidence: bool = False
 
     @property
     def is_loopback(self) -> bool:
@@ -81,6 +84,7 @@ def load_llm_config() -> LLMConfig | None:
         output_usd_per_mtok=number("REPOMIND_LLM_OUTPUT_USD_PER_MTOK", 0.0),
         max_total_cost_usd=number("REPOMIND_LLM_MAX_TOTAL_COST_USD", 0.0),
         selection=(get_setting("REPOMIND_LLM_SELECTION", "choose") or "choose").strip().lower(),
+        linked_evidence=get_setting("REPOMIND_LLM_LINKED_EVIDENCE", "0") == "1",
     )
     validate_config(config)
     return config

@@ -127,3 +127,10 @@ Through the API with `qwen2.5-coder:7b`, the same seven questions as before, sta
 The new risk, `v5-sn-neg-reminder`, asked in Turkish with the stored translation, once with each model: both had the pairable declaration offered, and both declined, with no source given. The default model started at 12.19 GB of free physical memory and the coder model at 15.41 GB, after two starts refused below 12 GB with nothing loaded. Rows: [`dev-linked-reminder-qwen2.5-7b.json`](results/dev-linked-reminder-qwen2.5-7b.json), [`dev-linked-reminder-qwen2.5-coder-7b.json`](results/dev-linked-reminder-qwen2.5-coder-7b.json).
 
 `sim-timeout` is one known failure, fixed on purpose. It does not show that answers are more accurate in general.
+
+## Since this record
+
+Added on 2026-11-14. Nothing above was changed, and the result files are as they were. The code has changed since, so a run today would not repeat every row:
+
+- **Linked evidence is off by default.** A review found that the pair is in effect a one-shared-word rule, with the word usually coming from the constant's own name: "note" is in 65% of SyncNotes' files and "request" in 47% of StockGuard's, and 1 of the 15 declarations it could accept is a right source. It now needs `REPOMIND_LLM_LINKED_EVIDENCE=1`, and is experimental. The rows under "With linked evidence" were made while it was always on. With it off, `app-sg-sim-timeout` is "no answer, the right line to review" again, as in the column before it.
+- **The use that linking adds is labelled.** When it is on and the model chose only the declaration, the line that uses the constant is marked as added by RepoMind, and not as chosen by the model.

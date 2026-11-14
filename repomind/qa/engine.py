@@ -65,6 +65,8 @@ class Source:
     passage: Passage
     exists_in_git: bool
     answer_check: AnswerCheck
+    # Shown because a line the model chose declares a constant these lines use. The model did not choose them.
+    added_by_link: bool = False
 
 
 @dataclass
@@ -99,6 +101,8 @@ class AskResult:
     judgements: list[tuple[str, str]] = field(default_factory=list)
     # Declarations of constants the passages use, added from the syntax tree, and the ones that were not.
     completions: list[Completion] = field(default_factory=list)
+    # Evidence the model did not choose: the use of a constant whose declaration it chose. Only with linked evidence on.
+    linked_uses: list[Passage] = field(default_factory=list)
 
     @property
     def citations(self) -> list[VerifiedCitation]:
@@ -108,13 +112,14 @@ class AskResult:
         """Everything shown to a reader, with both checks. Only lines matching Git ever reach ``passages``."""
         passed = {item.passage.id for item in self.evidence}
         failed = {passage.id for passage in self.review_candidates}
+        linked = {passage.id for passage in self.linked_uses}
 
         def check(passage: Passage) -> AnswerCheck:
             if passage.id in passed:
                 return AnswerCheck.PASSED
             return AnswerCheck.FAILED if passage.id in failed else AnswerCheck.NOT_MADE
 
-        return [Source(passage, True, check(passage)) for passage in self.passages]
+        return [Source(passage, True, check(passage), passage.id in linked) for passage in self.passages]
 
 
 def assemble_answer(evidence: list[Evidence], note: str = "") -> str:
@@ -362,8 +367,15 @@ class QAEngine:
         prompt = build_selection_prompt(question, offered, nonce, english)
         reply = self._call(prompt, self.config.max_output_tokens, result)
         selection = verify_selection(reply, offered, question)
-        # A declaration completion added counts only beside a use that passes the rule. See linked_evidence.
-        chosen, turned_down, linked = linked_evidence(selection.chosen, offered, result.completions, wording, counts_as_evidence)
+        if self.config.linked_evidence:
+            # Experimental: a declaration completion added counts beside a use that passes the rule.
+            chosen, turned_down, linked = linked_evidence(selection.chosen, offered, result.completions, wording, counts_as_evidence)
+            result.linked_uses = [passage for passage in chosen if passage not in selection.chosen]
+        else:
+            # The evidence rule alone. A declaration is evidence only if it passes the rule itself.
+            chosen = [passage for passage in selection.chosen if counts_as_evidence(passage)]
+            turned_down = [passage for passage in selection.chosen if not counts_as_evidence(passage)]
+            linked = []
         # Without the model's note, which is the least trustworthy thing about a choice the rule turned down.
         result.review_candidates = turned_down
         if selection.outcome == "invalid":

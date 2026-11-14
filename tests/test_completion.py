@@ -410,12 +410,58 @@ QUESTION = "Which timeout does the simulation use for each reserve request?"
 
 @pytest.mark.db
 class TestLinkedEvidenceInAsk:
-    def ask(self, store, fake_embedder, model, question=QUESTION):
+    def ask(self, store, fake_embedder, model, question=QUESTION, linked_evidence=True):
         from repomind.qa.engine import QAEngine
         from repomind.search.engine import SearchEngine
         from tests.test_qa import LOCAL
 
-        return QAEngine(store, SearchEngine(store, fake_embedder), LOCAL, model).ask(question, ["linked"])
+        config = replace(LOCAL, linked_evidence=linked_evidence)
+        return QAEngine(store, SearchEngine(store, fake_embedder), config, model).ask(question, ["linked"])
+
+    def test_it_is_off_unless_it_is_asked_for(self, monkeypatch):
+        from repomind.qa.llm import LLMConfig, load_llm_config
+
+        assert LLMConfig(base_url="http://127.0.0.1:1/v1", model="fake").linked_evidence is False
+        monkeypatch.setenv("REPOMIND_LLM_BASE_URL", "http://127.0.0.1:11535/v1")
+        monkeypatch.setenv("REPOMIND_LLM_MODEL", "m")
+        monkeypatch.delenv("REPOMIND_LLM_LINKED_EVIDENCE", raising=False)
+        assert load_llm_config().linked_evidence is False
+        for value, expected in (("1", True), ("0", False), ("", False), ("true", False), ("yes", False)):
+            monkeypatch.setenv("REPOMIND_LLM_LINKED_EVIDENCE", value)
+            assert load_llm_config().linked_evidence is expected, f"only 1 turns it on, not {value!r}"
+
+    # The next test and the one named "...is_shown_with_the_use..." are the shape of sim-timeout in
+    # eval/EVIDENCE_COMPLETION.md: the model chose only the declaration that holds the value. Off, it is
+    # a source to review, as in that record. On, it is shown with the use.
+    def test_off_a_declaration_chosen_alone_is_only_something_to_review(self, store, fake_embedder, linked):
+        from tests.test_qa import FakeClient
+
+        linked((28, 31))  # the use passes the rule and was offered, which is all the link needs when it is on
+        result = self.ask(store, fake_embedder, FakeClient(choose("REQUEST_LIMIT = Duration")), linked_evidence=False)
+        assert result.status == "insufficient"
+        assert result.citations == [] and result.linked_uses == []
+        assert [(p.start_line, p.end_line) for p in result.review_candidates] == [(2, 2)]
+        assert [c.used_in for c in result.completions if c.declaration and not c.reason] == ["src/Client.java:28-31"], "completion still works"
+
+    def test_off_both_chosen_cite_the_use_alone(self, store, fake_embedder, linked):
+        from tests.test_qa import FakeClient
+
+        linked((28, 31))
+        result = self.ask(store, fake_embedder, FakeClient(choose("REQUEST_LIMIT = Duration", r"\.timeout\(REQUEST_LIMIT")), linked_evidence=False)
+        assert result.status == "answered"
+        assert [(c.start_line, c.end_line) for c in result.citations] == [(28, 31)]
+        assert [(p.start_line, p.end_line) for p in result.review_candidates] == [(2, 2)]
+
+    def test_on_the_use_the_system_added_is_marked_as_not_chosen_by_the_model(self, store, fake_embedder, linked):
+        from tests.test_qa import FakeClient
+
+        linked((28, 31))
+        result = self.ask(store, fake_embedder, FakeClient(choose("REQUEST_LIMIT = Duration")))
+        assert [(p.start_line, p.end_line) for p in result.linked_uses] == [(28, 31)]
+        assert [s.added_by_link for s in result.sources() if s.answer_check.value == "passed"] == [True, False]
+        assert any("was added by RepoMind and not chosen by the model" in w for w in result.warnings)
+        both = self.ask(store, fake_embedder, FakeClient(choose("REQUEST_LIMIT = Duration", r"\.timeout\(REQUEST_LIMIT")))
+        assert both.linked_uses == [] and not any(s.added_by_link for s in both.sources())
 
     def test_the_declaration_chosen_alone_is_shown_with_the_use_both_checked_against_git(self, store, fake_embedder, linked):
         from tests.test_qa import FakeClient
@@ -459,3 +505,68 @@ class TestLinkedEvidenceInAsk:
         alone = self.ask(store, fake_embedder, FakeClient(choose(r"\.timeout\(REQUEST_LIMIT")))
         assert [(c.start_line, c.end_line) for c in alone.citations] == [(28, 31)]
         assert any("REQUEST_LIMIT, whose value is at src/Client.java:2, which was not chosen" in w for w in alone.warnings)
+
+
+ROLES = "export const NOTE_ROLE_KEY = 'app:noteRole';\n"
+SHARE = (
+    "import { NOTE_ROLE_KEY } from './roles';\n"
+    "\n"
+    "/** The role a shared note was opened with. */\n"
+    "export function rememberRole(noteId: string, role: string) {\n"
+    "  localStorage.setItem(`${NOTE_ROLE_KEY}:${noteId}`, role);\n"  # line 5: shares "shared" and "note", so it passes the rule
+    "}\n"
+)
+TASKS = "/** A reminder kept for a task. */\nexport function taskReminder(task: string) {\n  return schedule(task);\n}\n"
+# Nothing in this repository keeps a reminder for a note. The constant's own name shares one word with the question.
+REMINDER_QUESTION = "Is a reminder kept for a shared note?"
+
+
+@pytest.fixture
+def reminder(store, tmp_path, fake_embedder, monkeypatch):
+    """The shape of v5-sn-neg-reminder: a question the code does not answer, and a constant named after a word in it."""
+    from repomind.indexing import index_repository
+    from repomind.qa import engine as engine_module
+    from tests.conftest import commit_all, git, write
+
+    root = tmp_path / "notes"
+    root.mkdir()
+    git(root, "init", "-b", "main")
+    write(root, "src/roles.ts", ROLES)
+    write(root, "src/share.ts", SHARE)
+    write(root, "src/tasks.ts", TASKS)
+    commit_all(root, "notes")
+    index_repository(store, str(root), fake_embedder, name="notes")
+    snapshot = store.active_snapshots(["notes"])[0]
+    use = next(c for c in store.file_chunks(snapshot.id, "src/share.ts") if c.start_line <= 5 <= c.end_line)
+    # Search stays real. Passage selection offers the function that uses the constant, as it did in the record.
+    monkeypatch.setattr(engine_module, "select_passages", lambda *args, **kwargs: [Passage("P1", use, use.start_line, use.end_line, use.content)])
+    return use
+
+
+@pytest.mark.db
+class TestAQuestionTheCodeDoesNotAnswer:
+    """The model picks the declaration of NOTE_ROLE_KEY for a question about reminders, as it did for v5-sn-neg-reminder."""
+
+    def ask(self, store, fake_embedder, linked_evidence):
+        from repomind.qa.engine import QAEngine
+        from repomind.search.engine import SearchEngine
+        from tests.test_qa import LOCAL, FakeClient
+
+        model = FakeClient(choose("NOTE_ROLE_KEY = "))
+        config = replace(LOCAL, linked_evidence=linked_evidence)
+        result = QAEngine(store, SearchEngine(store, fake_embedder), config, model).ask(REMINDER_QUESTION, ["notes"])
+        assert model.calls, f"the question has to reach the model: {result.status} {result.warnings}"
+        assert "NOTE_ROLE_KEY = " in model.calls[-1]["user"], "completion offered the declaration either way"
+        return result
+
+    def test_off_the_declaration_is_not_an_answer(self, store, fake_embedder, reminder):
+        result = self.ask(store, fake_embedder, linked_evidence=False)
+        assert result.status == "insufficient"
+        assert result.citations == [] and result.linked_uses == []
+        assert [(p.path, p.start_line) for p in result.review_candidates] == [("src/roles.ts", 1)]
+
+    def test_on_the_same_choice_is_shown_as_an_answer_which_is_why_it_is_off(self, store, fake_embedder, reminder):
+        result = self.ask(store, fake_embedder, linked_evidence=True)
+        assert result.status == "answered", "one shared word, from the constant's own name, is all the link asks of the declaration"
+        assert [(c.path, c.start_line) for c in result.citations] == [("src/share.ts", reminder.start_line), ("src/roles.ts", 1)]
+        assert [p.path for p in result.linked_uses] == ["src/share.ts"], "and the use is marked as added, not chosen"

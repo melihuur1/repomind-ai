@@ -100,8 +100,10 @@ def unload(server: str, model: str) -> None:
     request("POST", f"{server}/api/generate", {"model": model, "keep_alive": 0}, timeout=60)
 
 
-def start_server(model: str, log: Path) -> subprocess.Popen:
-    environment = {**os.environ, "REPOMIND_LLM_MODEL": model, "REPOMIND_LLM_SELECTION": "choose", "HF_HUB_DISABLE_SYMLINKS_WARNING": "1"}
+def start_server(model: str, log: Path, linked_evidence: bool = False) -> subprocess.Popen:
+    # Both settings are given, so a record never depends on what the machine's .env happens to say.
+    environment = {**os.environ, "REPOMIND_LLM_MODEL": model, "REPOMIND_LLM_SELECTION": "choose",
+                   "REPOMIND_LLM_LINKED_EVIDENCE": "1" if linked_evidence else "0", "HF_HUB_DISABLE_SYMLINKS_WARNING": "1"}
     process = subprocess.Popen([sys.executable, "-m", "repomind", "serve", "--port", str(PORT)], cwd=PROJECT, env=environment,
                                stdout=log.open("w", encoding="utf-8"), stderr=subprocess.STDOUT)
     deadline = time.monotonic() + 240
@@ -168,7 +170,7 @@ def github_answers(urls: set[str]) -> dict[str, int | str]:
     return status
 
 
-def ask(model: str, output: Path, translations: bool = True) -> int:
+def ask(model: str, output: Path, translations: bool = True, linked_evidence: bool = False) -> int:
     if output.exists():
         print(f"{output} already exists, and is not overwritten.")
         return 2
@@ -189,9 +191,9 @@ def ask(model: str, output: Path, translations: bool = True) -> int:
         print(f"Not started: {', '.join(others)} is still in memory. Two models are never loaded at once.")
         return 3
 
-    record = {"model": model, "memory_at_start": check.describe(), "placement": None, "answers": [], "translations": {}}
+    record = {"model": model, "linked_evidence": linked_evidence, "memory_at_start": check.describe(), "placement": None, "answers": [], "translations": {}}
     log = output.with_name(output.name + ".server.log")
-    process = start_server(model, log)
+    process = start_server(model, log, linked_evidence)
     try:
         repositories = {r["name"]: r for r in request("GET", f"{BASE}/api/repositories")}
         for question in (*data["questions"], *data["apart"]):
@@ -312,11 +314,12 @@ def main() -> int:
     one.add_argument("--model", required=True)
     one.add_argument("--output", type=Path, required=True)
     one.add_argument("--no-translations", action="store_true", help="ask the questions only, without translating the development questions")
+    one.add_argument("--linked-evidence", action="store_true", help="experimental: start the application with linked evidence on. It is off without this.")
     two = commands.add_parser("retrieval")
     two.add_argument("record", type=Path)
     arguments = parser.parse_args()
     if arguments.command == "ask":
-        return ask(arguments.model, arguments.output, translations=not arguments.no_translations)
+        return ask(arguments.model, arguments.output, translations=not arguments.no_translations, linked_evidence=arguments.linked_evidence)
     return retrieval(arguments.record)
 
 

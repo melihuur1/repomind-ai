@@ -288,9 +288,11 @@ def linked_evidence(
             use, name = link
             add(use)
             add(passage)
+            chose_the_use = any(use is item for item in chosen)
             notes.append(
-                f"{_key(passage)} declares {name}, which {_key(use)} uses, so both are shown. "
-                "They exist in Git at this commit. Whether they answer the question is the model's reading."
+                f"The model chose {_key(passage)}, which declares {name}. "
+                + (f"It also chose {_key(use)}, which uses it. " if chose_the_use else f"{_key(use)}, which uses it, was added by RepoMind and not chosen by the model. ")
+                + "Both exist in Git at this commit. Whether they answer the question is the model's reading."
             )
         else:
             turned_down.append(passage)

@@ -68,7 +68,7 @@ Every language then has rules of its own for a credential that is not in a known
 - **YAML** files with a personal or secret marker in the name (`application-local.yml`, `*-override.yml`, `vault.yml`, `kubeconfig.yml`) and lock files are skipped. In the rest, a chunk holding a literal credential, such as a password key or a URL with a password, is withheld on its own and reported, so that one development password does not hide a whole compose file. An entry holding one is taken apart down to the flat list of settings that holds it, such as a service's `environment`, which is withheld whole, so the same service's `build` and `depends_on` stay searchable.
 - **SQL** files with a literal `PASSWORD '...'` or `IDENTIFIED BY '...'` are rejected.
 
-The same rules run again when something is asked, because an index made by an older version may still hold such lines. Search leaves out any chunk that holds a credential, so no result, passage or prompt starts from one. Before lines are checked against Git and offered to a model, each passage is checked once more, which also covers a declaration that [completion](#known-limitations) fetched. The file view hides the same statements in every language.
+The same rules run again when something is asked, because an index made by an older version may still hold such lines. Search leaves out any chunk that holds a credential, so no result, passage or prompt starts from one. Before lines are checked against Git and offered to a model, each passage is checked once more, which also covers a declaration that [completion](#a-constants-declaration) fetched. The file view hides the same statements in every language.
 
 ## Parsing and chunking
 
@@ -132,7 +132,7 @@ These ideas were tested and rejected, and their code removed:
 1. Translate a Turkish question to English with the same model. This wording is better than the local translator's, at about 2.5 seconds, so only `ask` uses it. `search` keeps working without any LLM.
 2. Retrieve up to 12 chunks with hybrid search, and for a Turkish question up to 5 more through the glossary.
 3. Refuse if the question is about something the code never mentions.
-4. Narrow the chunks to at most 5 short passages with no LLM, and compare each with Git.
+4. Narrow the chunks to at most 5 short passages with no LLM, add the declaration of a constant they use when it can be found for certain, and compare each with Git.
 5. Refuse if no passage mentions enough of the question.
 6. Without an LLM, stop and list the passages, labelled as not being an AI answer.
 7. Enforce the budget, and send the passages to the model in one request.
@@ -148,6 +148,12 @@ Each source in `AskResult.sources()` carries both of them:
 The first does not imply the second, and `passed` is a check, not a proof. In [a trial](evaluation.md#two-short-trials), all 15 lines 7B chose were real, and 7 of them answered the question.
 
 **A source to review** (`AskResult.review_candidates`, "İncelenebilecek kaynak adayı" for a Turkish question) is a choice the rule turned down. The reader gets its path, lines and code, and is told that nothing confirms it answers the question. It does not change the status, the answer or the citations, so "I do not know" stays "I do not know", and the model's note about it is never shown. There can be none when the rule refuses before the model is asked. The closest lines are listed then, as before.
+
+### A constant's declaration
+
+A passage that reads `.timeout(REQUEST_TIMEOUT)` does not say how long the timeout is. `repomind/qa/completion.py` adds at most two declarations of constants the passages use, read from Git at the indexed commit and found with Tree-sitter. A declaration is added only when it lies inside an indexed chunk, holds no credential and is at most 4 lines long. It is offered to the model like any other passage, and it is evidence only if it passes the evidence rule itself. When the model chooses a line and not the declaration of a constant it uses, the answer says where the value is.
+
+**Linked evidence is experimental, and off.** With `REPOMIND_LLM_LINKED_EVIDENCE=1`, a declaration the model chose that fails the evidence rule is still shown as an answer when the line that uses it was offered and passes the rule, and the declaration shares one word with the question. The use is then shown too, marked as added by RepoMind and not chosen by the model. It is off by default because the link shows that one line refers to the other, and not that either answers the question. The one shared word usually comes from the constant's own name, and on the two test repositories 1 of 15 declarations it could accept was a right source. See [EVIDENCE_COMPLETION.md](../eval/EVIDENCE_COMPLETION.md) for the record made while it was always on.
 
 ### Real lines, not sentences
 
