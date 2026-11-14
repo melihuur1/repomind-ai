@@ -1,0 +1,482 @@
+{
+ "model": "qwen2.5-coder:7b",
+ "memory_at_start": "physical 15.67 GB, commit 23.92 GB; physical 15.68 GB, commit 23.93 GB",
+ "placement": {
+  "size_mib": 6082,
+  "in_gpu_mib": 3282
+ },
+ "answers": [
+  {
+   "id": "app-sg-ttl-max",
+   "language": "tr",
+   "apart": false,
+   "answerable": true,
+   "verdict": "not_enough_evidence",
+   "ai_used": true,
+   "model": "qwen2.5-coder:7b",
+   "translated_query": "What is the longest wait time that can be set when creating a reservation?",
+   "outcome": "none",
+   "right_lines_offered": false,
+   "sources": [
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/reservation/ReservationTransactions.java:17-30",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/resources/application.yml:61-66",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/reservation/ReservationRepository.java:54-68",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/reservation/ReservationTransactions.java:109-114",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/reservation/ReservationService.java:32-35",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": null,
+   "warnings": [],
+   "input_tokens": 1252,
+   "output_tokens": 31,
+   "seconds": 13.92,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.25,
+   "min_free_commit_gb": 14.25
+  },
+  {
+   "id": "app-sn-title-length",
+   "language": "tr",
+   "apart": false,
+   "answerable": true,
+   "verdict": "lines_chosen",
+   "ai_used": true,
+   "model": "qwen2.5-coder:7b",
+   "translated_query": "What is the maximum number of characters that a note title can be saved as?",
+   "outcome": "wrong",
+   "right_lines_offered": false,
+   "sources": [
+    {
+     "role": "answer",
+     "where": "apps/web/src/editor/title-input.tsx:53-57",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/web/src/pages/dashboard-page.tsx:140-144",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "packages/shared/src/roles.ts:8-12",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/web/src/pages/note-page.tsx:17-24",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/api/src/notes/notes.service.ts:30-43",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": "`maxLength={200}` notun başlığı en fazla 200 karakter olarak kaydediliyor.",
+   "warnings": [],
+   "input_tokens": 1068,
+   "output_tokens": 59,
+   "seconds": 8.07,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.26,
+   "min_free_commit_gb": 14.24
+  },
+  {
+   "id": "app-sg-barcode",
+   "language": "tr",
+   "apart": false,
+   "answerable": false,
+   "verdict": "not_enough_evidence",
+   "ai_used": true,
+   "model": null,
+   "translated_query": "How is a barcode generated for a product?",
+   "outcome": "none",
+   "right_lines_offered": false,
+   "sources": [
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/catalog/ProductController.java:82-88",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/resources/db/migration/V2__catalog_and_stock.sql:1-12",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/catalog/ProductController.java:48-55",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/catalog/ProductService.java:29-36",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/catalog/Product.java:47-48",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": null,
+   "warnings": [
+    "Not found anywhere in the indexed code: barcode.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "input_tokens": 61,
+   "output_tokens": 14,
+   "seconds": 2.49,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.26,
+   "min_free_commit_gb": 14.28
+  },
+  {
+   "id": "app-sg-sim-timeout",
+   "language": "en",
+   "apart": false,
+   "answerable": true,
+   "verdict": "lines_chosen",
+   "ai_used": true,
+   "model": "qwen2.5-coder:7b",
+   "translated_query": null,
+   "outcome": "correct",
+   "right_lines_offered": true,
+   "sources": [
+    {
+     "role": "answer",
+     "where": "src/main/java/com/stockguard/simulation/SimulationService.java:147-156",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "answer",
+     "where": "src/main/java/com/stockguard/simulation/SimulationService.java:49-49",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/simulation/SimulationService.java:157-169",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/simulation/SimulationService.java:98-102",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/simulation/SimulationController.java:31-35",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/inventory/StockLevelRepository.java:14-23",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": "`REQUEST_TIMEOUT` is set to 60 seconds.",
+   "warnings": [
+    "src/main/java/com/stockguard/simulation/SimulationService.java:49-49 declares REQUEST_TIMEOUT, which src/main/java/com/stockguard/simulation/SimulationService.java:147-156 uses, so both are shown. They exist in Git at this commit. Whether they answer the question is the model's reading."
+   ],
+   "input_tokens": 1331,
+   "output_tokens": 24,
+   "seconds": 6.04,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.13,
+   "min_free_commit_gb": 14.09
+  },
+  {
+   "id": "app-sn-search-length",
+   "language": "en",
+   "apart": false,
+   "answerable": true,
+   "verdict": "lines_chosen",
+   "ai_used": true,
+   "model": "qwen2.5-coder:7b",
+   "translated_query": null,
+   "outcome": "correct",
+   "right_lines_offered": true,
+   "sources": [
+    {
+     "role": "answer",
+     "where": "apps/api/src/notes/dto.ts:5-20",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/api/src/notes/notes.service.ts:72-76",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql:8-9",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/api/src/notes/notes.controller.ts:45-51",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/api/src/notes/notes.service.ts:54-56",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": "`ListNotesQueryDto` has a `q` field with a maximum length of 100 characters.",
+   "warnings": [
+    "Not found anywhere in the indexed code: accepted."
+   ],
+   "input_tokens": 1004,
+   "output_tokens": 35,
+   "seconds": 5.8,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 8.82,
+   "min_free_commit_gb": 13.76
+  },
+  {
+   "id": "app-sn-webhook",
+   "language": "en",
+   "apart": false,
+   "answerable": false,
+   "verdict": "not_enough_evidence",
+   "ai_used": true,
+   "model": "qwen2.5-coder:7b",
+   "translated_query": null,
+   "outcome": "none",
+   "right_lines_offered": false,
+   "sources": [
+    {
+     "role": "closest",
+     "where": "apps/web/src/lib/api.ts:144-147",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/web/src/lib/api.ts:139-143",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/web/src/lib/api.ts:148-150",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/web/src/collab/connection.ts:50-54",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/api/src/main.ts:8-14",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/api/src/config/env.ts:35-35",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": null,
+   "warnings": [
+    "Not found anywhere in the indexed code: webhook.",
+    "The repository's name was left out of the search, because every result is in this repository."
+   ],
+   "input_tokens": 1076,
+   "output_tokens": 10,
+   "seconds": 5.8,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 8.55,
+   "min_free_commit_gb": 13.53
+  },
+  {
+   "id": "manual-negative-stock",
+   "language": "tr",
+   "apart": true,
+   "answerable": true,
+   "verdict": "lines_chosen",
+   "ai_used": true,
+   "model": "qwen2.5-coder:7b",
+   "translated_query": "How does StockGuard prevent stock quantities from dropping below zero?",
+   "outcome": "correct",
+   "right_lines_offered": true,
+   "sources": [
+    {
+     "role": "answer",
+     "where": "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/simulation/SimulationService.java:196-200",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/simulation/SimulationService.java:222-226",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/common/config/StockGuardProperties.java:13-17",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": "`stock_levels` tablosunda `available_quantity >= 0` kontrolü negatif stok miktarını engeller.",
+   "warnings": [
+    "Not found anywhere in the indexed code: prevent, dropping, below.",
+    "The repository's name was left out of the search, because every result is in this repository."
+   ],
+   "input_tokens": 1279,
+   "output_tokens": 56,
+   "seconds": 9.53,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 8.47,
+   "min_free_commit_gb": 13.46
+  }
+ ],
+ "translations": {},
+ "github": {}
+}

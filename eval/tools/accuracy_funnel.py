@@ -37,7 +37,7 @@ from repomind.evaluation.dataset import (  # noqa: E402
 )
 from repomind.evaluation.metrics import overlaps, touches  # noqa: E402
 from repomind.ingest.git_source import GitRepository  # noqa: E402
-from repomind.qa.completion import SnapshotSources, complete  # noqa: E402
+from repomind.qa.completion import SnapshotSources, complete, linked_evidence  # noqa: E402
 from repomind.qa.passages import is_evidence, select_passages  # noqa: E402
 from repomind.qa.prompt import build_selection_prompt  # noqa: E402
 from repomind.qa.sufficiency import check_sufficiency  # noqa: E402
@@ -148,6 +148,11 @@ def main() -> int:
                         completion_seconds = time.perf_counter() - completing
                         completed = [f"{c.name} -> {c.declaration.path}:{c.declaration.start_line}" for c in record if c.declaration and not c.reason]
                     good = [p for p in passages if is_evidence(p, wording)]
+                    # Declarations that would be evidence only as a pair, if the model chose them.
+                    linkable = []
+                    if arguments.complete and passages:
+                        accepted, _, _ = linked_evidence([p for p in passages if not is_evidence(p, wording)], passages, record, wording, lambda p: is_evidence(p, wording))
+                        linkable = [p for p in accepted if not is_evidence(p, wording)]
                     row = {
                         "language": language,
                         "set": set_name,
@@ -159,6 +164,7 @@ def main() -> int:
                         "selection_seconds": round(selection_seconds, 4),
                         "completion_seconds": round(completion_seconds, 4),
                         "completed": completed,
+                        "linkable": [f"{p.path}:{p.start_line}-{p.end_line}" for p in linkable],
                         # What choosing at once would send, as estimated before every request.
                         "prompt_tokens": build_selection_prompt(asked, passages, "0" * 16, found.translated_query).estimated_input_tokens if not gate and good else 0,
                         "passages_offered": len(passages),
@@ -174,6 +180,7 @@ def main() -> int:
                             whole=any(p.path == s.path and p.start_line <= s.start_line and s.end_line <= p.end_line for p in passages for s in accepted),
                             anchor=any(squeeze(s.anchor) in text for s in accepted),
                             evidence=any(touches(p, s) for p in good for s in accepted),
+                            linkable_right_lines=any(touches(p, s) for p in linkable for s in accepted),
                         )
                     rows.append(row)
 
@@ -196,6 +203,9 @@ def main() -> int:
             "mean_selection_ms": round(1000 * sum(r.get("selection_seconds", 0) for r in group) / max(1, len(group)), 1),
             "mean_completion_ms": round(1000 * sum(r.get("completion_seconds", 0) for r in group) / max(1, len(group)), 1),
             "questions_completed": sum(bool(r.get("completed")) for r in group),
+            "answerable_with_a_linkable_declaration": sum(bool(r.get("linkable")) for r in answerable),
+            "of_which_right_lines": sum(bool(r.get("linkable_right_lines")) for r in answerable),
+            "unanswerable_with_a_linkable_declaration": sum(bool(r.get("linkable")) for r in negatives),
             "declarations_added": sum(len(r.get("completed", [])) for r in group),
             "max_prompt_tokens": max((r.get("prompt_tokens", 0) for r in group), default=0),
             "mean_prompt_tokens": round(sum(r.get("prompt_tokens", 0) for r in group if r.get("prompt_tokens")) / max(1, sum(bool(r.get("prompt_tokens")) for r in group))),
@@ -214,6 +224,7 @@ def main() -> int:
     peak = peak_memory_mb()
     print(f"{time.perf_counter() - started:.0f} s; search {', '.join(f'{language} {item['mean_search_ms']} ms' for language, item in report.items())} per question; peak memory {peak} MB")
     print("completion " + ", ".join(f"{language}: {item['declarations_added']} declarations in {item['questions_completed']} questions, {item['mean_completion_ms']} ms" for language, item in report.items()))
+    print("linkable if chosen " + ", ".join(f"{language}: answerable {item['answerable_with_a_linkable_declaration']} (right lines {item['of_which_right_lines']}), unanswerable {item['unanswerable_with_a_linkable_declaration']}" for language, item in report.items()))
     print("selection " + ", ".join(f"{language} {item['mean_selection_ms']} ms" for language, item in report.items())
           + "; prompt tokens mean/max " + ", ".join(f"{language} {item['mean_prompt_tokens']}/{item['max_prompt_tokens']}" for language, item in report.items()))
     if arguments.output:

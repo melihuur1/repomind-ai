@@ -80,7 +80,7 @@ def unload(server: str, model: str) -> None:
         pass
 
 
-def run(model: str, output: Path) -> int:
+def run(model: str, output: Path, only: set[str] | None = None) -> int:
     check = check_before_loading()
     print(f"Free memory before the model loads: {check.describe()}", flush=True)
     if check.refusal:
@@ -115,7 +115,7 @@ def run(model: str, output: Path) -> int:
             store.record_llm_usage = lambda *args, **kwargs: None  # This trial writes nothing.
             search = SearchEngine(store, embedder, SearchConfig(), LocalTurkishTranslator(settings.models_dir))
             for question, negative in shared.questions():
-                if question.id in done:
+                if question.id in done or (only and question.id not in only):
                     continue
                 free = available_memory_gb()
                 if free is not None and free < STOP_GB:
@@ -221,13 +221,14 @@ def main() -> int:
     one = commands.add_parser("run")
     one.add_argument("--model", required=True)
     one.add_argument("--output", type=Path, required=True)
+    one.add_argument("--only", help="comma-separated question ids, for a small check of a few questions")
     both = commands.add_parser("compare")
     both.add_argument("first", type=Path)
     both.add_argument("second", type=Path)
     both.add_argument("--output", type=Path)
     arguments = parser.parse_args()
     if arguments.command == "run":
-        return run(arguments.model, arguments.output)
+        return run(arguments.model, arguments.output, set(arguments.only.split(",")) if arguments.only else None)
     report = compare(*(json.loads(path.read_text(encoding="utf-8")) for path in (arguments.first, arguments.second)))
     text = json.dumps(report, ensure_ascii=False, indent=1)
     print(text)

@@ -77,3 +77,53 @@ The same seven questions, asked again through the API with `qwen2.5-coder:7b`, t
 For `sim-timeout`, the model chose the added declaration, `REQUEST_TIMEOUT = Duration.ofSeconds(60)`. The evidence rule turned it down, because the line shares one word with the question, "request", and the rule asks for two. So it is shown as a source to review, and the status stays without an answer. One way to change that would be to let a declaration count as evidence when the line that uses it does. That is a change to the evidence rule, decided after seeing this result, so it was not made.
 
 Every returned line matched Git at the indexed commit. Peak GPU memory in use was 2814 MiB, and the lowest free memory 8.48 GB physical and 12.18 GB commit space.
+
+## Linked evidence, added after the user approved it
+
+A declaration that completion added is evidence as a pair with the line that uses it ([`linked_evidence`](../repomind/qa/completion.py)). The general evidence rule is unchanged: every other passage needs two shared words, as before.
+
+**When a declaration the model chose counts as evidence.** Every one of these has to hold:
+
+- completion itself added it, so it resolved to exactly one declaration, inside an indexed chunk, and passed the credential check;
+- the line that uses it was offered to the model in the same request;
+- that line passes the evidence rule on its own;
+- both come from the same repository and commit, and both were checked against Git before the model saw them;
+- the declaration shares at least one word with the question, so that a constant beside the point is not taken in with a line that is.
+
+Then both are shown as the answer, the use first, with a warning that the lines exist in Git and that whether they answer the question is the model's reading.
+
+**When it never does.** A declaration search found by itself, or one completion only noted as already shown; a declaration completion did not add because it was ambiguous, declared twice, outside the index, holding a credential or too long; a use that was not offered, that fails the rule, or that comes from another commit; a declaration sharing no word with the question. A use the model chose alone never brings its declaration into the answer. The answer only says where the value is.
+
+The judging way of choosing, which is experimental, does not use pairs.
+
+### With no model
+
+On the development sets, nothing that can be measured without a model changed. Linking decides only about lines the model chose. Rows: [`dev-completion-linked.json`](results/dev-completion-linked.json).
+
+How many questions have a declaration that would count only as a pair, if the model chose it:
+
+| | Turkish | English |
+|---|---|---|
+| Answerable | 5, none of them the right lines | 7, none of them the right lines |
+| Unanswerable | 1 | 1 |
+
+Both unanswerable ones are `v5-sn-neg-reminder`, "How is a reminder set for a note?". Its pairable declaration is `NOTE_ROLE_KEY = 'syncnotes:noteRole'`, which shares "note" with the question, beside the line using it, `decorators.ts:10`. That line already passes the rule, so choosing it would already have given a wrong source. A choice of the declaration would before have been a source to review, and could now be a wrong source. This is the new risk. The one shared word is a weak tie when the word is as common as "note".
+
+On the real-flow questions, only `sim-timeout`'s declaration counts as a pair.
+
+### With the model
+
+Through the API with `qwen2.5-coder:7b`, the same seven questions as before, started at 15.67 GB of free physical memory and 23.9 GB of commit space. Rows: [`dev-app-check-qwen2.5-coder-7b-linked.json`](results/dev-app-check-qwen2.5-coder-7b-linked.json).
+
+| Question | Before completion | With completion | With linked evidence |
+|---|---|---|---|
+| `app-sg-sim-timeout` | no answer | no answer, the right line to review | **correct**: `SimulationService.java:147-156` and `:49`, "REQUEST_TIMEOUT is set to 60 seconds" |
+| `app-sn-search-length` | refused before the model | correct | correct |
+| `app-sn-title-length` | wrong source, the web field | the same | the same |
+| `app-sg-ttl-max` | no answer | no answer | no answer |
+| `app-sg-barcode`, `app-sn-webhook` (unanswerable) | refused | refused | refused |
+| `manual-negative-stock`, apart | correct | correct | correct |
+
+The new risk, `v5-sn-neg-reminder`, asked in Turkish with the stored translation, once with each model: both had the pairable declaration offered, and both declined, with no source given. The default model started at 12.19 GB of free physical memory and the coder model at 15.41 GB, after two starts refused below 12 GB with nothing loaded. Rows: [`dev-linked-reminder-qwen2.5-7b.json`](results/dev-linked-reminder-qwen2.5-7b.json), [`dev-linked-reminder-qwen2.5-coder-7b.json`](results/dev-linked-reminder-qwen2.5-coder-7b.json).
+
+`sim-timeout` is one known failure, fixed on purpose. It does not show that answers are more accurate in general.

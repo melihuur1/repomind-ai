@@ -1,0 +1,44 @@
+{
+ "model": "qwen2.5-coder:7b",
+ "settings": {
+  "max_output_tokens": 250,
+  "max_input_tokens": 4000,
+  "temperature": 0,
+  "selection": "choose"
+ },
+ "memory_at_start": "physical 15.41 GB, commit 23.30 GB; physical 15.39 GB, commit 23.27 GB",
+ "placement": {
+  "size_mib": 6082,
+  "in_gpu_mib": 3282
+ },
+ "rows": [
+  {
+   "id": "v5-sn-neg-reminder",
+   "negative": true,
+   "status": "insufficient",
+   "outcome": "none",
+   "gold_offered": false,
+   "chosen": [],
+   "review": [],
+   "offered": [
+    "apps/web/src/pages/note-page.tsx:133-142",
+    "apps/api/src/common/decorators.ts:10-14",
+    "apps/api/src/common/decorators.ts:9-9",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:47-60",
+    "apps/api/src/notes/notes.controller.ts:53-56",
+    "packages/db/prisma/migrations/20261104110838_init/migration.sql:62-73"
+   ],
+   "note": "",
+   "prompts": [
+    "c0f23c1eb14ed2748ee2c0a52eb4a45848d8e1f55fb16952f002db2162779b06"
+   ],
+   "requests": 1,
+   "input_tokens": 1165,
+   "output_tokens": 10,
+   "seconds": 10.47,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 9.14,
+   "min_free_commit_gb": 14.22
+  }
+ ]
+}
