@@ -5,28 +5,24 @@ is where the constant is declared: thirty lines up in the same file, or in a fil
 The file is read from Git at the indexed commit and parsed with Tree-sitter, so a declaration is
 found by its syntax, not by a matching line of text.
 
-Only what resolves to exactly one declaration is followed:
+Which declaration a name means is decided where it is used, by `repomind.qa.declarations`: by
+lexical scope in TypeScript and JavaScript, and by enclosing types, imports and the package in
+Java. A same-named constant in another function, another file or another package is never taken,
+and what cannot be decided from the syntax is left alone.
 
-* a constant declared in the passage's own file;
-* in TypeScript or JavaScript, a constant the file imports by name from a relative module;
-* in Java, ``Name.CONSTANT``, when exactly one class or interface in the repository is called ``Name``.
-
-Anything else, such as a workspace package, a second declaration with the same name, or a
-constant declared in a file that is not indexed, is left alone. The declaration has to lie inside
-an indexed chunk, so lines withheld for holding a credential are never added, and it is checked
-for a credential again before it is shown. Constants are written in capitals with an underscore,
-``MAX_TITLE_LENGTH``, by convention in all three languages.
+The declaration has to lie inside an indexed chunk, so lines withheld for holding a credential are
+never added, and it is checked for a credential again before it is shown. Constants are written
+in capitals with an underscore, ``MAX_TITLE_LENGTH``, by convention in all three languages.
 """
 
 from __future__ import annotations
 
-import posixpath
 import re
 from dataclasses import dataclass, replace
-from typing import Callable, Protocol, Sequence
+from typing import Callable, Sequence
 
 from repomind.ingest.filters import find_credential
-from repomind.parsing.languages import parser_for
+from repomind.qa.declarations import Declaration, Resolver, Sources, resolve  # noqa: F401
 from repomind.qa.passages import Passage
 from repomind.search.tokenizer import tokenize
 from repomind.store.database import ChunkRow
@@ -36,26 +32,10 @@ CONSTANT = re.compile(r"\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+\b")
 MAX_DECLARATION_LINES = 4
 # On top of the passages search chose, so that they are completed and not crowded out.
 MAX_COMPLETIONS = 2
-_LANGUAGES = {"java", "typescript", "tsx", "javascript"}
-_MODULE_SUFFIXES = (".ts", ".tsx", ".js", ".jsx", "/index.ts", "/index.tsx", "/index.js")
-
-
-class Sources(Protocol):
-    """What completion may read, all at the commit the passages come from."""
-
-    def text(self, path: str) -> str | None: ...
-
-    def language(self, path: str) -> str | None: ...
-
-    def chunks(self, path: str) -> Sequence[ChunkRow]: ...
-
-    def imports(self, path: str) -> Sequence[tuple[str, Sequence[str]]]: ...
-
-    def type_paths(self, name: str) -> Sequence[str]: ...
 
 
 class SnapshotSources:
-    """One indexed commit: chunks, imports and types from the index, and file text from Git.
+    """One indexed commit: chunks and types from the index, and file text from Git.
 
     Only files in the index are ever read, so a file left out of it, such as `.env`, is never opened.
     """
@@ -82,19 +62,8 @@ class SnapshotSources:
     def chunks(self, path: str) -> Sequence[ChunkRow]:
         return self._store.file_chunks(self._snapshot, path)
 
-    def imports(self, path: str) -> Sequence[tuple[str, Sequence[str]]]:
-        return self._store.file_imports(self._snapshot, path)
-
     def type_paths(self, name: str) -> Sequence[str]:
         return self._store.type_paths(self._snapshot, name)
-
-
-@dataclass(frozen=True)
-class Declaration:
-    name: str
-    path: str
-    start_line: int
-    end_line: int
 
 
 @dataclass(frozen=True)
@@ -105,80 +74,6 @@ class Completion:
     used_in: str
     declaration: Declaration | None
     reason: str = ""
-
-
-def _text(node, source: bytes) -> str:
-    return source[node.start_byte : node.end_byte].decode("utf-8", "replace")
-
-
-def declarations(language: str, source: str, name: str) -> list[tuple[int, int]]:
-    """Lines of every declaration of ``name`` as a field or a variable, by Tree-sitter."""
-    if language not in _LANGUAGES:
-        return []
-    data = source.encode("utf-8")
-    found: list[tuple[int, int]] = []
-    stack = [parser_for(language).parse(data).root_node]
-    while stack:
-        node = stack.pop()
-        stack.extend(node.named_children)
-        names: list = []
-        if node.type in ("field_declaration", "constant_declaration", "lexical_declaration", "variable_declaration"):
-            names = [d.child_by_field_name("name") for d in node.named_children if d.type == "variable_declarator"]
-        elif node.type in ("public_field_definition", "field_definition"):
-            names = [node.child_by_field_name("name") or node.child_by_field_name("property")]
-        if any(n is not None and _text(n, data) == name for n in names):
-            outer = node.parent if node.parent is not None and node.parent.type == "export_statement" else node
-            found.append((outer.start_point[0] + 1, outer.end_point[0] + 1))
-    return sorted(set(found))
-
-
-def _relative_module(path: str, module: str) -> list[str]:
-    if not module.startswith("."):
-        return []
-    base = posixpath.normpath(posixpath.join(posixpath.dirname(path), module))
-    return [base, *(base + suffix for suffix in _MODULE_SUFFIXES)]
-
-
-def _only(sources: Sources, path: str, name: str) -> tuple[Declaration | None, str]:
-    language, text = sources.language(path), sources.text(path)
-    if language is None or text is None:
-        return None, f"{path} is not indexed"
-    spans = declarations(language, text, name)
-    if len(spans) > 1:
-        return None, f"{name} is declared {len(spans)} times in {path}"
-    if not spans:
-        return None, ""
-    return Declaration(name, path, *spans[0]), ""
-
-
-def resolve(sources: Sources, name: str, path: str, used_in: str) -> tuple[Declaration | None, str]:
-    """The one declaration of ``name`` that the passage at ``path`` can mean, or why there is none."""
-    found, reason = _resolve(sources, name, path, used_in)
-    return found, reason or ("" if found else f"no declaration of {name} was found")
-
-
-def _resolve(sources: Sources, name: str, path: str, used_in: str) -> tuple[Declaration | None, str]:
-    found, reason = _only(sources, path, name)
-    if found is not None or reason:
-        return found, reason
-    language = sources.language(path)
-    if language in ("typescript", "tsx", "javascript"):
-        for module, imported in sources.imports(path):
-            if name not in imported:
-                continue
-            for candidate in _relative_module(path, module):
-                if sources.language(candidate) is not None:
-                    return _only(sources, candidate, name)
-            return None, f"{name} is imported from {module}, which is not a file of this repository"
-    if language == "java":
-        qualifier = re.search(rf"\b([A-Z]\w*)\.{re.escape(name)}\b", used_in)
-        if qualifier:
-            paths = list(dict.fromkeys(sources.type_paths(qualifier.group(1))))
-            if len(paths) == 1:
-                return _only(sources, paths[0], name)
-            if paths:
-                return None, f"{len(paths)} types are called {qualifier.group(1)}"
-    return None, ""
 
 
 def _covering_chunk(sources: Sources, declaration: Declaration) -> ChunkRow | None:
@@ -201,6 +96,7 @@ def complete(passages: Sequence[Passage], sources: Sources, limit: int = MAX_COM
 
     Returns the new passages, numbered again, and a record of every constant considered.
     """
+    resolver = Resolver(sources)
     added: dict[int, list[Passage]] = {}
     record: list[Completion] = []
     taken: list[Passage] = list(passages)
@@ -209,7 +105,7 @@ def complete(passages: Sequence[Passage], sources: Sources, limit: int = MAX_COM
             where = f"{passage.path}:{passage.start_line}-{passage.end_line}"
             if sum(len(items) for items in added.values()) >= limit:
                 break
-            declaration, reason = resolve(sources, name, passage.path, passage.text)
+            declaration, reason = resolver.resolve(name, passage.path, passage.start_line, passage.end_line)
             if declaration is None:
                 record.append(Completion(name, where, None, reason))
                 continue
@@ -301,7 +197,7 @@ def linked_evidence(
 
 # Unresolved for these reasons, the constant is real and its value unknown. "No declaration" is left
 # out: an enum value or a constant of a library is its own meaning, and warning about each would be noise.
-_UNRESOLVED = ("is declared", "is not indexed", "is imported from", "types are called", "not in the index", "may hold a credential", "too long")
+_UNRESOLVED = ("is declared", "is not indexed", "is imported from", "types are called", "different declarations", "not in the index", "may hold a credential", "too long")
 
 
 def unshown_values(chosen: Sequence[Passage], record: Sequence[Completion]) -> list[str]:

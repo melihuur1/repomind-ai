@@ -297,12 +297,6 @@ class Store:
         ).fetchall()
         return [ChunkRow(**row) for row in rows]
 
-    def file_imports(self, snapshot_id: int, path: str) -> list[tuple[str, list[str]]]:
-        rows = self.connection.execute(
-            "SELECT module, names FROM imports WHERE snapshot_id = %s AND path = %s ORDER BY line", (snapshot_id, path)
-        ).fetchall()
-        return [(row["module"], list(row["names"])) for row in rows]
-
     def type_paths(self, snapshot_id: int, name: str) -> list[str]:
         """Files declaring a class, interface, enum or record called ``name``."""
         rows = self.connection.execute(

@@ -9,7 +9,7 @@ import pytest
 
 from dataclasses import replace
 
-from repomind.qa.completion import MAX_COMPLETIONS, SnapshotSources, complete, declarations, linked_evidence, resolve, unshown_values
+from repomind.qa.completion import MAX_COMPLETIONS, SnapshotSources, complete, linked_evidence, unshown_values
 from repomind.qa.passages import Passage
 
 JAVA = """package shop;
@@ -43,10 +43,10 @@ def chunk(path: str, start: int, end: int, text: str, language: str = "java"):
 
 
 class Files:
-    """Indexed files with their chunks, imports and declared types, and a record of every file read."""
+    """Indexed files with their chunks and declared types, and a record of every file read."""
 
-    def __init__(self, files: dict, chunks: dict | None = None, imports: dict | None = None, types: dict | None = None):
-        self.files, self._chunks, self._imports, self._types = files, chunks or {}, imports or {}, types or {}
+    def __init__(self, files: dict, chunks: dict | None = None, types: dict | None = None):
+        self.files, self._chunks, self._types = files, chunks or {}, types or {}
         self.read: list[str] = []
 
     def language(self, path):
@@ -59,9 +59,6 @@ class Files:
     def chunks(self, path):
         return self._chunks.get(path, [])
 
-    def imports(self, path):
-        return self._imports.get(path, [])
-
     def type_paths(self, name):
         return self._types.get(name, [])
 
@@ -69,29 +66,6 @@ class Files:
 def passage(path: str, start: int, end: int, text: str, language: str = "java") -> Passage:
     owner = chunk(path, start, end, text, language)
     return Passage("P1", owner, start, end, owner.content)
-
-
-class TestDeclarations:
-    def test_a_java_field_is_found_by_its_syntax(self):
-        assert declarations("java", JAVA, "REQUEST_TIMEOUT") == [(4, 4)]
-
-    def test_a_name_that_only_starts_the_same_is_not_a_declaration(self):
-        assert declarations("java", JAVA, "REQUEST") == []
-        assert declarations("java", JAVA, "REQUEST_TIMEOUT_LOCAL") == []  # a local variable, not a field
-
-    def test_an_exported_typescript_constant_is_found_with_its_export(self):
-        assert declarations("typescript", LIMITS, "MAX_TITLE_LENGTH") == [(1, 1)]
-
-    def test_a_class_field_in_typescript_is_found(self):
-        source = "export class Limits {\n  static readonly MAX_ITEMS = 50;\n}\n"
-        assert declarations("typescript", source, "MAX_ITEMS") == [(2, 2)]
-
-    def test_a_name_in_a_string_or_a_comment_is_not_a_declaration(self):
-        source = '// REQUEST_TIMEOUT = 5\nclass A { String s = "REQUEST_TIMEOUT = 5"; }\n'
-        assert declarations("java", source, "REQUEST_TIMEOUT") == []
-
-    def test_an_unsupported_language_declares_nothing(self):
-        assert declarations("yaml", "REQUEST_TIMEOUT: 5\n", "REQUEST_TIMEOUT") == []
 
 
 JAVA_PATH = "src/Simulation.java"
@@ -108,7 +82,8 @@ class TestComplete:
         assert [(p.id, p.start_line, p.end_line) for p in completed] == [("P1", 7, 10), ("P2", 4, 4)]
         assert completed[1].text == "    private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(60);"
         assert completed[1].chunk.start_line == 3, "taken from the indexed chunk that holds it"
-        assert [(c.name, c.reason) for c in record if c.declaration] == [("REQUEST_TIMEOUT", "")]
+        # The local variable is declared in the passage itself, so there is nothing to add for it.
+        assert [(c.name, c.reason) for c in record if c.declaration] == [("REQUEST_TIMEOUT_LOCAL", "already shown"), ("REQUEST_TIMEOUT", "")]
 
     def test_the_passage_lines_are_kept_exactly(self):
         use = passage(JAVA_PATH, 7, 10, JAVA)
@@ -128,11 +103,35 @@ class TestComplete:
         assert len(completed) == 1
         assert ("REQUEST_TIMEOUT", "the declaration is not in the index") in [(c.name, c.reason) for c in record]
 
-    def test_two_declarations_of_the_name_in_the_file_are_not_guessed_between(self):
-        twice = JAVA.replace("class Simulation {", "class Simulation {\n    static class Inner { static final int REQUEST_TIMEOUT = 5; }")
-        files = Files({JAVA_PATH: ("java", twice)}, chunks={JAVA_PATH: [chunk(JAVA_PATH, 1, 12, twice)]})
-        _, record = complete([passage(JAVA_PATH, 9, 11, twice)], files)
-        assert any(c.name == "REQUEST_TIMEOUT" and c.declaration is None and "declared 2 times" in c.reason for c in record)
+    def test_two_declarations_in_one_scope_are_not_guessed_between(self):
+        twice = "var RETRY_LIMIT = 1;\nvar RETRY_LIMIT = 2;\nexport const tries = () => RETRY_LIMIT;\n"
+        files = Files({"a.js": ("javascript", twice)}, chunks={"a.js": [chunk("a.js", 1, 3, twice, "javascript")]})
+        completed, record = complete([passage("a.js", 3, 3, twice, "javascript")], files)
+        assert len(completed) == 1
+        assert [(c.name, c.declaration, c.reason) for c in record] == [("RETRY_LIMIT", None, "RETRY_LIMIT is declared 2 times in a.js")]
+
+    def test_a_same_named_constant_of_another_function_is_never_added(self):
+        source = (
+            "function first() {\n  const PAGE_SIZE = 5;\n  return PAGE_SIZE;\n}\n\n"
+            "export function second(rows: string[]) {\n  return rows.slice(0, PAGE_SIZE);\n}\n"
+        )
+        files = Files({"a.ts": ("typescript", source)}, chunks={"a.ts": [chunk("a.ts", 1, 8, source, "typescript")]})
+        completed, record = complete([passage("a.ts", 6, 8, source, "typescript")], files)
+        assert len(completed) == 1, "the constant of first() is not what second() means"
+        assert [(c.name, c.declaration) for c in record] == [("PAGE_SIZE", None)]
+
+    def test_each_passage_gets_the_declaration_its_own_file_imports(self):
+        user = "import { PAGE_SIZE } from './limits';\nexport const page = (rows: string[]) => rows.slice(0, PAGE_SIZE);\n"
+        sources = {
+            "web/list.ts": ("typescript", user), "web/limits.ts": ("typescript", "export const PAGE_SIZE = 20;\n"),
+            "admin/list.ts": ("typescript", user), "admin/limits.ts": ("typescript", "export const PAGE_SIZE = 500;\n"),
+        }
+        files = Files(sources, chunks={path: [chunk(path, 1, 1, text, "typescript")] for path, (_, text) in sources.items() if path.endswith("limits.ts")})
+        completed, _ = complete([passage("web/list.ts", 2, 2, user, "typescript"), passage("admin/list.ts", 2, 2, user, "typescript")], files)
+        assert [(p.path, p.text) for p in completed] == [
+            ("web/list.ts", user.split("\n")[1]), ("web/limits.ts", "export const PAGE_SIZE = 20;"),
+            ("admin/list.ts", user.split("\n")[1]), ("admin/limits.ts", "export const PAGE_SIZE = 500;"),
+        ]
 
     def test_a_declaration_holding_a_credential_is_not_added(self):
         source = 'class A {\n    static final String DB_URL_VALUE = "postgresql://app:hunter2@db/app";\n    void f() { connect(DB_URL_VALUE); }\n}\n'
@@ -165,45 +164,6 @@ class TestComplete:
         assert len(completed) == 1 + MAX_COMPLETIONS
 
 
-class TestAcrossFiles:
-    def files(self):
-        return Files(
-            {"src/title.ts": ("typescript", TYPESCRIPT), "src/limits.ts": ("typescript", LIMITS), "src/other.ts": ("typescript", "export const SHARED_LIMIT = 9;\n")},
-            chunks={"src/limits.ts": [chunk("src/limits.ts", 1, 2, LIMITS, "typescript")], "src/other.ts": [chunk("src/other.ts", 1, 1, "export const SHARED_LIMIT = 9;\n", "typescript")]},
-            imports={"src/title.ts": [("./limits", ["MAX_TITLE_LENGTH"]), ("@acme/shared", ["SHARED_LIMIT"])]},
-        )
-
-    def test_a_constant_imported_from_a_relative_module_is_found_there(self):
-        files = self.files()
-        declaration, reason = resolve(files, "MAX_TITLE_LENGTH", "src/title.ts", TYPESCRIPT)
-        assert (declaration.path, declaration.start_line, reason) == ("src/limits.ts", 1, "")
-
-    def test_a_same_named_constant_in_a_file_it_does_not_import_is_never_used(self):
-        files = self.files()
-        declaration, reason = resolve(files, "SHARED_LIMIT", "src/title.ts", TYPESCRIPT)
-        assert declaration is None and "@acme/shared" in reason, "src/other.ts also declares it, and is not what the file imports"
-
-    def test_java_follows_a_qualified_constant_only_to_the_one_type_of_that_name(self):
-        holder = "class Limits {\n    static final int MAX_ITEMS = 50;\n}\n"
-        user = "class Cart {\n    boolean full(int n) { return n >= Limits.MAX_ITEMS; }\n}\n"
-        files = Files({"a/Cart.java": ("java", user), "a/Limits.java": ("java", holder)}, types={"Limits": ["a/Limits.java"]})
-        assert resolve(files, "MAX_ITEMS", "a/Cart.java", user)[0].path == "a/Limits.java"
-        files._types["Limits"] = ["a/Limits.java", "b/Limits.java"]
-        declaration, reason = resolve(files, "MAX_ITEMS", "a/Cart.java", user)
-        assert declaration is None and reason == "2 types are called Limits"
-
-    def test_an_enum_value_behind_a_qualifier_is_not_a_declaration_and_says_so(self):
-        holder = "enum Action {\n    PRODUCT_CREATED, PRODUCT_RENAMED\n}\n"
-        user = "class Audit {\n    void on() { record(Action.PRODUCT_CREATED); }\n}\n"
-        files = Files({"a/Audit.java": ("java", user), "a/Action.java": ("java", holder)}, types={"Action": ["a/Action.java"]})
-        assert resolve(files, "PRODUCT_CREATED", "a/Audit.java", user) == (None, "no declaration of PRODUCT_CREATED was found")
-
-    def test_an_unqualified_java_constant_from_elsewhere_is_left_alone(self):
-        user = "class Cart {\n    boolean full(int n) { return n >= MAX_ITEMS; }\n}\n"
-        files = Files({"a/Cart.java": ("java", user), "a/Limits.java": ("java", "class Limits { static final int MAX_ITEMS = 50; }\n")}, types={"Limits": ["a/Limits.java"]})
-        assert resolve(files, "MAX_ITEMS", "a/Cart.java", user)[0] is None
-
-
 class TestSnapshotSources:
     def test_a_file_outside_the_index_is_never_read_from_git(self):
         store = SimpleNamespace(indexed_file=lambda snapshot, path: {"language": "java"} if path == "A.java" else None)
@@ -230,12 +190,13 @@ class TestTellingTheReader:
         assert unshown_values(completed, record) == []
 
     def test_an_unresolvable_value_is_said_to_be_unknown_and_an_unknown_name_is_not(self):
-        twice = JAVA.replace("class Simulation {", "class Simulation {\n    static class Inner { static final int REQUEST_TIMEOUT = 5; }")
-        files = Files({JAVA_PATH: ("java", twice)}, chunks={JAVA_PATH: [chunk(JAVA_PATH, 1, 12, twice)]})
-        use = passage(JAVA_PATH, 9, 11, twice)
+        files = Files({"src/title.ts": ("typescript", TYPESCRIPT), "src/limits.ts": ("typescript", LIMITS)},
+                      chunks={"src/limits.ts": [chunk("src/limits.ts", 1, 2, LIMITS, "typescript")]})
+        use = passage("src/title.ts", 4, 6, TYPESCRIPT, "typescript")
         completed, record = complete([use], files)
-        notes = unshown_values([completed[0]], record)
-        assert len(notes) == 1 and re.search(r"REQUEST_TIMEOUT, whose value is not shown: .*declared 2 times", notes[0])
+        assert [(p.path, p.start_line) for p in completed] == [("src/title.ts", 4), ("src/limits.ts", 1)]
+        notes = unshown_values(completed, record)
+        assert len(notes) == 1 and re.search(r"SHARED_LIMIT, whose value is not shown: .*imported from @acme/shared", notes[0])
         enum_like = passage("B.java", 1, 1, "return Status.ORDER_PLACED;")
         assert unshown_values([enum_like], complete([enum_like], Files({"B.java": ("java", "class B {}\n")}))[1]) == []
 
