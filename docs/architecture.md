@@ -240,6 +240,8 @@ Measured with no model on the 147 stored questions, 101 answerable and 46 unansw
 
 - Each passage's lines are compared with the blob in Git at the indexed commit before the model sees them, so a tampered database row is never shown.
 - A reply can only choose passages by the ids it was offered. Anything else in it is ignored, and a reply that chooses nothing offered counts as invalid.
+- A reply that cannot be used is neither an answer nor a refusal by the model. Only `{"chosen": []}` says that nothing was chosen. An empty reply, one cut off at the output limit, text that is not JSON, a reply with no list, and ids that were not offered each end as `invalid_response`, with no source, and with what was wrong in `AskResult.reply_problem` and in the API's `reply_problem`. The start of the reply is kept in `AskResult.invalid_reply` for looking into it, and is not shown. It is not asked again.
+- An endpoint that reports 0 input tokens has reported no count: the size of the request is then estimated, so that it is still accounted for, and it is not taken for a truncated prompt.
 - A note is left out, and the lines stay, if it names something that is in neither the chosen lines nor the question, gives a number they do not contain, drifts into a script that is in neither, or is too long to be one sentence.
 
 **What this does not prove.** Verification shows that the lines exist at the commit, and that a note names nothing the lines do not contain. It does not show that the lines answer the question, or that a note made of real names is true. A citation alone does not prove an answer, and `ask` says so under every answer. See [limitations](#known-limitations).

@@ -329,6 +329,7 @@ def ask(request: Request, body: schemas.AskRequest) -> schemas.AskResponse:
     return schemas.AskResponse(
         verdict=verdict,
         message=_MESSAGES[verdict],
+        reply_problem=result.reply_problem,
         ai_used=used,
         ai=ai,
         model_reading=result.note or None,

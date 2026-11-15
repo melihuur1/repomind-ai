@@ -228,6 +228,11 @@ export interface components {
             model_reading_removed_because: string | null;
             /** Output Tokens */
             output_tokens: number;
+            /**
+             * Reply Problem
+             * @description With the verdict invalid_response, what was wrong with the model's reply. An invalid reply is neither an answer nor a refusal by the model, and it gives no source.
+             */
+            reply_problem?: ("empty" | "cut_off" | "not_json" | "no_choice_list" | "not_offered" | "no_judgement") | null;
             /** Seconds */
             seconds: number;
             /** Sources */

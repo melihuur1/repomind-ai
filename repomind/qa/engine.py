@@ -12,7 +12,7 @@ from repomind.ingest.filters import find_credential
 from repomind.ingest.git_source import GitRepository
 from repomind.qa.completion import Completion, SnapshotSources, complete, linked_evidence, unshown_values
 from repomind.qa.judge import Judgement, build_judge_prompt, parse_judgement
-from repomind.qa.llm import LLMClient, LLMConfig, cost_usd
+from repomind.qa.llm import LLMClient, LLMConfig, LLMResponse, cost_usd
 from repomind.qa.passages import Passage, is_evidence, select_passages
 from repomind.qa.project_name import Wording, counts_with_name, stands_alone, with_name_seat, without_project_name
 from repomind.qa.prompt import (
@@ -31,6 +31,13 @@ from repomind.store.database import Store
 # If the endpoint reports far fewer input tokens than we sent, it truncated the prompt
 # silently (for example Ollama's small default context) and sources were never seen.
 _TRUNCATION_RATIO = 0.5
+# How much of a reply that could not be used is kept for looking into it.
+_INVALID_REPLY_CHARACTERS = 2000
+# What the reader is told about a reply that could not be used. Any other kind gets the general sentence.
+_REPLY_WARNINGS = {
+    "empty": "The model returned an empty reply.",
+    "cut_off": "The model's reply was cut off at its output limit.",
+}
 _CHUNKS_WITHOUT_A_MODEL = 12
 # Beyond those. With anything from 2 to 8 seats, the same number of questions reached the passages.
 _GLOSSARY_SEATS = 5
@@ -103,6 +110,11 @@ class AskResult:
     completions: list[Completion] = field(default_factory=list)
     # Evidence the model did not choose: the use of a constant whose declaration it chose. Only with linked evidence on.
     linked_uses: list[Passage] = field(default_factory=list)
+    # With the status invalid_response, what was wrong with the reply: empty, cut_off, not_json,
+    # no_choice_list, not_offered, or no_judgement when judging. None with any other status.
+    reply_problem: str | None = None
+    # The start of that reply, kept for whoever looks into it. It is never shown as an answer.
+    invalid_reply: str | None = None
 
     @property
     def citations(self) -> list[VerifiedCitation]:
@@ -210,14 +222,18 @@ class QAEngine:
                 hint="Raise REPOMIND_LLM_MAX_TOTAL_COST_USD if this spending is intended.",
             )
 
-    def _call(self, prompt: PreparedPrompt, max_output_tokens: int, result: AskResult) -> str:
+    def _ask_model(self, prompt: PreparedPrompt, max_output_tokens: int, result: AskResult) -> LLMResponse:
         """The one place that talks to the model, so that no request escapes the budget or the accounting."""
         self._enforce_budget(prompt)
         response = self.client.complete(prompt.system, prompt.user, max_output_tokens)
 
-        estimated = response.input_tokens is None or response.output_tokens is None
+        # No prompt is empty, so 0 input tokens is a missing count and not a small one. An endpoint that
+        # ends a reply without its closing figures reports it. Counting it as 0 would undercount what was
+        # spent, and would be taken for a truncated prompt.
+        reported_input = response.input_tokens or None
+        estimated = reported_input is None or response.output_tokens is None
         result.tokens_are_estimated = result.tokens_are_estimated or estimated
-        input_tokens = response.input_tokens if response.input_tokens is not None else prompt.estimated_input_tokens
+        input_tokens = reported_input if reported_input is not None else prompt.estimated_input_tokens
         output_tokens = response.output_tokens if response.output_tokens is not None else max(1, len(response.text) // 3)
         cost = cost_usd(self.config, input_tokens, output_tokens)
         result.input_tokens += input_tokens
@@ -225,8 +241,11 @@ class QAEngine:
         result.cost_usd += cost
         result.context_chars = max(result.context_chars, prompt.context_chars)
         self.store.record_llm_usage(self.config.base_url, self.config.model, input_tokens, output_tokens, cost)
-        self._warn_if_truncated(response.input_tokens, prompt, result)
-        return response.text
+        self._warn_if_truncated(reported_input, prompt, result)
+        return response
+
+    def _call(self, prompt: PreparedPrompt, max_output_tokens: int, result: AskResult) -> str:
+        return self._ask_model(prompt, max_output_tokens, result).text
 
     @staticmethod
     def _warn_if_truncated(reported: int | None, prompt: PreparedPrompt, result: AskResult) -> None:
@@ -365,8 +384,8 @@ class QAEngine:
             return result
 
         prompt = build_selection_prompt(question, offered, nonce, english)
-        reply = self._call(prompt, self.config.max_output_tokens, result)
-        selection = verify_selection(reply, offered, question)
+        response = self._ask_model(prompt, self.config.max_output_tokens, result)
+        selection = verify_selection(response.text, offered, question, getattr(response, "finish_reason", None))
         if self.config.linked_evidence:
             # Experimental: a declaration completion added counts beside a use that passes the rule.
             chosen, turned_down, linked = linked_evidence(selection.chosen, offered, result.completions, wording, counts_as_evidence)
@@ -379,9 +398,12 @@ class QAEngine:
         # Without the model's note, which is the least trustworthy thing about a choice the rule turned down.
         result.review_candidates = turned_down
         if selection.outcome == "invalid":
+            # Neither an answer nor a refusal: the model said nothing that can be used, and that is kept apart.
             result.status = "invalid_response"
+            result.reply_problem = selection.problem
+            result.invalid_reply = response.text[:_INVALID_REPLY_CHARACTERS]
             result.rejected.append(selection.reason)
-            result.warnings.append("The model did not return the required JSON.")
+            result.warnings.append(_REPLY_WARNINGS.get(selection.problem, "The model did not return the required JSON."))
         elif selection.outcome == "none":
             result.status = "insufficient"
         elif not chosen:
@@ -420,6 +442,7 @@ class QAEngine:
             return result
         if all(judgement is None for _, judgement in judged):
             result.status = "invalid_response"
+            result.reply_problem = "no_judgement"
             result.rejected.append("no judgement had one of the four roles")
             result.warnings.append("The model did not return the required JSON.")
             return result

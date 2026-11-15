@@ -50,13 +50,18 @@ class VerifiedCitation:
 
 @dataclass(frozen=True)
 class Selection:
-    """What became of the model's reply. ``outcome``: chosen, none, invalid."""
+    """What became of the model's reply. ``outcome``: chosen, none, invalid.
+
+    ``problem`` says what kind of invalid reply it was, so that an empty reply can be told from a
+    reply that says something unusable: empty, cut_off, not_json, no_choice_list, not_offered.
+    """
 
     outcome: str
     chosen: tuple[Passage, ...] = ()
     note: str = ""
     note_problem: str | None = None
     reason: str | None = None
+    problem: str | None = None
 
 
 def _parse(text: str) -> dict | None:
@@ -118,22 +123,27 @@ def _note_problem(note: str, chosen: Sequence[Passage], question: str) -> str | 
     return None
 
 
-def verify_selection(raw_text: str, passages: Sequence[Passage], question: str = "") -> Selection:
+def verify_selection(raw_text: str, passages: Sequence[Passage], question: str = "", finish_reason: str | None = None) -> Selection:
+    """An empty or broken reply is invalid. It is never read as "nothing chosen", which only ``{"chosen": []}`` says."""
+    if not raw_text or not raw_text.strip():
+        return Selection("invalid", reason="the model returned an empty reply", problem="empty")
     parsed = _parse(raw_text)
     if parsed is None:
-        return Selection("invalid", reason="the model did not return the required JSON")
+        if finish_reason == "length":
+            return Selection("invalid", reason="the model's reply was cut off at its output limit", problem="cut_off")
+        return Selection("invalid", reason="the model did not return the required JSON", problem="not_json")
     wanted = parsed.get("chosen")
     if isinstance(wanted, str):
         wanted = [wanted]
     if not isinstance(wanted, list) or not all(isinstance(item, str) for item in wanted):
-        return Selection("invalid", reason="the model's reply has no list of chosen passages")
+        return Selection("invalid", reason="the model's reply has no list of chosen passages", problem="no_choice_list")
     if not wanted:
         return Selection("none")
 
     by_id = {passage.id: passage for passage in passages}
     chosen = tuple(by_id[item] for item in dict.fromkeys(wanted) if item in by_id)[:MAX_CHOSEN]
     if not chosen:
-        return Selection("invalid", reason="the model chose passages that were not offered")
+        return Selection("invalid", reason="the model chose passages that were not offered", problem="not_offered")
 
     note = parsed.get("note")
     note = _MARKER.sub("", note).strip() if isinstance(note, str) else ""

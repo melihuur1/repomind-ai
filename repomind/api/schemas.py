@@ -160,12 +160,20 @@ class AskSource(BaseModel):
 
 
 Verdict = Literal["lines_chosen", "not_enough_evidence", "invalid_response", "ai_unavailable"]
+ReplyProblem = Literal["empty", "cut_off", "not_json", "no_choice_list", "not_offered", "no_judgement"]
 
 
 class AskResponse(BaseModel):
     experimental: Literal[True] = True
     verdict: Verdict
     message: str
+    reply_problem: ReplyProblem | None = Field(
+        default=None,
+        description=(
+            "With the verdict invalid_response, what was wrong with the model's reply. An invalid reply is "
+            "neither an answer nor a refusal by the model, and it gives no source."
+        ),
+    )
     ai_used: bool
     ai: AiStatus
     model_reading: str | None = Field(description="The model's own sentence. It is unverified, and may be false.")

@@ -113,6 +113,8 @@ class LLMResponse:
     text: str
     input_tokens: int | None
     output_tokens: int | None
+    # Why the endpoint stopped writing: "stop", "length" at the output limit, or None when it did not say.
+    finish_reason: str | None = None
 
 
 class LLMClient(Protocol):
@@ -152,8 +154,16 @@ class OpenAICompatibleClient:
                 hint="For the local model: docker compose --profile llm up -d",
             ) from exc
         try:
-            text = payload["choices"][0]["message"]["content"]
+            choice = payload["choices"][0]
+            text = choice["message"]["content"]
         except (KeyError, IndexError, TypeError) as exc:
             raise RepoMindError("The LLM endpoint returned an unexpected response shape.") from exc
         usage = payload.get("usage") or {}
-        return LLMResponse(text or "", usage.get("prompt_tokens"), usage.get("completion_tokens"))
+        finish = choice.get("finish_reason")
+        # An empty reply is passed on as one, with whatever the endpoint said about it. The engine decides what it means.
+        return LLMResponse(
+            text if isinstance(text, str) else "",
+            usage.get("prompt_tokens"),
+            usage.get("completion_tokens"),
+            finish if isinstance(finish, str) else None,
+        )

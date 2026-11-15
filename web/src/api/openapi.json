@@ -142,6 +142,26 @@
       "title": "Output Tokens",
       "type": "integer"
      },
+     "reply_problem": {
+      "anyOf": [
+       {
+        "enum": [
+         "empty",
+         "cut_off",
+         "not_json",
+         "no_choice_list",
+         "not_offered",
+         "no_judgement"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "With the verdict invalid_response, what was wrong with the model's reply. An invalid reply is neither an answer nor a refusal by the model, and it gives no source.",
+      "title": "Reply Problem"
+     },
      "seconds": {
       "title": "Seconds",
       "type": "number"
