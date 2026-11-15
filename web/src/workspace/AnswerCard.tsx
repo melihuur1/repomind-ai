@@ -82,6 +82,12 @@ export function AnswerCard({ response }: { response: AskResponse }) {
 
       <Section title="Lines the model chose" hint="They exist at this commit. Whether they answer the question is the model’s judgement." sources={of("answer")} />
       <Section
+        title="Value of a constant the chosen lines use"
+        hint="Added by RepoMind, not chosen by the model. These lines declare a constant that the lines above use, so that its value is shown with them. They exist at this commit."
+        icon={<Link2 size={14} aria-hidden />}
+        sources={of("declaration")}
+      />
+      <Section
         title="Added by RepoMind, not chosen by the model"
         hint="These lines use a constant that is declared in a line the model chose. They exist at this commit. The model did not pick them, and nothing confirms that they answer the question."
         icon={<Link2 size={14} aria-hidden />}

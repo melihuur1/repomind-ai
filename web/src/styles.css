@@ -1579,6 +1579,7 @@ kbd {
   border-color: var(--border-strong);
 }
 
+.source-declaration,
 .source-linked_use {
   border-style: dotted;
   border-color: var(--border-strong);

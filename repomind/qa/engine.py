@@ -10,7 +10,7 @@ from repomind.errors import RepoMindError
 from repomind.evaluation.citations import CitationVerifier
 from repomind.ingest.filters import find_credential
 from repomind.ingest.git_source import GitRepository
-from repomind.qa.completion import Completion, SnapshotSources, complete, linked_evidence, unshown_values
+from repomind.qa.completion import Completion, SnapshotSources, complete, declared_values, linked_evidence, unshown_values
 from repomind.qa.judge import Judgement, build_judge_prompt, parse_judgement
 from repomind.qa.llm import LLMClient, LLMConfig, LLMResponse, cost_usd
 from repomind.qa.passages import Passage, is_evidence, select_passages
@@ -25,7 +25,7 @@ from repomind.qa.prompt import (
 from repomind.qa.sufficiency import check_sufficiency
 from repomind.qa.verification import MAX_CHOSEN, VerifiedCitation, note_problem, verify_selection
 from repomind.search.engine import SearchEngine, SearchHit
-from repomind.search.translation import keep_technical_terms, looks_turkish
+from repomind.search.translation import keep_technical_terms, looks_turkish, plain_sentence
 from repomind.store.database import Store
 
 # If the endpoint reports far fewer input tokens than we sent, it truncated the prompt
@@ -74,6 +74,8 @@ class Source:
     answer_check: AnswerCheck
     # Shown because a line the model chose declares a constant these lines use. The model did not choose them.
     added_by_link: bool = False
+    # Shown because lines the model chose use a constant these lines declare. The model did not choose them.
+    declares_a_value: bool = False
 
 
 @dataclass
@@ -115,6 +117,13 @@ class AskResult:
     reply_problem: str | None = None
     # The start of that reply, kept for whoever looks into it. It is never shown as an answer.
     invalid_reply: str | None = None
+    # The passages that went into the prompt, and which rule ended the question before any model was asked.
+    # Both are for repomind.qa.trace, which says where a right source was lost.
+    sent: list[Passage] = field(default_factory=list)
+    stopped_by: str | None = None
+    # Declarations of constants that the chosen lines use, shown with them. The model chose the use,
+    # and not these: they are here so that an answer naming a constant also shows its value.
+    declared_values: list[Passage] = field(default_factory=list)
 
     @property
     def citations(self) -> list[VerifiedCitation]:
@@ -125,13 +134,14 @@ class AskResult:
         passed = {item.passage.id for item in self.evidence}
         failed = {passage.id for passage in self.review_candidates}
         linked = {passage.id for passage in self.linked_uses}
+        declared = {passage.id for passage in self.declared_values}
 
         def check(passage: Passage) -> AnswerCheck:
             if passage.id in passed:
                 return AnswerCheck.PASSED
             return AnswerCheck.FAILED if passage.id in failed else AnswerCheck.NOT_MADE
 
-        return [Source(passage, True, check(passage), passage.id in linked) for passage in self.passages]
+        return [Source(passage, True, check(passage), passage.id in linked, passage.id in declared) for passage in self.passages]
 
 
 def assemble_answer(evidence: list[Evidence], note: str = "") -> str:
@@ -270,7 +280,7 @@ class QAEngine:
             return None
         if not isinstance(english, str) or not english.strip() or len(english) > _MAX_TRANSLATION_CHARACTERS:
             return None
-        return keep_technical_terms(question, english.strip())
+        return keep_technical_terms(question, plain_sentence(english.strip()))
 
     def _with_name_seat(
         self, repo: str, asked: Wording, passages: list[Passage], wording: str, asked_wording: str, chunk_limit: int
@@ -336,6 +346,7 @@ class QAEngine:
             result.warnings.append(sufficiency.message)
         if sufficiency.insufficient:
             result.status = "insufficient"
+            result.stopped_by = "words of the question are nowhere in the code"
             return result
 
         queries = [text for text in (searched.question, retrieved.translated_query, searched.second) if text]
@@ -345,9 +356,14 @@ class QAEngine:
         # Code is in English, so the English wording is what can be compared with it.
         wording = retrieved.translated_query or searched.question
         asked_wording = asked_translation or question
+        # A translation can change what a question is about, and then no right line shares its words.
+        # So the second translator's wording counts as well: lines are evidence when they mention
+        # enough of either. Each wording is compared on its own, so that the words of a wrong one
+        # are never added to those of a right one.
+        wordings = [text for text in dict.fromkeys((wording, searched.second)) if text]
 
         def counts_as_evidence(passage: Passage) -> bool:
-            if is_evidence(passage, wording):
+            if any(is_evidence(passage, text) for text in wordings):
                 return True
             return name_left_out and counts_with_name(repo, passage, wording, asked_wording)
 
@@ -361,10 +377,12 @@ class QAEngine:
         if not result.passages:
             result.status = "insufficient"
             result.warnings.append("Search found code, but no lines that mention what the question asks about.")
+            result.stopped_by = "no line shares a word with the question"
             return result
         if not any(counts_as_evidence(passage) for passage in result.passages):
             result.status = "insufficient"
             result.warnings.append("The closest lines mention too little of the question to count as evidence.")
+            result.stopped_by = "no passage passes the evidence rule"
             return result
 
         if self.client is None or self.config is None:
@@ -378,6 +396,7 @@ class QAEngine:
         )
         result.model = self.config.model
         result.sources_sent = len(offered)
+        result.sent = list(offered)
         if not offered:
             result.status = "insufficient"
             result.warnings.append("The passages do not fit within the input token limit, so the model was not called.")
@@ -411,12 +430,18 @@ class QAEngine:
             result.rejected.append("the model chose lines that mention too little of the question")
         else:
             result.status = "answered"
+            # The declaration of a constant the chosen lines use is shown with them. It was offered to
+            # the model as well, and the model's choice of the use is what brings it here.
+            result.declared_values = declared_values(chosen, result.completions, offered)
+            # Shown as a value, it is no longer something the reader is only asked to review.
+            result.review_candidates = [p for p in turned_down if all(p is not shown for shown in result.declared_values)]
+            chosen = [*chosen, *result.declared_values]
             result.evidence = _evidence(chosen)
             result.warnings.extend(linked)
             # A value the chosen lines only name, and do not show, is not to be taken for granted.
             result.warnings.extend(unshown_values(chosen, result.completions))
             # A note was written about everything chosen, so it may describe lines that were just left out.
-            complete = not turned_down
+            complete = not result.review_candidates
             result.note = selection.note if complete else ""
             result.note_problem = selection.note_problem if complete else "it may describe lines that were left out"
             result.answer = assemble_answer(result.evidence, result.note)
@@ -435,6 +460,7 @@ class QAEngine:
             reply = self._call(prompt, min(_JUDGE_OUTPUT_TOKENS, self.config.max_output_tokens), result)
             judged.append((passage, parse_judgement(reply)))
         result.sources_sent = len(judged)
+        result.sent = [passage for passage, _ in judged]
         result.judgements = [(passage.id, judgement.role if judgement else "invalid") for passage, judgement in judged]
         if not judged:
             result.status = "insufficient"
@@ -458,10 +484,13 @@ class QAEngine:
             return result
 
         result.status = "answered"
+        first = chosen[0]
+        result.declared_values = declared_values(chosen, result.completions, [passage for passage, _ in judged])
+        chosen = [*chosen, *result.declared_values]
         result.evidence = _evidence(chosen)
         result.warnings.extend(unshown_values(chosen, result.completions))
-        reason = next(judgement.reason for passage, judgement in judged if passage is chosen[0])
-        problem = note_problem(reason, chosen[:1], question) if reason else None
+        reason = next(judgement.reason for passage, judgement in judged if passage is first)
+        problem = note_problem(reason, [first], question) if reason else None
         result.note = "" if problem else reason
         result.note_problem = problem
         result.answer = assemble_answer(result.evidence, result.note)

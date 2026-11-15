@@ -273,7 +273,7 @@ class TestLinkedEvidence:
 
 
 @pytest.mark.db
-def test_in_ask_the_declaration_is_offered_checked_against_git_and_named_when_not_chosen(store, tmp_path, fake_embedder):
+def test_in_ask_the_declaration_is_offered_checked_against_git_and_shown_with_the_use_the_model_chose(store, tmp_path, fake_embedder):
     import json
 
     from repomind.indexing import index_repository
@@ -306,9 +306,14 @@ def test_in_ask_the_declaration_is_offered_checked_against_git_and_named_when_no
     assert (2, 2) in shown and "Duration.ofSeconds(60)" in shown[(2, 2)], "the declaration is offered, verified against Git"
     assert "HTTP_LIMIT = Duration.ofSeconds(60)" in model.calls[-1]["user"]
     assert result.status == "answered"
-    assert any("HTTP_LIMIT, whose value is at src/Client.java:2, which was not chosen" in w for w in result.warnings)
     assert [(c.name, c.reason) for c in result.completions if c.declaration] == [("HTTP_LIMIT", "")]
-    assert [c.start_line for c in result.citations] == [use_line(result)], "the use only: its declaration is not brought in unasked"
+    # The model chose the line that names the constant. The line that gives it its value is shown with it,
+    # marked as added, so the answer holds both places a question about a value needs.
+    assert [c.start_line for c in result.citations] == [use_line(result), 2]
+    assert [(p.start_line, p.end_line) for p in result.declared_values] == [(2, 2)]
+    assert [(s.passage.start_line, s.declares_a_value) for s in result.sources() if s.answer_check.value == "passed"] == [(use_line(result), False), (2, True)]
+    assert not any("which was not chosen" in w for w in result.warnings), "the value is shown, so nothing is missing"
+    assert result.review_candidates == []
 
 
 def use_line(result) -> int:
@@ -404,14 +409,17 @@ class TestLinkedEvidenceInAsk:
         assert [(p.start_line, p.end_line) for p in result.review_candidates] == [(2, 2)]
         assert [c.used_in for c in result.completions if c.declaration and not c.reason] == ["src/Client.java:28-31"], "completion still works"
 
-    def test_off_both_chosen_cite_the_use_alone(self, store, fake_embedder, linked):
+    def test_off_both_chosen_show_the_use_and_its_value(self, store, fake_embedder, linked):
         from tests.test_qa import FakeClient
 
         linked((28, 31))
         result = self.ask(store, fake_embedder, FakeClient(choose("REQUEST_LIMIT = Duration", r"\.timeout\(REQUEST_LIMIT")), linked_evidence=False)
         assert result.status == "answered"
-        assert [(c.start_line, c.end_line) for c in result.citations] == [(28, 31)]
-        assert [(p.start_line, p.end_line) for p in result.review_candidates] == [(2, 2)]
+        # The use passes the evidence rule and is the answer. The declaration does not pass it, and is
+        # shown as the value of a constant the use names, not as an answer of its own or as something to review.
+        assert [(c.start_line, c.end_line) for c in result.citations] == [(28, 31), (2, 2)]
+        assert [(p.start_line, p.end_line) for p in result.declared_values] == [(2, 2)]
+        assert result.review_candidates == [] and result.linked_uses == []
 
     def test_on_the_use_the_system_added_is_marked_as_not_chosen_by_the_model(self, store, fake_embedder, linked):
         from tests.test_qa import FakeClient
@@ -455,6 +463,21 @@ class TestLinkedEvidenceInAsk:
         assert body["verdict"] == ("lines_chosen" if on else "not_enough_evidence")
         assert any("was added by RepoMind and not chosen by the model" in w for w in body["warnings"]) is on
 
+    def test_the_api_shows_the_value_of_a_constant_beside_the_use_the_model_chose(self, store, fake_embedder, linked):
+        from fastapi.testclient import TestClient
+
+        from repomind.api.app import create_app
+        from tests.test_api import _services
+        from tests.test_qa import FakeClient
+
+        linked((28, 31))
+        services = _services(fake_embedder, FakeClient(choose(r"\.timeout\(REQUEST_LIMIT")))
+        with TestClient(create_app(services)) as client:
+            body = client.post("/api/ask", json={"repo": "linked", "question": QUESTION}).json()
+        assert body["verdict"] == "lines_chosen"
+        assert [(s["role"], s["start_line"]) for s in body["sources"]] == [("answer", 28), ("declaration", 2)]
+        assert not any("which was not chosen" in w for w in body["warnings"])
+
     def test_a_use_that_fails_the_rule_does_not_carry_its_declaration(self, store, fake_embedder, linked):
         from tests.test_qa import FakeClient
 
@@ -477,15 +500,15 @@ class TestLinkedEvidenceInAsk:
         assert result.status == "insufficient", "the declaration shares no word with this question"
         assert [(p.start_line, p.end_line) for p in result.review_candidates] == [(2, 2)]
 
-    def test_both_chosen_are_shown_once_and_the_use_alone_stays_alone(self, store, fake_embedder, linked):
+    def test_both_chosen_are_shown_once_and_a_use_chosen_alone_brings_its_value(self, store, fake_embedder, linked):
         from tests.test_qa import FakeClient
 
         linked((28, 31))
         both = self.ask(store, fake_embedder, FakeClient(choose("REQUEST_LIMIT = Duration", r"\.timeout\(REQUEST_LIMIT")))
         assert [(c.start_line, c.end_line) for c in both.citations] == [(28, 31), (2, 2)]
         alone = self.ask(store, fake_embedder, FakeClient(choose(r"\.timeout\(REQUEST_LIMIT")))
-        assert [(c.start_line, c.end_line) for c in alone.citations] == [(28, 31)]
-        assert any("REQUEST_LIMIT, whose value is at src/Client.java:2, which was not chosen" in w for w in alone.warnings)
+        assert [(c.start_line, c.end_line) for c in alone.citations] == [(28, 31), (2, 2)]
+        assert [(p.start_line, p.end_line) for p in alone.declared_values] == [(2, 2)] and alone.linked_uses == []
 
 
 ROLES = "export const NOTE_ROLE_KEY = 'app:noteRole';\n"

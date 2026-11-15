@@ -279,17 +279,26 @@ def _print_review_candidates(result) -> None:
 def command_ask(args: argparse.Namespace, settings: Settings) -> int:
     with _store(settings) as store:
         result = _qa_engine(store, settings, args).ask(args.question, args.repo)
+        traced = _trace_expected(store, result, args) if getattr(args, "expect", None) else []
     if result.translated_query:
         _emit(f"translated query: {safe_text(result.translated_query)}")
     for warning in result.warnings:
         _emit(f"warning: {safe_text(warning)}")
     if result.status == "answered":
         added = {passage.id for passage in result.linked_uses}
+        declared = {passage.id for passage in result.declared_values}
         _emit("The model chose these lines as the answer:")
         for item in result.evidence:
-            if item.passage.id not in added:
+            if item.passage.id not in added | declared:
                 _emit("")
                 _print_passage(item.passage)
+        if declared:
+            _emit("")
+            _emit("Added by RepoMind, not chosen by the model: the declaration of a constant the lines above use.")
+            for item in result.evidence:
+                if item.passage.id in declared:
+                    _emit("")
+                    _print_passage(item.passage)
         if added:
             _emit("")
             _emit("Added by RepoMind, not chosen by the model: these lines use a constant declared above.")
@@ -332,7 +341,28 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
             f"${result.cost_usd:.6f}; {result.sources_sent} passages read, "
             f"{result.sources_dropped} left out by the limits"
         )
+    if traced:
+        _emit("")
+        _emit("Where the expected lines got to:")
+        for line in traced:
+            _emit(f"  {line}")
     return 0
+
+
+def _trace_expected(store, result, args: argparse.Namespace) -> list[str]:
+    """For a developer: the first stage each expected place did not pass. Asked for with --expect, and not run otherwise."""
+    from repomind.qa.trace import Lines, describe, trace
+
+    snapshots = store.active_snapshots(args.repo)
+
+    def indexed(path: str):
+        return [chunk for snapshot in snapshots for chunk in store.file_chunks(snapshot.id, path)]
+
+    try:
+        places = [[Lines.parse(text) for text in place.split("|")] for place in args.expect]
+    except ValueError as exc:
+        raise RepoMindError(str(exc), hint='Use --expect "src/Order.java:10-20", with | between places that would do as well.') from exc
+    return describe(trace(result, places, indexed))
 
 
 def command_serve(args: argparse.Namespace, settings: Settings) -> int:
@@ -494,6 +524,14 @@ def build_parser() -> argparse.ArgumentParser:
     ask.add_argument("--model", help="embedding model")
     ask.add_argument("--translate", action=argparse.BooleanOptionalAction, default=True)
     ask.add_argument("--no-llm", action="store_true", help="only list the closest lines, even if a model is configured")
+    ask.add_argument(
+        "--expect",
+        action="append",
+        metavar="PATH:START-END",
+        help="for a developer: lines the answer should show. Prints the stage at which they were lost: the index, search, "
+        "the passages, a refusal, the model's choice or the evidence rule. Repeat it for each place an answer needs, "
+        "and write | between places that would do as well",
+    )
     ask.set_defaults(handler=command_ask)
 
     evaluate_ask = commands.add_parser("evaluate-ask", help="measure answers from the configured LLM")

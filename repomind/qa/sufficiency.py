@@ -58,17 +58,47 @@ class Sufficiency:
         return "Not found anywhere in the indexed code: " + ", ".join(missing) + "."
 
 
+# What English adds to a word to make another of the same family, after stemming: show and shown,
+# expose and exposure, create and creation. The stemmer joins "created" and "creates", and not these.
+_FAMILY_ENDINGS = frozenset({"n", "en", "ion", "ation", "ur", "er", "or", "al", "ment", "iv", "anc", "enc", "ag", "abl", "ibl"})
+_MIN_FAMILY_STEM = 4
+_ORDINAL = re.compile(r"\d+(?:st|nd|rd|th)?", re.IGNORECASE)
+
+
+def _same_family(stem: str, vocabulary) -> bool:
+    """Whether the code writes this word in another form of the same family.
+
+    One stem has to be the start of the other, at least four letters long, and what is left has to be
+    an ending English builds such forms with. So "exposed" is known where the code says "exposure",
+    and "comment" is not known because the code says "commit".
+    """
+    if len(stem) < _MIN_FAMILY_STEM or not stem.isalpha():
+        return False
+    start = stem[:_MIN_FAMILY_STEM]
+    for term in vocabulary:
+        if not term.startswith(start) or term == stem:
+            continue
+        shorter, longer = sorted((stem, term), key=len)
+        if longer.startswith(shorter) and longer[len(shorter):] in _FAMILY_ENDINGS:
+            return True
+    return False
+
+
 def _known(word: str, vocabulary) -> bool:
     """A compound such as GraphQL counts as known only as a whole: "graph" alone says nothing."""
     tokens = tokenize(word)
     if not tokens or tokens[-1] in vocabulary:
         return True
     lowered = word.lower()
-    return any(lowered in words and sense in vocabulary for sense, words in _LIMIT_SENSES.items())
+    if any(lowered in words and sense in vocabulary for sense, words in _LIMIT_SENSES.items()):
+        return True
+    return _same_family(tokens[-1], vocabulary)
 
 
 def _looks_like_a_name(word: str, position: int) -> bool:
     """Kafka, GraphQL, S3. A capital at the start of a sentence says nothing by itself."""
+    if _ORDINAL.fullmatch(word):
+        return False  # 95th and 3 are numbers. S3 and OAuth2 are names.
     if any(character.isdigit() for character in word) and any(character.isalpha() for character in word):
         return True
     if _INTERNAL_CAPITAL.search(word):
@@ -90,7 +120,10 @@ def check_sufficiency(question: str, translated: str | None, vocabulary) -> Suff
         words = [
             word
             for word in _WORD.findall(english)
-            if len(word) >= _MIN_WORD_LENGTH and word.lower() not in _CONTRACTIONS and not _known(word, vocabulary)
+            if len(word) >= _MIN_WORD_LENGTH
+            and word.lower() not in _CONTRACTIONS
+            and not _ORDINAL.fullmatch(word)  # A number says how many, and is no part of the code's vocabulary.
+            and not _known(word, vocabulary)
         ]
     words = [word for word in dict.fromkeys(words) if word not in names]
     return Sufficiency(tuple(dict.fromkeys(names)), tuple(words), words_are_translated=bool(translated))

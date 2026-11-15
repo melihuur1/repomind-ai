@@ -164,10 +164,20 @@ def _merged(ordered: Sequence[_Window], terms: set[str], limit: int, unit_lines:
     ]
 
 
+def passage_terms(passage: Passage) -> set[str]:
+    """The words of the lines and of where they are: the file's name and the unit they belong to.
+
+    Three lines of `StockMovement` are about stock movements whether or not they say so, and the
+    model is shown the path and the symbol with them. Folders are left out: `src` and `main` say nothing.
+    """
+    name = passage.chunk.path.rsplit("/", 1)[-1].rsplit(".", 1)[0]
+    return set(tokenize(passage.text)) | set(tokenize(name)) | set(tokenize(passage.chunk.symbol or ""))
+
+
 def is_evidence(passage: Passage, wording: str) -> bool:
     """Whether these lines mention enough of the question to count as an answer, rather than the closest lines."""
     terms = set(tokenize(wording))
-    return len(terms & set(tokenize(passage.text))) >= min(MIN_SHARED_TERMS, len(terms))
+    return len(terms & passage_terms(passage)) >= min(MIN_SHARED_TERMS, len(terms))
 
 
 def select_passages(

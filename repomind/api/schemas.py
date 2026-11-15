@@ -25,6 +25,11 @@ class AiStatus(BaseModel):
     state: AiState
     model: str | None = None
     detail: str
+    remote: bool = Field(
+        default=False,
+        description="The model runs on another machine: each question and the lines of code chosen for it are sent there.",
+    )
+    endpoint: str | None = Field(default=None, description="The host of a remote model server. Never a key, and nothing for a local one.")
 
 
 class Health(BaseModel):
@@ -131,7 +136,7 @@ class AskRequest(BaseModel):
     question: str = Field(min_length=1, max_length=MAX_QUESTION_CHARACTERS)
 
 
-SourceRole = Literal["answer", "linked_use", "review_candidate", "closest"]
+SourceRole = Literal["answer", "declaration", "linked_use", "review_candidate", "closest"]
 AnswerCheck = Literal["passed", "failed", "not_made"]
 
 
@@ -141,6 +146,8 @@ class AskSource(BaseModel):
     role: SourceRole = Field(
         description=(
             "answer: the model chose these lines and they were accepted. "
+            "declaration: the model did not choose these lines. They declare a constant that chosen lines use, "
+            "and RepoMind shows them so that the value is seen with the lines that name it. "
             "linked_use: the model did not choose these lines. RepoMind added them because they use a constant "
             "whose declaration the model chose. Only with the experimental linked evidence setting. "
             "review_candidate: the model chose these lines and the evidence rule turned them down. "

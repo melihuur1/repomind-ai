@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import type { AskResponse, AskSource } from "../api/client";
 import { AnswerCard } from "./AnswerCard";
 
-const CHECKS = { answer: "passed", linked_use: "passed", review_candidate: "failed", closest: "not_made" } as const;
+const CHECKS = { answer: "passed", declaration: "passed", linked_use: "passed", review_candidate: "failed", closest: "not_made" } as const;
 
 function source(role: AskSource["role"], path: string, line: number): AskSource {
   return {
@@ -28,7 +28,7 @@ function render(sources: AskSource[]): string {
     verdict: "lines_chosen",
     message: "The model chose these lines.",
     ai_used: true,
-    ai: { state: "ready", model: "fake", detail: "ready" },
+    ai: { state: "ready", model: "fake", detail: "ready", remote: false },
     model_reading: null,
     model_reading_removed_because: null,
     sources,
@@ -59,6 +59,18 @@ describe("AnswerCard", () => {
     expect(html.match(/data-testid="source-answer"/g)).toHaveLength(1);
     expect(html.match(/data-testid="source-linked_use"/g)).toHaveLength(1);
     expect(html).toContain("The model did not pick them");
+  });
+
+  it("shows the declaration of a constant apart, between the model's choice and anything else", () => {
+    const html = render([source("answer", "src/Client.java", 30), source("declaration", "src/Limits.java", 2), source("closest", "src/Other.java", 4)]);
+    const value = "Value of a constant the chosen lines use";
+    const order = [CHOSEN, "src/Client.java", value, "src/Limits.java"].map((text) => html.indexOf(text));
+    expect(order.every((position) => position >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    expect(html.match(/data-testid="source-declaration"/g)).toHaveLength(1);
+    expect(html.match(/data-testid="source-answer"/g)).toHaveLength(1);
+    expect(html).toContain("These lines declare a constant that the lines above use");
+    expect(html).not.toContain("source-linked_use");
   });
 
   it("does not mention added lines when there are none", () => {

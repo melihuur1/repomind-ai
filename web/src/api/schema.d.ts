@@ -185,8 +185,19 @@ export interface components {
         AiStatus: {
             /** Detail */
             detail: string;
+            /**
+             * Endpoint
+             * @description The host of a remote model server. Never a key, and nothing for a local one.
+             */
+            endpoint?: string | null;
             /** Model */
             model?: string | null;
+            /**
+             * Remote
+             * @description The model runs on another machine: each question and the lines of code chosen for it are sent there.
+             * @default false
+             */
+            remote: boolean;
             /**
              * State
              * @enum {string}
@@ -271,10 +282,10 @@ export interface components {
             repo: string;
             /**
              * Role
-             * @description answer: the model chose these lines and they were accepted. linked_use: the model did not choose these lines. RepoMind added them because they use a constant whose declaration the model chose. Only with the experimental linked evidence setting. review_candidate: the model chose these lines and the evidence rule turned them down. closest: the closest lines found, which nothing judged.
+             * @description answer: the model chose these lines and they were accepted. declaration: the model did not choose these lines. They declare a constant that chosen lines use, and RepoMind shows them so that the value is seen with the lines that name it. linked_use: the model did not choose these lines. RepoMind added them because they use a constant whose declaration the model chose. Only with the experimental linked evidence setting. review_candidate: the model chose these lines and the evidence rule turned them down. closest: the closest lines found, which nothing judged.
              * @enum {string}
              */
-            role: "answer" | "linked_use" | "review_candidate" | "closest";
+            role: "answer" | "declaration" | "linked_use" | "review_candidate" | "closest";
             /** Start Line */
             start_line: number;
             /** Symbol */

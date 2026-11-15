@@ -151,6 +151,40 @@ def linked_use(declaration: Passage, record: Sequence[Completion], offered: Sequ
     return None
 
 
+def declared_values(chosen: Sequence[Passage], record: Sequence[Completion], offered: Sequence[Passage]) -> list[Passage]:
+    """The offered passages that declare a constant the chosen lines use, when they are not chosen themselves.
+
+    A question about a value needs two places: the line that uses the constant and the line that
+    gives it its value. The model usually chooses the first. The second was found from the first by
+    the syntax, for exactly these lines, lies in the index, holds no credential and was offered to
+    the model too. Showing it beside the lines that name it makes the answer whole.
+
+    This goes one way only. The chosen lines were accepted on their own, and the declaration is
+    shown as what a name in them stands for. A declaration the model chose never brings in a line
+    that uses it: that is linked evidence, which is experimental and off.
+    """
+    found: list[Passage] = []
+    for passage in chosen:
+        for item in record:
+            declaration = item.declaration
+            if item.used_in != _key(passage) or declaration is None or item.reason not in ("", "already shown"):
+                continue
+            holder = next(
+                (
+                    other
+                    for other in offered
+                    if other.path == declaration.path
+                    and other.start_line <= declaration.start_line
+                    and declaration.end_line <= other.end_line
+                    and (other.chunk.repo, other.chunk.commit_sha) == (passage.chunk.repo, passage.chunk.commit_sha)
+                ),
+                None,
+            )
+            if holder is not None and all(holder is not other for other in (*chosen, *found)):
+                found.append(holder)
+    return found[:MAX_COMPLETIONS]
+
+
 def linked_evidence(
     chosen: Sequence[Passage],
     offered: Sequence[Passage],
