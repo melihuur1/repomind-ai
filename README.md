@@ -4,7 +4,7 @@
 
 RepoMind indexes a GitHub repository locally and lets you browse, search and question it in Turkish or English. Every result is a real range of lines, pinned to the Git commit it came from, so you can open it, link to it and check it yourself. It runs on your own machine, with no account and no paid API.
 
-> **Status: a working local web application for one person on one machine.** Searching and reading code are dependable. **The AI analysis is experimental and often wrong:** in the last measurement it pointed at the right source for 8 of 16 questions, and at a wrong one for 4. Read every line it points at. See [AI accuracy](#ai-accuracy).
+> **Status: a working local web application for one person on one machine.** Searching and reading code are dependable. **The AI analysis is experimental and often wrong:** in the last measurement it gave a fully right source for 13 of 32 questions, and a wrong one for 6. Read every line it points at. See [AI accuracy](#ai-accuracy).
 
 ![RepoMind showing StockGuard's file tree and a Java file at the indexed commit, with a linked range of lines selected](docs/screenshots/repository-explorer.png)
 
@@ -144,6 +144,8 @@ REPOMIND_LLM_BASE_URL=http://127.0.0.1:11535/v1
 REPOMIND_LLM_MODEL=qwen2.5:7b
 ```
 
+A larger model on another machine can be used instead, through the same settings: see the block in `.env.example`. With a remote model, each question and the lines of code chosen for it are sent to that server, so it has to be switched on with `REPOMIND_LLM_ALLOW_REMOTE=1`, and the page says when one is in use.
+
 The model can be started and stopped while RepoMind runs, and the status in the top bar follows it. `docker compose stop ollama` gives its memory back. The container keeps one model loaded at a time and is limited to 8 GB.
 
 ### With or without a GPU
@@ -209,6 +211,8 @@ The answer layer was measured on two real projects, [StockGuard](https://github.
 - **Every line shown exists in Git, and that does not make it an answer.** Of the 16, the right lines never reached the model for 6, lost in search for 3 and in passage selection for 3, and the model chose other lines for 2.
 - **Finding a source and choosing it are separate problems.** Asked how StockGuard stops stock going negative, the model is now always offered the database constraints that do it, and it still mostly picks code that only detects negative counters after a run. A [later change](docs/architecture.md#a-question-that-names-its-repository) fixed what reaches the model when a question names its repository, not what the model chooses.
 - **This is not an independent test.** The same developer wrote the questions and the system, and one reviewer graded the answers. 24 questions are too few to generalize.
+
+**A later comparison, on 2026-11-15, asked 48 new questions once.** With `qwen2.5:7b`, 13 of 32 answerable questions got a fully right source, 5 one of the two places they needed, 6 a wrong source, 7 no answer and 1 an unusable reply from the model. 14 of 16 unanswerable questions were refused. The published version before it scored 12, so the changes on this branch were **not shown to make answers better**. Every wrong source was on a Turkish question. The whole record is in [eval/V2_EVALUATION.md](eval/V2_EVALUATION.md). Changes made after it, to what reaches the model and to what is accepted, have not been measured with a model.
 
 Search itself was measured separately: the right code reaches the five passages for 65 to 68 of 85 Turkish development questions. How the project got here, including a rejected reranker, a pilot, and a fourth set that also did not pass, is in [docs/evaluation.md](docs/evaluation.md), with each result as it was.
 

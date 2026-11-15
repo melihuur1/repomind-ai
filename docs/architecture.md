@@ -159,7 +159,9 @@ The first does not imply the second, and `passed` is a check, not a proof. In [a
 
 ### A constant's declaration
 
-A passage that reads `.timeout(REQUEST_TIMEOUT)` does not say how long the timeout is. `repomind/qa/completion.py` adds at most two declarations of constants the passages use, read from Git at the indexed commit and found with Tree-sitter. A declaration is added only when it lies inside an indexed chunk, holds no credential and is at most 4 lines long. It is offered to the model like any other passage, and it is evidence only if it passes the evidence rule itself. When the model chooses a line and not the declaration of a constant it uses, the answer says where the value is.
+A passage that reads `.timeout(REQUEST_TIMEOUT)` does not say how long the timeout is. `repomind/qa/completion.py` adds at most two declarations of constants the passages use, read from Git at the indexed commit and found with Tree-sitter. A declaration is added only when it lies inside an indexed chunk, holds no credential and is at most 4 lines long. It is offered to the model like any other passage.
+
+**The value is shown with the line that names it.** A question about a value needs two places, the line that uses the constant and the line that gives it its value, and the model usually chooses the first. So when chosen lines pass the evidence rule and use a constant whose declaration was offered, the declaration is shown with them: `AskResult.declared_values`, the role `declaration` in the API, a heading of its own on the page. It is marked as added by RepoMind, and not as the model's choice. This goes one way only. Chosen lines bring the declaration of what they name, and a chosen declaration brings nothing: that is linked evidence, below.
 
 Which declaration a name means is decided where it is used, by `repomind/qa/declarations.py`, from the syntax tree alone. The same name is often declared twice in one repository, so a declaration found anywhere else is not an answer:
 
@@ -189,9 +191,11 @@ Retrieval similarity does not help: on the measured questions, unanswerable ones
 - a name-like term (`Kafka`, `GraphQL`, `S3`) from the question occurs nowhere in the code;
 - at least two ordinary words of an English question occur nowhere in the code.
 
+A word counts as occurring when the code writes another word of its family: "exposed" where the code says `exposure`, "shown" for `show`, "creation" for `created`. One has to be the start of the other, four letters or more, and what is left an ending English builds such words with, so "comment" is not known because the code says `commit`. A number such as "95th" is neither a name nor a word. On the sixth question set, the check without these refused three answerable English questions for "95th", for "exposed, shown" and for "supports, creation".
+
 Words of a translated question only produce a warning. A translation's wording says little about the code, and this rule refused 3 answerable Turkish questions while catching only 2 negatives. Questions refused this way cost nothing. The check cannot catch a question whose every word happens to appear in the code.
 
-A second rule looks at the lines themselves: a passage counts as evidence only if it shares at least two terms with the question. One shared word is what nearby code looks like. On an earlier question set it took unanswerable questions refused from 3 of 10 to 7 of 10, while answers from gold fell from 15 to 13. It is a blunt rule. In the pilot it also refused one answerable question, and it let through two unanswerable ones whose words appear in nearby code.
+A second rule looks at the lines themselves: a passage counts as evidence only if it shares at least two terms with the question. The terms of a passage are those of its lines, of its file's name and of the unit it belongs to: three lines inside `StockMovement` are about stock movements whether or not they say so. Folder names are left out. A Turkish question is compared through the model's translation and through the local translator's, each on its own, and passing either is enough. A translation that changes the subject then no longer turns down the right lines, and the words of a wrong wording are never added to those of a right one. One shared word is what nearby code looks like. On an earlier question set it took unanswerable questions refused from 3 of 10 to 7 of 10, while answers from gold fell from 15 to 13. It is a blunt rule. In the pilot it also refused one answerable question, and it let through two unanswerable ones whose words appear in nearby code.
 
 Thresholds on similarity, or on the share of question terms, do not work: on the second question set, unanswerable questions scored as high as answerable ones.
 
@@ -270,6 +274,21 @@ Repository content is untrusted: a comment can address the model directly. The d
 The budget check runs before each request, using worst-case cost. A non-loopback endpoint is refused unless `REPOMIND_LLM_ALLOW_REMOTE=1`, because it sends source code to a third party, and a remote endpoint with an API key is refused until prices are configured. If an endpoint reports far fewer input tokens than were sent, a warning says that it may have truncated the source.
 
 All providers share one small OpenAI-compatible client using only the standard library. The default local setup is Ollama in a container from RepoMind's Compose file, with no account or API key.
+
+### A model on another machine
+
+The same client talks to any OpenAI-compatible server, and to Ollama on another machine through its `/v1` address, so a larger model needs settings and no code: `REPOMIND_LLM_BASE_URL`, `REPOMIND_LLM_MODEL`, `REPOMIND_LLM_API_KEY`, `REPOMIND_LLM_ALLOW_REMOTE=1`, and `REPOMIND_LLM_TIMEOUT_SECONDS` for a slow one. `.env.example` has them as one block, and going back to the local model is restoring two lines.
+
+- **Code leaves the machine.** Each question and the passages chosen for it are sent to that server. It is refused until `REPOMIND_LLM_ALLOW_REMOTE=1` says this is meant. While a remote model is in use, the status in the top bar says "remote", the AI panel names the host, and `/api/health` reports `remote` and `endpoint`.
+- **The key** is read from `.env`, which Git ignores, sent only in the `Authorization` header to that server, and never returned by the API.
+- **Memory.** The rule that keeps the local model from starting on low memory looks at this machine, so it does not apply to a remote model.
+- **What stays the same.** Search, passage selection, the credential checks, the refusal rules and the check against Git all run here, before anything is sent. Passages holding a credential are not sent to a remote model either.
+
+On the 35 prompts of the sixth question set that reached the model, a run made outside this repository gave, for 27 answerable questions, 14 fully right with `qwen2.5:7b`, 17 with `qwen2.5-coder:14b` and 16 with `qwen2.5-coder:32b`, at a median of about 23 and 51 seconds for the larger two. That is the choice among the same passages, not the application end to end, and the models differ in more than size. It is why 14B is the model to try remotely, and not a result recorded here.
+
+### Tracing where the right lines are lost
+
+For a developer. `python -m repomind ask "..." --repo name --expect "src/Order.java:10-20"` prints, for each expected place, the first stage it did not pass: not in the index, not among the chunks search returned, retrieved and not made a passage, refused before the model and by which rule, sent and not chosen, chosen and turned down by the evidence rule, or shown as an answer. `--expect` can be repeated for an answer that needs two places, with `|` between places that would do as well. Nothing is computed without it. [`repomind/qa/trace.py`](../repomind/qa/trace.py) does the same from an `AskResult`, and [`eval/tools/stage_trace.py`](../eval/tools/stage_trace.py) runs a whole question file with no model.
 
 ### Memory limits
 
