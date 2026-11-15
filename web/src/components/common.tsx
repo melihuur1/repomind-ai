@@ -106,6 +106,11 @@ export function AiStatusPill() {
       <Sparkles size={12} aria-hidden />
       {AI_LABELS[data.ai.state]}
       {ready && data.ai.model ? <span className="pill-detail">{data.ai.model}</span> : null}
+      {ready && data.ai.remote ? (
+        <span className="pill-detail" data-testid="ai-remote-pill">
+          remote
+        </span>
+      ) : null}
     </span>
   );
 }

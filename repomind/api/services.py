@@ -11,6 +11,7 @@ import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
+from urllib.parse import urlparse
 
 from repomind.api.schemas import AiStatus
 from repomind.config import PROJECT_ROOT, Settings, get_setting
@@ -29,6 +30,8 @@ MIN_FREE_MEMORY_GB = 4.0
 _AI_STATUS_SECONDS = 5.0
 _LOCAL_PATH = re.compile(r"(?:[A-Za-z]:[\\/]|\\\\|/(?:home|Users|tmp|var|root|opt|mnt|srv)/)[^\s'\"<>|]*")
 START_THE_MODEL = "Start it with: docker compose --profile llm up -d ollama"
+# A server on another machine, perhaps behind a tunnel, gets longer to say which models it has.
+_REMOTE_PROBE_SECONDS = 6.0
 
 
 def public_message(text: str) -> str:
@@ -56,19 +59,40 @@ class _GuardedClient:
             raise LLMUnavailable(str(exc)) from exc
 
 
+def _host(config: LLMConfig) -> str:
+    return urlparse(config.base_url).hostname or "another machine"
+
+
 def _probe_openai_compatible(config: LLMConfig) -> AiStatus:
+    """Asks the endpoint which models it has. The same request works for Ollama and for any OpenAI-compatible server."""
+    remote = not config.is_loopback
+    where = {"remote": remote, "endpoint": _host(config) if remote else None}
+    request = urllib.request.Request(
+        f"{config.base_url}/models", headers={"Authorization": f"Bearer {config.api_key}"} if config.api_key else {}
+    )
     try:
-        with urllib.request.urlopen(f"{config.base_url}/models", timeout=1.5) as response:
+        with urllib.request.urlopen(request, timeout=_REMOTE_PROBE_SECONDS if remote else 1.5) as response:
             models = {entry.get("id") for entry in json.load(response).get("data", [])}
     except (urllib.error.URLError, TimeoutError, OSError, ValueError):
-        return AiStatus(state="offline", model=config.model, detail=f"The local model server is not running. {START_THE_MODEL}")
+        detail = (
+            f"The remote model server at {_host(config)} cannot be reached. Check REPOMIND_LLM_BASE_URL, its key, and that the server is up."
+            if remote
+            else f"The local model server is not running. {START_THE_MODEL}"
+        )
+        return AiStatus(state="offline", model=config.model, detail=detail, **where)
     if config.model not in models:
         return AiStatus(
             state="model_missing",
             model=config.model,
             detail=f"The model server is running, but {config.model} is not installed on it.",
+            **where,
         )
-    return AiStatus(state="ready", model=config.model, detail="The local model is available.")
+    detail = (
+        f"A remote model is in use. Each question, and the lines of code chosen for it, are sent to {_host(config)}."
+        if remote
+        else "The local model is available."
+    )
+    return AiStatus(state="ready", model=config.model, detail=detail, **where)
 
 
 @dataclass
@@ -143,7 +167,8 @@ class Services:
                 state="not_configured",
                 detail="No model is configured. Set REPOMIND_LLM_BASE_URL and REPOMIND_LLM_MODEL in .env.",
             )
-        free = self.free_memory()
+        # Only a model on this machine needs this machine's memory.
+        free = self.free_memory() if self.llm_config.is_loopback else None
         if free is not None and free < self.limits.min_free_memory_gb:
             return AiStatus(
                 state="low_memory",
@@ -174,6 +199,9 @@ class Services:
                 status = AiStatus(
                     state="offline",
                     model=self.llm_config.model,
-                    detail=f"The model stopped responding during this question. {START_THE_MODEL}",
+                    detail="The model stopped responding during this question."
+                    + (f" {START_THE_MODEL}" if self.llm_config.is_loopback else ""),
+                    remote=not self.llm_config.is_loopback,
+                    endpoint=None if self.llm_config.is_loopback else _host(self.llm_config),
                 )
         return QAEngine(store, search, None, None).ask(question, [repo]), status, False

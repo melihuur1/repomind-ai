@@ -65,8 +65,13 @@ export function AiPanel({ repo, turns, setTurns, closeButton }: Props) {
         {closeButton}
       </div>
       <p className="ai-warning" data-testid="ai-warning">
-        Experimental. In our last measurement the model found the right source for 8 of 16 questions and showed a wrong one for 4. Read the code it points at.
+        Experimental. In the last measurement the local model gave a fully right source for 13 of 32 questions and a wrong one for 6. Read the code it points at.
       </p>
+      {health && ready && health.ai.remote ? (
+        <p className="note" data-testid="ai-remote">
+          <strong>Remote model.</strong> {health.ai.detail}
+        </p>
+      ) : null}
       {health && !ready ? (
         <div className="note" data-testid="ai-unavailable">
           <p>

@@ -202,8 +202,8 @@ test.describe("Experimental AI Analysis", () => {
   test("is labelled as experimental, with what was measured", async ({ page }) => {
     await page.goto("/r/demo");
     await expect(page.getByRole("heading", { name: "Experimental AI Analysis" })).toBeVisible();
-    await expect(page.getByTestId("ai-warning")).toContainText("8 of 16");
-    await expect(page.getByTestId("ai-warning")).toContainText("a wrong one for 4");
+    await expect(page.getByTestId("ai-warning")).toContainText("13 of 32");
+    await expect(page.getByTestId("ai-warning")).toContainText("a wrong one for 6");
   });
 
   test("chosen lines keep Git's check and the model's judgement apart, and link to the code", async ({ page, request }) => {

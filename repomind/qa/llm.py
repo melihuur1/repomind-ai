@@ -85,12 +85,16 @@ def load_llm_config() -> LLMConfig | None:
         max_total_cost_usd=number("REPOMIND_LLM_MAX_TOTAL_COST_USD", 0.0),
         selection=(get_setting("REPOMIND_LLM_SELECTION", "choose") or "choose").strip().lower(),
         linked_evidence=get_setting("REPOMIND_LLM_LINKED_EVIDENCE", "0") == "1",
+        # A larger model on a slower machine can take a minute for one answer.
+        timeout_seconds=int(number("REPOMIND_LLM_TIMEOUT_SECONDS", 300)),
     )
     validate_config(config)
     return config
 
 
 def validate_config(config: LLMConfig) -> None:
+    if config.timeout_seconds <= 0:
+        raise RepoMindError(f"REPOMIND_LLM_TIMEOUT_SECONDS must be more than 0, got {config.timeout_seconds}.")
     if config.selection not in ("judge", "choose"):
         raise RepoMindError(f"REPOMIND_LLM_SELECTION must be judge or choose, got '{config.selection}'.")
     if not config.is_loopback and not config.allow_remote:
