@@ -83,7 +83,7 @@ export function CodeViewer({ repo, commit, currentCommit, path, selection }: Pro
       ) : null}
       {data?.hidden_lines.length ? (
         <div className="viewer-note">
-          <EyeOff size={14} aria-hidden /> {data.hidden_lines.length} {data.hidden_lines.length === 1 ? "line is" : "lines are"} hidden because they may hold a credential.
+          <EyeOff size={14} aria-hidden /> {data.hidden_lines.length} {data.hidden_lines.length === 1 ? "line is hidden because it may hold" : "lines are hidden because they may hold"} a credential.
         </div>
       ) : null}
       <div className="code-scroll" ref={scroller} data-testid="code-view" translate="no">

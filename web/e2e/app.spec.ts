@@ -134,6 +134,26 @@ test.describe("Reading code", () => {
     await expect(page.locator("body")).not.toContainText("hunter2");
   });
 
+  test("a credential written into code is hidden in the file, in search and in an answer", async ({ page, request }) => {
+    await page.goto(`/r/demo/blob/${await commitOf(request)}/src/tokens.ts`);
+    await expect(page.getByText("1 line is hidden because it may hold a credential")).toBeVisible();
+    await expect(codeView(page)).toContainText("DEFAULT_REGION");
+    await expect(page.locator("body")).not.toContainText("FAKE_E2E_TOKEN_VALUE");
+
+    await search(page, "API_TOKEN default region");
+    await expect(page.getByTestId("search-result").first()).toBeVisible();
+    await expect(page.locator("body")).not.toContainText("FAKE_E2E_TOKEN_VALUE");
+
+    await setState(request, { reply: { choose: ["src/tokens.ts"] } });
+    await page.goto("/r/demo");
+    const answer = await ask(page, "default region");
+    await expect(answer.getByTestId("source-link").first()).toBeVisible();
+    await expect(page.locator("body")).not.toContainText("FAKE_E2E_TOKEN_VALUE");
+    for (const path of ["/api/search?repo=demo&q=API_TOKEN&mode=keyword", "/api/file?repo=demo&path=src/tokens.ts"]) {
+      expect(await (await request.get(path)).text()).not.toContain("FAKE_E2E_TOKEN_VALUE");
+    }
+  });
+
   for (const path of [".env", "config/secrets.yml", "src/leak.ts", ".git/config", "..%2F..%2F..%2Fetc%2Fpasswd", "src/..%2F.env", "..%5C..%5Cwindows%5Cwin.ini"]) {
     test(`nothing outside the index can be opened: ${path}`, async ({ page, request }) => {
       await page.goto(`/r/demo/blob/${await commitOf(request)}/${path}`);
