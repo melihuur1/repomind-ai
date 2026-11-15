@@ -1,0 +1,4167 @@
+{
+ "version": "v2",
+ "part": "A",
+ "run": 2,
+ "model": "qwen2.5:7b",
+ "code": "C:\\Projects\\repomind-ai\\.data\\v6-eval\\code\\v2",
+ "code_commit": "fd03dcecb5fb62a944fb2f4fc2321220bc507d3b",
+ "pipeline_version": "3",
+ "database": "repomind_rt_eval_v2",
+ "settings": {
+  "selection": "choose",
+  "linked_evidence": false,
+  "max_input_tokens": 4000,
+  "max_output_tokens": 250
+ },
+ "memory_at_start": "physical 14.38 GB, commit 22.09 GB; physical 14.64 GB, commit 22.36 GB",
+ "placement": {
+  "size_mib": 6082,
+  "in_gpu_mib": 3282
+ },
+ "rows": [
+  {
+   "id": "v6-sg-product-page-size",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 71,
+     "end_line": 80
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 71,
+     "end_line": 80
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 62,
+     "end_line": 65
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 70,
+     "end_line": 77
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 90,
+     "end_line": 94
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 71,
+     "end_line": 80
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 62,
+     "end_line": 65
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 70,
+     "end_line": 77
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 90,
+     "end_line": 94
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How many products can be requested per page when listing products?",
+   "model_translation": null,
+   "note": "`size` parametresi 1 ile 100 arasında olabilir, bu sayede bir sayfada en fazla 100 ürün istenebilir.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 101: it may have truncated the source."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "f53c6d571813f7c881f4196f2f61a6f97b8e18794b822fcc8c3e5e6f6b4b3ff3"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1151,
+   "output_tokens": 50,
+   "seconds": 14.2,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.02,
+   "min_free_commit_gb": 13.92
+  },
+  {
+   "id": "v6-sg-sku-characters",
+   "repo": "stockguard",
+   "language": "en",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 63,
+     "end_line": 67
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 50,
+     "end_line": 54
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 1,
+     "end_line": 12
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 29,
+     "end_line": 36
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 63,
+     "end_line": 67
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 50,
+     "end_line": 54
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 1,
+     "end_line": 12
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 29,
+     "end_line": 36
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "@Pattern(regexp = \"^[A-Za-z0-9][A-Za-z0-9._-]*$\", message = \"must contain only letters, digits, dots, underscores or hyphens\")",
+   "warnings": [],
+   "completions": [
+    [
+     "PRODUCT_CREATED",
+     "src/main/java/com/stockguard/catalog/ProductService.java:29-36",
+     false,
+     "no declaration of PRODUCT_CREATED was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "50079d0b485b71f41e8896768ec27d71fe2cde6a7fbcb06edaa8b9acdb79ccad"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1031,
+   "output_tokens": 55,
+   "seconds": 7.36,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.0,
+   "min_free_commit_gb": 13.81
+  },
+  {
+   "id": "v6-sg-description-length",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 90,
+     "end_line": 94
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 50,
+     "end_line": 54
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 71,
+     "end_line": 75
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 110,
+     "end_line": 114
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 90,
+     "end_line": 94
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 50,
+     "end_line": 54
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 71,
+     "end_line": 75
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 110,
+     "end_line": 114
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What is the maximum character length for a product description?",
+   "model_translation": null,
+   "note": "`@Size(max = 2000) String description)` ifadesi gösteriyor ki bir ürün açıklaması en fazla 2000 karakter olabilir.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 97: it may have truncated the source."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "c680b95e98ccaa566c111cde4b9f9081a7e4d37d34da5fbf7aed3ad749f9727a"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 906,
+   "output_tokens": 49,
+   "seconds": 6.32,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.12,
+   "min_free_commit_gb": 13.85
+  },
+  {
+   "id": "v6-sg-latency-percentile",
+   "repo": "stockguard",
+   "language": "en",
+   "answerable": true,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [],
+   "sent": [],
+   "returned_sources": 0,
+   "returned_sources_matching_git": 0,
+   "sent_holding_a_credential": null,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: 95th."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.02,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.52,
+   "min_free_commit_gb": 14.26
+  },
+  {
+   "id": "v6-sg-simulation-consistent",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 295,
+     "end_line": 299
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 108,
+     "end_line": 116
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 295,
+     "end_line": 299
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 31,
+     "end_line": 35
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 281,
+     "end_line": 283
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 11,
+     "end_line": 22
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 108,
+     "end_line": 116
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 295,
+     "end_line": 299
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 31,
+     "end_line": 35
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 281,
+     "end_line": 283
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 11,
+     "end_line": 22
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What conditions does the simulation report consider consistent for storing a run's data?",
+   "model_translation": null,
+   "note": "`dataConsistent` parametresi raporun verilerinin tutarlı olduğuna dair bir durumu gösterir.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 109: it may have truncated the source."
+   ],
+   "completions": [
+    [
+     "SIMULATION_EXECUTED",
+     "src/main/java/com/stockguard/simulation/SimulationService.java:108-116",
+     false,
+     "no declaration of SIMULATION_EXECUTED was found"
+    ],
+    [
+     "IN_SCOPE",
+     "src/main/java/com/stockguard/inventory/ConsistencyService.java:11-22",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "f9af0c0cae7fea9e710127de6bb9ad371d2002847321862f1fd1590176dca010"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1106,
+   "output_tokens": 40,
+   "seconds": 6.46,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.54,
+   "min_free_commit_gb": 14.31
+  },
+  {
+   "id": "v6-sg-delta-total",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 79,
+     "end_line": 83
+    }
+   ],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 79,
+     "end_line": 83
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 10,
+     "end_line": 20
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 1,
+     "end_line": 5
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 19,
+     "end_line": 22
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 79,
+     "end_line": 83
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 10,
+     "end_line": 20
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 1,
+     "end_line": 5
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 19,
+     "end_line": 22
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How is the total change in quantity calculated in a stock movement?",
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 102: it may have truncated the source.",
+    "Not found anywhere in the indexed code: calculated."
+   ],
+   "completions": [
+    [
+     "STOCK_IN",
+     "src/main/resources/db/migration/V4__ledger_and_audit.sql:19-22",
+     false,
+     "no declaration of STOCK_IN was found"
+    ],
+    [
+     "CANCEL_RELEASED",
+     "src/main/resources/db/migration/V4__ledger_and_audit.sql:19-22",
+     false,
+     "no declaration of CANCEL_RELEASED was found"
+    ],
+    [
+     "EXPIRY_RELEASED",
+     "src/main/resources/db/migration/V4__ledger_and_audit.sql:19-22",
+     false,
+     "no declaration of EXPIRY_RELEASED was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "99ce5a7a810d84d8ab54f5470afae73a9b2a9fc423da8939005b652dd4c827ef"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1126,
+   "output_tokens": 39,
+   "seconds": 6.43,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.49,
+   "min_free_commit_gb": 14.18
+  },
+  {
+   "id": "v6-sg-audit-entity-index",
+   "repo": "stockguard",
+   "language": "en",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 39,
+     "end_line": 39
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 39,
+     "end_line": 39
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditEvent.java",
+     "start_line": 53,
+     "end_line": 60
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditEventRepository.java",
+     "start_line": 8,
+     "end_line": 15
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditTrail.java",
+     "start_line": 36,
+     "end_line": 40
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditTrail.java",
+     "start_line": 32,
+     "end_line": 35
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 39,
+     "end_line": 39
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditEvent.java",
+     "start_line": 53,
+     "end_line": 60
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditEventRepository.java",
+     "start_line": 8,
+     "end_line": 15
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditTrail.java",
+     "start_line": 36,
+     "end_line": 40
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditTrail.java",
+     "start_line": 32,
+     "end_line": 35
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "`CREATE INDEX ix_audit_events_entity ON audit_events (entity_id, id);` shows that the database index `ix_audit_events_entity` supports looking up audit events by entity ID.",
+   "warnings": [
+    "Not found anywhere in the indexed code: supports."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "5abca4ec1e369001eba1cf6e37e5f7afff0b5f7b1c914381a9115841f847a6b2"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 979,
+   "output_tokens": 49,
+   "seconds": 6.49,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.51,
+   "min_free_commit_gb": 14.17
+  },
+  {
+   "id": "v6-sg-confirm-counters",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 85,
+     "end_line": 90
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 85,
+     "end_line": 90
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 87,
+     "end_line": 91
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 39,
+     "end_line": 45
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 83
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 37,
+     "end_line": 40
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 85,
+     "end_line": 90
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 87,
+     "end_line": 91
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 39,
+     "end_line": 45
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 79,
+     "end_line": 83
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 37,
+     "end_line": 40
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "Which stock counters change when a reservation is confirmed?",
+   "model_translation": null,
+   "note": "`confirmReservation` operasyonunda stok sayacılar değişiyor.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 103: it may have truncated the source."
+   ],
+   "completions": [
+    [
+     "RESERVATION_EXPIRED",
+     "src/main/java/com/stockguard/reservation/ReservationController.java:85-90",
+     false,
+     "no declaration of RESERVATION_EXPIRED was found"
+    ],
+    [
+     "RESERVATION_ALREADY_SETTLED",
+     "src/main/java/com/stockguard/reservation/ReservationController.java:85-90",
+     false,
+     "no declaration of RESERVATION_ALREADY_SETTLED was found"
+    ],
+    [
+     "CANCEL_RELEASED",
+     "src/main/java/com/stockguard/inventory/ConsistencyService.java:87-91",
+     false,
+     "no declaration of CANCEL_RELEASED was found"
+    ],
+    [
+     "EXPIRY_RELEASED",
+     "src/main/java/com/stockguard/inventory/ConsistencyService.java:87-91",
+     false,
+     "no declaration of EXPIRY_RELEASED was found"
+    ],
+    [
+     "RESERVATION_NOT_SETTLED_EXACTLY_ONCE",
+     "src/main/java/com/stockguard/inventory/ConsistencyService.java:79-83",
+     false,
+     "no declaration of RESERVATION_NOT_SETTLED_EXACTLY_ONCE was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "14270cd6ba7a2c2941697cad4e16794e133533c97330c6a278436ace1cbeff7b"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1163,
+   "output_tokens": 28,
+   "seconds": 5.51,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.51,
+   "min_free_commit_gb": 14.32
+  },
+  {
+   "id": "v6-sg-invalid-fields",
+   "repo": "stockguard",
+   "language": "en",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 128,
+     "end_line": 132
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 133,
+     "end_line": 136
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 128,
+     "end_line": 132
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 115,
+     "end_line": 124
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 133,
+     "end_line": 136
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 5,
+     "end_line": 9
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 27,
+     "end_line": 32
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 128,
+     "end_line": 132
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 115,
+     "end_line": 124
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 133,
+     "end_line": 136
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/ErrorCode.java",
+     "start_line": 5,
+     "end_line": 9
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java",
+     "start_line": 27,
+     "end_line": 32
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "`GlobalExceptionHandler.handleHandlerMethodValidationException` and `handleHandlerMethodValidationException`'s conditional logic process validation results from the request body fields.",
+   "warnings": [],
+   "completions": [
+    [
+     "VALIDATION_FAILED",
+     "src/main/java/com/stockguard/common/error/ErrorCode.java:5-9",
+     false,
+     "no declaration of VALIDATION_FAILED was found"
+    ],
+    [
+     "BAD_REQUEST",
+     "src/main/java/com/stockguard/common/error/ErrorCode.java:5-9",
+     false,
+     "no declaration of BAD_REQUEST was found"
+    ],
+    [
+     "INVALID_CREDENTIALS",
+     "src/main/java/com/stockguard/common/error/ErrorCode.java:5-9",
+     false,
+     "no declaration of INVALID_CREDENTIALS was found"
+    ],
+    [
+     "WWW_AUTHENTICATE",
+     "src/main/java/com/stockguard/security/ProblemAuthErrorHandler.java:27-32",
+     false,
+     "no declaration of WWW_AUTHENTICATE was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "4f1c014010ac04a46bdcf5c3ab1f11cfda8145656192c4a429e0b5d8f39551a4"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1032,
+   "output_tokens": 46,
+   "seconds": 6.52,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.5,
+   "min_free_commit_gb": 14.21
+  },
+  {
+   "id": "v6-sg-unknown-constraint",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 97,
+     "end_line": 107
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 97,
+     "end_line": 107
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 44,
+     "end_line": 47
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 29,
+     "end_line": 42
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/ApiException.java",
+     "start_line": 5,
+     "end_line": 9
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 120,
+     "end_line": 121
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 97,
+     "end_line": 107
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 44,
+     "end_line": 47
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 29,
+     "end_line": 42
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/ApiException.java",
+     "start_line": 5,
+     "end_line": 9
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 120,
+     "end_line": 121
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How does the API respond when a database constraint violation occurs, aside from known conflicts?",
+   "model_translation": null,
+   "note": "`handleIntegrity` metodunda bilinen çakışmalar dışında bir veritabanı kısıtlaması ihlali durumunda hata mesajı ve içermeyen bir yanıt döndürülüyor.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 110: it may have truncated the source.",
+    "Not found anywhere in the indexed code: aside.",
+    "The chosen lines use KNOWN_CONSTRAINTS, whose value is at src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:36, which was not chosen."
+   ],
+   "completions": [
+    [
+     "KNOWN_CONSTRAINTS",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:97-107",
+     true,
+     "already shown"
+    ],
+    [
+     "INTERNAL_ERROR",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:97-107",
+     false,
+     "no declaration of INTERNAL_ERROR was found"
+    ],
+    [
+     "KNOWN_CONSTRAINTS",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:29-42",
+     true,
+     "already shown"
+    ],
+    [
+     "SKU_TAKEN",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:29-42",
+     false,
+     "no declaration of SKU_TAKEN was found"
+    ],
+    [
+     "SERVER_GOING_AWAY",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:29-42",
+     true,
+     "already shown"
+    ],
+    [
+     "POOL_CONNECTION_CLOSED",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:29-42",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "a74c7ea3daf312b9537b69020910675200ced54edbee6432a6103c49a880973a"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1171,
+   "output_tokens": 61,
+   "seconds": 8.35,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.5,
+   "min_free_commit_gb": 14.21
+  },
+  {
+   "id": "v6-sg-actuator-exposure",
+   "repo": "stockguard",
+   "language": "en",
+   "answerable": true,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [],
+   "sent": [],
+   "returned_sources": 0,
+   "returned_sources_matching_git": 0,
+   "sent_holding_a_credential": null,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: exposed, shown."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.02,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.54,
+   "min_free_commit_gb": 14.33
+  },
+  {
+   "id": "v6-sg-compose-healthcheck",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "compose.yaml",
+     "start_line": 5,
+     "end_line": 17
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyController.java",
+     "start_line": 22,
+     "end_line": 26
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    }
+   ],
+   "sent": [],
+   "returned_sources": 3,
+   "returned_sources_matching_git": 3,
+   "sent_holding_a_credential": null,
+   "translated_query": "How is the readiness of an application container checked in Docker Compose?",
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 108: it may have truncated the source.",
+    "Not found anywhere in the indexed code: Docker.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.46,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.55,
+   "min_free_commit_gb": 14.33
+  },
+  {
+   "id": "v6-sg-stock-received-records",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 48,
+     "end_line": 53
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 29,
+     "end_line": 36
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 48,
+     "end_line": 53
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 26,
+     "end_line": 31
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 14,
+     "end_line": 23
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditTrail.java",
+     "start_line": 32,
+     "end_line": 36
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 29,
+     "end_line": 36
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 48,
+     "end_line": 53
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 26,
+     "end_line": 31
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 14,
+     "end_line": 23
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditTrail.java",
+     "start_line": 32,
+     "end_line": 36
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What journal entry is recorded in the ledger when a stock entry is made and which audit event is logged?",
+   "model_translation": null,
+   "note": "`InventoryService.addStock` ledger'de hareket kaydeder ve aynı zamanda bir denetim olayı kaydeder.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 111: it may have truncated the source.",
+    "Not found anywhere in the indexed code: journal, made."
+   ],
+   "completions": [
+    [
+     "PRODUCT_CREATED",
+     "src/main/java/com/stockguard/catalog/ProductService.java:29-36",
+     false,
+     "no declaration of PRODUCT_CREATED was found"
+    ],
+    [
+     "STOCK_RECEIVED",
+     "src/main/java/com/stockguard/inventory/InventoryService.java:48-53",
+     false,
+     "no declaration of STOCK_RECEIVED was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "1c4e2f52799f40ecb54ae5d4b1e242d97553599f156183459e060a88141377a4"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1181,
+   "output_tokens": 41,
+   "seconds": 6.25,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.52,
+   "min_free_commit_gb": 14.24
+  },
+  {
+   "id": "v6-sg-user-reservations-index",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 22,
+     "end_line": 22
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 54,
+     "end_line": 61
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 22,
+     "end_line": 22
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 70,
+     "end_line": 77
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 20,
+     "end_line": 21
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 76,
+     "end_line": 80
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 54,
+     "end_line": 61
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 22,
+     "end_line": 22
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 70,
+     "end_line": 77
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 20,
+     "end_line": 21
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 76,
+     "end_line": 80
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "Which index is supported for listing reservations by date, and which query does the application use to fetch this list?",
+   "model_translation": null,
+   "note": "`ix_reservations_user_created` indeksi tarihye göre rezervasyonları listelemek için destekliyor.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 123: it may have truncated the source.",
+    "Not found anywhere in the indexed code: supported, date, fetch."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "ee47184e4f56c05b9bf6f20b93a54c8c0584ce2973ba8374de52f3fec176b483"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1069,
+   "output_tokens": 39,
+   "seconds": 6.12,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.5,
+   "min_free_commit_gb": 14.22
+  },
+  {
+   "id": "v6-sg-simulated-user-prefix",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 50,
+     "end_line": 50
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 254,
+     "end_line": 257
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 50,
+     "end_line": 50
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 258,
+     "end_line": 262
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 244,
+     "end_line": 248
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 19,
+     "end_line": 23
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 31,
+     "end_line": 35
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 254,
+     "end_line": 257
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 50,
+     "end_line": 50
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 258,
+     "end_line": 262
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 244,
+     "end_line": 248
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 19,
+     "end_line": 23
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 31,
+     "end_line": 35
+    }
+   ],
+   "returned_sources": 6,
+   "returned_sources_matching_git": 6,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What prefix are the user names for simulation customers starting with?",
+   "model_translation": null,
+   "note": "SIMULATED_USERS_PREFIX değişkeni __sim- ile başlıyor.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 101: it may have truncated the source."
+   ],
+   "completions": [
+    [
+     "SIMULATED_USERS_PREFIX",
+     "src/main/java/com/stockguard/simulation/SimulationService.java:254-257",
+     true,
+     ""
+    ],
+    [
+     "SIMULATED_USERS_PREFIX",
+     "src/main/java/com/stockguard/simulation/SimulationService.java:258-262",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "ce4ecc016d9d290bf5cf0506481ca1d24f080050b610edf5ccc2d9828f05a2ac"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1095,
+   "output_tokens": 29,
+   "seconds": 5.36,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.49,
+   "min_free_commit_gb": 14.23
+  },
+  {
+   "id": "v6-sg-replay-header",
+   "repo": "stockguard",
+   "language": "en",
+   "answerable": true,
+   "status": "invalid_response",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 61,
+     "end_line": 68
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 45,
+     "end_line": 49
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 30,
+     "end_line": 37
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java",
+     "start_line": 14,
+     "end_line": 18
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 72,
+     "end_line": 80
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 61,
+     "end_line": 68
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 45,
+     "end_line": 49
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 30,
+     "end_line": 37
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java",
+     "start_line": 14,
+     "end_line": 18
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 72,
+     "end_line": 80
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 1506: it may have truncated the source.",
+    "The model did not return the required JSON."
+   ],
+   "completions": [
+    [
+     "REPLAY_HEADER",
+     "src/main/java/com/stockguard/reservation/ReservationController.java:61-68",
+     true,
+     "already shown"
+    ],
+    [
+     "REPLAY_HEADER",
+     "src/main/java/com/stockguard/reservation/ReservationController.java:30-37",
+     true,
+     "already shown"
+    ],
+    [
+     "HIGHEST_PRECEDENCE",
+     "src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java:14-18",
+     false,
+     "no declaration of HIGHEST_PRECEDENCE was found"
+    ],
+    [
+     "IDEMPOTENCY_KEY_REUSED",
+     "src/main/java/com/stockguard/reservation/ReservationTransactions.java:72-80",
+     false,
+     "no declaration of IDEMPOTENCY_KEY_REUSED was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "c9332f206497e0c8d5769aeda028401014e0cf1e0f77f41ee6774cf75db84f3b"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 7.8,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.46,
+   "min_free_commit_gb": 14.23
+  },
+  {
+   "id": "v6-sn-note-list-limit",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 45,
+     "end_line": 51
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 45,
+     "end_line": 51
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 55,
+     "end_line": 56
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 54,
+     "end_line": 58
+    },
+    {
+     "path": "apps/api/src/notes/versions.service.ts",
+     "start_line": 15,
+     "end_line": 30
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 45,
+     "end_line": 51
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 55,
+     "end_line": 56
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 54,
+     "end_line": 58
+    },
+    {
+     "path": "apps/api/src/notes/versions.service.ts",
+     "start_line": 15,
+     "end_line": 30
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How many issues does a single request return in the issue list?",
+   "model_translation": null,
+   "note": "`NotesController.list` methodu bir istekten çok sayıda not döndürür.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 97: it may have truncated the source."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "890aaf6ca32710eb9f40b9cf61f9df4d6f0ac227dba580c30f182c53c8c6f11b"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1078,
+   "output_tokens": 33,
+   "seconds": 5.67,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.44,
+   "min_free_commit_gb": 14.22
+  },
+  {
+   "id": "v6-sn-delete-note-role",
+   "repo": "syncnotes",
+   "language": "en",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 74,
+     "end_line": 79
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 74,
+     "end_line": 79
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 17,
+     "end_line": 24
+    },
+    {
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 58,
+     "end_line": 68
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 117,
+     "end_line": 120
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 122,
+     "end_line": 127
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 74,
+     "end_line": 79
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 17,
+     "end_line": 24
+    },
+    {
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 58,
+     "end_line": 68
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 117,
+     "end_line": 120
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 122,
+     "end_line": 127
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "`@RequireNoteRole('OWNER')` indicates that only the owner can delete a note.",
+   "warnings": [],
+   "completions": [
+    [
+     "ACCESS_MESSAGES",
+     "apps/web/src/pages/note-page.tsx:17-24",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "2a39fc48b90a2fc46b6d7c44382968ea995f69135d275c5b89b617f34982751c"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1007,
+   "output_tokens": 31,
+   "seconds": 4.44,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.41,
+   "min_free_commit_gb": 14.13
+  },
+  {
+   "id": "v6-sn-owner-leave",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 122,
+     "end_line": 127
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 91,
+     "end_line": 98
+    },
+    {
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 70,
+     "end_line": 80
+    },
+    {
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 51,
+     "end_line": 65
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 81,
+     "end_line": 90
+    }
+   ],
+   "sent": [],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": null,
+   "translated_query": "What happens if the owner tries to fork a repository?",
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 96: it may have truncated the source.",
+    "Not found anywhere in the indexed code: fork, repository.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 1.12,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.4,
+   "min_free_commit_gb": 14.11
+  },
+  {
+   "id": "v6-sn-invite-existing-member",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 121,
+     "end_line": 125
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 121,
+     "end_line": 125
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 46,
+     "end_line": 50
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 62,
+     "end_line": 66
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 52,
+     "end_line": 56
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 117,
+     "end_line": 120
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 121,
+     "end_line": 125
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 46,
+     "end_line": 50
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 62,
+     "end_line": 66
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 52,
+     "end_line": 56
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 117,
+     "end_line": 120
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "If an already registered user is invited again, what does the API return?",
+   "model_translation": null,
+   "note": "`MembersController.invite` metodu yeni bir üyenin bilgisini döndürür, zaten üye olan bir kullanıcı için özel bir yanıt vermez.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 103: it may have truncated the source."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "a8da36cd872224b87b376164e5f9aab1bf26d38d4f171c0f718fb781eb71b1e0"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 937,
+   "output_tokens": 48,
+   "seconds": 6.68,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.4,
+   "min_free_commit_gb": 14.12
+  },
+  {
+   "id": "v6-sn-folder-name-length",
+   "repo": "syncnotes",
+   "language": "en",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/folders/folders.controller.ts",
+     "start_line": 9,
+     "end_line": 14
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/folders/folders.controller.ts",
+     "start_line": 9,
+     "end_line": 14
+    },
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 24,
+     "end_line": 39
+    },
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 49,
+     "end_line": 53
+    },
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 41,
+     "end_line": 45
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 102,
+     "end_line": 115
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/folders/folders.controller.ts",
+     "start_line": 9,
+     "end_line": 14
+    },
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 24,
+     "end_line": 39
+    },
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 49,
+     "end_line": 53
+    },
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 41,
+     "end_line": 45
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 102,
+     "end_line": 115
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "`@Length(1, 60)` restricts the folder's name length between 1 and 60 characters.",
+   "warnings": [],
+   "completions": [],
+   "prompt_sha256": [
+    "17ab58665fa436375c103318900a919414c710e88dc2c2ec1c892ad8a8fafd26"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1068,
+   "output_tokens": 38,
+   "seconds": 5.49,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.38,
+   "min_free_commit_gb": 14.12
+  },
+  {
+   "id": "v6-sn-foreign-folder",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 69,
+     "end_line": 77
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 69,
+     "end_line": 77
+    },
+    {
+     "path": "apps/api/src/common/auth-user.ts",
+     "start_line": 4,
+     "end_line": 11
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 153,
+     "end_line": 157
+    },
+    {
+     "path": "packages/shared/src/api-types.ts",
+     "start_line": 3,
+     "end_line": 3
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 69,
+     "end_line": 77
+    },
+    {
+     "path": "apps/api/src/common/auth-user.ts",
+     "start_line": 4,
+     "end_line": 11
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 153,
+     "end_line": 157
+    },
+    {
+     "path": "packages/shared/src/api-types.ts",
+     "start_line": 3,
+     "end_line": 3
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How does the API respond when it receives a repository ID belonging to another user?",
+   "model_translation": null,
+   "note": "`FoldersService.assertOwned` kontrol eder ki bir klasör id'si sahiplenilmediği takdirde hata fırlatır.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 107: it may have truncated the source.",
+    "Not found anywhere in the indexed code: respond, repository."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "bfbe6e5fffe5ef1d4a444b519085ec13513f472cbb6feb0c890a1dc54ea8b960"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1107,
+   "output_tokens": 45,
+   "seconds": 6.82,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.35,
+   "min_free_commit_gb": 14.08
+  },
+  {
+   "id": "v6-sn-role-cache-db-down",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 40,
+     "end_line": 44
+    },
+    {
+     "path": "apps/api/src/notes/collab-ticket.service.ts",
+     "start_line": 17,
+     "end_line": 21
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 115,
+     "end_line": 119
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 40,
+     "end_line": 44
+    },
+    {
+     "path": "apps/api/src/notes/collab-ticket.service.ts",
+     "start_line": 17,
+     "end_line": 21
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 115,
+     "end_line": 119
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How does the collaboration server determine a user's role when database access fails?",
+   "model_translation": null,
+   "note": "`PermissionService` kullanıcının rolünü veritabanı erişiminin başarısız olup olmadığını bakmadan belirler.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 110: it may have truncated the source.",
+    "Not found anywhere in the indexed code: determine."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "9b4bc3cba0a999aa91fb0e7840ed8ca290883b8461aed8ca12956fb7606eeddf"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1190,
+   "output_tokens": 42,
+   "seconds": 6.8,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.33,
+   "min_free_commit_gb": 14.08
+  },
+  {
+   "id": "v6-sn-collab-url",
+   "repo": "syncnotes",
+   "language": "en",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/web/src/lib/config.ts",
+     "start_line": 1,
+     "end_line": 7
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/web/src/lib/config.ts",
+     "start_line": 1,
+     "end_line": 7
+    },
+    {
+     "path": "packages/shared/src/collab.ts",
+     "start_line": 25,
+     "end_line": 29
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 46,
+     "end_line": 60
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 92,
+     "end_line": 102
+    },
+    {
+     "path": "packages/shared/src/access-events.ts",
+     "start_line": 3,
+     "end_line": 8
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/web/src/lib/config.ts",
+     "start_line": 1,
+     "end_line": 7
+    },
+    {
+     "path": "packages/shared/src/collab.ts",
+     "start_line": 25,
+     "end_line": 29
+    },
+    {
+     "path": "apps/collab/src/extensions/access-control.ts",
+     "start_line": 46,
+     "end_line": 60
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 92,
+     "end_line": 102
+    },
+    {
+     "path": "packages/shared/src/access-events.ts",
+     "start_line": 3,
+     "end_line": 8
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "`collabUrl` function decides the WebSocket URL based on the environment configuration or the current protocol and host.",
+   "warnings": [],
+   "completions": [
+    [
+     "VITE_COLLAB_URL",
+     "apps/web/src/lib/config.ts:1-7",
+     false,
+     "no declaration of VITE_COLLAB_URL was found"
+    ],
+    [
+     "COLLAB_CLOSE",
+     "packages/shared/src/collab.ts:25-29",
+     true,
+     "already shown"
+    ],
+    [
+     "ACCESS_EVENTS_CHANNEL",
+     "packages/shared/src/access-events.ts:3-8",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "40bce53016cfde7095b90f9a82d02fdafafc56ff57380430652e21c2281bcb7c"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1111,
+   "output_tokens": 34,
+   "seconds": 5.32,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.39,
+   "min_free_commit_gb": 14.13
+  },
+  {
+   "id": "v6-sn-versions-index",
+   "repo": "syncnotes",
+   "language": "en",
+   "answerable": true,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [],
+   "sent": [],
+   "returned_sources": 0,
+   "returned_sources_matching_git": 0,
+   "sent_holding_a_credential": null,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: supports, creation."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.02,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.41,
+   "min_free_commit_gb": 14.24
+  },
+  {
+   "id": "v6-sn-note-delete-versions",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 66,
+     "end_line": 76
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 66,
+     "end_line": 76
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 134,
+     "end_line": 135
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 75,
+     "end_line": 87
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 137,
+     "end_line": 138
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 117,
+     "end_line": 120
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 66,
+     "end_line": 76
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 134,
+     "end_line": 135
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 75,
+     "end_line": 87
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 137,
+     "end_line": 138
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 117,
+     "end_line": 120
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What happens to the version records in the database when a note is deleted?",
+   "model_translation": null,
+   "note": "`VersionService.pruneAuto` silinen notun sürüm kayıtlarını veritabanından siler.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 101: it may have truncated the source."
+   ],
+   "completions": [
+    [
+     "CURRENT_TIMESTAMP",
+     "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+     false,
+     "no declaration of CURRENT_TIMESTAMP was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "e324df38b1619808e8bd70ff13099c654952770bc8e3ea8464463a9b43523314"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1075,
+   "output_tokens": 37,
+   "seconds": 5.74,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.41,
+   "min_free_commit_gb": 14.23
+  },
+  {
+   "id": "v6-sn-web-port",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "docker-compose.yml",
+     "start_line": 90,
+     "end_line": 99
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "docker-compose.yml",
+     "start_line": 90,
+     "end_line": 99
+    },
+    {
+     "path": "docker-compose.yml",
+     "start_line": 31,
+     "end_line": 32
+    },
+    {
+     "path": "docker-compose.yml",
+     "start_line": 42,
+     "end_line": 53
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 41,
+     "end_line": 45
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 9,
+     "end_line": 9
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 3,
+     "end_line": 7
+    }
+   ],
+   "sent": [
+    {
+     "path": "docker-compose.yml",
+     "start_line": 90,
+     "end_line": 99
+    },
+    {
+     "path": "docker-compose.yml",
+     "start_line": 31,
+     "end_line": 32
+    },
+    {
+     "path": "docker-compose.yml",
+     "start_line": 42,
+     "end_line": 53
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 41,
+     "end_line": 45
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 9,
+     "end_line": 9
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 3,
+     "end_line": 7
+    }
+   ],
+   "returned_sources": 6,
+   "returned_sources_matching_git": 6,
+   "sent_holding_a_credential": 0,
+   "translated_query": "Which port is the web interface opening from when run with Docker Compose?",
+   "model_translation": null,
+   "note": "`web` hizmeti `8080:80` ports'u kullanarak dışa açılıyor.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 104: it may have truncated the source."
+   ],
+   "completions": [
+    [
+     "WEB_URL",
+     "apps/web/playwright.config.ts:41-45",
+     true,
+     ""
+    ]
+   ],
+   "prompt_sha256": [
+    "7b24b58df554be2bfad82d9e6dcea41e6f81e8fa5690d15e6de4c6b5527c647f"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1057,
+   "output_tokens": 37,
+   "seconds": 5.39,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.37,
+   "min_free_commit_gb": 14.13
+  },
+  {
+   "id": "v6-sn-title-caret",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 12,
+     "end_line": 16
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 111,
+     "end_line": 115
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 39,
+     "end_line": 43
+    },
+    {
+     "path": "apps/web/src/editor/title-input.tsx",
+     "start_line": 6,
+     "end_line": 6
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 17,
+     "end_line": 20
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 12,
+     "end_line": 16
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 111,
+     "end_line": 115
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 39,
+     "end_line": 43
+    },
+    {
+     "path": "apps/web/src/editor/title-input.tsx",
+     "start_line": 6,
+     "end_line": 6
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 17,
+     "end_line": 20
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How is the cursor position being maintained when another user changes the title?",
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 110: it may have truncated the source.",
+    "Not found anywhere in the indexed code: maintained."
+   ],
+   "completions": [
+    [
+     "LOCAL_ORIGIN",
+     "apps/web/src/editor/title-input.tsx:6-6",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "1404d753f76014106eb221124476cd0feb44d95dc0a8fd3d3a463096f167600d"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 853,
+   "output_tokens": 10,
+   "seconds": 3.6,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.42,
+   "min_free_commit_gb": 14.26
+  },
+  {
+   "id": "v6-sn-role-change-live",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 40,
+     "end_line": 44
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 133,
+     "end_line": 142
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 40,
+     "end_line": 44
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 44,
+     "end_line": 56
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 115,
+     "end_line": 119
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 39,
+     "end_line": 43
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 133,
+     "end_line": 142
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 40,
+     "end_line": 44
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 44,
+     "end_line": 56
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 115,
+     "end_line": 119
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 39,
+     "end_line": 43
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "When a user's role is changed, how does this change propagate to collaborative workspaces?",
+   "model_translation": null,
+   "note": "`useCollaboration` kullanıcının yazma izininin değişmesi durumunda kopyası atılır ve sunucidan yeniden oluşturulur.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 111: it may have truncated the source."
+   ],
+   "completions": [
+    [
+     "ACCESS_MESSAGES",
+     "apps/web/src/pages/note-page.tsx:44-56",
+     true,
+     "the declaration is too long to add"
+    ]
+   ],
+   "prompt_sha256": [
+    "aeaca36a355c0bd804c81a600056652b05604e8625d06a8021e1f9cc10a95e7a"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1077,
+   "output_tokens": 47,
+   "seconds": 7.19,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.36,
+   "min_free_commit_gb": 14.13
+  },
+  {
+   "id": "v6-sn-folder-placement",
+   "repo": "syncnotes",
+   "language": "en",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 102,
+     "end_line": 115
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 102,
+     "end_line": 115
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 64,
+     "end_line": 72
+    },
+    {
+     "path": "apps/collab/src/extensions/persistence.ts",
+     "start_line": 20,
+     "end_line": 31
+    },
+    {
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 28,
+     "end_line": 33
+    },
+    {
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 82,
+     "end_line": 90
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 102,
+     "end_line": 115
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 64,
+     "end_line": 72
+    },
+    {
+     "path": "apps/collab/src/extensions/persistence.ts",
+     "start_line": 20,
+     "end_line": 31
+    },
+    {
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 28,
+     "end_line": 33
+    },
+    {
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 82,
+     "end_line": 90
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "`NotesService.moveToFolder` updates the folder of a note for each user, storing it through the `prisma.db.noteMember.update` method.",
+   "warnings": [],
+   "completions": [],
+   "prompt_sha256": [
+    "1ede8ea71091ff3f65e2e7b0bd76d54c3a77a146a2144464c1261557a5e11424"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1164,
+   "output_tokens": 42,
+   "seconds": 6.29,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.35,
+   "min_free_commit_gb": 14.07
+  },
+  {
+   "id": "v6-sn-member-order",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 12,
+     "end_line": 12
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 21,
+     "end_line": 36
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 12,
+     "end_line": 12
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 111,
+     "end_line": 115
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 21,
+     "end_line": 36
+    },
+    {
+     "path": "apps/api/src/common/note-access/note-access.service.ts",
+     "start_line": 25,
+     "end_line": 29
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 131,
+     "end_line": 135
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 12,
+     "end_line": 12
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 111,
+     "end_line": 115
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 21,
+     "end_line": 36
+    },
+    {
+     "path": "apps/api/src/common/note-access/note-access.service.ts",
+     "start_line": 25,
+     "end_line": 29
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 131,
+     "end_line": 135
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What roles are listed in order of precedence for a note's members?",
+   "model_translation": null,
+   "note": "`OWNER`, `EDITOR` ve `VIEWER` rolleri bu sırada not üyelerinin üyeleri listeler: OWNER, EDITOR, VIEWER.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 97: it may have truncated the source.",
+    "Not found anywhere in the indexed code: precedence."
+   ],
+   "completions": [
+    [
+     "ROLE_ORDER",
+     "apps/api/src/notes/members.service.ts:12-12",
+     true,
+     "already shown"
+    ],
+    [
+     "ROLE_ORDER",
+     "apps/api/src/notes/members.service.ts:21-36",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "1409ea4b40cd8ee0692eebc5f8ba99245f8a61d82502b517ab1595ec2f1ce92b"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 983,
+   "output_tokens": 48,
+   "seconds": 6.78,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.39,
+   "min_free_commit_gb": 14.2
+  },
+  {
+   "id": "v6-sn-publish-timeout",
+   "repo": "syncnotes",
+   "language": "en",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 9,
+     "end_line": 21
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 9,
+     "end_line": 21
+    },
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 32,
+     "end_line": 35
+    },
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 36,
+     "end_line": 40
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22
+    },
+    {
+     "path": "apps/api/src/health/health.controller.ts",
+     "start_line": 15,
+     "end_line": 19
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 9,
+     "end_line": 21
+    },
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 32,
+     "end_line": 35
+    },
+    {
+     "path": "apps/api/src/redis/access-events.publisher.ts",
+     "start_line": 36,
+     "end_line": 40
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22
+    },
+    {
+     "path": "apps/api/src/health/health.controller.ts",
+     "start_line": 15,
+     "end_line": 19
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "`AccessEventsPublisher.PUBLISH_TIMEOUT_MS` is set to 1000 milliseconds, indicating the API waits for an access event to be published to Redis before giving up.",
+   "warnings": [
+    "Not found anywhere in the indexed code: giving."
+   ],
+   "completions": [
+    [
+     "PUBLISH_TIMEOUT_MS",
+     "apps/api/src/redis/access-events.publisher.ts:9-21",
+     true,
+     "already shown"
+    ],
+    [
+     "ACCESS_EVENTS_CHANNEL",
+     "apps/api/src/redis/access-events.publisher.ts:36-40",
+     false,
+     "ACCESS_EVENTS_CHANNEL is imported from @syncnotes/shared, which is not a file of this repository"
+    ]
+   ],
+   "prompt_sha256": [
+    "01680c7babdd99dce004114e15410ef74aed3b6c2dd987673db0a632d580232d"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1132,
+   "output_tokens": 48,
+   "seconds": 6.23,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.37,
+   "min_free_commit_gb": 14.11
+  },
+  {
+   "id": "v6-sg-neg-supplier",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 110,
+     "end_line": 114
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 47,
+     "end_line": 48
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 43,
+     "end_line": 46
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 50,
+     "end_line": 54
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 71,
+     "end_line": 80
+    }
+   ],
+   "sent": [],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": null,
+   "translated_query": "Where are the supplier information of products stored?",
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 95: it may have truncated the source.",
+    "Not found anywhere in the indexed code: supplier, information.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.78,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.4,
+   "min_free_commit_gb": 14.21
+  },
+  {
+   "id": "v6-sg-neg-loyalty",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [],
+   "sent": [],
+   "returned_sources": 0,
+   "returned_sources_matching_git": 0,
+   "sent_holding_a_credential": null,
+   "translated_query": "How are loyalty points awarded to customers?",
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 94: it may have truncated the source.",
+    "Not found anywhere in the indexed code: loyalty, awarded.",
+    "Search found code, but no lines that mention what the question asks about."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.11,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.41,
+   "min_free_commit_gb": 14.21
+  },
+  {
+   "id": "v6-sg-neg-reviews",
+   "repo": "stockguard",
+   "language": "en",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 110,
+     "end_line": 114
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 96,
+     "end_line": 98
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 106,
+     "end_line": 109
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 180,
+     "end_line": 182
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 192,
+     "end_line": 196
+    }
+   ],
+   "sent": [],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": null,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: reviews.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.57,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.39,
+   "min_free_commit_gb": 14.21
+  },
+  {
+   "id": "v6-sg-neg-tax",
+   "repo": "stockguard",
+   "language": "en",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [],
+   "sent": [],
+   "returned_sources": 0,
+   "returned_sources_matching_git": 0,
+   "sent_holding_a_credential": null,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: sales, tax, calculated."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.02,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.39,
+   "min_free_commit_gb": 14.21
+  },
+  {
+   "id": "v6-sg-neg-product-delete",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 29,
+     "end_line": 36
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 123,
+     "end_line": 124
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 96,
+     "end_line": 98
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 29,
+     "end_line": 36
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 123,
+     "end_line": 124
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 96,
+     "end_line": 98
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What happens to the stock record when a product is deleted?",
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 95: it may have truncated the source."
+   ],
+   "completions": [
+    [
+     "PRODUCT_CREATED",
+     "src/main/java/com/stockguard/catalog/ProductService.java:29-36",
+     false,
+     "no declaration of PRODUCT_CREATED was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "33782bb33e5f78a3cf18d6e0d72a395f4f4d83e1a457558b487d634e085c8c40"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1145,
+   "output_tokens": 10,
+   "seconds": 3.62,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.36,
+   "min_free_commit_gb": 14.08
+  },
+  {
+   "id": "v6-sg-neg-pending-limit",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 54,
+     "end_line": 61
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 54,
+     "end_line": 68
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 17,
+     "end_line": 30
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 11,
+     "end_line": 15
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 1,
+     "end_line": 5
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 54,
+     "end_line": 61
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 54,
+     "end_line": 68
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 17,
+     "end_line": 30
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 11,
+     "end_line": 15
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 1,
+     "end_line": 5
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What is the maximum number of pending reservations that can be queued at the same time?",
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 103: it may have truncated the source.",
+    "Not found anywhere in the indexed code: queued."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "fb90b981c14f2f37362618a2e5bd2e71c40f8de34eb1872208ea9cce3e476dbc"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1214,
+   "output_tokens": 10,
+   "seconds": 3.95,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.36,
+   "min_free_commit_gb": 14.08
+  },
+  {
+   "id": "v6-sg-neg-refresh-token",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": false,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 29,
+     "end_line": 33
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 43,
+     "end_line": 47
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 57,
+     "end_line": 58
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 29,
+     "end_line": 33
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 43,
+     "end_line": 47
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 21,
+     "end_line": 25
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/config/OpenApiConfig.java",
+     "start_line": 23,
+     "end_line": 27
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 57,
+     "end_line": 58
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 29,
+     "end_line": 33
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 43,
+     "end_line": 47
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 21,
+     "end_line": 25
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/config/OpenApiConfig.java",
+     "start_line": 23,
+     "end_line": 27
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How do you renew an expired access token?",
+   "model_translation": null,
+   "note": "`JwtTokenService.issue` metodu yeni bir token oluştururken, `JwtTokenService` sınıfı token'in geçerlilik süresini belirler.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 95: it may have truncated the source.",
+    "Not found anywhere in the indexed code: renew."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "de881609b0abafe71491c260f892ca55769bdf9b98d5396e4a7ed38022a4b7c2"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 890,
+   "output_tokens": 51,
+   "seconds": 7.07,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.36,
+   "min_free_commit_gb": 14.09
+  },
+  {
+   "id": "v6-sg-neg-account-lock",
+   "repo": "stockguard",
+   "language": "en",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 244,
+     "end_line": 248
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 54,
+     "end_line": 55
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 71,
+     "end_line": 80
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AuthService.java",
+     "start_line": 64,
+     "end_line": 74
+    },
+    {
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 38,
+     "end_line": 43
+    }
+   ],
+   "sent": [],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": null,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The repository's name was left out of the search, because every result is in this repository.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "completions": [
+    [
+     "INVALID_CREDENTIALS",
+     "src/main/java/com/stockguard/user/AuthService.java:64-74",
+     false,
+     "no declaration of INVALID_CREDENTIALS was found"
+    ]
+   ],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 1.42,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.37,
+   "min_free_commit_gb": 14.21
+  },
+  {
+   "id": "v6-sn-neg-subscription",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "packages/shared/src/access-events.ts",
+     "start_line": 3,
+     "end_line": 8
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 12,
+     "end_line": 16
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 33,
+     "end_line": 35
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 17,
+     "end_line": 20
+    },
+    {
+     "path": "apps/collab/src/access-events.ts",
+     "start_line": 12,
+     "end_line": 20
+    }
+   ],
+   "sent": [],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": null,
+   "translated_query": "How are paid subscription plans managed?",
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 94: it may have truncated the source.",
+    "Not found anywhere in the indexed code: paid.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "completions": [
+    [
+     "ACCESS_EVENTS_CHANNEL",
+     "packages/shared/src/access-events.ts:3-8",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.47,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.42,
+   "min_free_commit_gb": 14.26
+  },
+  {
+   "id": "v6-sn-neg-voice",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 53,
+     "end_line": 56
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 119,
+     "end_line": 120
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 47,
+     "end_line": 60
+    },
+    {
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 22,
+     "end_line": 26
+    },
+    {
+     "path": "packages/shared/src/roles.ts",
+     "start_line": 8,
+     "end_line": 12
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 53,
+     "end_line": 56
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 119,
+     "end_line": 120
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 47,
+     "end_line": 60
+    },
+    {
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 22,
+     "end_line": 26
+    },
+    {
+     "path": "packages/shared/src/roles.ts",
+     "start_line": 8,
+     "end_line": 12
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How is audio recording added to notes?",
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 92: it may have truncated the source.",
+    "Not found anywhere in the indexed code: audio."
+   ],
+   "completions": [
+    [
+     "CURRENT_TIMESTAMP",
+     "packages/db/prisma/migrations/20261104110838_init/migration.sql:47-60",
+     false,
+     "no declaration of CURRENT_TIMESTAMP was found"
+    ],
+    [
+     "ROLE_RANK",
+     "packages/shared/src/roles.ts:8-12",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "c00a7e6b66ffd228a2d029534b3b25f7bcdce3ddac27447b1d95a5a5c80ece59"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 963,
+   "output_tokens": 10,
+   "seconds": 3.24,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.41,
+   "min_free_commit_gb": 14.25
+  },
+  {
+   "id": "v6-sn-neg-evernote",
+   "repo": "syncnotes",
+   "language": "en",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [],
+   "sent": [],
+   "returned_sources": 0,
+   "returned_sources_matching_git": 0,
+   "sent_holding_a_credential": null,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: Evernote."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.02,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.4,
+   "min_free_commit_gb": 14.25
+  },
+  {
+   "id": "v6-sn-neg-calendar",
+   "repo": "syncnotes",
+   "language": "en",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/common/decorators.ts",
+     "start_line": 9,
+     "end_line": 9
+    },
+    {
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 38,
+     "end_line": 40
+    },
+    {
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 52,
+     "end_line": 56
+    },
+    {
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 50,
+     "end_line": 51
+    },
+    {
+     "path": "apps/api/src/main.ts",
+     "start_line": 8,
+     "end_line": 14
+    },
+    {
+     "path": "apps/api/src/config/env.ts",
+     "start_line": 35,
+     "end_line": 35
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/common/decorators.ts",
+     "start_line": 9,
+     "end_line": 9
+    },
+    {
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 38,
+     "end_line": 40
+    },
+    {
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 52,
+     "end_line": 56
+    },
+    {
+     "path": "apps/web/src/collab/connection.ts",
+     "start_line": 50,
+     "end_line": 51
+    },
+    {
+     "path": "apps/api/src/main.ts",
+     "start_line": 8,
+     "end_line": 14
+    },
+    {
+     "path": "apps/api/src/config/env.ts",
+     "start_line": 35,
+     "end_line": 35
+    }
+   ],
+   "returned_sources": 6,
+   "returned_sources_matching_git": 6,
+   "sent_holding_a_credential": 0,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: calendar.",
+    "The repository's name was left out of the search, because every result is in this repository."
+   ],
+   "completions": [
+    [
+     "NOTE_ROLE_KEY",
+     "apps/api/src/common/decorators.ts:9-9",
+     true,
+     "already shown"
+    ],
+    [
+     "APP_CONFIG",
+     "apps/api/src/main.ts:8-14",
+     true,
+     ""
+    ],
+    [
+     "API_PORT",
+     "apps/api/src/main.ts:8-14",
+     false,
+     "no declaration of API_PORT was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "68058c6d42e81f60e2acdbccac2d33563dbc29478b2b9c32c9554549056daa91"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 948,
+   "output_tokens": 10,
+   "seconds": 3.81,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.4,
+   "min_free_commit_gb": 14.17
+  },
+  {
+   "id": "v6-sn-neg-member-limit",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": false,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 128,
+     "end_line": 129
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 122,
+     "end_line": 123
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 125,
+     "end_line": 126
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 30,
+     "end_line": 43
+    }
+   ],
+   "sent": [
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 128,
+     "end_line": 129
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 122,
+     "end_line": 123
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 125,
+     "end_line": 126
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 30,
+     "end_line": 43
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How many members can be added at most in a team?",
+   "model_translation": null,
+   "note": "`CREATE UNIQUE INDEX` ifadesi, her nota en fazla bir OWNER üyesine sahip olabileceğini gösteriyor.",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 92: it may have truncated the source.",
+    "Not found anywhere in the indexed code: team."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "8cae87e50da46c3398b53beb21626e295848785a5278470002afe2ef2beac989"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1053,
+   "output_tokens": 40,
+   "seconds": 5.81,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.41,
+   "min_free_commit_gb": 14.26
+  },
+  {
+   "id": "v6-sn-neg-subfolder",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/web/src/components/sidebar.tsx",
+     "start_line": 224,
+     "end_line": 228
+    },
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 24,
+     "end_line": 39
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 36,
+     "end_line": 45
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 101,
+     "end_line": 102
+    },
+    {
+     "path": "packages/shared/src/api-types.ts",
+     "start_line": 15,
+     "end_line": 20
+    }
+   ],
+   "sent": [],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": null,
+   "translated_query": "How is an subfolder created in a directory?",
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 97: it may have truncated the source.",
+    "Not found anywhere in the indexed code: subfolder, directory.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "completions": [
+    [
+     "CURRENT_TIMESTAMP",
+     "packages/db/prisma/migrations/20261104110838_init/migration.sql:36-45",
+     false,
+     "no declaration of CURRENT_TIMESTAMP was found"
+    ]
+   ],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 1.0,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.41,
+   "min_free_commit_gb": 14.22
+  },
+  {
+   "id": "v6-sn-neg-change-email",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 216,
+     "end_line": 220
+    },
+    {
+     "path": "apps/api/src/auth/dto.ts",
+     "start_line": 8,
+     "end_line": 23
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 206,
+     "end_line": 210
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 75,
+     "end_line": 79
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 46,
+     "end_line": 50
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 216,
+     "end_line": 220
+    },
+    {
+     "path": "apps/api/src/auth/dto.ts",
+     "start_line": 8,
+     "end_line": 23
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 206,
+     "end_line": 210
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 75,
+     "end_line": 79
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 46,
+     "end_line": 50
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How can I change my account's email address?",
+   "model_translation": null,
+   "note": "",
+   "warnings": [
+    "The endpoint reports 0 input tokens for a prompt of about 98: it may have truncated the source."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "5265943e802d2122656d995507d71ac80f37ada12c25476c8f363070166e9db3"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 947,
+   "output_tokens": 10,
+   "seconds": 3.58,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.31,
+   "min_free_commit_gb": 14.06
+  },
+  {
+   "id": "v6-sn-neg-folder-limit",
+   "repo": "syncnotes",
+   "language": "en",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/folders/folders.controller.ts",
+     "start_line": 24,
+     "end_line": 28
+    },
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 24,
+     "end_line": 39
+    },
+    {
+     "path": "apps/api/src/folders/folders.controller.ts",
+     "start_line": 20,
+     "end_line": 23
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 102,
+     "end_line": 115
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/folders/folders.controller.ts",
+     "start_line": 24,
+     "end_line": 28
+    },
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 24,
+     "end_line": 39
+    },
+    {
+     "path": "apps/api/src/folders/folders.controller.ts",
+     "start_line": 20,
+     "end_line": 23
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 102,
+     "end_line": 115
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": null,
+   "model_translation": null,
+   "note": "",
+   "warnings": [],
+   "completions": [],
+   "prompt_sha256": [
+    "391146898aea9b7c7ff5a851c0eef1cc4f69c13438953788ec9d2cb03d3cd3b7"
+   ],
+   "requests": 1,
+   "translation_requests": 0,
+   "input_tokens": 1077,
+   "output_tokens": 10,
+   "seconds": 3.45,
+   "peak_gpu_mib": 2810,
+   "min_free_physical_gb": 9.35,
+   "min_free_commit_gb": 14.18
+  }
+ ],
+ "translations": {}
+}

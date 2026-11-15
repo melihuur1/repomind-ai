@@ -541,7 +541,7 @@ def judge(question: dict, row: dict, decided: dict) -> dict:
             covered.update(decision.get("places") or [place["name"] for place in places][:1])
         else:
             wrong.append(source)
-            if decision is None:
+            if decision is None and question["answerable"]:  # Any source for an unanswerable question is wrong. Nothing is left to decide.
                 undecided.append(source)
     offered = {place["name"] for place in places if any(overlaps(source, accepted) for source in row["offered"] for accepted in place["accepted"])}
     sent = {place["name"] for place in places if any(overlaps(source, accepted) for source in row.get("sent", []) for accepted in place["accepted"])}
