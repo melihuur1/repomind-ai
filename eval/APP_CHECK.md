@@ -53,6 +53,8 @@ The negative-stock question, apart: the model translated it as "How does StockGu
 
 All 34 lines returned across the seven questions match Git exactly at the indexed commit, which is the pinned one. These repositories were indexed from local folders, so they have no GitHub address, and the web application links each line to its own Git view rather than to GitHub. No GitHub link was built, and none was checked.
 
+> **Correction, 2026-11-15.** The figure in the paragraph above is wrong, and the sentence is left as it was written. [`dev-app-check-qwen2.5-coder-7b.json`](results/dev-app-check-qwen2.5-coder-7b.json) holds 30 returned sources, not 34: five for each of six questions, and none for `app-sn-search-length`, which was refused before any lines were returned. Each source is a passage of a few lines, so "lines" there means passages. All 30 match Git exactly at the indexed commit, which is the pinned one. The result file was not changed, and no other figure in this document was derived from this one.
+
 ### Cost
 
 From 0.05 s, refused before the model, to 14.1 s, with a median of 4.8 s for the six. Peak GPU memory in use was 2814 MiB. The model was 3282 of 6082 MiB in GPU memory, 54%, as in the trial. The lowest free memory during a question was 8.53 GB physical and 12.44 GB commit space.
