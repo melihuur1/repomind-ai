@@ -74,8 +74,16 @@ class SearchEngine:
         self._translations: dict[str, str | None] = {}
         self._credential_free: dict[int, bool] = {}
 
-    def _snapshot_ids(self, repos: list[str] | None) -> list[int]:
+    def _snapshot_ids(self, repos: list[str] | None, warnings: list[str] | None = None) -> list[int]:
         snapshots = self.store.active_snapshots(repos)
+        if warnings is not None:
+            # Search still works on it, and a chunk holding a credential is left out whatever stored it.
+            warnings.extend(
+                f"{snapshot.repo} was indexed by an older version of RepoMind, so its chunks are not the ones "
+                "this version would make. Index it again to refresh them."
+                for snapshot in snapshots
+                if not snapshot.is_current
+            )
         if repos:
             missing = set(repos) - {s.repo for s in snapshots}
             if missing:
@@ -232,7 +240,7 @@ class SearchEngine:
             raise RepoMindError(f"Unknown search mode: {mode}", hint=f"Choose one of: {', '.join(MODES)}.")
 
         warnings: list[str] = []
-        snapshot_ids = self._snapshot_ids(repos)
+        snapshot_ids = self._snapshot_ids(repos, warnings)
         translated = translated or self._translate(query, warnings)
         include_tests = self._tests_included(query, translated)
         depth = max(limit, self.config.candidates)

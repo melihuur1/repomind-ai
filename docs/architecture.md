@@ -100,6 +100,14 @@ PostgreSQL 17 with pgvector runs in RepoMind's own Compose project, on `127.0.0.
 
 Re-indexing the same commit with the same `PIPELINE_VERSION` does nothing.
 
+### The index version
+
+`PIPELINE_VERSION` in `repomind/__init__.py` is the version of what indexing stores for a commit: which lines become chunks, symbols and imports, and which are withheld. Each snapshot records the version that made it.
+
+- **When it changes.** Whenever a change to parsing, chunking or withholding gives any file different output. `tests/test_pipeline_version.py` parses fixed files in every indexed language and compares a fingerprint of the result with the one recorded for the current version, so such a change fails the tests until the version is bumped and the new fingerprint recorded. It is 3 now. Version 2 is the first published one, and by mistake it also covers a later change to YAML chunking.
+- **What an upgrade asks for.** Run `python -m repomind index --path <repository>` again for each indexed repository. With a newer version the same commit is read and parsed again, with no `--force`, and vectors are kept for chunks whose text did not change. Nothing is re-indexed by itself. A repository added by URL is indexed again when it is added again.
+- **Until then.** The older index keeps working. `python -m repomind repos` marks it as outdated, and every search and question on it carries a warning. Its chunks are the older ones, so results can differ from a fresh index. Lines that are now withheld may still be stored in it, and are not shown: search leaves out any chunk holding a credential, whatever version stored it.
+
 Semantic search is an exact cosine scan. At about 1,200 chunks it is fast enough, and it keeps an approximate index from capping the measured recall.
 
 ## Retrieval

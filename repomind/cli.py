@@ -10,6 +10,7 @@ import socket
 import sys
 from pathlib import Path
 
+from repomind import PIPELINE_VERSION
 from repomind.config import PROJECT_ROOT, Settings
 from repomind.errors import RepoMindError
 from repomind.search.engine import MODES, SearchConfig, SearchEngine
@@ -131,6 +132,9 @@ def command_repos(_args: argparse.Namespace, settings: Settings) -> int:
             _emit(f"  symbols    {counts['symbols']}   imports {counts['imports']}")
             _emit(f"  languages  {snapshot.stats['languages']}")
             _emit(f"  embeddings {embedded}/{total} with {settings.embedding_model}")
+            if not snapshot.is_current:
+                _emit(f"  OUTDATED   indexed by pipeline {snapshot.pipeline_version}, and this version is {PIPELINE_VERSION}.")
+                _emit(f'             Run `python -m repomind index --path "{snapshot.source_path}" --name {snapshot.repo}` to index it again.')
     return 0
 
 
