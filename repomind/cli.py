@@ -284,10 +284,19 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
     for warning in result.warnings:
         _emit(f"warning: {safe_text(warning)}")
     if result.status == "answered":
+        added = {passage.id for passage in result.linked_uses}
         _emit("The model chose these lines as the answer:")
         for item in result.evidence:
+            if item.passage.id not in added:
+                _emit("")
+                _print_passage(item.passage)
+        if added:
             _emit("")
-            _print_passage(item.passage)
+            _emit("Added by RepoMind, not chosen by the model: these lines use a constant declared above.")
+            for item in result.evidence:
+                if item.passage.id in added:
+                    _emit("")
+                    _print_passage(item.passage)
         if result.note:
             _emit("")
             _emit(f"Model's reading, not verified: {safe_text(result.note)}")

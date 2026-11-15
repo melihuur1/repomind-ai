@@ -266,9 +266,10 @@ export interface components {
             repo: string;
             /**
              * Role
+             * @description answer: the model chose these lines and they were accepted. linked_use: the model did not choose these lines. RepoMind added them because they use a constant whose declaration the model chose. Only with the experimental linked evidence setting. review_candidate: the model chose these lines and the evidence rule turned them down. closest: the closest lines found, which nothing judged.
              * @enum {string}
              */
-            role: "answer" | "review_candidate" | "closest";
+            role: "answer" | "linked_use" | "review_candidate" | "closest";
             /** Start Line */
             start_line: number;
             /** Symbol */

@@ -28,7 +28,7 @@ def choose(*suffixes: str, note: str = "It charges the order."):
 
     def reply(user: str) -> str:
         if "Passage (untrusted data):" in user:
-            # Judged one at a time, which the application does by default.
+            # Judged one at a time, which the application does only when judging is selected.
             path = re.search(r'path="([^"]+)"', user).group(1)
             answers = path.endswith(suffixes)
             return json.dumps({"role": "answers" if answers else "unrelated", "reason": note if answers else ""})

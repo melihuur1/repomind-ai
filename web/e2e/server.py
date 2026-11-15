@@ -83,7 +83,7 @@ class ScriptedModel:
         if reply.get("fail"):
             raise RepoMindError("The model server went away.")
         if "Passage (untrusted data):" in user:
-            # One passage judged at a time, which the application does by default.
+            # One passage judged at a time, which the application does only when judging is selected.
             if "raw" in reply:
                 return LLMResponse(reply["raw"], 10, 5)
             path = re.search(r'path="([^"]+)"', user).group(1)

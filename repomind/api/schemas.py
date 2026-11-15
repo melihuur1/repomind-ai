@@ -131,14 +131,22 @@ class AskRequest(BaseModel):
     question: str = Field(min_length=1, max_length=MAX_QUESTION_CHARACTERS)
 
 
-SourceRole = Literal["answer", "review_candidate", "closest"]
+SourceRole = Literal["answer", "linked_use", "review_candidate", "closest"]
 AnswerCheck = Literal["passed", "failed", "not_made"]
 
 
 class AskSource(BaseModel):
     """Two checks that must not be confused. ``exists_in_git`` does not mean the lines answer the question."""
 
-    role: SourceRole
+    role: SourceRole = Field(
+        description=(
+            "answer: the model chose these lines and they were accepted. "
+            "linked_use: the model did not choose these lines. RepoMind added them because they use a constant "
+            "whose declaration the model chose. Only with the experimental linked evidence setting. "
+            "review_candidate: the model chose these lines and the evidence rule turned them down. "
+            "closest: the closest lines found, which nothing judged."
+        )
+    )
     repo: str
     commit: str
     path: str

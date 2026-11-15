@@ -1,4 +1,4 @@
-import { CheckCircle2, CircleHelp, CircleSlash, GitCommitHorizontal, Info, ScanSearch, Sparkles, TriangleAlert } from "lucide-react";
+import { CheckCircle2, CircleHelp, CircleSlash, GitCommitHorizontal, Info, Link2, ScanSearch, Sparkles, TriangleAlert } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { AskResponse, AskSource } from "../api/client";
 import { CodeSnippet } from "../components/CodeLines";
@@ -81,6 +81,12 @@ export function AnswerCard({ response }: { response: AskResponse }) {
       ) : null}
 
       <Section title="Lines the model chose" hint="They exist at this commit. Whether they answer the question is the model’s judgement." sources={of("answer")} />
+      <Section
+        title="Added by RepoMind, not chosen by the model"
+        hint="These lines use a constant that is declared in a line the model chose. They exist at this commit. The model did not pick them, and nothing confirms that they answer the question."
+        icon={<Link2 size={14} aria-hidden />}
+        sources={of("linked_use")}
+      />
 
       {response.model_reading ? (
         <details className="reading" data-testid="model-reading">

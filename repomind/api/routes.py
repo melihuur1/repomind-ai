@@ -272,16 +272,25 @@ def search(
 
 
 def _sources(result: AskResult) -> list[schemas.AskSource]:
-    """Answers first, then anything to review, then the closest lines, each role in the engine's order."""
+    """What the model chose first, then a line added beside it, anything to review, and the closest lines.
+
+    Each role keeps the engine's order. A line RepoMind added because a chosen declaration is used
+    there has a role of its own, so that it is never shown as the model's choice.
+    """
     roles = {
         AnswerCheck.PASSED: "answer",
         AnswerCheck.FAILED: "review_candidate",
         AnswerCheck.NOT_MADE: "closest",
     }
-    ordered = sorted(result.sources(), key=lambda source: list(roles).index(source.answer_check))
+    order = ("answer", "linked_use", "review_candidate", "closest")
+
+    def role(source) -> str:
+        return "linked_use" if source.added_by_link else roles[source.answer_check]
+
+    ordered = sorted(result.sources(), key=lambda source: order.index(role(source)))
     return [
         schemas.AskSource(
-            role=roles[source.answer_check],
+            role=role(source),
             repo=source.passage.chunk.repo,
             commit=source.passage.chunk.commit_sha,
             path=source.passage.path,

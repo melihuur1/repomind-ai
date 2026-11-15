@@ -435,6 +435,26 @@ class TestLinkedEvidenceInAsk:
         assert all(source.exists_in_git for source in result.sources())
         assert any("declares REQUEST_LIMIT" in w and "the model's reading" in w for w in result.warnings)
 
+    @pytest.mark.parametrize(
+        ("on", "roles"),
+        [(True, [("answer", 2), ("linked_use", 28)]), (False, [("review_candidate", 2), ("closest", 28)])],
+    )
+    def test_the_api_never_calls_the_added_use_the_models_choice(self, store, fake_embedder, linked, on, roles):
+        from fastapi.testclient import TestClient
+
+        from repomind.api.app import create_app
+        from tests.test_api import _services
+        from tests.test_qa import FakeClient
+
+        linked((28, 31))
+        services = _services(fake_embedder, FakeClient(choose("REQUEST_LIMIT = Duration")))
+        services.llm_config = replace(services.llm_config, linked_evidence=on)
+        with TestClient(create_app(services)) as client:
+            body = client.post("/api/ask", json={"repo": "linked", "question": QUESTION}).json()
+        assert [(s["role"], s["start_line"]) for s in body["sources"]] == roles
+        assert body["verdict"] == ("lines_chosen" if on else "not_enough_evidence")
+        assert any("was added by RepoMind and not chosen by the model" in w for w in body["warnings"]) is on
+
     def test_a_use_that_fails_the_rule_does_not_carry_its_declaration(self, store, fake_embedder, linked):
         from tests.test_qa import FakeClient
 
