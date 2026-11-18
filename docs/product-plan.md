@@ -1,6 +1,6 @@
 # Product plan
 
-**Status: built.** This was the plan for turning the engine into something people can use from a browser. It now records what was built, and where that differs from the plan. For how it works, see [the architecture](architecture.md#web-application), and to run it, see the [README](../README.md#getting-started).
+**Status: built.** This was the plan for turning the engine into something people can use from a browser. It now records what was built, and where that differs from the plan. For how it works, see [the architecture](architecture.md#web-application), and to run it, see the [README](../README.en.md#getting-started-on-windows).
 
 **What did not change.** Tree-sitter parsing, SQL and YAML chunking, embeddings, pgvector, hybrid search, Git verification, the evidence rule, prompt injection defences, and the evaluation system all stay, and `qwen2.5:7b` stays the default. The API calls the engine and adds no retrieval or answer logic. No model, threshold or prompt was tuned in this phase, and no evaluation result changed.
 

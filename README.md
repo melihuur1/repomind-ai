@@ -1,102 +1,104 @@
+[🇹🇷 Türkçe](README.md) | [🇬🇧 English](README.en.md)
+
 # RepoMind AI
 
-**Find where and how something is done in a codebase, and read the exact lines that do it.**
+**Bir kod tabanında bir işin nerede ve nasıl yapıldığını bulun, o işi yapan satırları birebir okuyun.**
 
-RepoMind indexes a GitHub repository locally and lets you browse, search and question it in Turkish or English. Every result is a real range of lines, pinned to the Git commit it came from, so you can open it, link to it and check it yourself. It runs on your own machine, with no account and no paid API.
+RepoMind bir GitHub deposunu (repository) yerel olarak indeksler; depoyu gezmenizi, içinde arama yapmanızı ve ona Türkçe ya da İngilizce soru sormanızı sağlar. Her sonuç, geldiği Git commit'ine sabitlenmiş gerçek bir satır aralığıdır; böylece onu açabilir, bağlantısını paylaşabilir ve kendiniz kontrol edebilirsiniz. Kendi makinenizde çalışır; hesap ya da ücretli API gerektirmez.
 
-> **Status: a working local web application for one person on one machine.** Searching and reading code are dependable. **The AI analysis is experimental and often wrong:** in the last measurement it pointed at the right source for 8 of 16 questions, and at a wrong one for 4. Read every line it points at. See [AI accuracy](#ai-accuracy).
+> **Durum: tek bir makinede tek bir kişi için çalışan, yerel bir web uygulaması.** Kodda arama yapmak ve kodu okumak güvenilir biçimde çalışır. **Yapay zekâ analizi deneyseldir ve sık sık yanılır:** son ölçümde 16 sorunun 8'inde doğru kaynağı, 4'ünde ise yanlış bir kaynağı gösterdi. Gösterdiği her satırı okuyun. Bkz. [Yapay zekâ doğruluğu](#yapay-zekâ-doğruluğu).
 
-![RepoMind showing StockGuard's file tree and a Java file at the indexed commit, with a linked range of lines selected](docs/screenshots/repository-explorer.png)
+![RepoMind, StockGuard'ın dosya ağacını ve indekslenen commit'teki bir Java dosyasını, bağlantıyla seçilmiş bir satır aralığıyla gösteriyor](docs/screenshots/repository-explorer.png)
 
-## Contents
+## İçindekiler
 
-- [Why](#why) · [Features](#features) · [Screenshots](#screenshots) · [How it works](#how-it-works)
-- [Getting started on Windows](#getting-started-on-windows): [your first repository](#your-first-repository), [AI analysis](#ai-analysis-optional), [with or without a GPU](#with-or-without-a-gpu), [common problems](#common-problems)
-- [Using it](#using-it) · [AI accuracy](#ai-accuracy) · [Security](#security) · [Tests](#tests)
-- [Project structure](#project-structure) · [Known limitations](#known-limitations) · [Third-party software and models](#third-party-software-and-models) · [License](#license)
+- [Neden](#neden) · [Özellikler](#özellikler) · [Ekran görüntüleri](#ekran-görüntüleri) · [Nasıl çalışır](#nasıl-çalışır)
+- [Windows'ta başlarken](#windowsta-başlarken): [önce bir depo ekleyin](#önce-bir-depo-ekleyin), [yapay zekâ analizi](#yapay-zekâ-analizi-isteğe-bağlı), [GPU ile veya GPU olmadan](#gpu-ile-veya-gpu-olmadan), [sık karşılaşılan sorunlar](#sık-karşılaşılan-sorunlar)
+- [Kullanım](#kullanım) · [Yapay zekâ doğruluğu](#yapay-zekâ-doğruluğu) · [Güvenlik](#güvenlik) · [Testler](#testler)
+- [Proje yapısı](#proje-yapısı) · [Bilinen sınırlamalar](#bilinen-sınırlamalar) · [Üçüncü taraf yazılımlar ve modeller](#üçüncü-taraf-yazılımlar-ve-modeller) · [Lisans](#lisans)
 
-## Why
+## Neden
 
-Asking a chat model about an unfamiliar repository tends to produce confident answers that name files, functions and settings that do not exist. RepoMind turns this around: it searches first, and every answer is made of the repository's own lines. Each line is checked against Git, and a model, when one is used, only chooses among lines that were found. It never writes code or facts of its own into the answer. When the evidence is too thin, it says "I do not know".
+Bir sohbet modeline tanımadığınız bir depo hakkında soru sormak, çoğu zaman var olmayan dosyaları, fonksiyonları ve ayarları adıyla anan, kendinden emin yanıtlar doğurur. RepoMind bunu tersine çevirir: önce arar ve her yanıt deponun kendi satırlarından oluşur. Her satır Git'e karşı doğrulanır; bir model kullanılıyorsa, model yalnızca bulunan satırlar arasından seçim yapar. Model, yanıta asla kendi yazdığı bir kodu ya da bilgiyi eklemez. Kanıt yetersiz kaldığında RepoMind "bilmiyorum" der.
 
-## Features
+## Özellikler
 
-- **Add a public GitHub repository by URL.** It is cloned safely, parsed and indexed in the background, with progress, readable errors and a retry.
-- **Browse the code as committed.** A file tree and a code view with line numbers and syntax highlighting, read from Git at the indexed commit. Links such as `…/blob/<commit>/src/App.ts#L12-L20` always open the same lines, and for a repository added from GitHub, a button opens them there too.
-- **Search code three ways.** Keyword (BM25), semantic (vector search with pgvector), or hybrid, which fuses both with Reciprocal Rank Fusion. Each result shows why it was found and opens at its lines.
-- **Ask in Turkish or English.** Turkish questions are translated locally, and both wordings are searched. Code, identifiers and config keys stay unchanged.
-- **Experimental AI analysis.** A local model, `qwen2.5:7b` on Ollama, chooses among the lines found, or declines. Lines that exist in Git, lines that passed the evidence rule, and the model's own sentence are shown as separate, labelled things.
-- **Local and private by default.** It listens only on `127.0.0.1`, embeddings run on the CPU, and a GPU is optional.
-- **Treats repositories as hostile.** Code is never executed, secrets and credentials stay out of the index, prompt injection in code is contained, and everything is rendered as text.
+- **Herkese açık bir GitHub deposunu URL'siyle ekleyin.** Depo arka planda güvenli biçimde klonlanır, ayrıştırılır (parse) ve indekslenir; ilerleme gösterilir, hatalar anlaşılır biçimde bildirilir ve iş yeniden denenebilir.
+- **Kodu commit'lendiği hâliyle gezin.** Bir dosya ağacı ile satır numaralı ve sözdizimi renklendirmeli bir kod görünümü; içerik, indekslenen commit'te Git'ten okunur. `…/blob/<commit>/src/App.ts#L12-L20` gibi bağlantılar her zaman aynı satırları açar; GitHub'dan eklenen bir depoda bir düğme aynı satırları GitHub'da da açar.
+- **Kodda üç yolla arayın.** Anahtar kelime (BM25), anlamsal (pgvector ile vektör araması) ya da ikisini Reciprocal Rank Fusion (RRF) ile birleştiren hibrit arama. Her sonuç neden bulunduğunu gösterir ve kendi satırlarında açılır.
+- **Türkçe veya İngilizce sorun.** Türkçe sorular yerel olarak çevrilir ve her iki ifade de aranır. Kod, tanımlayıcılar (identifier) ve yapılandırma anahtarları değiştirilmeden korunur.
+- **Deneysel yapay zekâ analizi.** Ollama üzerinde çalışan yerel bir model (`qwen2.5:7b`), bulunan satırlar arasından seçim yapar ya da hiçbirini seçmez. Git'te var olan satırlar, kanıt kuralını geçen satırlar ve modelin kendi cümlesi birbirinden ayrı ve etiketli olarak gösterilir.
+- **Varsayılan olarak yerel ve size özel.** Yalnızca `127.0.0.1` üzerinde dinler, embedding'ler CPU'da hesaplanır, GPU isteğe bağlıdır.
+- **Depoları güvenilmez (hostile) kabul eder.** Kod asla çalıştırılmaz, gizli bilgiler (secrets) ve kimlik bilgileri (credentials) indekse girmez, koddaki prompt injection (istem enjeksiyonu) girişimlerinin etkisi sınırlandırılır ve her şey düz metin olarak gösterilir.
 
-Java, TypeScript (including TSX), JavaScript, SQL and YAML are indexed. Other files appear in counts but are not searched.
+Java, TypeScript (TSX dahil), JavaScript, SQL ve YAML indekslenir. Diğer dosyalar sayımlarda görünür ama aranmaz.
 
-## Screenshots
+## Ekran görüntüleri
 
-Taken from the running application, on [StockGuard](https://github.com/melihuur1/stockguard) and the public [`expressjs/cors`](https://github.com/expressjs/cors). Nothing in them was edited.
+Çalışan uygulamadan, [StockGuard](https://github.com/melihuur1/stockguard) ve herkese açık [`expressjs/cors`](https://github.com/expressjs/cors) depoları üzerinde alınmıştır. Hiçbirinde düzenleme yapılmamıştır.
 
-**Hybrid search, asked in Turkish.** The question is also searched as its English translation, shown under the result count, and the first result is open at its lines.
+**Türkçe sorulmuş bir hibrit arama.** Soru, İngilizce çevirisiyle de aranır; bu çeviri sonuç sayısının altında, *also searched as* satırında görünür. İlk sonuç kendi satırlarında açıktır.
 
-![Hybrid search for "Süresi dolan rezervasyonlar nasıl serbest bırakılıyor?", with ReservationExpiryService.java open at lines 14 to 48](docs/screenshots/hybrid-search.png)
+![“Süresi dolan rezervasyonlar nasıl serbest bırakılıyor?” için hibrit arama; ReservationExpiryService.java dosyası 14-48. satırlarda açık](docs/screenshots/hybrid-search.png)
 
-**Adding a public GitHub repository.** The page follows each step while the repository is cloned, with nothing from it run, and then parsed and embedded.
+**Herkese açık bir GitHub deposu ekleme.** Depo klonlanırken (içinden hiçbir şey çalıştırılmadan), ardından ayrıştırılıp embedding'leri hesaplanırken sayfa her adımı takip eder.
 
-![Adding https://github.com/expressjs/cors, shown while it is being cloned](docs/screenshots/github-import.png)
+![https://github.com/expressjs/cors deposunun eklenmesi, klonlama sürerken](docs/screenshots/github-import.png)
 
-The code view at the top of this page shows a Java file at the indexed commit, opened from a link that selects lines 50 to 61.
+Bu sayfanın başındaki kod görünümü, indekslenen commit'teki bir Java dosyasını gösterir; dosya, 50-61. satırları seçen bir bağlantıyla açılmıştır.
 
-## How it works
+## Nasıl çalışır
 
 ```mermaid
 flowchart LR
-    U[GitHub URL or local repository] --> G[Git objects at one commit]
-    G --> F[Filters: secrets, generated and vendored files]
-    F --> T[Tree-sitter syntax trees, SQL statements, YAML structure]
-    T --> C[Chunks, symbols, imports]
-    C --> E[Local embeddings]
+    U["GitHub URL'si veya yerel depo"] --> G["Tek bir commit'teki Git nesneleri"]
+    G --> F["Filtreler: gizli bilgiler, üretilmiş ve vendor dosyaları"]
+    F --> T["Tree-sitter sözdizimi ağaçları, SQL ifadeleri, YAML yapısı"]
+    T --> C["Parçalar, semboller, import'lar"]
+    C --> E["Yerel embedding'ler"]
     C --> DB[(PostgreSQL + pgvector)]
     E --> DB
-    Q[Question in Turkish or English] --> S[BM25 + vector search, fused with RRF]
+    Q["Türkçe veya İngilizce soru"] --> S["BM25 + vektör araması, RRF ile birleştirilir"]
     DB --> S
-    S --> P[A few short passages, checked against Git]
-    P --> M[Optional local LLM: choose passages, or none]
-    M --> A[The repository's own lines, with labelled checks]
+    S --> P["Git'e karşı doğrulanmış birkaç kısa pasaj"]
+    P --> M["İsteğe bağlı yerel LLM: pasajları seçer ya da hiçbirini seçmez"]
+    M --> A["Deponun kendi satırları, etiketli kontrollerle"]
 ```
 
-1. **Read** one commit from Git's object database. Analyzed repositories are never modified, checked out or executed.
-2. **Parse** Java, TypeScript and JavaScript with Tree-sitter into syntax-aligned chunks, with their symbols and imports. SQL is split into statements and YAML into its structure.
-3. **Exclude** hidden, generated, vendored and build files, and anything that looks like a credential.
-4. **Embed** chunks locally, caching by content so unchanged code is never embedded twice.
-5. **Search** with BM25 and pgvector, fused with Reciprocal Rank Fusion, and translate Turkish questions locally.
-6. **Answer** by narrowing results to a few short passages with no model, then let an optional LLM choose among them. Each passage is checked against Git, and lines that share too little with the question cannot count as evidence.
+1. **Okuma:** Git'in nesne veritabanından tek bir commit okunur. Analiz edilen depolar asla değiştirilmez, checkout edilmez ya da çalıştırılmaz.
+2. **Ayrıştırma:** Java, TypeScript ve JavaScript, Tree-sitter ile sözdizimine uygun parçalara (chunk) ayrılır; sembolleri ve import'ları da çıkarılır. SQL ifadelere (statement), YAML ise kendi yapısına göre bölünür.
+3. **Dışarıda bırakma:** Gizli (hidden), üretilmiş (generated), üçüncü taraflardan kopyalanmış (vendored) ve derleme (build) dosyaları ile kimlik bilgisine benzeyen her şey dışarıda bırakılır.
+4. **Embedding:** Parçaların embedding'leri yerel olarak hesaplanır; içerik bazında önbelleğe alındığı için değişmeyen kodun embedding'i asla iki kez hesaplanmaz.
+5. **Arama:** BM25 ve pgvector ile aranır, sonuçlar Reciprocal Rank Fusion ile birleştirilir; Türkçe sorular yerel olarak çevrilir.
+6. **Yanıtlama:** Sonuçlar, hiçbir model kullanılmadan birkaç kısa pasaja (passage) indirgenir; ardından isteğe bağlı bir LLM bunlar arasından seçim yapar. Her pasaj Git'e karşı doğrulanır; soruyla çok az ortak terimi olan satırlar kanıt sayılamaz.
 
-| Layer | Technology |
+| Katman | Teknoloji |
 | --- | --- |
-| Backend | Python 3.11+, FastAPI, Uvicorn |
-| Parsing | Tree-sitter syntax trees (AST) for Java, TypeScript, TSX and JavaScript, plus SQL statement and YAML structure chunking |
-| Storage | PostgreSQL 17 with pgvector, in Docker |
-| Embeddings | [`intfloat/multilingual-e5-small`](https://huggingface.co/intfloat/multilingual-e5-small), 384 dimensions, through fastembed and ONNX Runtime, on the CPU |
-| Search | BM25 and cosine similarity, fused with Reciprocal Rank Fusion |
-| Translation | Opus-MT Turkish to English through CTranslate2, on the CPU, and the LLM when it is running |
-| LLM, optional | `qwen2.5:7b` on Ollama in Docker, or any OpenAI-compatible endpoint |
-| Frontend | React 19, TypeScript, Vite, TanStack Query, React Router, highlight.js through lowlight |
-| Tests | pytest, Vitest, Playwright in Edge or Chrome |
+| Arka uç (backend) | Python 3.11+, FastAPI, Uvicorn |
+| Ayrıştırma | Java, TypeScript, TSX ve JavaScript için Tree-sitter sözdizimi ağaçları (AST); ayrıca SQL ifadesi ve YAML yapısı bazında parçalama |
+| Veri depolama | Docker'da, pgvector eklentili PostgreSQL 17 |
+| Embedding'ler | [`intfloat/multilingual-e5-small`](https://huggingface.co/intfloat/multilingual-e5-small), 384 boyutlu; fastembed ve ONNX Runtime aracılığıyla CPU'da |
+| Arama | BM25 ve kosinüs benzerliği, Reciprocal Rank Fusion ile birleştirilir |
+| Çeviri | CTranslate2 üzerinden CPU'da çalışan Opus-MT (Türkçeden İngilizceye); LLM çalışıyorsa o da kullanılır |
+| LLM (isteğe bağlı) | Docker'daki Ollama üzerinde `qwen2.5:7b` ya da OpenAI uyumlu herhangi bir uç nokta (endpoint) |
+| Ön yüz (frontend) | React 19, TypeScript, Vite, TanStack Query, React Router, lowlight aracılığıyla highlight.js |
+| Testler | pytest, Vitest, Edge veya Chrome'da Playwright |
 
-Design and trade-offs: [docs/architecture.md](docs/architecture.md). Measurements: [docs/evaluation.md](docs/evaluation.md).
+Tasarım ve ödünleşimler (trade-off): [docs/architecture.md](docs/architecture.md) (İngilizce). Ölçümler: [docs/evaluation.md](docs/evaluation.md) (İngilizce).
 
-## Getting started on Windows
+## Windows'ta başlarken
 
-| You need | Version | Notes |
+| Gerekenler | Sürüm | Notlar |
 | --- | --- | --- |
-| Windows 10 or 11 | | Developed and tested on Windows 11. macOS and Linux should work, but are untested |
-| [Python](https://www.python.org/downloads/) | 3.11 or newer | Tested with 3.13 |
-| [Node.js](https://nodejs.org/) | 20 or newer | Only to build the web client. Tested with 26 |
-| [Git](https://git-scm.com/download/win) | any recent | Tested with 2.51 |
-| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | with WSL 2 | Runs PostgreSQL, and optionally the LLM |
-| Memory | see notes | The RepoMind process used 1 to 1.9 GB here, besides Docker. The 7B model needs about 6.4 GB more |
-| GPU | none needed | An NVIDIA GPU can speed up the optional LLM |
+| Windows 10 veya 11 | | Windows 11'de geliştirildi ve test edildi. macOS ve Linux'ta da çalışması beklenir, ancak test edilmedi |
+| [Python](https://www.python.org/downloads/) | 3.11 veya üzeri | 3.13 ile test edildi |
+| [Node.js](https://nodejs.org/) | 20 veya üzeri | Yalnızca web istemcisini derlemek için. 26 ile test edildi |
+| [Git](https://git-scm.com/download/win) | güncel herhangi bir sürüm | 2.51 ile test edildi |
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | WSL 2 ile | PostgreSQL'i ve isteğe bağlı olarak LLM'i çalıştırır |
+| Bellek | notlara bakın | RepoMind süreci geliştirme makinesinde, Docker'ın dışında 1 ile 1,9 GB arası bellek kullandı. 7B model yaklaşık 6,4 GB daha gerektirir |
+| GPU | gerekmez | Bir NVIDIA GPU, isteğe bağlı LLM'i hızlandırabilir |
 
-In PowerShell, from the folder where you keep projects:
+PowerShell'de, projelerinizi tuttuğunuz klasörden:
 
 ```powershell
 git clone https://github.com/melihuur1/repomind-ai.git
@@ -106,138 +108,142 @@ py -3 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
 Copy-Item .env.example .env
 
-docker compose up -d db              # PostgreSQL + pgvector on 127.0.0.1:55432
+docker compose up -d db              # 127.0.0.1:55432 üzerinde PostgreSQL + pgvector
 
 npm --prefix web ci
-npm --prefix web run build           # builds the web client into web\dist
+npm --prefix web run build           # web istemcisini web\dist içine derler
 
 .\.venv\Scripts\python.exe -m repomind serve
 ```
 
-Open <http://127.0.0.1:7321>. The commands call the virtual environment's Python directly, so PowerShell's script policy does not get in the way of activating it. On macOS or Linux, use `python3 -m venv .venv`, `.venv/bin/python` and `cp .env.example .env`.
+<http://127.0.0.1:7321> adresini açın. Komutlar sanal ortamın Python'unu doğrudan çağırır; böylece PowerShell'in betik çalıştırma ilkesi (execution policy) sanal ortamı etkinleştirmeye engel olmaz. macOS veya Linux'ta `python3 -m venv .venv`, `.venv/bin/python` ve `cp .env.example .env` kullanın.
 
-### Your first repository
+### Önce bir depo ekleyin
 
-Paste a public repository's address, such as `https://github.com/expressjs/cors`, into **Analyze a public GitHub repository** and press **Analyze**. The page shows each step while you keep working, then offers **Open**.
+`https://github.com/expressjs/cors` gibi herkese açık bir deponun adresini **Analyze a public GitHub repository** (herkese açık bir GitHub deposunu analiz et) alanına yapıştırın ve **Analyze** düğmesine basın. Siz çalışmaya devam ederken sayfa her adımı gösterir, iş bitince **Open** (aç) seçeneğini sunar.
 
-The first indexing downloads the embedding and translation models into `.models\`, about 0.6 GB, once. After that, on a laptop CPU, a small repository took about 10 seconds, and one of 59 source files and 426 chunks took 27 seconds.
+İlk indeksleme, embedding ve çeviri modellerini (yaklaşık 0,6 GB) bir kez `.models\` klasörüne indirir. Sonrasında, bir dizüstü bilgisayar CPU'sunda küçük bir deponun indekslenmesi yaklaşık 10 saniye, 59 kaynak dosya ve 426 parçadan oluşan bir deponunki ise 27 saniye sürdü.
 
-To index a repository you already have on disk instead, which can be private:
+Bunun yerine diskinizde zaten bulunan, özel (private) de olabilecek bir depoyu indekslemek için:
 
 ```powershell
 .\.venv\Scripts\python.exe -m repomind index --path "C:\path\to\repository"
 ```
 
-### AI analysis, optional
+### Yapay zekâ analizi (isteğe bağlı)
 
-Search, the file tree and the code view need no model. To let a local model choose among the lines found, which needs no account or API key:
+Arama, dosya ağacı ve kod görünümü model gerektirmez. Bulunan satırlar arasından yerel bir modelin seçim yapmasını istiyorsanız (hesap ya da API anahtarı gerekmez):
 
 ```powershell
 docker compose --profile llm up -d ollama
-docker exec repomind-ollama ollama pull qwen2.5:7b      # about 4.7 GB, once
+docker exec repomind-ollama ollama pull qwen2.5:7b      # yaklaşık 4,7 GB, bir kez
 ```
 
-Then remove the `#` from these two lines in `.env`, and restart `repomind serve`:
+Ardından `.env` dosyasındaki şu iki satırın başındaki `#` işaretini kaldırın ve `repomind serve` komutunu yeniden başlatın:
 
 ```bash
 REPOMIND_LLM_BASE_URL=http://127.0.0.1:11535/v1
 REPOMIND_LLM_MODEL=qwen2.5:7b
 ```
 
-The model can be started and stopped while RepoMind runs, and the status in the top bar follows it. `docker compose stop ollama` gives its memory back. The container keeps one model loaded at a time and is limited to 8 GB.
+Model, RepoMind çalışırken başlatılıp durdurulabilir; üst çubuktaki durum göstergesi bunu takip eder. `docker compose stop ollama` modelin kullandığı belleği geri verir. Konteyner aynı anda yalnızca bir modeli yüklü tutar ve 8 GB ile sınırlıdır.
 
-### With or without a GPU
+### GPU ile veya GPU olmadan
 
-**Without a GPU** nothing changes: this is the default, and only the optional LLM is slower. On the development machine one Turkish question took about 50 seconds on the CPU, including loading the model.
+**GPU olmadan** hiçbir şey değişmez: varsayılan budur ve yalnızca isteğe bağlı LLM daha yavaş çalışır. Geliştirme makinesinde tek bir Türkçe soru, modelin yüklenmesi dahil, CPU'da yaklaşık 50 saniye sürdü.
 
-**With an NVIDIA GPU**, add these two lines to `.env` and run `docker compose --profile llm up -d ollama` again. Layers that fit in the GPU's memory run there. On a 4 GB RTX 3050 the same question took about 12 seconds.
+**NVIDIA GPU ile** şu iki satırı `.env` dosyasına ekleyin ve `docker compose --profile llm up -d ollama` komutunu yeniden çalıştırın. Modelin GPU belleğine sığan katmanları orada çalışır. 4 GB'lık bir RTX 3050'de aynı soru yaklaşık 12 saniye sürdü.
 
 ```bash
 COMPOSE_PATH_SEPARATOR=,
 COMPOSE_FILE=compose.yaml,compose.gpu.yaml
 ```
 
-Those are single questions on one machine, not benchmarks.
+Bunlar tek bir makinede ölçülmüş tekil sorulardır; kıyaslama (benchmark) sonucu değildir.
 
-### Common problems
+### Sık karşılaşılan sorunlar
 
-| What you see | Why | What to do |
+| Gördüğünüz | Nedeni | Yapılacak |
 | --- | --- | --- |
-| `Port 7321 cannot be used` | Another program holds it, or Windows reserves the range | Add `--port 7400` to `repomind serve`, or choose another free port |
-| `The web client is not built` | `web\dist` does not exist yet | `npm --prefix web ci`, then `npm --prefix web run build`. No restart is needed |
-| The page cannot load repositories, and `/api/health` reports `"database": false` | The database container is not running | `docker compose up -d db`, and check `docker compose ps` |
-| **AI not set up** in the top bar | No model is configured in `.env` | See [AI analysis](#ai-analysis-optional) |
-| **AI offline** | Ollama is not running | `docker compose --profile llm up -d ollama` |
-| **AI model missing** | The model was not pulled | `docker exec repomind-ollama ollama pull qwen2.5:7b` |
-| **AI paused** | Less than 4 GB of memory is free | Close something, and ask again |
-| `GitHub is limiting requests from this machine` | GitHub's anonymous API allows about 60 requests an hour | Wait, then press **Retry** |
-| `Git on Windows cannot write a clone this deep in the folder tree` | The clone's path would pass 260 characters | Set `REPOMIND_DATA_DIR=C:\repomind-data` in `.env`, or keep the project in a short path |
-| `npm warn install-scripts … esbuild` during `npm ci` | npm 11 does not run install scripts unless approved | Harmless: the build works without it |
-| A Hugging Face warning about symlinks | Windows without Developer Mode | Harmless. `HF_HUB_DISABLE_SYMLINKS_WARNING=1` silences it |
+| `Port 7321 cannot be used` | Portu başka bir program kullanıyor ya da Windows bu port aralığını ayırmış | `repomind serve` komutuna `--port 7400` ekleyin ya da başka boş bir port seçin |
+| `The web client is not built` | `web\dist` henüz yok | `npm --prefix web ci`, ardından `npm --prefix web run build`. Yeniden başlatma gerekmez |
+| Sayfa depoları yükleyemiyor ve `/api/health` `"database": false` bildiriyor | Veritabanı konteyneri çalışmıyor | `docker compose up -d db`, ardından `docker compose ps` ile kontrol edin |
+| Üst çubukta **AI not set up** (yapay zekâ ayarlanmadı) | `.env` içinde model yapılandırılmamış | Bkz. [Yapay zekâ analizi](#yapay-zekâ-analizi-isteğe-bağlı) |
+| **AI offline** (yapay zekâ çevrim dışı) | Ollama çalışmıyor | `docker compose --profile llm up -d ollama` |
+| **AI model missing** (model eksik) | Model indirilmemiş (pull edilmemiş) | `docker exec repomind-ollama ollama pull qwen2.5:7b` |
+| **AI paused** (yapay zekâ duraklatıldı) | 4 GB'tan az boş bellek var | Bazı programları kapatın ve yeniden sorun |
+| `GitHub is limiting requests from this machine` | GitHub'ın anonim API'si saatte yaklaşık 60 isteğe izin verir | Bekleyin, ardından **Retry** (yeniden dene) düğmesine basın |
+| `Git on Windows cannot write a clone this deep in the folder tree` | Klonun yolu 260 karakteri aşacak | `.env` içinde `REPOMIND_DATA_DIR=C:\repomind-data` ayarlayın ya da projeyi kısa bir yolda tutun |
+| `npm ci` sırasında `npm warn install-scripts … esbuild` | npm 11, onaylanmadıkça kurulum betiklerini (install scripts) çalıştırmaz | Zararsızdır: derleme bu betik olmadan da çalışır |
+| Sembolik bağlantılarla (symlink) ilgili bir Hugging Face uyarısı | Geliştirici Modu (Developer Mode) kapalı bir Windows | Zararsızdır. `HF_HUB_DISABLE_SYMLINKS_WARNING=1` uyarıyı susturur |
 
-## Using it
+## Kullanım
 
-- **Repositories:** what is indexed, with commit, languages and counts. Repositories added by URL can be removed, which deletes only RepoMind's index and clone. To pick up new commits, add the same address again. The same commit is never indexed twice.
-- **Files:** click line numbers to select a range, with Shift for several lines, and copy the link. **GitHub** opens the same lines there.
-- **Search** (`/` focuses it): hybrid suits most questions, keyword suits exact names such as `cancelReservation` or `token-ttl`, and semantic suits descriptions. Test code is left out unless you tick **Tests** or the question mentions tests.
-- **Experimental AI Analysis:** ask about the open repository in Turkish or English. What each part of a reply means:
+Arayüz İngilizcedir. Aşağıda düğme ve etiketler arayüzdeki özgün adlarıyla yazılmış, anlamları Türkçe açıklanmıştır.
 
-| Shown as | What it means | What it does not mean |
+- **Repositories (depolar):** Neyin indekslendiğini; commit'i, dilleri ve sayılarıyla gösterir. URL ile eklenen depolar kaldırılabilir; bu yalnızca RepoMind'ın indeksini ve klonunu siler. Yeni commit'leri almak için aynı adresi yeniden ekleyin. Aynı commit asla iki kez indekslenmez.
+- **Files (dosyalar):** Bir aralık seçmek için satır numaralarına tıklayın, birden çok satır için Shift'i kullanın ve bağlantıyı kopyalayın. **GitHub** düğmesi aynı satırları GitHub'da açar.
+- **Search (arama)** (`/` tuşu imleci arama kutusuna götürür): Çoğu soruya hibrit (Hybrid) arama uyar; anahtar kelime (Keyword) araması `cancelReservation` veya `token-ttl` gibi tam adlar için, anlamsal (Semantic) arama ise bir şeyi tarif eden sorgular için uygundur. **Tests** kutusunu işaretlemediğiniz ya da soru testlerden söz etmediği sürece test kodu dışarıda bırakılır.
+- **Experimental AI Analysis (deneysel yapay zekâ analizi):** Açık olan depo hakkında Türkçe veya İngilizce soru sorun. Bir yanıtın her bölümünün anlamı:
+
+| Görünen etiket | Anlamı | Anlamına gelmeyen |
 | --- | --- | --- |
-| **In Git at `abc1234`** | These exact lines exist in that commit. This is checked | That they answer the question |
-| **The model chose these lines** | The model picked them, and they share enough words with the question to pass the evidence rule | That they are right. It is the model's judgement, and often wrong |
-| **Model's reading** | One sentence from the model, collapsed and marked as unverified | That it is true. These sentences have described features that do not exist |
-| **Not enough evidence** | "I do not know": no lines passed | That the code certainly lacks it. Search misses things |
-| **Source to review** | The model pointed here, and the evidence rule did not accept it | An answer |
-| **Closest lines found** | What search found, with no judgement from a model | An answer |
-| **AI unavailable** | The model is off or memory is low, so it was not asked | A failure: everything else keeps working |
+| **In Git at `abc1234`** (Git'te, `abc1234` commit'inde var) | Bu satırlar o commit'te birebir bu hâliyle vardır. Bu doğrulanır | Soruyu yanıtladıkları |
+| **The model chose these lines** (model bu satırları seçti) | Model bu satırları seçti ve satırlar soruyla, kanıt kuralını geçecek kadar ortak kelime paylaşıyor | Doğru oldukları. Bu modelin yargısıdır ve sık sık yanılır |
+| **Model's reading** (modelin yorumu) | Modelden gelen tek bir cümle; daraltılmış (collapsed) bir bölümde, doğrulanmamış olarak işaretlenmiş hâlde gösterilir | Doğru olduğu. Bu tür cümlelerin var olmayan özellikler anlattığı görüldü |
+| **Not enough evidence** (yeterli kanıt yok) | "Bilmiyorum": hiçbir satır kontrolü geçmedi | Kodda bunun kesinlikle bulunmadığı. Arama bazı şeyleri kaçırır |
+| **Source to review** (incelenecek kaynak) | Model burayı gösterdi, ancak kanıt kuralı kabul etmedi | Bir yanıt olduğu |
+| **Closest lines found** (bulunan en yakın satırlar) | Aramanın bulduğu satırlar; hiçbir model bunları değerlendirmedi | Bir yanıt olduğu |
+| **AI unavailable** (yapay zekâ kullanılamıyor) | Model kapalı ya da bellek az olduğu için modele sorulmadı | Bir arıza olduğu: geri kalan her şey çalışmaya devam eder |
 
-## AI accuracy
+## Yapay zekâ doğruluğu
 
-The answer layer was measured on two real projects, [StockGuard](https://github.com/melihuur1/stockguard) (Java) and [SyncNotes](https://github.com/melihuur1/syncnotes) (TypeScript). **The final measurement did not pass its own targets.** A set of 24 Turkish questions, fixed before the run and run once with `qwen2.5:7b`, gave:
+Yanıt katmanı iki gerçek proje üzerinde ölçüldü: [StockGuard](https://github.com/melihuur1/stockguard) (Java) ve [SyncNotes](https://github.com/melihuur1/syncnotes) (TypeScript). **Son ölçüm, önceden belirlenen kendi hedeflerini tutturamadı.** Çalıştırmadan önce sabitlenen ve `qwen2.5:7b` ile yalnızca bir kez çalıştırılan 24 Türkçe soruluk set şu sonuçları verdi:
 
-| Final set, Turkish, `qwen2.5:7b` | Result | Target set in advance |
+| Son set, Türkçe, `qwen2.5:7b` | Sonuç | Önceden belirlenen hedef |
 | --- | --- | --- |
-| Right source, of 16 answerable | 8 | at least 8 |
-| Wrong source, of 16 | **4** | at most 2 |
-| No answer, of 16 | 4 | |
-| Unanswerable questions refused, of 8 | **6** | at least 7 |
-| File or line references that do not exist | 0 of 120 | 0 |
-| Graded correct, partly correct, wrong | 9, 1, 2 | |
-| Mean time per question | 6.6 s | |
+| Doğru kaynak, 16 yanıtlanabilir sorudan | 8 | en az 8 |
+| Yanlış kaynak, 16 sorudan | **4** | en fazla 2 |
+| Yanıt yok, 16 sorudan | 4 | |
+| Reddedilen yanıtlanamaz sorular, 8 sorudan | **6** | en az 7 |
+| Var olmayan dosya veya satır referansları | 120'de 0 | 0 |
+| Notlandırma: doğru, kısmen doğru, yanlış | 9, 1, 2 | |
+| Soru başına ortalama süre | 6,6 sn | |
 
-- **Every line shown exists in Git, and that does not make it an answer.** Of the 16, the right lines never reached the model for 6, lost in search for 3 and in passage selection for 3, and the model chose other lines for 2.
-- **Finding a source and choosing it are separate problems.** Asked how StockGuard stops stock going negative, the model is now always offered the database constraints that do it, and it still mostly picks code that only detects negative counters after a run. A [later change](docs/architecture.md#a-question-that-names-its-repository) fixed what reaches the model when a question names its repository, not what the model chooses.
-- **This is not an independent test.** The same developer wrote the questions and the system, and one reviewer graded the answers. 24 questions are too few to generalize.
+Kısacası: cevabı depoda bulunan 16 sorunun yalnızca yarısında doğru kaynak gösterildi; 4'ünde gösterilen kaynak yanlıştı, 4'ünde ise hiç yanıt verilmedi. Cevabı depoda olmayan 8 sorudan 6'sı doğru biçimde reddedildi, 2'si ise yanıt aldı. 120 dosya ve satır referansının hiçbiri uydurma değildi; ancak bu yalnızca satırların var olduğunu gösterir, soruyu yanıtladıklarını değil.
 
-Search itself was measured separately: the right code reaches the five passages for 65 to 68 of 85 Turkish development questions. How the project got here, including a rejected reranker, a pilot, and a fourth set that also did not pass, is in [docs/evaluation.md](docs/evaluation.md), with each result as it was.
+- **Gösterilen her satır Git'te vardır; ama bu, o satırı bir yanıt yapmaz.** 16 sorunun 6'sında doğru satırlar modele hiç ulaşmadı (3'ünde aramada, 3'ünde pasaj seçiminde kayboldu); 2'sinde ise model başka satırları seçti.
+- **Kaynağı bulmak ile onu seçmek ayrı sorunlardır.** StockGuard'ın stoğun negatife düşmesini nasıl engellediği sorulduğunda, bunu sağlayan veritabanı kısıtları (constraint) artık her seferinde modele sunuluyor; buna rağmen model çoğunlukla, negatif sayaçları yalnızca bir çalıştırmanın ardından tespit eden kodu seçiyor. [Sonraki bir değişiklik](docs/architecture.md#a-question-that-names-its-repository) (İngilizce), soru deponun adını andığında modele neyin ulaştığını düzeltti; modelin neyi seçtiğini değil.
+- **Bu bağımsız bir test değildir.** Soruları ve sistemi aynı geliştirici yazdı, yanıtları tek bir değerlendirici notlandırdı. 24 soru, genelleme yapmak için çok azdır.
 
-## Security
+Aramanın kendisi ayrıca ölçüldü: 85 Türkçe geliştirme sorusunun (sistemin üzerinde ayarlandığı sorular; bağımsız bir ölçüm değildir) 65 ila 68'inde doğru kod beş pasaja ulaşıyor. Projenin buraya nasıl geldiği (reddedilen bir reranker, bir pilot çalışma ve yine geçemeyen dördüncü bir soru seti dahil), her sonuç olduğu gibi aktarılarak [docs/evaluation.md](docs/evaluation.md) (İngilizce) belgesinde anlatılır.
 
-RepoMind reads code written by strangers, so it treats both the repository and the address of it as hostile:
+## Güvenlik
 
-- **Addresses:** only `https://github.com/owner/name` is accepted. Every request is rebuilt from the owner and name, so it cannot reach another host or a local service. Private repositories are refused.
-- **Cloning:** only Git's own objects are written, with no working files, hooks, submodules, filters or LFS. Only HTTPS is allowed, and Git redirects are off. This machine's Git settings and stored credentials take no part.
-- **Limits, all [configurable](.env.example):** 300 MB on GitHub, 600 MB cloned, 20,000 files, 5,000 source files, 100 MB of source, 5 minutes to clone and 30 minutes in all. Below 4 GB of free memory, indexing does not start.
-- **Secrets:** files and lines that look like credentials are never indexed or shown.
-- **Prompt injection:** code reaches the model inside tags it cannot close, the model only refers to passages by id, and its reply is checked.
-- **The browser:** everything from a repository is rendered as text, behind a strict content security policy. The server answers only to its own host names, and accepts changes only from its own pages, so another website cannot drive it.
+RepoMind yabancıların yazdığı kodu okur; bu yüzden hem depoyu hem de deponun adresini güvenilmez (hostile) kabul eder:
 
-Details: [docs/architecture.md](docs/architecture.md#web-application).
+- **Adresler:** Yalnızca `https://github.com/owner/name` biçimi kabul edilir. Her istek, sahip (owner) ve ad (name) bilgisinden yeniden oluşturulur; böylece başka bir sunucuya ya da yerel bir servise ulaşamaz. Özel (private) depolar reddedilir.
+- **Klonlama:** Yalnızca Git'in kendi nesneleri yazılır; çalışma dosyaları, hook'lar, submodule'ler, filtreler ya da LFS kullanılmaz. Yalnızca HTTPS'e izin verilir ve Git yönlendirmeleri kapalıdır. Bu makinenin Git ayarları ve kayıtlı kimlik bilgileri sürece dahil olmaz.
+- **Sınırlar, tümü [yapılandırılabilir](.env.example):** GitHub'da 300 MB, klonlanmış hâlde 600 MB, 20.000 dosya, 5.000 kaynak dosya, 100 MB kaynak kod, klonlama için 5 dakika ve toplamda 30 dakika. Boş bellek 4 GB'ın altındaysa indeksleme başlamaz.
+- **Gizli bilgiler (secrets):** Kimlik bilgisine benzeyen dosya ve satırlar asla indekslenmez ya da gösterilmez.
+- **Prompt injection:** Kod modele, kapatamayacağı etiketlerin (tag) içinde ulaşır; model pasajlara yalnızca kimlikleriyle (id) atıfta bulunur ve yanıtı kontrol edilir.
+- **Tarayıcı:** Depodan gelen her şey, katı bir içerik güvenlik politikasının (Content Security Policy) arkasında düz metin olarak gösterilir. Sunucu yalnızca kendi ana makine adlarına (host name) yanıt verir ve değişiklikleri yalnızca kendi sayfalarından kabul eder; böylece başka bir web sitesi onu yönetemez.
 
-## Tests
+Ayrıntılar: [docs/architecture.md](docs/architecture.md#web-application) (İngilizce).
+
+## Testler
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest        # about 900 tests: parsing, search, answers, API, indexing, security
-npm --prefix web test                       # the web client's own logic
+.\.venv\Scripts\python.exe -m pytest        # yaklaşık 900 test: ayrıştırma, arama, yanıtlar, API, indeksleme, güvenlik
+npm --prefix web test                       # web istemcisinin kendi mantığı
 npm --prefix web run build
-npm --prefix web run test:e2e               # Playwright, in the installed Edge
+npm --prefix web run test:e2e               # Playwright, kurulu Edge tarayıcısında
 ```
 
-Tests that need the database, a running LLM or the evaluated repositories skip themselves without them. The browser tests drive the real API, database, Git and clone command on a fixture repository that holds secrets, prompt injection and markup in its file names, code and commit messages. Only the models and GitHub are stood in for, so they need no network, GPU or model. `REPOMIND_E2E_BROWSER=chrome` uses Chrome instead.
+Veritabanına, çalışan bir LLM'e ya da değerlendirilen depolara ihtiyaç duyan testler, bunlar yoksa kendilerini atlar. Tarayıcı testleri gerçek API'yi, veritabanını, Git'i ve klonlama komutunu; dosya adlarında, kodunda ve commit mesajlarında gizli bilgiler, prompt injection ve HTML işaretlemesi (markup) barındıran bir test deposu (fixture) üzerinde çalıştırır. Yalnızca modellerin ve GitHub'ın yerine sahteleri kullanılır; bu yüzden ağ, GPU ya da model gerekmez. `REPOMIND_E2E_BROWSER=chrome` ile Edge yerine Chrome kullanılır.
 
 <details>
-<summary>Command line, and reproducing the evaluation</summary>
+<summary>Komut satırı ve değerlendirmeyi yeniden üretme</summary>
 
 ```powershell
 .\.venv\Scripts\python.exe -m repomind repos
@@ -246,7 +252,7 @@ Tests that need the database, a running LLM or the evaluated repositories skip t
 .\.venv\Scripts\python.exe -m repomind ask "Rezervasyon iptali nerede yönetiliyor?" --repo stockguard
 ```
 
-To reproduce the evaluation, clone the two repositories, set `REPOMIND_REPO_STOCKGUARD` and `REPOMIND_REPO_SYNCNOTES` in `.env`, and index the pinned commits:
+Değerlendirmeyi yeniden üretmek için iki depoyu klonlayın, `.env` içinde `REPOMIND_REPO_STOCKGUARD` ve `REPOMIND_REPO_SYNCNOTES` değerlerini ayarlayın ve sabitlenmiş (pinned) commit'leri, yani ölçümün yapıldığı commit'leri indeksleyin:
 
 ```powershell
 .\.venv\Scripts\python.exe -m repomind index --path "C:\path\to\stockguard" --name stockguard --ref b6698d81475232f2b8ca95af45336fae5665cd81
@@ -255,58 +261,58 @@ To reproduce the evaluation, clone the two repositories, set `REPOMIND_REPO_STOC
 .\.venv\Scripts\python.exe -m repomind evaluate-ask --dataset eval/questions_v5.yaml --output eval/results/my-run.json
 ```
 
-`evaluate-ask` needs a configured LLM. It saves each question as it finishes and continues from there if stopped, does not start with less than 3 GB of memory free, and never replaces a finished result without `--overwrite`. The questions and gold labels were committed before the code they measure, and every gold span is checked by test against the pinned commit. See [docs/evaluation.md](docs/evaluation.md#reproducing).
+`evaluate-ask` yapılandırılmış bir LLM gerektirir. Her soruyu bittiği anda kaydeder ve durdurulursa kaldığı yerden devam eder; 3 GB'tan az boş bellek varsa başlamaz ve `--overwrite` verilmedikçe tamamlanmış bir sonucun üzerine asla yazmaz. Sorular ve altın (gold) etiketler, ölçtükleri koddan önce commit'lendi; her altın aralık (gold span), sabitlenmiş commit'e karşı bir testle kontrol edilir. Bkz. [docs/evaluation.md](docs/evaluation.md#reproducing) (İngilizce).
 
 </details>
 
-## Project structure
+## Proje yapısı
 
 ```text
-repomind/          Python package
-  ingest/          Git reading, filters, safe GitHub cloning
-  parsing/         Tree-sitter, SQL and YAML chunking
-  embeddings/      local embedding models
-  search/          BM25, vector search, fusion, translation, glossary
-  qa/              passages, evidence rule, prompts, verification, the ask engine
-  store/           PostgreSQL schema and queries
-  api/             FastAPI application and background indexing
-  evaluation/      evaluation runners and metrics
-web/               React and TypeScript client, with Vitest and Playwright tests
-eval/              question sets, gold labels, results and tools
-docs/              architecture, evaluation and plans
-compose.yaml       PostgreSQL, and Ollama under the llm profile
-compose.gpu.yaml   optional NVIDIA GPU for Ollama
+repomind/          Python paketi
+  ingest/          Git okuma, filtreler, güvenli GitHub klonlama
+  parsing/         Tree-sitter, SQL ve YAML parçalama
+  embeddings/      yerel embedding modelleri
+  search/          BM25, vektör araması, birleştirme (fusion), çeviri, terim sözlüğü
+  qa/              pasajlar, kanıt kuralı, prompt'lar, doğrulama, ask motoru
+  store/           PostgreSQL şeması ve sorguları
+  api/             FastAPI uygulaması ve arka planda indeksleme
+  evaluation/      değerlendirme çalıştırıcıları ve metrikler
+web/               React ve TypeScript istemcisi, Vitest ve Playwright testleriyle
+eval/              soru setleri, altın etiketler, sonuçlar ve araçlar
+docs/              mimari, değerlendirme ve planlar (İngilizce)
+compose.yaml       PostgreSQL ve llm profilinde Ollama
+compose.gpu.yaml   Ollama için isteğe bağlı NVIDIA GPU
 ```
 
-## Known limitations
+## Bilinen sınırlamalar
 
-- **AI answers are not reliable,** as [measured above](#ai-accuracy). Use them to find code, and read it.
-- **The model's sentences can be false.** They are labelled as unverified.
-- **A verified line is not a proven answer.** Lines are checked against Git. Whether they answer the question is not.
-- **Turkish is weaker than English** in search, and depends on an imperfect translation.
-- **For one person on one machine.** There are no accounts, quotas or sandbox, so it must not be exposed beyond `127.0.0.1`.
-- **Public GitHub repositories only** by URL, through GitHub's anonymous API, which allows about 60 requests an hour. Local repositories can be indexed from the command line.
-- **One commit per repository,** the default branch's latest.
-- **Five languages** are indexed: Java, TypeScript, JavaScript, SQL and YAML.
-- **Embeddings run on the CPU,** so a large repository takes a while. The largest added by URL so far had 426 chunks and took 27 seconds.
-- **Secret detection is pattern based.** It recognizes known token formats and credential keys, not every hardcoded password.
-- **The layout is for a desktop window,** down to about 1000 pixels wide.
-- **The evaluation is small:** two repositories, labelled and graded by one person.
+- **Yapay zekâ yanıtları güvenilir değildir;** [yukarıdaki ölçümde](#yapay-zekâ-doğruluğu) görüldüğü gibi. Onları kodu bulmak için kullanın ve kodu okuyun.
+- **Modelin cümleleri yanlış olabilir.** Doğrulanmamış olarak etiketlenirler.
+- **Doğrulanmış bir satır, kanıtlanmış bir yanıt değildir.** Satırlar Git'e karşı kontrol edilir; soruyu yanıtlayıp yanıtlamadıkları kontrol edilmez.
+- **Türkçe, aramada İngilizceden daha zayıftır** ve kusurlu bir çeviriye dayanır.
+- **Tek bir makinede tek bir kişi içindir.** Hesap, kota ya da sandbox yoktur; bu yüzden `127.0.0.1` dışına açılmamalıdır.
+- **URL ile yalnızca herkese açık GitHub depoları** eklenebilir; bu, saatte yaklaşık 60 isteğe izin veren GitHub'ın anonim API'si üzerinden yapılır. Yerel depolar komut satırından indekslenebilir.
+- **Depo başına tek commit:** varsayılan dalın (branch) en son commit'i.
+- **Beş dil** indekslenir: Java, TypeScript, JavaScript, SQL ve YAML.
+- **Embedding'ler CPU'da hesaplanır;** bu yüzden büyük bir deponun indekslenmesi zaman alır. URL ile şimdiye kadar eklenen en büyük depo 426 parçadan oluşuyordu ve 27 saniye sürdü.
+- **Gizli bilgi tespiti desen (pattern) tabanlıdır.** Bilinen token biçimlerini ve kimlik bilgisi anahtarlarını tanır; koda gömülü her parolayı değil.
+- **Arayüz düzeni masaüstü penceresi içindir;** yaklaşık 1000 piksel genişliğe kadar.
+- **Değerlendirme küçüktür:** iki depo; etiketleme ve notlandırma tek bir kişi tarafından yapıldı.
 
-The complete list is in [docs/architecture.md](docs/architecture.md#known-limitations).
+Listenin tamamı [docs/architecture.md](docs/architecture.md#known-limitations) (İngilizce) belgesindedir.
 
-## Third-party software and models
+## Üçüncü taraf yazılımlar ve modeller
 
-Models are downloaded at run time and are never part of this repository:
+Modeller çalışma zamanında indirilir ve hiçbir zaman bu deponun parçası değildir:
 
-| Model | Used for | License |
+| Model | Kullanım amacı | Lisans |
 | --- | --- | --- |
-| [`intfloat/multilingual-e5-small`](https://huggingface.co/intfloat/multilingual-e5-small) | Embeddings | MIT |
-| [`gaudi/opus-mt-tr-en-ctranslate2`](https://huggingface.co/gaudi/opus-mt-tr-en-ctranslate2), from [Helsinki-NLP Opus-MT](https://huggingface.co/Helsinki-NLP/opus-mt-tr-en) | Turkish to English translation | Apache-2.0 |
-| [`qwen2.5:7b`](https://ollama.com/library/qwen2.5), optional | Choosing passages | Apache-2.0 |
+| [`intfloat/multilingual-e5-small`](https://huggingface.co/intfloat/multilingual-e5-small) | Embedding'ler | MIT |
+| [`gaudi/opus-mt-tr-en-ctranslate2`](https://huggingface.co/gaudi/opus-mt-tr-en-ctranslate2), [Helsinki-NLP Opus-MT](https://huggingface.co/Helsinki-NLP/opus-mt-tr-en) modelinden | Türkçeden İngilizceye çeviri | Apache-2.0 |
+| [`qwen2.5:7b`](https://ollama.com/library/qwen2.5), isteğe bağlı | Pasaj seçimi | Apache-2.0 |
 
-`qwen2.5:3b` also works, but it is under the Qwen Research License rather than an open source license. The Python and npm dependencies are under permissive licenses such as MIT, BSD, Apache-2.0 and ISC, except `psycopg` (LGPL-3.0) and `certifi` (MPL-2.0), which are used unmodified as libraries. The containers run [pgvector](https://github.com/pgvector/pgvector) on PostgreSQL and [Ollama](https://github.com/ollama/ollama).
+`qwen2.5:3b` de çalışır, ancak açık kaynak bir lisans yerine Qwen Research License ile lisanslanmıştır. Python ve npm bağımlılıkları MIT, BSD, Apache-2.0 ve ISC gibi serbest (permissive) lisanslara sahiptir; istisnalar `psycopg` (LGPL-3.0), `certifi` (MPL-2.0) ve `tqdm` (MPL-2.0 ve MIT) olup bunlar değiştirilmeden, kütüphane olarak kullanılır. Konteynerler PostgreSQL üzerinde [pgvector](https://github.com/pgvector/pgvector) ve [Ollama](https://github.com/ollama/ollama) çalıştırır.
 
-## License
+## Lisans
 
-[MIT](LICENSE), © 2026 Melih Uğur. This covers RepoMind's own code. The dependencies and models above keep their own licenses.
+[MIT](LICENSE), © 2026 Melih Uğur. Bu lisans RepoMind'ın kendi kodunu kapsar. Yukarıdaki bağımlılıklar ve modeller kendi lisanslarına tabidir.
