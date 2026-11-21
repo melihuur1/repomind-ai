@@ -72,6 +72,7 @@ class TestAModelOnAnotherMachine:
             "REPOMIND_LLM_BASE_URL": "https://models.example.org/v1/", "REPOMIND_LLM_MODEL": "qwen2.5-coder:14b",
             "REPOMIND_LLM_API_KEY": "made-up-key", "REPOMIND_LLM_ALLOW_REMOTE": "1", "REPOMIND_LLM_MAX_TOTAL_COST_USD": "1",
             "REPOMIND_LLM_TIMEOUT_SECONDS": "120", "REPOMIND_LLM_SELECTION": "", "REPOMIND_LLM_LINKED_EVIDENCE": "",
+            "REPOMIND_LLM_PROVIDER": "", "REPOMIND_LLM_REASONING_EFFORT": "",
         }.items():
             monkeypatch.setenv(name, value)
         config = load_llm_config()
