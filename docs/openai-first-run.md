@@ -65,7 +65,7 @@ UPDATE llm_usage SET kind = 'legacy' WHERE kind = 'reported' AND created_at < '2
 | # | What | How to check it |
 | --- | --- | --- |
 | 1 | **A safe repository** | A small repository with nothing secret in it, in a database of its own (`REPOMIND_DATABASE_URL=…/repomind_openai_trial`). The main index takes no part. One made-up credential line in it, such as `const API_TOKEN = "made-up-token-value"`, shows whether it stays out |
-| 2 | **What would be sent** | `prompt_check.py --database repomind_openai_trial --repo <name> --questions <file>` before any real request: 0 prompts carrying a stored credential line, 0 passages flagged by their own rules |
+| 2 | **What would be sent** | `prompt_check.py --database repomind_openai_trial --repo <name> --questions <file> --must-not-contain <each planted fake value>` before any real request. Expect 0 prompts carrying a stored credential line, 0 holding a planted value, and 0 passages flagged by their own rules. A planted value withheld at indexing leaves no stored line to compare with, so `--must-not-contain` checks for it directly |
 | 3 | **A model, checked that day** | From OpenAI's model list. It must take Chat Completions with `response_format` `json_object`, and `temperature` 0, or, for a reasoning model, the `reasoning_effort` value that is set. Its thinking counts against `REPOMIND_LLM_MAX_OUTPUT_TOKENS`, 250 by default, so use a low effort or raise that limit |
 | 4 | **The key** | A project key in `.env` only. `git check-ignore .env` names the file, and `git status` does not list it. A spending limit on the OpenAI project as well, as a second guard |
 | 5 | **Consent** | `REPOMIND_LLM_ALLOW_REMOTE=1`. The page shows the "Sent to OpenAI" note |

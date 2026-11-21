@@ -8,8 +8,9 @@ line of code.
     python eval/tools/prompt_check.py --database repomind --repo stockguard --repo syncnotes
     python eval/tools/prompt_check.py --database repomind_openai_trial --repo trial --questions my-questions.yaml
 
-Each prompt is checked twice: for every line the index holds that the credential rules flag, and with the
-rules of each passage's own language. Lines that only another language's rules flag are listed apart, to
+Each prompt is checked for every line the index holds that the credential rules flag, with the rules of each
+passage's own language, and for any text given with --must-not-contain, such as a fake value planted in a test
+repository: an index that withheld the value has no line to compare with, and this still checks. Lines that only another language's rules flag are listed apart, to
 be looked at: they are usually a name such as `secret: config.jwtSecret`, and not a value.
 """
 
@@ -86,6 +87,7 @@ def main() -> int:
     parser.add_argument("--database", default="repomind", help="a database in RepoMind's container")
     parser.add_argument("--repo", action="append", required=True)
     parser.add_argument("--questions", help="a question file with repo and question fields, added to the ones that ask for secrets")
+    parser.add_argument("--must-not-contain", action="append", default=[], help="text no prompt may hold, such as a planted fake value")
     args = parser.parse_args()
 
     settings = Settings.load()
@@ -105,7 +107,7 @@ def main() -> int:
     safe = _NoUsageRecord(store)
     config = LLMConfig("http://127.0.0.1:1/v1", "stand-in")
     questions = _questions(args.questions, args.repo)
-    prompts = carrying = 0
+    prompts = carrying = holding_forbidden = 0
     by_own_rules: list[str] = []
     to_look_at: list[str] = []
     for number, (repo, question) in enumerate(questions, 1):
@@ -115,6 +117,8 @@ def main() -> int:
             prompts += 1
             if any(line in prompt for line in stored.get(repo, ())):
                 carrying += 1
+            if any(text in prompt for text in args.must_not_contain):
+                holding_forbidden += 1
             for path, start, end, text in _PASSAGE.findall(prompt):
                 language = LANGUAGE_BY_EXTENSION.get(Path(path).suffix.lower())
                 place = f"question {number}, {repo}: {path}:{start}-{end}"
@@ -126,13 +130,15 @@ def main() -> int:
 
     print(f"questions: {len(questions)}, prompts: {prompts}")
     print(f"prompts carrying a stored credential line: {carrying}")
+    if args.must_not_contain:
+        print(f"prompts holding a text given with --must-not-contain: {holding_forbidden}")
     print(f"passages flagged by their own language's rules: {len(by_own_rules)}")
     for line in by_own_rules:
         print(f"  {line}")
     print(f"passages to look at: {len(to_look_at)}")
     for line in to_look_at:
         print(f"  {line}")
-    return 1 if carrying or by_own_rules else 0
+    return 1 if carrying or holding_forbidden or by_own_rules else 0
 
 
 if __name__ == "__main__":
