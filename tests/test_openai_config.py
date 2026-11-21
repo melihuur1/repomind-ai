@@ -244,7 +244,7 @@ class TestReasoningEffort:
         settings(**OPENAI)
         assert load_llm_config().reasoning_effort is None
 
-    @pytest.mark.parametrize("value", ["none", "minimal", "low", "medium", "high", "xhigh"])
+    @pytest.mark.parametrize("value", ["none", "minimal", "low", "medium", "high", "xhigh", "max"])
     def test_each_value_the_api_names_is_kept(self, settings, value):
         settings(**OPENAI, REASONING_EFFORT=value)
         assert load_llm_config().reasoning_effort == value
@@ -255,7 +255,7 @@ class TestReasoningEffort:
 
     def test_an_unknown_value_is_named_with_the_ones_that_exist(self, settings):
         error = refused(settings, **OPENAI, REASONING_EFFORT="turbo")
-        assert "must be one of none, minimal, low, medium, high, xhigh" in str(error) and "'turbo'" in str(error)
+        assert "must be one of none, minimal, low, medium, high, xhigh, max" in str(error) and "'turbo'" in str(error)
         assert "depends on the model" in said(error)
 
     def test_it_is_not_taken_for_the_local_model(self, settings):

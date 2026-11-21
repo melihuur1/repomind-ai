@@ -14,6 +14,7 @@ import json
 import math
 import re
 import socket
+import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
@@ -30,7 +31,7 @@ OPENAI_BASE_URL = "https://api.openai.com/v1"
 _OPENAI_HOST = "api.openai.com"
 # The values the OpenAI API names for reasoning effort. Which of them a model accepts depends on the
 # model, so nothing here assumes that a model takes one.
-REASONING_EFFORTS = ("none", "minimal", "low", "medium", "high", "xhigh")
+REASONING_EFFORTS = ("none", "minimal", "low", "medium", "high", "xhigh", "max")
 # A key is sent in a request header: printable ASCII and no spaces.
 _KEY_CHARACTERS = re.compile(r"[!-~]+")
 # A setting's value is repeated in an error only when it is short and plain, so that a key pasted
@@ -233,11 +234,171 @@ class LLMClient(Protocol):
     def complete(self, system: str, user: str, max_output_tokens: int) -> LLMResponse: ...
 
 
+class LLMRequestError(RepoMindError):
+    """A request to the OpenAI API that got no usable answer.
+
+    ``kind`` says why: auth, forbidden, quota, rate_limit, bad_request, not_found, server, timeout,
+    connection, redirect or bad_response. The message never holds the server's own text or the key.
+    It is a RepoMindError, so everything that already falls back to search without a model still does.
+    """
+
+    def __init__(
+        self,
+        kind: str,
+        message: str,
+        hint: str | None = None,
+        *,
+        status: int | None = None,
+        request_id: str | None = None,
+        retry_after: float | None = None,
+    ) -> None:
+        super().__init__(f"{message} Request ID: {request_id}." if request_id else message, hint)
+        self.kind = kind
+        self.status = status
+        self.request_id = request_id
+        # Set only when the server asked to wait and a second try is allowed.
+        self.retry_after = retry_after
+
+
+class _RefuseRedirects(urllib.request.HTTPRedirectHandler):
+    """A redirect is not followed: it would take the key, and the code in the request, to another address."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: ANN001, ARG002
+        return None  # urllib then raises the redirect as an HTTPError
+
+
+_NO_REDIRECTS = urllib.request.build_opener(_RefuseRedirects)
+_sleep = time.sleep
+
+# A second try is made only when the server asked to wait, for a temporary rate limit or an overload,
+# and not for longer than this. Those requests were turned away, so the one request the budget allowed
+# for is still the only one that can cost anything.
+_MAX_RETRY_WAIT_SECONDS = 10.0
+# Words in a 429's type or code that mean the account needs its owner, and waiting will not help.
+_QUOTA_WORDS = ("quota", "credit", "billing", "spend_limit", "usage_limit")
+_IDENTIFIER = re.compile(r"[A-Za-z0-9_.-]{1,64}")
+_REQUEST_ID = re.compile(r"[A-Za-z0-9_-]{1,128}")
+
+
+def _plain(value: object, pattern: re.Pattern[str] = _IDENTIFIER) -> str | None:
+    return value if isinstance(value, str) and pattern.fullmatch(value) else None
+
+
+def _retry_after(headers: object) -> float | None:
+    """The wait the server asked for, in seconds. A date or anything else unclear means no second try."""
+    raw = headers.get("Retry-After") if headers is not None else None
+    try:
+        seconds = float(raw)
+    except (TypeError, ValueError):
+        return None
+    return seconds if math.isfinite(seconds) and seconds >= 0 else None
+
+
+def _openai_error(exc: urllib.error.HTTPError) -> LLMRequestError:
+    """What an error answer means, from its status and the API's type and code. Its text is not repeated."""
+    status = exc.code
+    request_id = _plain(exc.headers.get("x-request-id") if exc.headers is not None else None, _REQUEST_ID)
+    try:
+        error = json.loads(exc.read(8192)).get("error") or {}
+    except (ValueError, AttributeError, OSError):
+        error = {}
+    if not isinstance(error, dict):
+        error = {}
+    kind_of, code, param = _plain(error.get("type")), _plain(error.get("code")), _plain(error.get("param"))
+    found = dict(status=status, request_id=request_id)
+
+    if 300 <= status < 400:
+        return LLMRequestError(
+            "redirect",
+            f"OpenAI answered with a redirect (HTTP {status}). It is not followed, so that the key and the code are not sent elsewhere.",
+            **found,
+        )
+    if status == 401:
+        return LLMRequestError(
+            "auth",
+            "OpenAI did not accept the API key (HTTP 401).",
+            hint="Check REPOMIND_LLM_API_KEY in .env, and that the key is active and allowed to use the API.",
+            **found,
+        )
+    if status == 403:
+        return LLMRequestError(
+            "forbidden",
+            "OpenAI refused the request (HTTP 403).",
+            hint="The key's project or organisation, or the country or region the request comes from, may not have access.",
+            **found,
+        )
+    if status == 404:
+        return LLMRequestError(
+            "not_found", "OpenAI has no such model for this key (HTTP 404).", hint="Check REPOMIND_LLM_MODEL.", **found
+        )
+    if status == 429:
+        said = f"{kind_of or ''} {code or ''}".lower()
+        if any(word in said for word in _QUOTA_WORDS):
+            return LLMRequestError(
+                "quota",
+                f"OpenAI reports that the account's quota, credit or spending limit is used up (HTTP 429{f', {code}' if code else ''}).",
+                hint="Waiting does not help. Check billing and limits in the OpenAI account.",
+                **found,
+            )
+        wait = _retry_after(exc.headers)
+        asked = f" It asks to wait {wait:g} seconds." if wait is not None else ""
+        return LLMRequestError(
+            "rate_limit",
+            f"OpenAI's rate limit was reached (HTTP 429).{asked}",
+            hint="Ask again in a moment.",
+            retry_after=wait if wait is not None and wait <= _MAX_RETRY_WAIT_SECONDS else None,
+            **found,
+        )
+    if 400 <= status < 500:
+        named = "".join(
+            part for part in (f" It names the parameter '{param}'." if param else "", f" Code: {code}." if code else "")
+        )
+        return LLMRequestError(
+            "bad_request",
+            f"OpenAI did not accept the request (HTTP {status}).{named}",
+            hint=(
+                "The model may not take a parameter RepoMind sends. For a reasoning model, set "
+                "REPOMIND_LLM_REASONING_EFFORT, which leaves the temperature out. Otherwise check REPOMIND_LLM_MODEL."
+            ),
+            **found,
+        )
+    if 500 <= status < 600:
+        wait = _retry_after(exc.headers) if status == 503 else None
+        return LLMRequestError(
+            "server",
+            f"OpenAI had a server error (HTTP {status}).",
+            hint="Ask again in a moment. A failed request is not sent again on its own, except after an overload with a wait.",
+            retry_after=wait if wait is not None and wait <= _MAX_RETRY_WAIT_SECONDS else None,
+            **found,
+        )
+    return LLMRequestError("bad_response", f"OpenAI answered with HTTP {status}.", **found)
+
+
+def _reply(payload: object) -> LLMResponse:
+    """The reply from a chat completion. None for the text, as after a refusal, is an empty reply."""
+    try:
+        choice = payload["choices"][0]
+        text = choice["message"]["content"]
+    except (KeyError, IndexError, TypeError) as exc:
+        raise RepoMindError("The LLM endpoint returned an unexpected response shape.") from exc
+    usage = payload.get("usage") or {}
+    finish = choice.get("finish_reason")
+    # An empty reply is passed on as one, with whatever the endpoint said about it. The engine decides what it means.
+    return LLMResponse(
+        text if isinstance(text, str) else "",
+        usage.get("prompt_tokens"),
+        usage.get("completion_tokens"),
+        finish if isinstance(finish, str) else None,
+    )
+
+
 class OpenAICompatibleClient:
     def __init__(self, config: LLMConfig) -> None:
         self.config = config
 
     def complete(self, system: str, user: str, max_output_tokens: int) -> LLMResponse:
+        if self.config.provider == "openai":
+            return self._complete_with_openai(system, user, max_output_tokens)
         body = {
             "model": self.config.model,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
@@ -245,17 +406,19 @@ class OpenAICompatibleClient:
             "temperature": 0,
             "response_format": {"type": "json_object"},
         }
-        headers = {"Content-Type": "application/json"}
-        if self.config.api_key:
-            headers["Authorization"] = f"Bearer {self.config.api_key}"
         request = urllib.request.Request(
-            f"{self.config.base_url}/chat/completions", json.dumps(body).encode(), headers, method="POST"
+            f"{self.config.base_url}/chat/completions", json.dumps(body).encode(), {"Content-Type": "application/json"}, method="POST"
         )
+        if self.config.api_key:
+            # Not carried over if the server redirects the request somewhere else.
+            request.add_unredirected_header("Authorization", f"Bearer {self.config.api_key}")
         try:
             with urllib.request.urlopen(request, timeout=self.config.timeout_seconds) as response:
                 payload = json.load(response)
         except urllib.error.HTTPError as exc:
             detail = exc.read(500).decode("utf-8", "replace")
+            if self.config.api_key:
+                detail = detail.replace(self.config.api_key, "<key>")
             raise RepoMindError(
                 f"The LLM endpoint answered with HTTP {exc.code}: {detail}",
                 hint=f"Check that model '{self.config.model}' is available at {self.config.base_url}.",
@@ -265,17 +428,69 @@ class OpenAICompatibleClient:
                 f"Cannot reach the LLM endpoint at {self.config.base_url}: {exc}",
                 hint="For the local model: docker compose --profile llm up -d",
             ) from exc
-        try:
-            choice = payload["choices"][0]
-            text = choice["message"]["content"]
-        except (KeyError, IndexError, TypeError) as exc:
+        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+            # A reply that is not JSON used to end the question with a crash.
             raise RepoMindError("The LLM endpoint returned an unexpected response shape.") from exc
-        usage = payload.get("usage") or {}
-        finish = choice.get("finish_reason")
-        # An empty reply is passed on as one, with whatever the endpoint said about it. The engine decides what it means.
-        return LLMResponse(
-            text if isinstance(text, str) else "",
-            usage.get("prompt_tokens"),
-            usage.get("completion_tokens"),
-            finish if isinstance(finish, str) else None,
+        return _reply(payload)
+
+    def _complete_with_openai(self, system: str, user: str, max_output_tokens: int) -> LLMResponse:
+        body: dict[str, object] = {
+            "model": self.config.model,
+            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+            # Counts reasoning tokens as well as the reply, so it caps what one request can cost.
+            "max_completion_tokens": max_output_tokens,
+            "response_format": {"type": "json_object"},
+            # OpenAI keeps nothing of this request for its distillation or evaluation products.
+            "store": False,
+        }
+        if self.config.reasoning_effort is None:
+            body["temperature"] = 0
+        else:
+            # Set for a reasoning model, and the temperature left out, since such a model may refuse one.
+            body["reasoning_effort"] = self.config.reasoning_effort
+        data = json.dumps(body).encode()
+        url = f"{self.config.base_url}/chat/completions"
+
+        for attempt in (1, 2):
+            request = urllib.request.Request(url, data, {"Content-Type": "application/json"}, method="POST")
+            request.add_unredirected_header("Authorization", f"Bearer {self.config.api_key}")
+            try:
+                with _NO_REDIRECTS.open(request, timeout=self.config.timeout_seconds) as response:
+                    raw = response.read()
+                    request_id = _plain(response.headers.get("x-request-id"), _REQUEST_ID)
+                break
+            except urllib.error.HTTPError as exc:
+                error = _openai_error(exc)
+                if attempt == 1 and error.retry_after is not None:
+                    _sleep(error.retry_after)
+                    continue
+                raise error from exc
+            except (TimeoutError, socket.timeout) as exc:
+                raise self._timed_out() from exc
+            except urllib.error.URLError as exc:
+                if isinstance(exc.reason, (TimeoutError, socket.timeout)):
+                    raise self._timed_out() from exc
+                raise self._unreachable() from exc
+            except OSError as exc:
+                raise self._unreachable() from exc
+        try:
+            return _reply(json.loads(raw))
+        except (ValueError, RepoMindError) as exc:
+            raise LLMRequestError(
+                "bad_response", "OpenAI returned something other than a chat completion.", request_id=request_id
+            ) from exc
+
+    def _timed_out(self) -> LLMRequestError:
+        return LLMRequestError(
+            "timeout",
+            f"OpenAI did not answer within {self.config.timeout_seconds} seconds.",
+            hint="It is not sent again, since it may have been processed and charged. REPOMIND_LLM_TIMEOUT_SECONDS sets the wait.",
+        )
+
+    @staticmethod
+    def _unreachable() -> LLMRequestError:
+        return LLMRequestError(
+            "connection",
+            "The OpenAI API cannot be reached.",
+            hint="Check the internet connection, and any proxy or firewall in the way.",
         )
