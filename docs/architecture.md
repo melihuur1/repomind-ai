@@ -271,7 +271,7 @@ Repository content is untrusted: a comment can address the model directly. The d
 | Output tokens per request | 250 |
 | Total spend | $0 unless prices and a budget are set |
 
-The budget check runs before each request, using worst-case cost. A non-loopback endpoint is refused unless `REPOMIND_LLM_ALLOW_REMOTE=1`, because it sends source code to a third party, and a remote endpoint with an API key is refused until prices are configured. If an endpoint reports far fewer input tokens than were sent, a warning says that it may have truncated the source.
+The budget check runs before each request, using worst-case cost. A request that failed after it may have reached the model is recorded at the most it could cost, and marked so (see [the OpenAI API](#the-openai-api)). A non-loopback endpoint is refused unless `REPOMIND_LLM_ALLOW_REMOTE=1`, because it sends source code to a third party, and a remote endpoint with an API key is refused until prices are configured. If an endpoint reports far fewer input tokens than were sent, a warning says that it may have truncated the source.
 
 All providers share one small OpenAI-compatible client using only the standard library. The default local setup is Ollama in a container from RepoMind's Compose file, with no account or API key.
 
@@ -285,6 +285,61 @@ The same client talks to any OpenAI-compatible server, and to Ollama on another 
 - **What stays the same.** Search, passage selection, the credential checks, the refusal rules and the check against Git all run here, before anything is sent. Passages holding a credential are not sent to a remote model either.
 
 On the 35 prompts of the sixth question set that reached the model, a run made outside this repository gave, for 27 answerable questions, 14 fully right with `qwen2.5:7b`, 17 with `qwen2.5-coder:14b` and 16 with `qwen2.5-coder:32b`, at a median of about 23 and 51 seconds for the larger two. That is the choice among the same passages, not the application end to end, and the models differ in more than size. It is why 14B is the model to try remotely, and not a result recorded here.
+
+### The OpenAI API
+
+`REPOMIND_LLM_PROVIDER=openai` uses the OpenAI API through the same client. The default, `ollama`, is what RepoMind always did, and its request has not changed.
+
+**Settings.** [`repomind/qa/llm.py`](../repomind/qa/llm.py) refuses an OpenAI setup unless it has all of these:
+- a model;
+- a key, read only from `REPOMIND_LLM_API_KEY`;
+- consent to send code, `REPOMIND_LLM_ALLOW_REMOTE=1`;
+- both prices above 0;
+- a budget above 0.
+
+The address is fixed at `https://api.openai.com/v1`, and a configuration pointing elsewhere cannot even be made, so the key cannot be sent to another server. The OpenAI address used with the `ollama` provider is refused too, because that would skip the price and budget rules.
+
+The key is left out of the configuration's `repr`. An error repeats a setting's value only when it is short and plain, so a key pasted into the wrong setting is not printed. A setup that is wrong does not stop search: the status is `misconfigured` and names the setting.
+
+**The request.** A request to the Chat Completions endpoint sends:
+- `max_completion_tokens`, which also counts a reasoning model's thinking, so it caps what one request can cost;
+- `response_format` `json_object`;
+- `store: false`, which asks OpenAI not to keep the exchange for its distillation and evaluation products, and is not a promise that nothing is kept;
+- either `temperature` 0, or `reasoning_effort` and no temperature when `REPOMIND_LLM_REASONING_EFFORT` is set.
+
+Redirects are not followed. For any other server, the key goes in a header that a redirect would not carry.
+
+**Errors.** Each failure is an `LLMRequestError` with a kind. The message never holds the server's text or the key. It names the HTTP status, the parameter and code when they are plain identifiers, and the request ID.
+
+| What OpenAI answered | Kind | State | Sent again |
+| --- | --- | --- | --- |
+| 401, 403 | `auth`, `forbidden` | `auth_failed` | no |
+| 404 | `not_found` | `model_missing` | no |
+| 429 naming a quota, credit, billing, spending or usage limit | `quota` | `limited` | no |
+| other 429 | `rate_limit` | `limited` | once, after a `Retry-After` of 10 seconds or less |
+| 503 | `server` | `offline` | once, after a `Retry-After` of 10 seconds or less |
+| 500, 502, 504, a timeout, a lost connection | `server`, `timeout`, `connection` | `offline` | no, since it may have been processed |
+| other 4xx, a redirect, an answer that cannot be read | `bad_request`, `redirect`, `bad_response` | `rejected` | no |
+
+**The status.** The status asks OpenAI about the model with `GET /v1/models/<model>`. That request generates nothing, sends no question or code, and costs nothing. It is asked at most once a minute. After a refused key, a quota or a refused request, OpenAI is not asked again for a minute; after trouble that passes by itself, after 15 seconds. The memory rule applies only to a model on this machine. Whatever stops OpenAI, a question is still answered with the lines search finds, and says why.
+
+**The budget.** Before every request, and every time the status is read, RepoMind adds up what it has recorded. The state is `budget_reached` once the largest request a question can make no longer fits in what is left, and then nothing is sent. Each `llm_usage` row has a kind:
+- `reported`: the server's token counts;
+- `estimated`: an answer without counts;
+- `worst_case`: a request that failed after it may have reached the model, after a timeout, a lost connection, a server error other than 503, or an unreadable answer, counted at the most it could cost;
+- `legacy`: from before kinds were kept.
+
+Requests turned away with a 4xx, 429 or 503, a refused connection and an unknown host are not counted. Nothing in OpenAI's documentation says whether either kind of failure is charged.
+
+The budget is not an exact ceiling. It is passed if:
+- the prices set are wrong;
+- the token estimate, three characters a token, is below the real count, by at most one request's error;
+- the web page and the command line ask at the same moment;
+- requests turned away are charged after all.
+
+**The page.** It names the provider and where the model runs. For OpenAI it shows a note on what is sent, and the spending RepoMind has counted, with the cautious, estimated and legacy parts named apart, as its own count and not a bill. A model gets an accuracy figure only if it was measured in RepoMind. Today that is `qwen2.5:7b`, in `_MEASURED` in [`repomind/api/services.py`](../repomind/api/services.py).
+
+**Before the first real request:** [docs/openai-first-run.md](openai-first-run.md) holds what the indexes store, how to check what would be sent, and the checklist.
 
 ### Tracing where the right lines are lost
 
@@ -309,7 +364,7 @@ Free memory here means the smaller of free physical memory and free commit space
 
 `repomind/api` is a thin FastAPI layer over the same `SearchEngine`, `QAEngine` and `index_repository` that the command line uses. `web/` is a React and TypeScript client, whose types are generated from the API's OpenAPI document, and a test fails if the two drift apart. `python -m repomind serve` runs both in one process.
 
-Routes are synchronous and run in FastAPI's thread pool, because the engine is. Each request has its own `Store`, and they share the embedder, translator, LLM client and keyword index cache. The model's state is checked at most every 5 seconds. If it is off, or dies during a question, a question still returns the closest lines and says the model was not used.
+Routes are synchronous and run in FastAPI's thread pool, because the engine is. Each request has its own `Store`, and they share the embedder, translator, LLM client and keyword index cache. The model's state is checked at most every 5 seconds, and the OpenAI API's once a minute. If it is off, or dies during a question, a question still returns the closest lines and says the model was not used.
 
 ### What the browser can reach
 

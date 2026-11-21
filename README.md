@@ -144,9 +144,31 @@ REPOMIND_LLM_BASE_URL=http://127.0.0.1:11535/v1
 REPOMIND_LLM_MODEL=qwen2.5:7b
 ```
 
-A larger model on another machine can be used instead, through the same settings: see the block in `.env.example`. With a remote model, each question and the lines of code chosen for it are sent to that server, so it has to be switched on with `REPOMIND_LLM_ALLOW_REMOTE=1`, and the page says when one is in use.
-
 The model can be started and stopped while RepoMind runs, and the status in the top bar follows it. `docker compose stop ollama` gives its memory back. The container keeps one model loaded at a time and is limited to 8 GB.
+
+**A server of your own.** A larger model on another machine works through the same settings: see the block in `.env.example`. Each question and the lines of code chosen for it are sent to that server. It has to be switched on with `REPOMIND_LLM_ALLOW_REMOTE=1`, and the page says when one is in use.
+
+**The OpenAI API.** Optional, and it costs money. Each question, and the lines of code chosen for it, are sent to OpenAI. Lines that may hold a credential are left out first, by rules that can miss what they do not recognise. RepoMind sends `store: false`, which asks OpenAI not to keep the exchange for its own products. It is not a promise that nothing is kept: OpenAI's own data policy decides that. In `.env`, which Git ignores:
+
+```bash
+REPOMIND_LLM_PROVIDER=openai
+REPOMIND_LLM_MODEL=              # from OpenAI's model list, checked on the day
+REPOMIND_LLM_API_KEY=            # never in a file Git tracks
+REPOMIND_LLM_ALLOW_REMOTE=1      # consent to send code
+REPOMIND_LLM_INPUT_USD_PER_MTOK=     # from OpenAI's pricing page, above 0
+REPOMIND_LLM_OUTPUT_USD_PER_MTOK=    # the same
+REPOMIND_LLM_MAX_TOTAL_COST_USD=0.05 # nothing is sent once this could be passed
+# REPOMIND_LLM_REASONING_EFFORT=low  # only for a reasoning model, with a value it accepts
+```
+
+- **No model or price is written in here.** Both change, so take them from [OpenAI's model list](https://platform.openai.com/docs/models) and [pricing page](https://openai.com/api/pricing/) on the day.
+- **The address is fixed.** It is `https://api.openai.com/v1`, and the key is never sent anywhere else, also not after a redirect.
+- **A setting that is wrong is named** in the top bar as **AI settings invalid**, and no request is made.
+- **What the page shows.** The AI panel shows the model, the note on what is sent, and the spending RepoMind has counted from your prices, which is not OpenAI's bill. A cost counted at its most, for a request that failed after it may have been charged, is marked as such.
+- **When OpenAI fails,** whether the key is refused, a limit is reached, the budget is spent or it cannot be reached, a question still returns the closest lines found by search, and says why.
+- **Going back.** Remove `REPOMIND_LLM_PROVIDER` and the key, and restore the two local lines.
+
+Before the first real request, read [docs/openai-first-run.md](docs/openai-first-run.md).
 
 ### With or without a GPU
 
@@ -172,6 +194,11 @@ Those are single questions on one machine, not benchmarks.
 | **AI offline** | Ollama is not running | `docker compose --profile llm up -d ollama` |
 | **AI model missing** | The model was not pulled | `docker exec repomind-ollama ollama pull qwen2.5:7b` |
 | **AI paused** | Less than 4 GB of memory is free | Close something, and ask again |
+| **AI settings invalid** | A model setting in `.env` is wrong, for example `REPOMIND_LLM_PROVIDER=openai` without a key or prices | The AI panel names the setting |
+| **AI key refused** | OpenAI did not accept the key (HTTP 401 or 403) | Check `REPOMIND_LLM_API_KEY`, and that the key is active |
+| **AI budget spent** | The next request could pass `REPOMIND_LLM_MAX_TOTAL_COST_USD` | Raise it, if more spending is intended |
+| **AI limited** | OpenAI's quota, spending limit or rate limit | The AI panel says which. A rate limit passes; a quota needs the OpenAI account |
+| **AI request refused** | OpenAI did not accept the request, often a parameter the model does not take | For a reasoning model, set `REPOMIND_LLM_REASONING_EFFORT` |
 | `GitHub is limiting requests from this machine` | GitHub's anonymous API allows about 60 requests an hour | Wait, then press **Retry** |
 | `Git on Windows cannot write a clone this deep in the folder tree` | The clone's path would pass 260 characters | Set `REPOMIND_DATA_DIR=C:\repomind-data` in `.env`, or keep the project in a short path |
 | `npm warn install-scripts … esbuild` during `npm ci` | npm 11 does not run install scripts unless approved | Harmless: the build works without it |
@@ -192,7 +219,7 @@ Those are single questions on one machine, not benchmarks.
 | **Not enough evidence** | "I do not know": no lines passed | That the code certainly lacks it. Search misses things |
 | **Source to review** | The model pointed here, and the evidence rule did not accept it | An answer |
 | **Closest lines found** | What search found, with no judgement from a model | An answer |
-| **AI unavailable** | The model is off or memory is low, so it was not asked | A failure: everything else keeps working |
+| **AI unavailable** | The model was not asked: it is off, memory is low, its key was refused, its budget is spent or a limit was reached. The lines below were found by search alone, and the reason is given | A failure: everything else keeps working |
 
 ## AI accuracy
 
@@ -214,6 +241,8 @@ The answer layer was measured on two real projects, [StockGuard](https://github.
 
 **A later comparison, on 2026-11-15, asked 48 new questions once.** With `qwen2.5:7b`, 13 of 32 answerable questions got a fully right source, 5 one of the two places they needed, 6 a wrong source, 7 no answer and 1 an unusable reply from the model. 14 of 16 unanswerable questions were refused. The published version before it scored 12, so the changes on this branch were **not shown to make answers better**. Every wrong source was on a Turkish question. The whole record is in [eval/V2_EVALUATION.md](eval/V2_EVALUATION.md). Changes made after it, to what reaches the model and to what is accepted, have not been measured with a model.
 
+Both measurements are of `qwen2.5:7b`. No other model, the OpenAI models included, has been measured in RepoMind, so the page gives this figure only for `qwen2.5:7b`, and says of any other model that it has not been evaluated.
+
 Search itself was measured separately: the right code reaches the five passages for 65 to 68 of 85 Turkish development questions. How the project got here, including a rejected reranker, a pilot, and a fourth set that also did not pass, is in [docs/evaluation.md](docs/evaluation.md), with each result as it was.
 
 ## Security
@@ -223,7 +252,9 @@ RepoMind reads code written by strangers, so it treats both the repository and t
 - **Addresses:** only `https://github.com/owner/name` is accepted. Every request is rebuilt from the owner and name, so it cannot reach another host or a local service. Private repositories are refused.
 - **Cloning:** only Git's own objects are written, with no working files, hooks, submodules, filters or LFS. Only HTTPS is allowed, and Git redirects are off. This machine's Git settings and stored credentials take no part.
 - **Limits, all [configurable](.env.example):** 300 MB on GitHub, 600 MB cloned, 20,000 files, 5,000 source files, 100 MB of source, 5 minutes to clone and 30 minutes in all. Below 4 GB of free memory, indexing does not start.
-- **Secrets:** files and lines that look like credentials are never indexed or shown.
+- **Secrets:** files and lines that look like credentials are never indexed or shown, and are left out of what is sent to a model. An index made before index version 3 still stores credentials written into code. They are filtered again in search and before the prompt, and an outdated index is marked as such: see [docs/openai-first-run.md](docs/openai-first-run.md).
+- **One person, one machine:** `repomind serve` listens on 127.0.0.1 only and refuses another address. There is no login, no per-user limit and no rate limit, so it must not be put on the public internet as it is, through a tunnel or a proxy either, least of all with an API key in its settings.
+- **A remote model or the OpenAI API, only if chosen:** code is sent there only with `REPOMIND_LLM_ALLOW_REMOTE=1`. The OpenAI address is fixed, redirects are not followed, and the key is read from `.env` only. It never appears in a response, a log or an error.
 - **Prompt injection:** code reaches the model inside tags it cannot close, the model only refers to passages by id, and its reply is checked.
 - **The browser:** everything from a repository is rendered as text, behind a strict content security policy. The server answers only to its own host names, and accepts changes only from its own pages, so another website cannot drive it.
 
@@ -232,10 +263,16 @@ Details: [docs/architecture.md](docs/architecture.md#web-application).
 ## Tests
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest        # about 900 tests: parsing, search, answers, API, indexing, security
+.\.venv\Scripts\python.exe -m pytest        # about 1,460 tests: parsing, search, answers, API, indexing, security
 npm --prefix web test                       # the web client's own logic
-npm --prefix web run build
+npm --prefix web run build                  # also checks the types
 npm --prefix web run test:e2e               # Playwright, in the installed Edge
+```
+
+The OpenAI provider has its own tests, which send no request to OpenAI and use a made-up key. They run with the rest, or alone:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/test_openai_config.py tests/test_openai_client.py tests/test_openai_services.py tests/test_openai_api.py
 ```
 
 Tests that need the database, a running LLM or the evaluated repositories skip themselves without them. The browser tests drive the real API, database, Git and clone command on a fixture repository that holds secrets, prompt injection and markup in its file names, code and commit messages. Only the models and GitHub are stood in for, so they need no network, GPU or model. `REPOMIND_E2E_BROWSER=chrome` uses Chrome instead.
