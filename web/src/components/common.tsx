@@ -84,6 +84,12 @@ const AI_LABELS = {
   model_missing: "AI model missing",
   not_configured: "AI not set up",
   low_memory: "AI paused",
+  // Labels only. How these states are shown is the next step.
+  misconfigured: "AI settings invalid",
+  auth_failed: "AI key refused",
+  budget_reached: "AI budget spent",
+  limited: "AI limited",
+  rejected: "AI request refused",
 } as const;
 
 export function useHealth() {

@@ -57,7 +57,12 @@
        "offline",
        "model_missing",
        "not_configured",
-       "low_memory"
+       "low_memory",
+       "misconfigured",
+       "auth_failed",
+       "budget_reached",
+       "limited",
+       "rejected"
       ],
       "title": "State",
       "type": "string"

@@ -126,6 +126,9 @@ def _note_problem(note: str, chosen: Sequence[Passage], question: str) -> str | 
 def verify_selection(raw_text: str, passages: Sequence[Passage], question: str = "", finish_reason: str | None = None) -> Selection:
     """An empty or broken reply is invalid. It is never read as "nothing chosen", which only ``{"chosen": []}`` says."""
     if not raw_text or not raw_text.strip():
+        # A reasoning model can spend the whole output limit before it writes anything.
+        if finish_reason == "length":
+            return Selection("invalid", reason="the model's reply was cut off at its output limit", problem="cut_off")
         return Selection("invalid", reason="the model returned an empty reply", problem="empty")
     parsed = _parse(raw_text)
     if parsed is None:

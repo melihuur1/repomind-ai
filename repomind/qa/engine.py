@@ -12,7 +12,7 @@ from repomind.ingest.filters import find_credential
 from repomind.ingest.git_source import GitRepository
 from repomind.qa.completion import Completion, SnapshotSources, complete, declared_values, linked_evidence, unshown_values
 from repomind.qa.judge import Judgement, build_judge_prompt, parse_judgement
-from repomind.qa.llm import LLMClient, LLMConfig, LLMResponse, cost_usd
+from repomind.qa.llm import BudgetReached, LLMClient, LLMConfig, LLMResponse, cost_usd
 from repomind.qa.passages import Passage, is_evidence, select_passages
 from repomind.qa.project_name import Wording, counts_with_name, stands_alone, with_name_seat, without_project_name
 from repomind.qa.prompt import (
@@ -226,7 +226,7 @@ class QAEngine:
         spent = self.store.total_llm_cost()
         worst_case = config.worst_case_cost(prompt.estimated_input_tokens)
         if spent + worst_case > config.max_total_cost_usd:
-            raise RepoMindError(
+            raise BudgetReached(
                 f"This request could cost ${worst_case:.6f}, and ${spent:.6f} of the "
                 f"${config.max_total_cost_usd:.6f} budget is already spent. Nothing was sent.",
                 hint="Raise REPOMIND_LLM_MAX_TOTAL_COST_USD if this spending is intended.",
@@ -235,7 +235,11 @@ class QAEngine:
     def _ask_model(self, prompt: PreparedPrompt, max_output_tokens: int, result: AskResult) -> LLMResponse:
         """The one place that talks to the model, so that no request escapes the budget or the accounting."""
         self._enforce_budget(prompt)
-        response = self.client.complete(prompt.system, prompt.user, max_output_tokens)
+        try:
+            response = self.client.complete(prompt.system, prompt.user, max_output_tokens)
+        except RepoMindError as exc:
+            self._count_what_it_may_have_cost(exc, prompt, max_output_tokens)
+            raise
 
         # No prompt is empty, so 0 input tokens is a missing count and not a small one. An endpoint that
         # ends a reply without its closing figures reports it. Counting it as 0 would undercount what was
@@ -253,6 +257,17 @@ class QAEngine:
         self.store.record_llm_usage(self.config.base_url, self.config.model, input_tokens, output_tokens, cost)
         self._warn_if_truncated(reported_input, prompt, result)
         return response
+
+    def _count_what_it_may_have_cost(self, exc: RepoMindError, prompt: PreparedPrompt, max_output_tokens: int) -> None:
+        """A paid request that failed after it may have reached the model is counted at the most it could cost.
+
+        Whether such a request is charged is not known. Counting it at its most keeps the spending recorded
+        at or above what was charged, so the budget is not crossed by requests that were never counted.
+        """
+        if self.config.is_free or not getattr(exc, "may_have_been_charged", False):
+            return
+        cost = cost_usd(self.config, prompt.estimated_input_tokens, max_output_tokens)
+        self.store.record_llm_usage(self.config.base_url, self.config.model, prompt.estimated_input_tokens, max_output_tokens, cost)
 
     def _call(self, prompt: PreparedPrompt, max_output_tokens: int, result: AskResult) -> str:
         return self._ask_model(prompt, max_output_tokens, result).text

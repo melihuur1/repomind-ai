@@ -202,7 +202,7 @@ export interface components {
              * State
              * @enum {string}
              */
-            state: "ready" | "offline" | "model_missing" | "not_configured" | "low_memory";
+            state: "ready" | "offline" | "model_missing" | "not_configured" | "low_memory" | "misconfigured" | "auth_failed" | "budget_reached" | "limited" | "rejected";
         };
         /** AskRequest */
         AskRequest: {

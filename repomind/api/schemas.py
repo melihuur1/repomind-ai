@@ -18,7 +18,21 @@ class ApiErrorBody(BaseModel):
     message: str
 
 
-AiState = Literal["ready", "offline", "model_missing", "not_configured", "low_memory"]
+# misconfigured: settings are present and not valid. auth_failed: the key was refused. budget_reached:
+# the next request could go over the budget. limited: a quota, spending or rate limit at the provider.
+# rejected: the provider did not accept RepoMind's request, or answered with something unreadable.
+AiState = Literal[
+    "ready",
+    "offline",
+    "model_missing",
+    "not_configured",
+    "low_memory",
+    "misconfigured",
+    "auth_failed",
+    "budget_reached",
+    "limited",
+    "rejected",
+]
 
 
 class AiStatus(BaseModel):

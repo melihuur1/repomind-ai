@@ -19,7 +19,7 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Protocol
-from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 
 from repomind.config import get_setting
 from repomind.errors import RepoMindError
@@ -251,6 +251,7 @@ class LLMRequestError(RepoMindError):
         status: int | None = None,
         request_id: str | None = None,
         retry_after: float | None = None,
+        may_have_been_charged: bool = False,
     ) -> None:
         super().__init__(f"{message} Request ID: {request_id}." if request_id else message, hint)
         self.kind = kind
@@ -258,6 +259,14 @@ class LLMRequestError(RepoMindError):
         self.request_id = request_id
         # Set only when the server asked to wait and a second try is allowed.
         self.retry_after = retry_after
+        # Whether the request may have reached the model before it failed: after a timeout, a lost
+        # connection, a server error other than an overload, or a reply that could not be read. Nothing
+        # says whether such a request is charged, so the engine counts it at its most.
+        self.may_have_been_charged = may_have_been_charged
+
+
+class BudgetReached(RepoMindError):
+    """The next request could go over REPOMIND_LLM_MAX_TOTAL_COST_USD, so it was not sent."""
 
 
 class _RefuseRedirects(urllib.request.HTTPRedirectHandler):
@@ -276,6 +285,7 @@ _sleep = time.sleep
 _MAX_RETRY_WAIT_SECONDS = 10.0
 # Words in a 429's type or code that mean the account needs its owner, and waiting will not help.
 _QUOTA_WORDS = ("quota", "credit", "billing", "spend_limit", "usage_limit")
+_MODEL_CHECK_SECONDS = 6.0
 _IDENTIFIER = re.compile(r"[A-Za-z0-9_.-]{1,64}")
 _REQUEST_ID = re.compile(r"[A-Za-z0-9_-]{1,128}")
 
@@ -369,6 +379,8 @@ def _openai_error(exc: urllib.error.HTTPError) -> LLMRequestError:
             f"OpenAI had a server error (HTTP {status}).",
             hint="Ask again in a moment. A failed request is not sent again on its own, except after an overload with a wait.",
             retry_after=wait if wait is not None and wait <= _MAX_RETRY_WAIT_SECONDS else None,
+            # An overload turns the request away. Any other server error may come after the model ran.
+            may_have_been_charged=status != 503,
             **found,
         )
     return LLMRequestError("bad_response", f"OpenAI answered with HTTP {status}.", **found)
@@ -470,27 +482,60 @@ class OpenAICompatibleClient:
             except urllib.error.URLError as exc:
                 if isinstance(exc.reason, (TimeoutError, socket.timeout)):
                     raise self._timed_out() from exc
-                raise self._unreachable() from exc
+                raise self._unreachable(_never_sent(exc.reason)) from exc
             except OSError as exc:
-                raise self._unreachable() from exc
+                raise self._unreachable(never_sent=False) from exc
         try:
             return _reply(json.loads(raw))
         except (ValueError, RepoMindError) as exc:
             raise LLMRequestError(
-                "bad_response", "OpenAI returned something other than a chat completion.", request_id=request_id
+                "bad_response",
+                "OpenAI returned something other than a chat completion.",
+                request_id=request_id,
+                may_have_been_charged=True,
             ) from exc
+
+    def check_model(self) -> None:
+        """Asks the OpenAI API whether this key can use the model. It generates nothing, so it costs nothing.
+
+        Raises LLMRequestError, as a request for an answer would.
+        """
+        request = urllib.request.Request(f"{self.config.base_url}/models/{quote(self.config.model, safe=':')}", method="GET")
+        request.add_unredirected_header("Authorization", f"Bearer {self.config.api_key}")
+        try:
+            with _NO_REDIRECTS.open(request, timeout=_MODEL_CHECK_SECONDS) as response:
+                json.loads(response.read())
+        except urllib.error.HTTPError as exc:
+            raise _openai_error(exc) from exc
+        except (TimeoutError, socket.timeout) as exc:
+            raise LLMRequestError("timeout", f"OpenAI did not answer the model check within {_MODEL_CHECK_SECONDS:g} seconds.") from exc
+        except urllib.error.URLError as exc:
+            if isinstance(exc.reason, (TimeoutError, socket.timeout)):
+                raise LLMRequestError("timeout", f"OpenAI did not answer the model check within {_MODEL_CHECK_SECONDS:g} seconds.") from exc
+            raise self._unreachable(never_sent=True) from exc
+        except OSError as exc:
+            raise self._unreachable(never_sent=True) from exc
+        except ValueError as exc:
+            raise LLMRequestError("bad_response", "OpenAI's answer to the model check could not be read.") from exc
 
     def _timed_out(self) -> LLMRequestError:
         return LLMRequestError(
             "timeout",
             f"OpenAI did not answer within {self.config.timeout_seconds} seconds.",
             hint="It is not sent again, since it may have been processed and charged. REPOMIND_LLM_TIMEOUT_SECONDS sets the wait.",
+            may_have_been_charged=True,
         )
 
     @staticmethod
-    def _unreachable() -> LLMRequestError:
+    def _unreachable(never_sent: bool) -> LLMRequestError:
         return LLMRequestError(
             "connection",
-            "The OpenAI API cannot be reached.",
+            "The OpenAI API cannot be reached." if never_sent else "The connection to the OpenAI API was lost.",
             hint="Check the internet connection, and any proxy or firewall in the way.",
+            may_have_been_charged=not never_sent,
         )
+
+
+def _never_sent(reason: object) -> bool:
+    """A refused connection or an unknown host means the request never left. Anything else may have been sent."""
+    return isinstance(reason, (ConnectionRefusedError, socket.gaierror))

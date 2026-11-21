@@ -184,9 +184,9 @@ class TestTheReply:
         openai(completion("", finish="length", usage=(1200, 250)))
         response = ask(REASONING)
         assert (response.text, response.finish_reason) == ("", "length")
-        # Never read as "nothing chosen". It is labelled empty, though the limit is what ended it.
+        # Never read as "nothing chosen", and named for what ended it.
         selection = verify_selection(response.text, [], "q", response.finish_reason)
-        assert (selection.outcome, selection.problem) == ("invalid", "empty")
+        assert (selection.outcome, selection.problem) == ("invalid", "cut_off")
 
     def test_a_filtered_reply_is_passed_on_as_it_came(self, openai):
         openai(completion("", finish="content_filter"))
