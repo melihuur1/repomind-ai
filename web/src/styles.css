@@ -1473,6 +1473,24 @@ kbd {
   font-size: 12px;
 }
 
+.ai-provider {
+  flex: none;
+  margin: 6px 12px 0;
+  font-size: 12px;
+}
+
+.ai-panel > .ai-privacy {
+  border-color: var(--warn);
+}
+
+.ai-spending summary {
+  cursor: pointer;
+}
+
+.ai-spending p {
+  margin-top: 6px;
+}
+
 .ai-conversation {
   display: flex;
   flex: 1;

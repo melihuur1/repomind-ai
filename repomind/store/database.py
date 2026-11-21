@@ -402,11 +402,18 @@ class Store:
 
     # ---------------------------------------------------------------- LLM usage
 
-    def record_llm_usage(self, base_url: str, model: str, input_tokens: int, output_tokens: int, cost_usd: float) -> None:
+    def record_llm_usage(
+        self, base_url: str, model: str, input_tokens: int, output_tokens: int, cost_usd: float, kind: str = "reported"
+    ) -> None:
         self.connection.execute(
-            "INSERT INTO llm_usage (base_url, model, input_tokens, output_tokens, cost_usd) VALUES (%s, %s, %s, %s, %s)",
-            (base_url, model, input_tokens, output_tokens, cost_usd),
+            "INSERT INTO llm_usage (base_url, model, input_tokens, output_tokens, cost_usd, kind) VALUES (%s, %s, %s, %s, %s, %s)",
+            (base_url, model, input_tokens, output_tokens, cost_usd, kind),
         )
+
+    def llm_spending(self) -> dict[str, float]:
+        """What is counted against the budget, by kind: reported, estimated and worst_case."""
+        rows = self.connection.execute("SELECT kind, COALESCE(SUM(cost_usd), 0) AS total FROM llm_usage GROUP BY kind").fetchall()
+        return {row["kind"]: float(row["total"]) for row in rows}
 
     def total_llm_cost(self) -> float:
         row = self.connection.execute("SELECT COALESCE(SUM(cost_usd), 0) AS total FROM llm_usage").fetchone()

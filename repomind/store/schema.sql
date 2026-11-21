@@ -124,3 +124,7 @@ CREATE TABLE IF NOT EXISTS llm_usage (
     output_tokens INTEGER NOT NULL,
     cost_usd      NUMERIC(12, 6) NOT NULL
 );
+-- reported: the server's own token counts. estimated: an answer whose counts the server did not give.
+-- worst_case: a request that failed after it may have reached the model, counted at the most it could cost.
+-- Rows from before this column are reported or estimated, and are left as reported.
+ALTER TABLE llm_usage ADD COLUMN IF NOT EXISTS kind TEXT NOT NULL DEFAULT 'reported';

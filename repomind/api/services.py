@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Callable
 from urllib.parse import urlparse
 
-from repomind.api.schemas import AiStatus
+from repomind.api.schemas import Accuracy, AiStatus, Spending
 from repomind.config import PROJECT_ROOT, Settings, get_setting
 from repomind.embeddings.provider import Embedder, FastEmbedProvider
 from repomind.errors import RepoMindError
@@ -45,6 +45,13 @@ _OPENAI_STATUS_SECONDS = 60.0
 # After trouble that passes by itself, OpenAI is tried again sooner.
 _PASSING_TROUBLE_SECONDS = 15.0
 _PASSING_TROUBLE = {"rate_limit", "server", "timeout", "connection"}
+# Models measured in RepoMind, with the record that holds the measurement. Only these get a figure on the page:
+# a figure belongs to the model that earned it. Measured before the changes that followed, which are not measured.
+_MEASURED = {
+    "qwen2.5:7b": Accuracy(
+        model="qwen2.5:7b", fully_right=13, wrong=6, questions=32, measured_on="2026-11-15", record="eval/V2_EVALUATION.md"
+    ),
+}
 _STATE_FOR_KIND = {
     "auth": "auth_failed",
     "forbidden": "auth_failed",
@@ -242,50 +249,88 @@ class Services:
         # Only a model on this machine needs this machine's memory.
         free = self.free_memory() if self.llm_config.is_loopback else None
         if free is not None and free < self.limits.min_free_memory_gb:
-            return AiStatus(
-                state="low_memory",
-                model=self.llm_config.model,
-                detail=f"Only {free:.1f} GB of memory is free, so the model is not being started.",
+            return self._described(
+                AiStatus(state="low_memory", detail=f"Only {free:.1f} GB of memory is free, so the model is not being started."), None
             )
         # Before any request, and never cached: what was spent changes with every answer.
-        over_budget = self._budget_status(store)
+        try:
+            spending = self._spending(store)
+        except Exception:  # noqa: BLE001 - whatever stops the reading, nothing is sent without it
+            return self._described(
+                AiStatus(state="offline", detail="What has been spent on the model cannot be read, so nothing is sent to it."), None
+            )
+        over_budget = self._budget_status(spending)
         if over_budget is not None:
-            return over_budget
+            return self._described(over_budget, spending)
         with self._ai_status_lock:
             now = time.monotonic()
             if self._ai_status and now - self._ai_status[0] < self._ai_status[2]:
-                return self._ai_status[1]
+                return self._described(self._ai_status[1], spending)
             status = self._ai_probe() if self._ai_probe else _probe_openai_compatible(self.llm_config)
             holds = _OPENAI_STATUS_SECONDS if self.llm_config.provider == "openai" else _AI_STATUS_SECONDS
             self._ai_status = (now, status, holds)
-            return status
+            return self._described(status, spending)
 
-    def _budget_status(self, store: Store | None) -> AiStatus | None:
-        """budget_reached when the largest request a question can make no longer fits in what is left."""
+    def _described(self, status: AiStatus, spending: Spending | None) -> AiStatus:
+        """Adds what the page shows about the model: its provider, where it runs, what it cost and what was measured.
+
+        Only facts from the settings and RepoMind's own records. Never the key.
+        """
+        config = self.llm_config
+        return status.model_copy(
+            update={
+                "model": config.model,
+                "provider": config.provider,
+                "remote": not config.is_loopback,
+                "endpoint": None if config.is_loopback else _host(config),
+                "spending": spending,
+                "accuracy": _MEASURED.get(config.model) if config.provider == "ollama" else None,
+            }
+        )
+
+    def _spending(self, store: Store | None) -> Spending | None:
+        """What RepoMind has counted against the budget, for a model with prices set."""
         config = self.llm_config
         if config is None or config.is_free:
             return None
-        where = {"model": config.model, "remote": not config.is_loopback, "endpoint": None if config.is_loopback else _host(config)}
-        try:
-            if store is None:
-                with self.store() as opened:
-                    spent = opened.total_llm_cost()
-            else:
-                spent = store.total_llm_cost()
-        except Exception:  # noqa: BLE001 - whatever stops the reading, nothing is sent without it
-            return AiStatus(state="offline", detail="What has been spent on the model cannot be read, so nothing is sent to it.", **where)
+        if store is None:
+            with self.store() as opened:
+                counted = opened.llm_spending()
+        else:
+            counted = store.llm_spending()
+        recorded = sum(counted.values())
+        return Spending(
+            budget_usd=config.max_total_cost_usd,
+            recorded_usd=round(recorded, 6),
+            left_usd=round(max(0.0, config.max_total_cost_usd - recorded), 6),
+            worst_case_usd=round(counted.get("worst_case", 0.0), 6),
+            estimated_usd=round(counted.get("estimated", 0.0), 6),
+            input_usd_per_mtok=config.input_usd_per_mtok,
+            output_usd_per_mtok=config.output_usd_per_mtok,
+        )
+
+    def _budget_status(self, spending: Spending | None) -> AiStatus | None:
+        """budget_reached when the largest request a question can make no longer fits in what is left."""
+        config = self.llm_config
+        if spending is None:
+            return None
         largest = config.worst_case_cost(config.max_input_tokens)
-        if spent + largest <= config.max_total_cost_usd:
+        if spending.recorded_usd + largest <= config.max_total_cost_usd:
             return None
         return AiStatus(
             state="budget_reached",
             detail=(
-                f"${spent:.4f} of the ${config.max_total_cost_usd:.4f} budget is spent, and the next request could cost up to "
-                f"${largest:.4f}, so nothing more is sent to the model. Search still works. "
+                f"${spending.recorded_usd:.4f} of the ${config.max_total_cost_usd:.4f} budget is counted as spent, and the next "
+                f"request could cost up to ${largest:.4f}, so nothing more is sent to the model. Search still works. "
                 "Raise REPOMIND_LLM_MAX_TOTAL_COST_USD if more spending is intended."
             ),
-            **where,
         )
+
+    def _spending_or_none(self, store: Store) -> Spending | None:
+        try:
+            return self._spending(store)
+        except Exception:  # noqa: BLE001 - the answer is still given, only without the figures
+            return None
 
     def forget_ai_status(self) -> None:
         with self._ai_status_lock:
@@ -322,10 +367,8 @@ class Services:
             try:
                 return QAEngine(store, search, self.llm_config, _GuardedClient(self.llm_client)).ask(question, [repo]), status, True
             except BudgetReached as exc:
-                status = self._budget_status(store) or AiStatus(
-                    state="budget_reached", model=self.llm_config.model, detail=_said(exc),
-                    remote=not self.llm_config.is_loopback, endpoint=None if self.llm_config.is_loopback else _host(self.llm_config),
-                )
+                spending = self._spending_or_none(store)
+                status = self._described(self._budget_status(spending) or AiStatus(state="budget_reached", detail=_said(exc)), spending)
             except LLMUnavailable as failure:
-                status = self._status_after(failure)
+                status = self._described(self._status_after(failure), self._spending_or_none(store))
         return QAEngine(store, search, None, None).ask(question, [repo]), status, False

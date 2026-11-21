@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import type { AskResponse, AskSource } from "../api/client";
 import { CodeSnippet } from "../components/CodeLines";
 import { blobUrl, shortCommit } from "../lib/links";
+import { STATE_TITLES, usd } from "./AiNotes";
 
 const VERDICTS = {
   lines_chosen: { icon: Sparkles, title: "The model chose these lines", tone: "chosen" },
@@ -75,8 +76,8 @@ export function AnswerCard({ response }: { response: AskResponse }) {
       </div>
       <p className="answer-message">{response.message}</p>
       {!response.ai_used && response.ai.state !== "ready" ? (
-        <p className="note" data-testid="answer-ai-state">
-          {response.ai.detail}
+        <p className="note" data-testid="answer-ai-state" data-state={response.ai.state}>
+          <strong>{STATE_TITLES[response.ai.state]}</strong> {response.ai.detail}
         </p>
       ) : null}
 
@@ -118,7 +119,8 @@ export function AnswerCard({ response }: { response: AskResponse }) {
       {of("closest").length ? (
         <details className="closest" open={response.verdict === "ai_unavailable"}>
           <summary>
-            <Info size={13} aria-hidden /> Closest lines found: not an answer ({of("closest").length})
+            <Info size={13} aria-hidden /> {response.ai_used ? "Closest lines found" : "Closest lines found by search, without the model"}: not an
+            answer ({of("closest").length})
           </summary>
           {of("closest").map((source) => (
             <SourceCard key={`${source.path}:${source.start_line}`} source={source} />
@@ -135,6 +137,13 @@ export function AnswerCard({ response }: { response: AskResponse }) {
       ) : null}
       <div className="answer-meta muted">
         {response.translated_query ? <span title="Translations can be wrong.">Searched as “{response.translated_query}”</span> : null}
+        {response.ai_used && (response.input_tokens || response.output_tokens) ? (
+          <span data-testid="answer-usage" title="What this answer used. A cost is RepoMind's count from the prices set, not a bill.">
+            {response.input_tokens.toLocaleString("en")} in, {response.output_tokens.toLocaleString("en")} out tokens
+            {response.cost_usd > 0 ? ` · ${usd(response.cost_usd)} by the prices set` : ""}
+            {response.tokens_are_estimated ? " (estimated)" : ""}
+          </span>
+        ) : null}
         <span>
           {response.model ?? "model not asked"} · {response.seconds.toFixed(1)} s
         </span>

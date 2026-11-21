@@ -35,10 +35,41 @@ AiState = Literal[
 ]
 
 
+AiProvider = Literal["ollama", "openai"]
+
+
+class Spending(BaseModel):
+    """RepoMind's own count of what a paid model cost, from the prices set in .env. It is not a bill."""
+
+    budget_usd: float
+    recorded_usd: float = Field(description="Everything counted against the budget.")
+    left_usd: float
+    worst_case_usd: float = Field(
+        description="Part of recorded_usd: requests that failed after they may have reached the model, counted at the most they could cost. Whether they were charged is not known."
+    )
+    estimated_usd: float = Field(description="Part of recorded_usd: answers whose token counts the server did not report, so they were estimated.")
+    input_usd_per_mtok: float
+    output_usd_per_mtok: float
+
+
+class Accuracy(BaseModel):
+    """The last measurement of this model in RepoMind, from the record named."""
+
+    model: str
+    fully_right: int
+    wrong: int
+    questions: int
+    measured_on: str
+    record: str
+
+
 class AiStatus(BaseModel):
     state: AiState
     model: str | None = None
     detail: str
+    provider: AiProvider | None = Field(default=None, description="ollama: Ollama or another OpenAI-compatible server. openai: the OpenAI API.")
+    spending: Spending | None = Field(default=None, description="For a model with prices set. Nothing for a free one.")
+    accuracy: Accuracy | None = Field(default=None, description="Nothing when this model has not been measured in RepoMind.")
     remote: bool = Field(
         default=False,
         description="The model runs on another machine: each question and the lines of code chosen for it are sent there.",
@@ -206,4 +237,6 @@ class AskResponse(BaseModel):
     model: str | None
     input_tokens: int
     output_tokens: int
+    cost_usd: float = Field(default=0.0, description="What this answer was counted at, from the prices set. 0 for a free model or no model.")
+    tokens_are_estimated: bool = Field(default=False, description="The server did not report token counts for this answer, so they were estimated.")
     seconds: float

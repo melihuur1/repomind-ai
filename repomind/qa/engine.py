@@ -254,7 +254,9 @@ class QAEngine:
         result.output_tokens += output_tokens
         result.cost_usd += cost
         result.context_chars = max(result.context_chars, prompt.context_chars)
-        self.store.record_llm_usage(self.config.base_url, self.config.model, input_tokens, output_tokens, cost)
+        self.store.record_llm_usage(
+            self.config.base_url, self.config.model, input_tokens, output_tokens, cost, "estimated" if estimated else "reported"
+        )
         self._warn_if_truncated(reported_input, prompt, result)
         return response
 
@@ -267,7 +269,9 @@ class QAEngine:
         if self.config.is_free or not getattr(exc, "may_have_been_charged", False):
             return
         cost = cost_usd(self.config, prompt.estimated_input_tokens, max_output_tokens)
-        self.store.record_llm_usage(self.config.base_url, self.config.model, prompt.estimated_input_tokens, max_output_tokens, cost)
+        self.store.record_llm_usage(
+            self.config.base_url, self.config.model, prompt.estimated_input_tokens, max_output_tokens, cost, "worst_case"
+        )
 
     def _call(self, prompt: PreparedPrompt, max_output_tokens: int, result: AskResult) -> str:
         return self._ask_model(prompt, max_output_tokens, result).text

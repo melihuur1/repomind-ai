@@ -22,7 +22,7 @@ function source(role: AskSource["role"], path: string, line: number): AskSource 
   };
 }
 
-function render(sources: AskSource[]): string {
+function render(sources: AskSource[], changes: Partial<AskResponse> = {}): string {
   const response: AskResponse = {
     experimental: true,
     verdict: "lines_chosen",
@@ -38,7 +38,10 @@ function render(sources: AskSource[]): string {
     model: "fake",
     input_tokens: 10,
     output_tokens: 5,
+    cost_usd: 0,
+    tokens_are_estimated: false,
     seconds: 1,
+    ...changes,
   };
   return renderToStaticMarkup(
     <MemoryRouter>
@@ -78,5 +81,41 @@ describe("AnswerCard", () => {
     expect(html).toContain(CHOSEN);
     expect(html).not.toContain(ADDED);
     expect(html).not.toContain("source-linked_use");
+  });
+
+  it("gives a free model's tokens and no cost", () => {
+    const html = render([source("answer", "src/Client.java", 30)], { input_tokens: 1234, output_tokens: 56 });
+    expect(html).toContain('data-testid="answer-usage"');
+    expect(html).toContain("1,234 in, 56 out tokens");
+    expect(html).not.toContain("by the prices set ·");
+    expect(html).not.toContain("$");
+  });
+
+  it("gives a paid answer's cost as counted from the prices set, and says when the tokens are estimated", () => {
+    const html = render([source("answer", "src/Client.java", 30)], { input_tokens: 1500, output_tokens: 40, cost_usd: 0.000664, tokens_are_estimated: true });
+    expect(html).toContain("1,500 in, 40 out tokens · $0.0007 by the prices set (estimated)");
+  });
+
+  it("labels lines found without the model, gives the reason, and keeps Git's check", () => {
+    const html = render([source("closest", "src/Other.java", 4)], {
+      verdict: "ai_unavailable",
+      ai_used: false,
+      model: null,
+      input_tokens: 0,
+      output_tokens: 0,
+      ai: { state: "auth_failed", model: "gpt-x", detail: "This question was answered without the model. OpenAI did not accept the API key (HTTP 401).", provider: "openai", remote: true, endpoint: "api.openai.com" },
+    });
+    expect(html).toContain("The API key was refused.");
+    expect(html).toContain("did not accept the API key (HTTP 401)");
+    expect(html).toContain("Closest lines found by search, without the model: not an");
+    expect(html).toContain("In Git at");
+    expect(html).not.toContain('data-testid="answer-usage"');
+    expect(html).toContain("model not asked");
+  });
+
+  it("does not call lines found with the model's help lines found without it", () => {
+    const html = render([source("closest", "src/Other.java", 4)], { verdict: "not_enough_evidence" });
+    expect(html).toContain("Closest lines found: not an");
+    expect(html).not.toContain("without the model");
   });
 });

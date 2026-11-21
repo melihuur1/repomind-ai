@@ -121,6 +121,9 @@ class FakeStore:
     def total_llm_cost(self) -> float:
         return self.spent
 
+    def llm_spending(self) -> dict[str, float]:
+        return {"reported": self.spent}
+
 
 class FakeEngine:
     """Stands in for the QA engine: asks the model once when it has one, and records which way it went."""
@@ -273,7 +276,7 @@ class TestTheBudget:
         fake = openai()
         status = services(spent=1.0).ai_status()
         assert status.state == "budget_reached" and fake.sent == []
-        assert "$1.0000 of the $1.0000 budget is spent" in status.detail and "Search still works" in status.detail
+        assert "$1.0000 of the $1.0000 budget is counted as spent" in status.detail and "Search still works" in status.detail
 
     def test_too_little_left_for_the_largest_request_is_spent(self, openai):
         fake = openai()
@@ -449,7 +452,7 @@ class TestWhatAFailedRequestMayHaveCost:
 
     @staticmethod
     def rows(store):
-        return store.connection.execute("SELECT input_tokens, output_tokens, cost_usd FROM llm_usage").fetchall()
+        return store.connection.execute("SELECT input_tokens, output_tokens, cost_usd, kind FROM llm_usage").fetchall()
 
     @pytest.mark.parametrize("wrapped", [False, True])
     def test_a_request_that_may_have_reached_the_model_is_counted_at_its_most(self, store, search, wrapped):
@@ -459,6 +462,7 @@ class TestWhatAFailedRequestMayHaveCost:
             QAEngine(store, search, OPENAI, _GuardedClient(client) if wrapped else client).ask("cancel order")
         [row] = self.rows(store)
         assert row["output_tokens"] == OPENAI.max_output_tokens and row["input_tokens"] > 0
+        assert row["kind"] == "worst_case", "kept apart, so that it is never shown as what was charged"
         assert float(row["cost_usd"]) == pytest.approx(cost_usd(OPENAI, row["input_tokens"], OPENAI.max_output_tokens), abs=1e-6)
         assert store.total_llm_cost() > 0
 

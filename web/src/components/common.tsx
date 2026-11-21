@@ -84,7 +84,6 @@ const AI_LABELS = {
   model_missing: "AI model missing",
   not_configured: "AI not set up",
   low_memory: "AI paused",
-  // Labels only. How these states are shown is the next step.
   misconfigured: "AI settings invalid",
   auth_failed: "AI key refused",
   budget_reached: "AI budget spent",
@@ -112,9 +111,17 @@ export function AiStatusPill() {
       <Sparkles size={12} aria-hidden />
       {AI_LABELS[data.ai.state]}
       {ready && data.ai.model ? <span className="pill-detail">{data.ai.model}</span> : null}
-      {ready && data.ai.remote ? (
+      {ready && data.ai.provider === "openai" ? (
+        <span className="pill-detail" data-testid="ai-provider-pill">
+          OpenAI API
+        </span>
+      ) : ready && data.ai.remote ? (
         <span className="pill-detail" data-testid="ai-remote-pill">
           remote
+        </span>
+      ) : ready && data.ai.provider ? (
+        <span className="pill-detail" data-testid="ai-provider-pill">
+          local
         </span>
       ) : null}
     </span>
