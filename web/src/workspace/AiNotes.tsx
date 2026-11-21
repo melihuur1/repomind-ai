@@ -50,7 +50,8 @@ function Spending({ spending, provider }: { spending: NonNullable<AiStatus["spen
     <details className="note ai-spending" data-testid="ai-spending">
       <summary>
         <strong>Spending counted by RepoMind:</strong> {usd(spending.recorded_usd)} of a {usd(spending.budget_usd)} budget,{" "}
-        {usd(spending.left_usd)} left{spending.worst_case_usd > 0 || spending.estimated_usd > 0 ? ", partly estimated" : ""}.
+        {usd(spending.left_usd)} left{spending.worst_case_usd > 0 || spending.estimated_usd > 0 ? ", partly estimated" : ""}
+        {spending.legacy_usd > 0 ? ", partly of an unknown kind" : ""}.
       </summary>
       <p>
         Prices set: {usd(spending.input_usd_per_mtok)} in and {usd(spending.output_usd_per_mtok)} out per million tokens.
@@ -64,6 +65,12 @@ function Spending({ spending, provider }: { spending: NonNullable<AiStatus["spen
       {spending.estimated_usd > 0 ? (
         <p data-testid="ai-spending-estimated">
           {usd(spending.estimated_usd)} of it is estimated, because the server did not report the token counts.
+        </p>
+      ) : null}
+      {spending.legacy_usd > 0 ? (
+        <p data-testid="ai-spending-legacy">
+          {usd(spending.legacy_usd)} of it was recorded before RepoMind kept how each cost was counted, so whether it was reported by the
+          server or estimated is not known.
         </p>
       ) : null}
       <p className="muted">This is RepoMind's own count from the prices you set, not {bill}</p>

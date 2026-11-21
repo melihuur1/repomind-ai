@@ -411,7 +411,7 @@ class Store:
         )
 
     def llm_spending(self) -> dict[str, float]:
-        """What is counted against the budget, by kind: reported, estimated and worst_case."""
+        """What is counted against the budget, by kind: reported, estimated, worst_case and legacy."""
         rows = self.connection.execute("SELECT kind, COALESCE(SUM(cost_usd), 0) AS total FROM llm_usage GROUP BY kind").fetchall()
         return {row["kind"]: float(row["total"]) for row in rows}
 

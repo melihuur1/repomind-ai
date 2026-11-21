@@ -516,6 +516,12 @@ export interface components {
             input_usd_per_mtok: number;
             /** Left Usd */
             left_usd: number;
+            /**
+             * Legacy Usd
+             * @description Part of recorded_usd: recorded before RepoMind kept how each cost was counted, so whether it was reported or estimated is not known.
+             * @default 0
+             */
+            legacy_usd: number;
             /** Output Usd Per Mtok */
             output_usd_per_mtok: number;
             /**

@@ -305,6 +305,7 @@ class Services:
             left_usd=round(max(0.0, config.max_total_cost_usd - recorded), 6),
             worst_case_usd=round(counted.get("worst_case", 0.0), 6),
             estimated_usd=round(counted.get("estimated", 0.0), 6),
+            legacy_usd=round(counted.get("legacy", 0.0), 6),
             input_usd_per_mtok=config.input_usd_per_mtok,
             output_usd_per_mtok=config.output_usd_per_mtok,
         )

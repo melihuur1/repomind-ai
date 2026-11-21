@@ -14,6 +14,7 @@ from repomind.api.services import Services
 from repomind.config import Settings
 from repomind.indexing import index_repository
 from repomind.qa.llm import OPENAI_BASE_URL, LLMConfig, LLMResponse, cost_usd
+from repomind.store.database import _SCHEMA_PATH as SCHEMA
 
 KEY = "made-up-key-for-tests-0001"
 OPENAI = LLMConfig(
@@ -56,7 +57,7 @@ class TestWhatThePageIsTold:
         assert (ai["state"], ai["provider"], ai["model"], ai["remote"], ai["endpoint"]) == ("ready", "openai", "gpt-x-mini", True, "api.openai.com")
         assert ai["accuracy"] is None
         assert ai["spending"] == {
-            "budget_usd": 1.0, "recorded_usd": 0.0, "left_usd": 1.0, "worst_case_usd": 0.0, "estimated_usd": 0.0,
+            "budget_usd": 1.0, "recorded_usd": 0.0, "left_usd": 1.0, "worst_case_usd": 0.0, "estimated_usd": 0.0, "legacy_usd": 0.0,
             "input_usd_per_mtok": 0.4, "output_usd_per_mtok": 1.6,
         }
         assert KEY not in response.text and "api_key" not in response.text
@@ -111,5 +112,27 @@ class TestSpendingByKind:
         )
         store.record_llm_usage("u", "m", 1, 1, 0.25, "worst_case")
         store.record_llm_usage("u", "m", 1, 1, 0.125, "estimated")
-        assert store.llm_spending() == {"reported": 0.5, "worst_case": 0.25, "estimated": 0.125}
+        assert store.llm_spending() == {"legacy": 0.5, "worst_case": 0.25, "estimated": 0.125}
         assert store.total_llm_cost() == pytest.approx(0.875)
+
+    def test_rows_from_before_the_column_become_legacy_and_new_rows_keep_their_kind(self, store):
+        """As on a database first opened by this version: its rows cannot be told apart, and are not called reported."""
+        store.connection.execute("ALTER TABLE llm_usage DROP COLUMN kind")
+        store.connection.execute("INSERT INTO llm_usage (base_url, model, input_tokens, output_tokens, cost_usd) VALUES ('u', 'm', 1, 1, 0.5)")
+        store.connection.execute(SCHEMA.read_text(encoding="utf-8"))
+        store.record_llm_usage("u", "m", 1, 1, 0.25)
+        store.record_llm_usage("u", "m", 1, 1, 0.125, "estimated")
+        kinds = [row["kind"] for row in store.connection.execute("SELECT kind FROM llm_usage ORDER BY id").fetchall()]
+        assert kinds == ["legacy", "reported", "estimated"]
+
+    def test_applying_the_schema_again_changes_no_row(self, store):
+        store.record_llm_usage("u", "m", 1, 1, 0.25, "worst_case")
+        store.connection.execute(SCHEMA.read_text(encoding="utf-8"))
+        assert store.llm_spending() == {"worst_case": 0.25}
+
+    def test_legacy_spending_is_shown_apart(self, store, indexed, fake_embedder):
+        store.connection.execute("INSERT INTO llm_usage (base_url, model, input_tokens, output_tokens, cost_usd) VALUES ('u', 'm', 1, 1, 0.01)")
+        store.record_llm_usage("u", "m", 1, 1, 0.02, "reported")
+        with TestClient(create_app(services(fake_embedder, OPENAI))) as client:
+            spending = client.get("/api/health").json()["ai"]["spending"]
+        assert (spending["recorded_usd"], spending["legacy_usd"], spending["estimated_usd"]) == (0.03, 0.01, 0.0)

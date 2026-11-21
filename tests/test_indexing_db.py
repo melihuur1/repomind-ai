@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from contextlib import nullcontext
+
 from pathlib import Path
 
 import pytest
@@ -312,7 +314,9 @@ class TestSearch:
 
 
 class TestCli:
-    def test_bad_path_is_a_readable_error(self, capsys, tmp_path):
+    def test_bad_path_is_a_readable_error(self, capsys, tmp_path, monkeypatch):
+        # Not the configured database: opening it applies the schema to the user's own index.
+        monkeypatch.setattr(cli, "_store", lambda settings: nullcontext(object()))
         code = cli.main(["index", "--path", str(tmp_path / "missing"), "--no-embed"])
         captured = capsys.readouterr()
         assert code == 2

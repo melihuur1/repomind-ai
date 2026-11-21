@@ -887,6 +887,12 @@
       "title": "Left Usd",
       "type": "number"
      },
+     "legacy_usd": {
+      "default": 0.0,
+      "description": "Part of recorded_usd: recorded before RepoMind kept how each cost was counted, so whether it was reported or estimated is not known.",
+      "title": "Legacy Usd",
+      "type": "number"
+     },
      "output_usd_per_mtok": {
       "title": "Output Usd Per Mtok",
       "type": "number"

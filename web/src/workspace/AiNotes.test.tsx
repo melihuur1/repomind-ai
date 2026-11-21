@@ -12,7 +12,7 @@ const OPENAI: AiStatus = {
   provider: "openai",
   remote: true,
   endpoint: "api.openai.com",
-  spending: { budget_usd: 1, recorded_usd: 0.0123, left_usd: 0.9877, worst_case_usd: 0, estimated_usd: 0, input_usd_per_mtok: 0.4, output_usd_per_mtok: 1.6 },
+  spending: { budget_usd: 1, recorded_usd: 0.0123, left_usd: 0.9877, worst_case_usd: 0, estimated_usd: 0, legacy_usd: 0, input_usd_per_mtok: 0.4, output_usd_per_mtok: 1.6 },
 };
 
 const render = (ai: AiStatus) => renderToStaticMarkup(<AiNotes ai={ai} />);
@@ -111,6 +111,13 @@ describe("spending", () => {
     expect(html).toContain("$0.0020 of it is a cautious count");
     expect(html).toContain("Whether they were charged is not known");
     expect(html).toContain("$0.0003 of it is estimated");
+  });
+
+  it("says which part was recorded before costs were labelled, and does not call it reported", () => {
+    const html = render({ ...OPENAI, spending: { ...OPENAI.spending!, recorded_usd: 0.05, legacy_usd: 0.03 } });
+    expect(html).toContain("partly of an unknown kind");
+    expect(html).toContain("$0.0300 of it was recorded before RepoMind kept how each cost was counted");
+    expect(html).not.toContain("partly estimated");
   });
 
   it("is not shown for a free model", () => {

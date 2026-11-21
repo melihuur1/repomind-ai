@@ -48,6 +48,10 @@ class Spending(BaseModel):
         description="Part of recorded_usd: requests that failed after they may have reached the model, counted at the most they could cost. Whether they were charged is not known."
     )
     estimated_usd: float = Field(description="Part of recorded_usd: answers whose token counts the server did not report, so they were estimated.")
+    legacy_usd: float = Field(
+        default=0.0,
+        description="Part of recorded_usd: recorded before RepoMind kept how each cost was counted, so whether it was reported or estimated is not known.",
+    )
     input_usd_per_mtok: float
     output_usd_per_mtok: float
 
