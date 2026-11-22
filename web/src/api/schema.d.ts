@@ -330,7 +330,7 @@ export interface components {
              * @description answer: the model chose these lines and they were accepted. declaration: the model did not choose these lines. They declare a constant that chosen lines use, and RepoMind shows them so that the value is seen with the lines that name it. linked_use: the model did not choose these lines. RepoMind added them because they use a constant whose declaration the model chose. Only with the experimental linked evidence setting. review_candidate: the model chose these lines and the evidence rule turned them down. closest: the closest lines found, which nothing judged.
              * @enum {string}
              */
-            role: "answer" | "declaration" | "linked_use" | "review_candidate" | "closest";
+            role: "answer" | "declaration" | "linked_use" | "review_candidate" | "review_use" | "closest";
             /** Start Line */
             start_line: number;
             /** Symbol */

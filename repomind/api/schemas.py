@@ -187,7 +187,7 @@ class AskRequest(BaseModel):
     question: str = Field(min_length=1, max_length=MAX_QUESTION_CHARACTERS)
 
 
-SourceRole = Literal["answer", "declaration", "linked_use", "review_candidate", "closest"]
+SourceRole = Literal["answer", "declaration", "linked_use", "review_candidate", "review_use", "closest"]
 AnswerCheck = Literal["passed", "failed", "not_made"]
 
 

@@ -115,6 +115,12 @@ export function AnswerCard({ response }: { response: AskResponse }) {
         icon={<ScanSearch size={14} aria-hidden />}
         sources={of("review_candidate")}
       />
+      <Section
+        title="Uses the constant above"
+        hint="Added by RepoMind, not chosen by the model: these lines use a constant declared in a line the model pointed to. They exist at this commit. They are something to review, not an answer."
+        icon={<Link2 size={14} aria-hidden />}
+        sources={of("review_use")}
+      />
 
       {of("closest").length ? (
         <details className="closest" open={response.verdict === "ai_unavailable"}>

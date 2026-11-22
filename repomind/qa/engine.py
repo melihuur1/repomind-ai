@@ -10,7 +10,15 @@ from repomind.errors import RepoMindError
 from repomind.evaluation.citations import CitationVerifier
 from repomind.ingest.filters import find_credential
 from repomind.ingest.git_source import GitRepository
-from repomind.qa.completion import Completion, SnapshotSources, complete, declared_values, linked_evidence, unshown_values
+from repomind.qa.completion import (
+    Completion,
+    SnapshotSources,
+    complete,
+    declared_values,
+    linked_evidence,
+    unshown_values,
+    uses_to_review,
+)
 from repomind.qa.judge import Judgement, build_judge_prompt, parse_judgement
 from repomind.qa.llm import BudgetReached, LLMClient, LLMConfig, LLMResponse, usage_cost
 from repomind.qa.passages import Passage, is_evidence, select_passages
@@ -76,6 +84,8 @@ class Source:
     added_by_link: bool = False
     # Shown because lines the model chose use a constant these lines declare. The model did not choose them.
     declares_a_value: bool = False
+    # Shown to review beside a declaration the model chose and the rule turned down: these lines use it.
+    added_for_review: bool = False
 
 
 @dataclass
@@ -126,6 +136,10 @@ class AskResult:
     # Declarations of constants that the chosen lines use, shown with them. The model chose the use,
     # and not these: they are here so that an answer naming a constant also shows its value.
     declared_values: list[Passage] = field(default_factory=list)
+    # Lines that use a constant whose declaration the model chose and the rule turned down, shown beside
+    # it to review. RepoMind found them from the declaration; the model did not choose them. They are kept
+    # apart from review_candidates, which are the model's own choices, and never change the status.
+    review_uses: list[Passage] = field(default_factory=list)
 
     @property
     def citations(self) -> list[VerifiedCitation]:
@@ -137,13 +151,17 @@ class AskResult:
         failed = {passage.id for passage in self.review_candidates}
         linked = {passage.id for passage in self.linked_uses}
         declared = {passage.id for passage in self.declared_values}
+        for_review = {passage.id for passage in self.review_uses}
 
         def check(passage: Passage) -> AnswerCheck:
             if passage.id in passed:
                 return AnswerCheck.PASSED
             return AnswerCheck.FAILED if passage.id in failed else AnswerCheck.NOT_MADE
 
-        return [Source(passage, True, check(passage), passage.id in linked, passage.id in declared) for passage in self.passages]
+        return [
+            Source(passage, True, check(passage), passage.id in linked, passage.id in declared, passage.id in for_review)
+            for passage in self.passages
+        ]
 
 
 def assemble_answer(evidence: list[Evidence], note: str = "") -> str:
@@ -475,6 +493,9 @@ class QAEngine:
             result.note = selection.note if complete else ""
             result.note_problem = selection.note_problem if complete else "it may describe lines that were left out"
             result.answer = assemble_answer(result.evidence, result.note)
+        # After the status is settled, and without changing it: the lines that use a constant whose
+        # declaration the model chose and the rule turned down, for the reader to check beside it.
+        result.review_uses = uses_to_review(result.review_candidates, chosen, offered, result.completions, counts_as_evidence)
         return result
 
     def _judge_each(self, question: str, english: str | None, result: AskResult, counts_as_evidence) -> AskResult:

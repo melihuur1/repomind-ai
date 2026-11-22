@@ -445,7 +445,8 @@ class TestLinkedEvidenceInAsk:
 
     @pytest.mark.parametrize(
         ("on", "roles"),
-        [(True, [("answer", 2), ("linked_use", 28)]), (False, [("review_candidate", 2), ("closest", 28)])],
+        # Off, the use is shown to review beside the declaration, and the verdict is still not an answer.
+        [(True, [("answer", 2), ("linked_use", 28)]), (False, [("review_candidate", 2), ("review_use", 28)])],
     )
     def test_the_api_never_calls_the_added_use_the_models_choice(self, store, fake_embedder, linked, on, roles):
         from fastapi.testclient import TestClient

@@ -283,11 +283,14 @@ def _sources(result: AskResult) -> list[schemas.AskSource]:
         AnswerCheck.FAILED: "review_candidate",
         AnswerCheck.NOT_MADE: "closest",
     }
-    order = ("answer", "declaration", "linked_use", "review_candidate", "closest")
+    order = ("answer", "declaration", "linked_use", "review_candidate", "review_use", "closest")
 
     def role(source) -> str:
         if source.declares_a_value:
             return "declaration"
+        if source.added_for_review:
+            # Found by RepoMind from a declaration the model chose, to review beside it. Never an answer.
+            return "review_use"
         return "linked_use" if source.added_by_link else roles[source.answer_check]
 
     ordered = sorted(result.sources(), key=lambda source: order.index(role(source)))

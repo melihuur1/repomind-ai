@@ -185,6 +185,44 @@ def declared_values(chosen: Sequence[Passage], record: Sequence[Completion], off
     return found[:MAX_COMPLETIONS]
 
 
+def uses_to_review(
+    review: Sequence[Passage],
+    chosen: Sequence[Passage],
+    offered: Sequence[Passage],
+    record: Sequence[Completion],
+    counts_as_evidence: Callable[[Passage], bool],
+) -> list[Passage]:
+    """Lines that use a constant whose declaration the model chose and the evidence rule turned down.
+
+    They are shown beside that declaration for the reader to check, and never as an answer: accepting a
+    declaration through a line that uses it was measured on 342 questions, and about two in three such
+    acceptances were a wrong place or an unanswerable question. A use is taken only when completion
+    resolved the constant in it to exactly this declaration, the use was offered to the model, which
+    means it passed the credential and Git checks, it is from the same repository and commit, and it
+    passes the evidence rule on its own. A passage counts as a declaration only if it is no longer than a
+    declaration can be. Nothing already shown is shown twice, and at most MAX_COMPLETIONS are added.
+    """
+    shown = {_key(passage) for passage in (*review, *chosen)}
+    found: list[Passage] = []
+    for passage in review:
+        if passage.end_line - passage.start_line + 1 > MAX_DECLARATION_LINES:
+            continue
+        for item in record:
+            declaration = item.declaration
+            if declaration is None or item.reason not in ("", "already shown") or declaration.path != passage.path:
+                continue
+            if not (passage.start_line <= declaration.start_line and declaration.end_line <= passage.end_line):
+                continue
+            use = next((other for other in offered if _key(other) == item.used_in), None)
+            if use is None or (use.chunk.repo, use.chunk.commit_sha) != (passage.chunk.repo, passage.chunk.commit_sha):
+                continue
+            if _key(use) in shown or not counts_as_evidence(use):
+                continue
+            shown.add(_key(use))
+            found.append(use)
+    return found[:MAX_COMPLETIONS]
+
+
 def linked_evidence(
     chosen: Sequence[Passage],
     offered: Sequence[Passage],

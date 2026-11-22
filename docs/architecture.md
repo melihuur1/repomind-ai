@@ -163,6 +163,16 @@ A passage that reads `.timeout(REQUEST_TIMEOUT)` does not say how long the timeo
 
 **The value is shown with the line that names it.** A question about a value needs two places, the line that uses the constant and the line that gives it its value, and the model usually chooses the first. So when chosen lines pass the evidence rule and use a constant whose declaration was offered, the declaration is shown with them: `AskResult.declared_values`, the role `declaration` in the API, a heading of its own on the page. It is marked as added by RepoMind, and not as the model's choice. This goes one way only. Chosen lines bring the declaration of what they name, and a chosen declaration brings nothing: that is linked evidence, below.
 
+**A declaration the rule turned down is shown with the line that uses it, to review.** The model sometimes chooses only the declaration: asked how many books a member may borrow at once, it chose `MAX_ACTIVE_LOANS = 3`. That line shares no word with the question, so it is turned down, and the verdict stays "not enough evidence". Such a declaration is then shown under **Source to review**, together with the lines that use it (`review_uses`, role `review_use`), so that the reader sees the value and where it is enforced.
+
+The use is taken only when four things hold:
+- completion resolved the constant in it to exactly this declaration;
+- it was offered to the model, so it passed the credential and Git checks;
+- it is from the same commit;
+- it passes the evidence rule on its own.
+
+A chosen passage counts as a declaration only if it is no longer than four lines. At most two uses are added, and nothing is shown twice. The use is marked as added by RepoMind, and it is never an answer: accepting a declaration through a line that uses it was measured on 342 questions with no model, and about two in three such acceptances were a wrong place or an unanswerable question.
+
 Which declaration a name means is decided where it is used, by `repomind/qa/declarations.py`, from the syntax tree alone. The same name is often declared twice in one repository, so a declaration found anywhere else is not an answer:
 
 - **TypeScript and JavaScript** follow lexical scope: the nearest `const`, `let` or `var` around the use, or a name the file imports from a relative module, followed to the top level of that file. A parameter, a destructured name, a loop or catch variable, a function, a class or an enum of that name hides everything outside it, and is not followed. `Class.NAME` is followed to a static field of a class the same file declares.

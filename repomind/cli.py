@@ -255,6 +255,10 @@ _REVIEW_HEADINGS = {
         "They do exist at this commit, but nothing confirms that they answer the question. This is not an answer."
     ),
 }
+_REVIEW_USE_HEADINGS = {
+    "tr": "RepoMind ekledi, model seçmedi: yukarıda tanımlanan sabiti kullanan satırlar. Bunlar da bir cevap değildir.",
+    "en": "Added by RepoMind, not chosen by the model: lines that use a constant declared above. These are not an answer either.",
+}
 
 
 def _print_passage(passage) -> None:
@@ -269,11 +273,18 @@ def _print_review_candidates(result) -> None:
 
     if not result.review_candidates:
         return
+    language = "tr" if looks_turkish(result.question) else "en"
     _emit("")
-    _emit(_REVIEW_HEADINGS["tr" if looks_turkish(result.question) else "en"])
+    _emit(_REVIEW_HEADINGS[language])
     for passage in result.review_candidates:
         _emit("")
         _print_passage(passage)
+    if result.review_uses:
+        _emit("")
+        _emit(_REVIEW_USE_HEADINGS[language])
+        for passage in result.review_uses:
+            _emit("")
+            _print_passage(passage)
 
 
 def command_ask(args: argparse.Namespace, settings: Settings) -> int:
@@ -318,7 +329,7 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
     else:
         _emit(_STATUS_MESSAGES[result.status])
         _print_review_candidates(result)
-        under_review = {passage.id for passage in result.review_candidates}
+        under_review = {passage.id for passage in (*result.review_candidates, *result.review_uses)}
         closest = [passage for passage in result.passages if passage.id not in under_review]
         if closest:
             if result.status != "no_llm":

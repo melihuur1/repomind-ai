@@ -382,6 +382,7 @@
        "declaration",
        "linked_use",
        "review_candidate",
+       "review_use",
        "closest"
       ],
       "title": "Role",

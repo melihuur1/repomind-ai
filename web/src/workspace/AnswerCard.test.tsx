@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import type { AskResponse, AskSource } from "../api/client";
 import { AnswerCard } from "./AnswerCard";
 
-const CHECKS = { answer: "passed", declaration: "passed", linked_use: "passed", review_candidate: "failed", closest: "not_made" } as const;
+const CHECKS = { answer: "passed", declaration: "passed", linked_use: "passed", review_candidate: "failed", review_use: "not_made", closest: "not_made" } as const;
 
 function source(role: AskSource["role"], path: string, line: number): AskSource {
   return {
@@ -82,6 +82,26 @@ describe("AnswerCard", () => {
     expect(html).toContain(CHOSEN);
     expect(html).not.toContain(ADDED);
     expect(html).not.toContain("source-linked_use");
+  });
+
+  it("shows a use RepoMind added beside a declaration to review, apart from the model's choice and never as an answer", () => {
+    const html = render([source("review_candidate", "src/loans.ts", 4), source("review_use", "src/loans.ts", 16), source("closest", "src/fees.ts", 6)], {
+      verdict: "not_enough_evidence",
+    });
+    const marks = ["Source to review", 'data-testid="source-review_candidate"', "Uses the constant above", 'data-testid="source-review_use"', "Closest lines found"];
+    const order = marks.map((text) => html.indexOf(text));
+    expect(order.every((position) => position >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    expect(html).toContain("Added by RepoMind, not chosen by the model");
+    expect(html).toContain("not an answer");
+    expect(html).not.toContain("Lines the model chose");
+    expect(html.match(/data-testid="source-review_use"/g)).toHaveLength(1);
+    expect(html.match(/data-testid="source-review_candidate"/g)).toHaveLength(1);
+  });
+
+  it("does not mention added uses when there are none", () => {
+    const html = render([source("review_candidate", "src/loans.ts", 4)], { verdict: "not_enough_evidence" });
+    expect(html).not.toContain("Uses the constant above");
   });
 
   it("gives a free model's tokens and no cost", () => {
