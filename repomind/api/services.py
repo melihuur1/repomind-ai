@@ -307,6 +307,8 @@ class Services:
             estimated_usd=round(counted.get("estimated", 0.0), 6),
             legacy_usd=round(counted.get("legacy", 0.0), 6),
             input_usd_per_mtok=config.input_usd_per_mtok,
+            cached_input_usd_per_mtok=config.cached_input_rate,
+            cache_write_usd_per_mtok=config.cache_write_rate,
             output_usd_per_mtok=config.output_usd_per_mtok,
         )
 

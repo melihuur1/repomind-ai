@@ -323,7 +323,16 @@ Redirects are not followed. For any other server, the key goes in a header that 
 
 **The status.** The status asks OpenAI about the model with `GET /v1/models/<model>`. That request generates nothing, sends no question or code, and costs nothing. It is asked at most once a minute. After a refused key, a quota or a refused request, OpenAI is not asked again for a minute; after trouble that passes by itself, after 15 seconds. The memory rule applies only to a model on this machine. Whatever stops OpenAI, a question is still answered with the lines search finds, and says why.
 
-**The budget.** Before every request, and every time the status is read, RepoMind adds up what it has recorded. The state is `budget_reached` once the largest request a question can make no longer fits in what is left, and then nothing is sent. Each `llm_usage` row has a kind:
+**Prices.** OpenAI caches the start of a long prompt by itself, 1,024 tokens or more, for 30 minutes in Chat Completions. It bills each input token at one of three rates: uncached, read from the cache, or written to it. A cache write is billed instead of the uncached rate, not on top of it.
+
+So `usage_cost` in [`repomind/qa/llm.py`](../repomind/qa/llm.py) takes `usage.prompt_tokens_details.cached_tokens` and `cache_write_tokens` out of `prompt_tokens`, and prices each part at its own rate:
+- `REPOMIND_LLM_INPUT_USD_PER_MTOK`;
+- `REPOMIND_LLM_CACHED_INPUT_USD_PER_MTOK`, optional, which counts reads at the input rate when unset;
+- `REPOMIND_LLM_CACHE_WRITE_USD_PER_MTOK`, required for OpenAI.
+
+A part the reply does not break down, or parts that add up to more than the whole, are counted at the highest input rate. The answer then says its cost is at most that, and its row is recorded as `estimated`. On the first real request, 1,050 input tokens, 1,047 of them written to the cache, and 45 output tokens came to $0.000153675 at gpt-6-luna's prices. The earlier count, before cache writes were priced, recorded $0.000128 for it. That row was left as it was.
+
+**The budget.** Before every request, and every time the status is read, RepoMind adds up what it has recorded. The largest request it allows for counts every input token at the highest of the three input rates. The state is `budget_reached` once the largest request a question can make no longer fits in what is left, and then nothing is sent. Each `llm_usage` row has a kind:
 - `reported`: the server's token counts;
 - `estimated`: an answer without counts;
 - `worst_case`: a request that failed after it may have reached the model, after a timeout, a lost connection, a server error other than 503, or an unreadable answer, counted at the most it could cost;
@@ -332,7 +341,7 @@ Redirects are not followed. For any other server, the key goes in a header that 
 Requests turned away with a 4xx, 429 or 503, a refused connection and an unknown host are not counted. Nothing in OpenAI's documentation says whether either kind of failure is charged.
 
 The budget is not an exact ceiling. It is passed if:
-- the prices set are wrong;
+- the prices set are wrong, a cache price included;
 - the token estimate, three characters a token, is below the real count, by at most one request's error;
 - the web page and the command line ask at the same moment;
 - requests turned away are charged after all.

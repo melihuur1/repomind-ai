@@ -244,6 +244,12 @@ export interface components {
             /** Ai Used */
             ai_used: boolean;
             /**
+             * Cost Is Cautious
+             * @description The server did not say how the input was split between its cache and the rest, so that part was counted at the highest input price: the cost is at most this.
+             * @default false
+             */
+            cost_is_cautious: boolean;
+            /**
              * Cost Usd
              * @description What this answer was counted at, from the prices set. 0 for a free model or no model.
              * @default 0
@@ -507,6 +513,16 @@ export interface components {
         Spending: {
             /** Budget Usd */
             budget_usd: number;
+            /**
+             * Cache Write Usd Per Mtok
+             * @description For input written to the provider's cache, instead of the input price. The input price when none is set.
+             */
+            cache_write_usd_per_mtok: number;
+            /**
+             * Cached Input Usd Per Mtok
+             * @description For input read from the provider's cache. The input price when none is set.
+             */
+            cached_input_usd_per_mtok: number;
             /**
              * Estimated Usd
              * @description Part of recorded_usd: answers whose token counts the server did not report, so they were estimated.

@@ -18,12 +18,13 @@ KEY = "made-up-key-for-tests-0001"
 SETTINGS = (
     "PROVIDER", "BASE_URL", "MODEL", "API_KEY", "ALLOW_REMOTE", "MAX_CONTEXT_CHUNKS", "MAX_INPUT_TOKENS",
     "MAX_OUTPUT_TOKENS", "INPUT_USD_PER_MTOK", "OUTPUT_USD_PER_MTOK", "MAX_TOTAL_COST_USD", "SELECTION",
-    "LINKED_EVIDENCE", "TIMEOUT_SECONDS", "REASONING_EFFORT",
+    "LINKED_EVIDENCE", "TIMEOUT_SECONDS", "REASONING_EFFORT", "CACHED_INPUT_USD_PER_MTOK", "CACHE_WRITE_USD_PER_MTOK",
 )
 
 OPENAI = {
     "PROVIDER": "openai", "MODEL": "an-openai-model", "API_KEY": KEY, "ALLOW_REMOTE": "1",
     "INPUT_USD_PER_MTOK": "0.4", "OUTPUT_USD_PER_MTOK": "1.6", "MAX_TOTAL_COST_USD": "1",
+    "CACHED_INPUT_USD_PER_MTOK": "0.04", "CACHE_WRITE_USD_PER_MTOK": "0.5",
 }
 
 
@@ -114,6 +115,7 @@ class TestOpenAI:
         assert config.base_url == OPENAI_BASE_URL == "https://api.openai.com/v1"
         assert config.api_key == KEY and config.allow_remote and not config.is_loopback
         assert (config.input_usd_per_mtok, config.output_usd_per_mtok, config.max_total_cost_usd) == (0.4, 1.6, 1.0)
+        assert (config.cached_input_usd_per_mtok, config.cache_write_usd_per_mtok) == (0.04, 0.5)
 
     def test_the_official_address_may_also_be_written_out(self, settings):
         settings(**OPENAI, BASE_URL="https://api.openai.com/v1/")
@@ -165,13 +167,32 @@ class TestOpenAI:
         assert "prices" in str(error) and "OpenAI's current price list" in said(error)
 
     @pytest.mark.parametrize("value", ["", "0"])
+    def test_a_cache_write_price_is_required(self, settings, value):
+        error = refused(settings, **{**OPENAI, "CACHE_WRITE_USD_PER_MTOK": value})
+        assert "cache-write price" in str(error) and "REPOMIND_LLM_CACHE_WRITE_USD_PER_MTOK" in said(error)
+        assert "30-minute write" in said(error)
+
+    def test_the_cache_prices_are_read(self, settings):
+        settings(**OPENAI)
+        config = load_llm_config()
+        assert (config.cached_input_usd_per_mtok, config.cache_write_usd_per_mtok) == (0.04, 0.5)
+        assert (config.cached_input_rate, config.cache_write_rate, config.highest_input_rate) == (0.04, 0.5, 0.5)
+
+    def test_without_a_cached_input_price_reads_from_the_cache_count_at_the_full_input_price(self, settings):
+        settings(**{**OPENAI, "CACHED_INPUT_USD_PER_MTOK": ""})
+        config = load_llm_config()
+        assert config.cached_input_usd_per_mtok is None and config.cached_input_rate == 0.4
+
+    @pytest.mark.parametrize("value", ["", "0"])
     def test_a_budget_is_required(self, settings, value):
         error = refused(settings, **{**OPENAI, "MAX_TOTAL_COST_USD": value})
         assert "budget" in str(error) and "REPOMIND_LLM_MAX_TOTAL_COST_USD above 0" in said(error)
 
 
 class TestNumbersThatCannotBeRight:
-    @pytest.mark.parametrize("name", ["INPUT_USD_PER_MTOK", "OUTPUT_USD_PER_MTOK", "MAX_TOTAL_COST_USD"])
+    @pytest.mark.parametrize(
+        "name", ["INPUT_USD_PER_MTOK", "OUTPUT_USD_PER_MTOK", "MAX_TOTAL_COST_USD", "CACHED_INPUT_USD_PER_MTOK", "CACHE_WRITE_USD_PER_MTOK"]
+    )
     @pytest.mark.parametrize("value", ["-1", "-0.01", "nan", "inf"])
     def test_a_negative_or_endless_price_or_budget_is_refused_for_either_provider(self, settings, name, value):
         for base in ({"BASE_URL": "http://127.0.0.1:11535/v1", "MODEL": "m"}, OPENAI):
@@ -237,6 +258,16 @@ class TestTheKeyIsNeverShown:
         error = refused(settings, BASE_URL="https://someone:password-in-url@models.example.org/v1", MODEL="m", ALLOW_REMOTE="1")
         assert "user name or a password" in str(error)
         assert "password-in-url" not in said(error)
+
+
+class TestTheDevelopersOwnSettings:
+    def test_never_reach_a_test(self):
+        """.env may hold a real key and a real provider. The fixture in conftest.py blanks every model setting."""
+        from repomind.config import get_setting
+
+        assert get_setting("REPOMIND_LLM_API_KEY") is None
+        assert get_setting("REPOMIND_LLM_PROVIDER") is None
+        assert load_llm_config() is None
 
 
 class TestReasoningEffort:

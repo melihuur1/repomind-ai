@@ -183,6 +183,12 @@
       "title": "Ai Used",
       "type": "boolean"
      },
+     "cost_is_cautious": {
+      "default": false,
+      "description": "The server did not say how the input was split between its cache and the rest, so that part was counted at the highest input price: the cost is at most this.",
+      "title": "Cost Is Cautious",
+      "type": "boolean"
+     },
      "cost_usd": {
       "default": 0.0,
       "description": "What this answer was counted at, from the prices set. 0 for a free model or no model.",
@@ -874,6 +880,16 @@
       "title": "Budget Usd",
       "type": "number"
      },
+     "cache_write_usd_per_mtok": {
+      "description": "For input written to the provider's cache, instead of the input price. The input price when none is set.",
+      "title": "Cache Write Usd Per Mtok",
+      "type": "number"
+     },
+     "cached_input_usd_per_mtok": {
+      "description": "For input read from the provider's cache. The input price when none is set.",
+      "title": "Cached Input Usd Per Mtok",
+      "type": "number"
+     },
      "estimated_usd": {
       "description": "Part of recorded_usd: answers whose token counts the server did not report, so they were estimated.",
       "title": "Estimated Usd",
@@ -915,6 +931,8 @@
      "worst_case_usd",
      "estimated_usd",
      "input_usd_per_mtok",
+     "cached_input_usd_per_mtok",
+     "cache_write_usd_per_mtok",
      "output_usd_per_mtok"
     ],
     "title": "Spending",

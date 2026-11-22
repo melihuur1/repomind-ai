@@ -12,7 +12,7 @@ const OPENAI: AiStatus = {
   provider: "openai",
   remote: true,
   endpoint: "api.openai.com",
-  spending: { budget_usd: 1, recorded_usd: 0.0123, left_usd: 0.9877, worst_case_usd: 0, estimated_usd: 0, legacy_usd: 0, input_usd_per_mtok: 0.4, output_usd_per_mtok: 1.6 },
+  spending: { budget_usd: 1, recorded_usd: 0.0123, left_usd: 0.9877, worst_case_usd: 0, estimated_usd: 0, legacy_usd: 0, input_usd_per_mtok: 0.4, cached_input_usd_per_mtok: 0.04, cache_write_usd_per_mtok: 0.5, output_usd_per_mtok: 1.6 },
 };
 
 const render = (ai: AiStatus) => renderToStaticMarkup(<AiNotes ai={ai} />);
@@ -99,7 +99,8 @@ describe("spending", () => {
     const html = render(OPENAI);
     expect(html).toContain("$0.0123 of a $1.00 budget,");
     expect(html).toContain("$0.9877 left");
-    expect(html).toContain("$0.4000 in and $1.60 out per million tokens");
+    expect(html).toContain("Prices set, per million tokens: $0.4000 in, $0.0400 read from the");
+    expect(html).toContain("cache, $0.5000 written to it, and $1.60 out.");
     expect(html).toContain("not OpenAI&#x27;s bill");
     expect(html).not.toContain("partly estimated");
     expect(html).not.toContain("ai-spending-worst-case");
@@ -110,7 +111,8 @@ describe("spending", () => {
     expect(html).toContain("partly estimated");
     expect(html).toContain("$0.0020 of it is a cautious count");
     expect(html).toContain("Whether they were charged is not known");
-    expect(html).toContain("$0.0003 of it is estimated");
+    expect(html).toContain("$0.0003 of it is estimated or counted at most");
+    expect(html).toContain("counted at the highest input price");
   });
 
   it("says which part was recorded before costs were labelled, and does not call it reported", () => {

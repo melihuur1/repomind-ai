@@ -346,5 +346,6 @@ def ask(request: Request, body: schemas.AskRequest) -> schemas.AskResponse:
         output_tokens=result.output_tokens,
         cost_usd=round(result.cost_usd, 6),
         tokens_are_estimated=result.tokens_are_estimated,
+        cost_is_cautious=result.cost_is_cautious,
         seconds=round(time.perf_counter() - started, 2),
     )

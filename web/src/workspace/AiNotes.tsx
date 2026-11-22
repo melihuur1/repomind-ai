@@ -54,7 +54,8 @@ function Spending({ spending, provider }: { spending: NonNullable<AiStatus["spen
         {spending.legacy_usd > 0 ? ", partly of an unknown kind" : ""}.
       </summary>
       <p>
-        Prices set: {usd(spending.input_usd_per_mtok)} in and {usd(spending.output_usd_per_mtok)} out per million tokens.
+        Prices set, per million tokens: {usd(spending.input_usd_per_mtok)} in, {usd(spending.cached_input_usd_per_mtok)} read from the
+        cache, {usd(spending.cache_write_usd_per_mtok)} written to it, and {usd(spending.output_usd_per_mtok)} out.
       </p>
       {spending.worst_case_usd > 0 ? (
         <p data-testid="ai-spending-worst-case">
@@ -64,7 +65,8 @@ function Spending({ spending, provider }: { spending: NonNullable<AiStatus["spen
       ) : null}
       {spending.estimated_usd > 0 ? (
         <p data-testid="ai-spending-estimated">
-          {usd(spending.estimated_usd)} of it is estimated, because the server did not report the token counts.
+          {usd(spending.estimated_usd)} of it is estimated or counted at most: the server did not report every token count, or how the
+          input was split between its cache and the rest, so that part was counted at the highest input price.
         </p>
       ) : null}
       {spending.legacy_usd > 0 ? (

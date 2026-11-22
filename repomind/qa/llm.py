@@ -67,8 +67,11 @@ class LLMConfig:
     linked_evidence: bool = False
     provider: str = "ollama"
     # For reasoning models of the OpenAI API, and only with that provider. None leaves it to the model.
-    # It is checked here and not yet sent: the request is the next step.
     reasoning_effort: str | None = None
+    # Input is billed at one of three rates: uncached, read from the provider's cache, or written to it.
+    # None counts that part at the uncached rate, which is what a server without a cache charges.
+    cached_input_usd_per_mtok: float | None = None
+    cache_write_usd_per_mtok: float | None = None
 
     def __post_init__(self) -> None:
         # The key goes wherever base_url points, so an OpenAI configuration cannot point anywhere else,
@@ -84,15 +87,59 @@ class LLMConfig:
         return (urlparse(self.base_url).hostname or "") in _LOOPBACK_HOSTS
 
     @property
-    def is_free(self) -> bool:
-        return self.input_usd_per_mtok == 0 and self.output_usd_per_mtok == 0
+    def cached_input_rate(self) -> float:
+        return self.input_usd_per_mtok if self.cached_input_usd_per_mtok is None else self.cached_input_usd_per_mtok
 
-    def worst_case_cost(self, input_tokens: int) -> float:
-        return cost_usd(self, input_tokens, self.max_output_tokens)
+    @property
+    def cache_write_rate(self) -> float:
+        return self.input_usd_per_mtok if self.cache_write_usd_per_mtok is None else self.cache_write_usd_per_mtok
+
+    @property
+    def highest_input_rate(self) -> float:
+        """What an input token can cost at most, whichever way the provider bills it."""
+        return max(self.input_usd_per_mtok, self.cached_input_rate, self.cache_write_rate)
+
+    @property
+    def is_free(self) -> bool:
+        return self.highest_input_rate == 0 and self.output_usd_per_mtok == 0
+
+    def worst_case_cost(self, input_tokens: int, output_tokens: int | None = None) -> float:
+        """The most a request can cost: every input token at the highest input rate, and every output token allowed."""
+        output = self.max_output_tokens if output_tokens is None else output_tokens
+        return (input_tokens * self.highest_input_rate + output * self.output_usd_per_mtok) / 1_000_000
 
 
 def cost_usd(config: LLMConfig, input_tokens: int, output_tokens: int) -> float:
+    """Every input token at the uncached rate. For what a reply cost, usage_cost splits the input as billed."""
     return (input_tokens * config.input_usd_per_mtok + output_tokens * config.output_usd_per_mtok) / 1_000_000
+
+
+def usage_cost(
+    config: LLMConfig,
+    input_tokens: int,
+    output_tokens: int,
+    cached_tokens: int | None = None,
+    cache_write_tokens: int | None = None,
+) -> tuple[float, bool]:
+    """What a reply cost, and whether that figure is cautious rather than exact.
+
+    The input splits into tokens read from the cache, tokens written to it, and the rest, each at its own rate:
+    a cache write is billed instead of the uncached rate, not on top of it. A part the server did not break
+    down is counted at the highest rate it could have been billed at, as is input whose parts add up to more
+    than the whole. Either makes the figure cautious: at or above what was charged, not equal to it.
+    """
+    output = output_tokens * config.output_usd_per_mtok
+    cached = cached_tokens or 0
+    written = cache_write_tokens or 0
+    if cached + written > input_tokens:
+        return (input_tokens * config.highest_input_rate + output) / 1_000_000, True
+    unknown = (cached_tokens is None and config.cached_input_rate > config.input_usd_per_mtok) or (
+        cache_write_tokens is None and config.cache_write_rate > config.input_usd_per_mtok
+    )
+    rest_rate = config.highest_input_rate if unknown else config.input_usd_per_mtok
+    rest = input_tokens - cached - written
+    total = rest * rest_rate + cached * config.cached_input_rate + written * config.cache_write_rate + output
+    return total / 1_000_000, unknown
 
 
 def load_llm_config() -> LLMConfig | None:
@@ -110,7 +157,7 @@ def load_llm_config() -> LLMConfig | None:
     elif not base_url or not model:
         return None
 
-    def number(name: str, default: float) -> float:
+    def number(name: str, default: float | None) -> float | None:
         raw = get_setting(name)
         try:
             return float(raw) if raw is not None else default
@@ -135,6 +182,8 @@ def load_llm_config() -> LLMConfig | None:
         timeout_seconds=int(number("REPOMIND_LLM_TIMEOUT_SECONDS", 300)),
         provider=provider,
         reasoning_effort=effort or None,
+        cached_input_usd_per_mtok=number("REPOMIND_LLM_CACHED_INPUT_USD_PER_MTOK", None),
+        cache_write_usd_per_mtok=number("REPOMIND_LLM_CACHE_WRITE_USD_PER_MTOK", None),
     )
     validate_config(config)
     return config
@@ -161,6 +210,8 @@ def validate_config(config: LLMConfig) -> None:
         ("REPOMIND_LLM_INPUT_USD_PER_MTOK", config.input_usd_per_mtok),
         ("REPOMIND_LLM_OUTPUT_USD_PER_MTOK", config.output_usd_per_mtok),
         ("REPOMIND_LLM_MAX_TOTAL_COST_USD", config.max_total_cost_usd),
+        ("REPOMIND_LLM_CACHED_INPUT_USD_PER_MTOK", config.cached_input_rate),
+        ("REPOMIND_LLM_CACHE_WRITE_USD_PER_MTOK", config.cache_write_rate),
     ):
         if not math.isfinite(value) or value < 0:
             raise RepoMindError(f"{name} must be a number of 0 or more, got {value}.")
@@ -214,6 +265,16 @@ def _validate_openai(config: LLMConfig) -> None:
                 "per million tokens, from OpenAI's current price list for the model."
             ),
         )
+    if config.cache_write_usd_per_mtok is None or config.cache_write_usd_per_mtok <= 0:
+        raise RepoMindError(
+            "REPOMIND_LLM_PROVIDER=openai needs the model's cache-write price: OpenAI caches long prompts on its own, "
+            "and writing to the cache costs more than ordinary input.",
+            hint=(
+                "Set REPOMIND_LLM_CACHE_WRITE_USD_PER_MTOK above 0, from OpenAI's price list: the 30-minute write, the one "
+                "Chat Completions uses. REPOMIND_LLM_CACHED_INPUT_USD_PER_MTOK is optional, and without it reads from "
+                "the cache are counted at the full input price."
+            ),
+        )
     if config.max_total_cost_usd <= 0:
         raise RepoMindError(
             "REPOMIND_LLM_PROVIDER=openai needs a budget.",
@@ -228,6 +289,10 @@ class LLMResponse:
     output_tokens: int | None
     # Why the endpoint stopped writing: "stop", "length" at the output limit, or None when it did not say.
     finish_reason: str | None = None
+    # Of input_tokens, how many were read from the provider's cache and how many written to it.
+    # None when the endpoint did not say, which is not the same as 0.
+    cached_tokens: int | None = None
+    cache_write_tokens: int | None = None
 
 
 class LLMClient(Protocol):
@@ -394,6 +459,8 @@ def _reply(payload: object) -> LLMResponse:
     except (KeyError, IndexError, TypeError) as exc:
         raise RepoMindError("The LLM endpoint returned an unexpected response shape.") from exc
     usage = payload.get("usage") or {}
+    details = usage.get("prompt_tokens_details") if isinstance(usage, dict) else None
+    details = details if isinstance(details, dict) else {}
     finish = choice.get("finish_reason")
     # An empty reply is passed on as one, with whatever the endpoint said about it. The engine decides what it means.
     return LLMResponse(
@@ -401,7 +468,13 @@ def _reply(payload: object) -> LLMResponse:
         usage.get("prompt_tokens"),
         usage.get("completion_tokens"),
         finish if isinstance(finish, str) else None,
+        _count(details.get("cached_tokens")),
+        _count(details.get("cache_write_tokens")),
     )
+
+
+def _count(value: object) -> int | None:
+    return value if isinstance(value, int) and not isinstance(value, bool) and value >= 0 else None
 
 
 class OpenAICompatibleClient:

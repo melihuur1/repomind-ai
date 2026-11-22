@@ -40,6 +40,7 @@ function render(sources: AskSource[], changes: Partial<AskResponse> = {}): strin
     output_tokens: 5,
     cost_usd: 0,
     tokens_are_estimated: false,
+    cost_is_cautious: false,
     seconds: 1,
     ...changes,
   };
@@ -94,6 +95,17 @@ describe("AnswerCard", () => {
   it("gives a paid answer's cost as counted from the prices set, and says when the tokens are estimated", () => {
     const html = render([source("answer", "src/Client.java", 30)], { input_tokens: 1500, output_tokens: 40, cost_usd: 0.000664, tokens_are_estimated: true });
     expect(html).toContain("1,500 in, 40 out tokens · $0.0007 by the prices set (estimated)");
+  });
+
+  it("says a cost is at most this when the server did not say how its cache was used", () => {
+    const html = render([source("answer", "src/Client.java", 30)], { input_tokens: 1050, output_tokens: 45, cost_usd: 0.000154, cost_is_cautious: true });
+    expect(html).toContain("1,050 in, 45 out tokens · $0.0002 by the prices set (at most)");
+  });
+
+  it("gives an exact cost without a qualifier", () => {
+    const html = render([source("answer", "src/Client.java", 30)], { input_tokens: 1050, output_tokens: 45, cost_usd: 0.000154 });
+    expect(html).toContain("1,050 in, 45 out tokens · $0.0002 by the prices set");
+    expect(html).not.toContain("(at most)");
   });
 
   it("labels lines found without the model, gives the reason, and keeps Git's check", () => {

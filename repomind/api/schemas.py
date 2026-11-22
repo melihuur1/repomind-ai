@@ -53,6 +53,8 @@ class Spending(BaseModel):
         description="Part of recorded_usd: recorded before RepoMind kept how each cost was counted, so whether it was reported or estimated is not known.",
     )
     input_usd_per_mtok: float
+    cached_input_usd_per_mtok: float = Field(description="For input read from the provider's cache. The input price when none is set.")
+    cache_write_usd_per_mtok: float = Field(description="For input written to the provider's cache, instead of the input price. The input price when none is set.")
     output_usd_per_mtok: float
 
 
@@ -243,4 +245,8 @@ class AskResponse(BaseModel):
     output_tokens: int
     cost_usd: float = Field(default=0.0, description="What this answer was counted at, from the prices set. 0 for a free model or no model.")
     tokens_are_estimated: bool = Field(default=False, description="The server did not report token counts for this answer, so they were estimated.")
+    cost_is_cautious: bool = Field(
+        default=False,
+        description="The server did not say how the input was split between its cache and the rest, so that part was counted at the highest input price: the cost is at most this.",
+    )
     seconds: float

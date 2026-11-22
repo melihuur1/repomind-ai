@@ -141,7 +141,7 @@ export function AnswerCard({ response }: { response: AskResponse }) {
           <span data-testid="answer-usage" title="What this answer used. A cost is RepoMind's count from the prices set, not a bill.">
             {response.input_tokens.toLocaleString("en")} in, {response.output_tokens.toLocaleString("en")} out tokens
             {response.cost_usd > 0 ? ` · ${usd(response.cost_usd)} by the prices set` : ""}
-            {response.tokens_are_estimated ? " (estimated)" : ""}
+            {response.tokens_are_estimated ? " (estimated)" : response.cost_is_cautious && response.cost_usd > 0 ? " (at most)" : ""}
           </span>
         ) : null}
         <span>

@@ -69,7 +69,7 @@ UPDATE llm_usage SET kind = 'legacy' WHERE kind = 'reported' AND created_at < '2
 | 3 | **A model, checked that day** | From OpenAI's model list. It must take Chat Completions with `response_format` `json_object`, and `temperature` 0, or, for a reasoning model, the `reasoning_effort` value that is set. Its thinking counts against `REPOMIND_LLM_MAX_OUTPUT_TOKENS`, 250 by default, so use a low effort or raise that limit |
 | 4 | **The key** | A project key in `.env` only. `git check-ignore .env` names the file, and `git status` does not list it. A spending limit on the OpenAI project as well, as a second guard |
 | 5 | **Consent** | `REPOMIND_LLM_ALLOW_REMOTE=1`. The page shows the "Sent to OpenAI" note |
-| 6 | **Prices and a small budget** | Both prices from OpenAI's pricing page for that model. `REPOMIND_LLM_MAX_TOTAL_COST_USD=0.05` or less |
+| 6 | **Prices and a small budget** | From OpenAI's pricing page for that model: input, output, the 30-minute cache write (required) and cached input (optional). `REPOMIND_LLM_MAX_TOTAL_COST_USD=0.05` or less |
 | 7 | **The model check** | `/api/health` gives `"state": "ready"` and `"provider": "openai"`. It is a free `GET /v1/models/<model>`. A refused key shows `auth_failed`, a wrong name `model_missing`. Neither costs anything |
 | 8 | **One real question** | About the safe repository, in English, then one in Turkish (which is also a translation request). Two or three requests in all |
 | 9 | **The sources** | Every line shown has "In Git at" with the indexed commit. The made-up credential line is not among them |

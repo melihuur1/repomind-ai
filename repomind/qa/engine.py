@@ -12,7 +12,7 @@ from repomind.ingest.filters import find_credential
 from repomind.ingest.git_source import GitRepository
 from repomind.qa.completion import Completion, SnapshotSources, complete, declared_values, linked_evidence, unshown_values
 from repomind.qa.judge import Judgement, build_judge_prompt, parse_judgement
-from repomind.qa.llm import BudgetReached, LLMClient, LLMConfig, LLMResponse, cost_usd
+from repomind.qa.llm import BudgetReached, LLMClient, LLMConfig, LLMResponse, usage_cost
 from repomind.qa.passages import Passage, is_evidence, select_passages
 from repomind.qa.project_name import Wording, counts_with_name, stands_alone, with_name_seat, without_project_name
 from repomind.qa.prompt import (
@@ -102,6 +102,8 @@ class AskResult:
     input_tokens: int = 0
     output_tokens: int = 0
     tokens_are_estimated: bool = False
+    # The cost counts some input at the highest rate, because the server did not say how it was cached.
+    cost_is_cautious: bool = False
     context_chars: int = 0
     sources_sent: int = 0
     sources_dropped: int = 0
@@ -249,13 +251,22 @@ class QAEngine:
         result.tokens_are_estimated = result.tokens_are_estimated or estimated
         input_tokens = reported_input if reported_input is not None else prompt.estimated_input_tokens
         output_tokens = response.output_tokens if response.output_tokens is not None else max(1, len(response.text) // 3)
-        cost = cost_usd(self.config, input_tokens, output_tokens)
+        # Counts of cache reads and writes belong to the reported input, and mean nothing beside an estimate.
+        cached = getattr(response, "cached_tokens", None) if reported_input is not None else None
+        written = getattr(response, "cache_write_tokens", None) if reported_input is not None else None
+        cost, cautious = usage_cost(self.config, input_tokens, output_tokens, cached, written)
+        result.cost_is_cautious = result.cost_is_cautious or cautious
         result.input_tokens += input_tokens
         result.output_tokens += output_tokens
         result.cost_usd += cost
         result.context_chars = max(result.context_chars, prompt.context_chars)
         self.store.record_llm_usage(
-            self.config.base_url, self.config.model, input_tokens, output_tokens, cost, "estimated" if estimated else "reported"
+            self.config.base_url,
+            self.config.model,
+            input_tokens,
+            output_tokens,
+            cost,
+            "estimated" if estimated or cautious else "reported",
         )
         self._warn_if_truncated(reported_input, prompt, result)
         return response
@@ -268,7 +279,7 @@ class QAEngine:
         """
         if self.config.is_free or not getattr(exc, "may_have_been_charged", False):
             return
-        cost = cost_usd(self.config, prompt.estimated_input_tokens, max_output_tokens)
+        cost = self.config.worst_case_cost(prompt.estimated_input_tokens, max_output_tokens)
         self.store.record_llm_usage(
             self.config.base_url, self.config.model, prompt.estimated_input_tokens, max_output_tokens, cost, "worst_case"
         )

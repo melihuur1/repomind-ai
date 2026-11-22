@@ -58,7 +58,7 @@ class TestWhatThePageIsTold:
         assert ai["accuracy"] is None
         assert ai["spending"] == {
             "budget_usd": 1.0, "recorded_usd": 0.0, "left_usd": 1.0, "worst_case_usd": 0.0, "estimated_usd": 0.0, "legacy_usd": 0.0,
-            "input_usd_per_mtok": 0.4, "output_usd_per_mtok": 1.6,
+            "input_usd_per_mtok": 0.4, "cached_input_usd_per_mtok": 0.4, "cache_write_usd_per_mtok": 0.4, "output_usd_per_mtok": 1.6,
         }
         assert KEY not in response.text and "api_key" not in response.text
 

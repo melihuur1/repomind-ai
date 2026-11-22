@@ -157,12 +157,15 @@ REPOMIND_LLM_API_KEY=            # never in a file Git tracks
 REPOMIND_LLM_ALLOW_REMOTE=1      # consent to send code
 REPOMIND_LLM_INPUT_USD_PER_MTOK=     # from OpenAI's pricing page, above 0
 REPOMIND_LLM_OUTPUT_USD_PER_MTOK=    # the same
+REPOMIND_LLM_CACHE_WRITE_USD_PER_MTOK=   # the 30-minute cache write price, above 0
+# REPOMIND_LLM_CACHED_INPUT_USD_PER_MTOK= # optional; without it, cache reads count at the full input price
 REPOMIND_LLM_MAX_TOTAL_COST_USD=0.05 # nothing is sent once this could be passed
 # REPOMIND_LLM_REASONING_EFFORT=low  # only for a reasoning model, with a value it accepts
 ```
 
 - **No model or price is written in here.** Both change, so take them from [OpenAI's model list](https://platform.openai.com/docs/models) and [pricing page](https://openai.com/api/pricing/) on the day.
 - **The address is fixed.** It is `https://api.openai.com/v1`, and the key is never sent anywhere else, also not after a redirect.
+- **Cached input has its own prices.** OpenAI caches the start of a long prompt by itself. Each input token is billed at one of three prices: uncached, read from the cache, or written to it, and a write replaces the uncached price instead of adding to it. RepoMind counts each part at its own price. Before a request, it allows for every input token at the highest of them.
 - **A setting that is wrong is named** in the top bar as **AI settings invalid**, and no request is made.
 - **What the page shows.** The AI panel shows the model, the note on what is sent, and the spending RepoMind has counted from your prices, which is not OpenAI's bill. A cost counted at its most, for a request that failed after it may have been charged, is marked as such.
 - **When OpenAI fails,** whether the key is refused, a limit is reached, the budget is spent or it cannot be reached, a question still returns the closest lines found by search, and says why.
