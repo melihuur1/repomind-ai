@@ -88,12 +88,14 @@ describe("AnswerCard", () => {
     const html = render([source("review_candidate", "src/loans.ts", 4), source("review_use", "src/loans.ts", 16), source("closest", "src/fees.ts", 6)], {
       verdict: "not_enough_evidence",
     });
-    const marks = ["Source to review", 'data-testid="source-review_candidate"', "Uses the constant above", 'data-testid="source-review_use"', "Closest lines found"];
+    const marks = ["Source to review", 'data-testid="source-review_candidate"', "Lines that use the constant above", 'data-testid="source-review_use"', "Closest lines found"];
     const order = marks.map((text) => html.indexOf(text));
     expect(order.every((position) => position >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
-    expect(html).toContain("Added by RepoMind, not chosen by the model");
-    expect(html).toContain("not an answer");
+    expect(html).toContain("Lines that use the constant above, added by RepoMind: not an answer (1)");
+    expect(html).toContain("The model did not choose these lines");
+    expect(html).toMatch(/<details class="closest review-uses" data-testid="review-uses">/);
+    expect(html).not.toMatch(/<details class="closest review-uses"[^>]*open/);
     expect(html).not.toContain("Lines the model chose");
     expect(html.match(/data-testid="source-review_use"/g)).toHaveLength(1);
     expect(html.match(/data-testid="source-review_candidate"/g)).toHaveLength(1);
@@ -101,7 +103,8 @@ describe("AnswerCard", () => {
 
   it("does not mention added uses when there are none", () => {
     const html = render([source("review_candidate", "src/loans.ts", 4)], { verdict: "not_enough_evidence" });
-    expect(html).not.toContain("Uses the constant above");
+    expect(html).not.toContain("use the constant above");
+    expect(html).not.toContain("review-uses");
   });
 
   it("gives a free model's tokens and no cost", () => {

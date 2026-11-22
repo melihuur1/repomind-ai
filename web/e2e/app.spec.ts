@@ -426,6 +426,53 @@ test.describe("Experimental AI Analysis", () => {
     });
   }
 
+  test("a declaration the model chose alone is shown for review with the check that uses it, and nothing is an answer", async ({ page, request }) => {
+    const commit = await commitOf(request, "other");
+    await setState(request, { reply: { choose: ["src/limits.ts"] } });
+    await page.goto("/r/other");
+    const answer = await ask(page, "What is the maximum number of items a cart holds?");
+
+    await expect(answer).toHaveAttribute("data-verdict", "not_enough_evidence");
+    await expect(answer.locator(".answer-message")).toContainText("I do not know");
+    await expect(answer.getByTestId("source-answer")).toHaveCount(0);
+    await expect(answer.getByRole("heading", { name: "Lines the model chose" })).toHaveCount(0);
+
+    const chosen = answer.getByTestId("source-review_candidate");
+    await expect(chosen).toHaveCount(1);
+    await expect(chosen.getByTestId("source-link")).toContainText("src/limits.ts:1");
+    await expect(chosen.locator(".snippet-line").first().locator(".snippet-number")).toHaveText("1");
+    await expect(chosen).toContainText("export const MAX_ITEMS = 3;");
+    await expect(chosen).toContainText("In Git at");
+    await expect(chosen).toContainText(commit.slice(0, 7));
+    await expect(chosen).toContainText("Answer not verified");
+
+    const folded = answer.getByTestId("review-uses");
+    await expect(folded.locator("summary")).toContainText("added by RepoMind: not an answer (1)");
+    const added = folded.getByTestId("source-review_use");
+    await expect(added).toBeHidden();
+    await folded.locator("summary").click();
+    await expect(added).toBeVisible();
+    await expect(folded).toContainText("The model did not choose these lines");
+    await expect(added.getByTestId("source-link")).toContainText("src/cart.ts");
+    const check = added.locator(".snippet-line", { hasText: "MAX_ITEMS) throw" });
+    await expect(check.locator(".snippet-number")).toHaveText("10");
+    await expect(added).toContainText("In Git at");
+    await expect(added).toContainText(commit.slice(0, 7));
+    await expect(added).toContainText("Not judged");
+    await expect(added).not.toContainText("Answer not verified");
+
+    // Text content, so that links inside a folded section count too.
+    const links = await answer.getByTestId("source-link").allTextContents();
+    expect(links.length).toBeGreaterThanOrEqual(2);
+    expect(new Set(links).size).toBe(links.length);
+    await expect(answer).not.toContainText("fake-cart-token-e2e");
+    await expect(answer).not.toContainText("CART_TOKEN");
+
+    await added.getByTestId("source-link").click();
+    await expect(page).toHaveURL(new RegExp(`/blob/${commit}/src/cart\\.ts#L\\d+`));
+    await expect(codeView(page)).not.toContainText("fake-cart-token-e2e");
+  });
+
   test("a model that dies during a question does not break the page", async ({ page, request }) => {
     await setState(request, { reply: { fail: true } });
     await page.goto("/r/demo");

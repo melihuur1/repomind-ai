@@ -78,6 +78,22 @@ FILES = {
 }
 
 state: dict = {"ai": "ready", "reply": {"choose": []}, "provider": "ollama", "tokens": [10, 5]}
+LIMITS = "export const MAX_ITEMS = 3;\nexport const CURRENCY = 'EUR';\n"
+CART = (
+    "import { MAX_ITEMS } from './limits';\n"
+    "\n"
+    "export interface Cart {\n"
+    "  items: string[];\n"
+    "}\n"
+    "\n"
+    "/** Adds an item to the cart, unless the cart already holds the maximum number of items. */\n"
+    "export function addItem(cart: Cart, item: string): Cart {\n"
+    '  const CART_TOKEN = "fake-cart-token-e2e";\n'
+    "  if (cart.items.length >= MAX_ITEMS) throw new Error('the cart is full');\n"
+    "  cart.items.push(item);\n"
+    "  return cart;\n"
+    "}\n"
+)
 # Made up. The browser tests check that it is in no response the page gets.
 E2E_KEY = "e2e-made-up-key-0001"
 LOCAL_MODEL = LLMConfig(base_url="http://127.0.0.1:1/v1", model="fake-model")
@@ -243,6 +259,9 @@ def main() -> None:
     other.mkdir()
     git(other, "init", "-b", "main")
     write(other, "src/notes.ts", "export function addNote(title: string) {\n  return title;\n}\n")
+    # A constant declared in one file and enforced in another, with a fake credential beside the check.
+    write(other, "src/limits.ts", LIMITS)
+    write(other, "src/cart.ts", CART)
     commit_all(other, "Notes")
 
     embedder = FakeEmbedder()

@@ -115,12 +115,21 @@ export function AnswerCard({ response }: { response: AskResponse }) {
         icon={<ScanSearch size={14} aria-hidden />}
         sources={of("review_candidate")}
       />
-      <Section
-        title="Uses the constant above"
-        hint="Added by RepoMind, not chosen by the model: these lines use a constant declared in a line the model pointed to. They exist at this commit. They are something to review, not an answer."
-        icon={<Link2 size={14} aria-hidden />}
-        sources={of("review_use")}
-      />
+      {of("review_use").length ? (
+        // Folded, and named as not an answer before it is opened: most such lines are not the right place.
+        <details className="closest review-uses" data-testid="review-uses">
+          <summary>
+            <Link2 size={13} aria-hidden /> Lines that use the constant above, added by RepoMind: not an answer ({of("review_use").length})
+          </summary>
+          <p className="muted answer-small">
+            The model did not choose these lines. They use a constant declared in a line the model pointed to, and they exist at this commit.
+            Nothing confirms that they answer the question.
+          </p>
+          {of("review_use").map((source) => (
+            <SourceCard key={`${source.path}:${source.start_line}`} source={source} />
+          ))}
+        </details>
+      ) : null}
 
       {of("closest").length ? (
         <details className="closest" open={response.verdict === "ai_unavailable"}>
