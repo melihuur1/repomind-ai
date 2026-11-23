@@ -52,11 +52,17 @@ $env:REPOMIND_DATABASE_URL = "postgresql://repomind:repomind@127.0.0.1:55432/rep
 
 A database that gets the column from this version marks its existing rows `legacy`, because reported and estimated counts were not told apart then. The page shows a legacy part apart, and never as reported.
 
-A database that got the column from an earlier build of this branch has its older rows marked `reported` instead. Rows from the local model cost $0, so no figure on the page changes. Relabelling them is one statement, to run only on purpose:
+A database that got the column from an earlier build of this branch has its older rows marked `reported` instead. Rows from the local model cost $0, so no figure on the page changes, and nothing has to be done.
 
-```sql
-UPDATE llm_usage SET kind = 'legacy' WHERE kind = 'reported' AND created_at < '2026-11-22';
-```
+**RepoMind never relabels rows itself, and there is no statement here to copy.** In a database that has been used with OpenAI, `reported` rows are real counts that OpenAI sent. A statement that picks rows by a date can turn some of them into `legacy`, and the spending shown is then split wrongly. If you want the older rows marked `legacy`:
+1. Back up the database first.
+2. Look at the rows, which changes nothing:
+
+   ```sql
+   SELECT kind, model, count(*), min(created_at), max(created_at), sum(cost_usd)
+     FROM llm_usage GROUP BY kind, model ORDER BY min(created_at);
+   ```
+3. Decide from what you see which rows came from before kinds were kept. Change only those, with a condition you have checked against that database.
 
 ## 2. Checklist for the first real request
 

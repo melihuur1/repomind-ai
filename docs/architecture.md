@@ -481,8 +481,10 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO repomind_reader;
 **Connecting Claude Code.** From the project folder, with only the two settings the server needs:
 
 ```powershell
-claude mcp add -e REPOMIND_MCP_DATABASE=<database> -e REPOMIND_MCP_REPOSITORIES=<repositories> --scope local repomind -- <path to .venv>\Scripts\python.exe -m repomind.mcp_server
+claude mcp add -e REPOMIND_MCP_DATABASE=<database> -e REPOMIND_MCP_REPOSITORIES=<repositories> --scope local repomind '--' "$PWD\.venv\Scripts\python.exe" -m repomind.mcp_server
 ```
+
+In Windows PowerShell, `claude` is npm's PowerShell script, and PowerShell keeps a bare `--` from reaching a script, so the `--` that ends Claude Code's own options is quoted. In another shell, it is a bare `--`.
 
 - **Where the entry is kept.** `--scope local` keeps it private to that folder, in Claude Code's own settings outside the repository. It makes no `.mcp.json`, and Git ignores one anyway.
 - **What the command must not hold.** It passes neither a model setting nor a key.
