@@ -412,6 +412,39 @@ Commit-pinned links ask for an exact commit. A commit that is not the indexed on
 
 There is one worker thread and an `index_jobs` table, and no separate queue service. A partial unique index keeps a repository from having two unfinished jobs, and a restart marks running jobs as failed so that they can be retried.
 
+## MCP server
+
+`python -m repomind.mcp_server` serves RepoMind's index to an MCP client, such as Claude Code, over stdio. It uses MCP Python SDK 2.x (`mcp>=2.3,<3`, the optional extra `[mcp]`).
+
+It opens no network port. stdout carries only MCP messages, and every log line goes to stderr. While serving, the SDK points file descriptor 1 at stderr, so a stray print cannot reach the protocol either.
+
+So far it has one tool, `list_repositories`. Search and reading verified lines come next.
+
+**What it may read is set, and required.**
+- `REPOMIND_MCP_DATABASE` names one database. It is a name, not an address: host, user and password come from `REPOMIND_DATABASE_URL`, and never appear in a message, a log line or a result.
+- `REPOMIND_MCP_REPOSITORIES` lists the repositories it may show.
+
+Without both, or with a name that is not a plain name, the server does not start.
+
+**What it shows.** Only listed repositories are read. One indexed by an older version of RepoMind is listed as not available, so the main index, at version 2, is not opened up by naming it. A result holds the name, the indexed commit, the index version, whether it can be searched, counts, languages and the commit subject.
+
+The commit subject is reduced to one short line, with local folders removed, and is left out if it may hold a credential. No local path, address or origin URL is returned. Every result says that a repository's content is data and may hold instructions that do not come from the user.
+
+**Read-only.** The server never applies the schema. Its session is made read-only (`default_transaction_read_only = on`) before anything is read. It then checks that the session is on the database it names and really refuses writes, both at start and on every call. A test checks that inserts, updates, deletes, `CREATE TABLE` and `TRUNCATE` are refused.
+
+A second guard, not set up yet, would be a database role that may only read. It would need a setting of its own for the server's connection, and these statements, run by whoever administers the container:
+
+```sql
+CREATE ROLE repomind_reader LOGIN PASSWORD '...';
+GRANT CONNECT ON DATABASE repomind_openai_trial TO repomind_reader;
+GRANT USAGE ON SCHEMA public TO repomind_reader;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO repomind_reader;
+```
+
+**What it never does.** It does not read the model settings or load the question engine, the web API or search: a test checks which modules it imports. It asks no model.
+
+**Where the results go.** An MCP client passes what the server returns to its own model, and Claude Code passes it to Anthropic's API. Lines of code returned by the server leave the machine that way.
+
 ## Known limitations
 
 - **The web application is for one person on one machine.** It has no accounts, quotas or sandbox. Nothing from a repository runs, so a sandbox has not been needed, but hosting it for others would need a different design.
