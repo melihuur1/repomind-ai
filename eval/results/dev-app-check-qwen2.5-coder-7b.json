@@ -1,0 +1,620 @@
+{
+ "model": "qwen2.5-coder:7b",
+ "memory_at_start": "physical 14.88 GB, commit 22.24 GB; physical 14.91 GB, commit 22.27 GB",
+ "placement": {
+  "size_mib": 6082,
+  "in_gpu_mib": 3282
+ },
+ "answers": [
+  {
+   "id": "app-sg-ttl-max",
+   "language": "tr",
+   "apart": false,
+   "answerable": true,
+   "verdict": "not_enough_evidence",
+   "ai_used": true,
+   "model": "qwen2.5-coder:7b",
+   "translated_query": "What is the longest wait time that can be set when creating a reservation?",
+   "outcome": "none",
+   "right_lines_offered": false,
+   "sources": [
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/reservation/ReservationTransactions.java:17-30",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/resources/application.yml:61-66",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/reservation/ReservationRepository.java:54-68",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/reservation/ReservationTransactions.java:109-114",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/reservation/ReservationService.java:32-35",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": null,
+   "warnings": [
+    "Not found anywhere in the indexed code: longest."
+   ],
+   "input_tokens": 1282,
+   "output_tokens": 31,
+   "seconds": 14.13,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 8.73,
+   "min_free_commit_gb": 12.65
+  },
+  {
+   "id": "app-sn-title-length",
+   "language": "tr",
+   "apart": false,
+   "answerable": true,
+   "verdict": "lines_chosen",
+   "ai_used": true,
+   "model": "qwen2.5-coder:7b",
+   "translated_query": "What is the maximum number of characters that a note title can be saved as?",
+   "outcome": "wrong",
+   "right_lines_offered": false,
+   "sources": [
+    {
+     "role": "answer",
+     "where": "apps/web/src/editor/title-input.tsx:53-57",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/web/src/pages/dashboard-page.tsx:140-144",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "packages/shared/src/roles.ts:8-12",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/web/src/pages/note-page.tsx:17-24",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/api/src/notes/notes.service.ts:30-43",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": "`maxLength={200}` notun başlığı en fazla 200 karakter olarak kaydediliyor.",
+   "warnings": [
+    "Not found anywhere in the indexed code: maximum."
+   ],
+   "input_tokens": 1078,
+   "output_tokens": 59,
+   "seconds": 8.52,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 8.68,
+   "min_free_commit_gb": 12.6
+  },
+  {
+   "id": "app-sg-barcode",
+   "language": "tr",
+   "apart": false,
+   "answerable": false,
+   "verdict": "not_enough_evidence",
+   "ai_used": true,
+   "model": null,
+   "translated_query": "How is a barcode generated for a product?",
+   "outcome": "none",
+   "right_lines_offered": false,
+   "sources": [
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/catalog/ProductController.java:82-88",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/resources/db/migration/V2__catalog_and_stock.sql:1-12",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/catalog/ProductController.java:48-55",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/catalog/ProductService.java:29-36",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/catalog/Product.java:47-48",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": null,
+   "warnings": [
+    "Not found anywhere in the indexed code: barcode.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "input_tokens": 61,
+   "output_tokens": 14,
+   "seconds": 2.53,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 8.68,
+   "min_free_commit_gb": 12.6
+  },
+  {
+   "id": "app-sg-sim-timeout",
+   "language": "en",
+   "apart": false,
+   "answerable": true,
+   "verdict": "not_enough_evidence",
+   "ai_used": true,
+   "model": "qwen2.5-coder:7b",
+   "translated_query": null,
+   "outcome": "none",
+   "right_lines_offered": true,
+   "sources": [
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/simulation/SimulationService.java:147-156",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/simulation/SimulationService.java:157-169",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/simulation/SimulationService.java:98-102",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/simulation/SimulationController.java:31-35",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/inventory/StockLevelRepository.java:14-23",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": null,
+   "warnings": [],
+   "input_tokens": 1247,
+   "output_tokens": 10,
+   "seconds": 4.74,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 8.66,
+   "min_free_commit_gb": 12.62
+  },
+  {
+   "id": "app-sn-search-length",
+   "language": "en",
+   "apart": false,
+   "answerable": true,
+   "verdict": "not_enough_evidence",
+   "ai_used": true,
+   "model": null,
+   "translated_query": null,
+   "outcome": "none",
+   "right_lines_offered": false,
+   "sources": [],
+   "index_commit_is_pinned": true,
+   "model_reading": null,
+   "warnings": [
+    "Not found anywhere in the indexed code: longest, accepted."
+   ],
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "seconds": 0.05,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 8.65,
+   "min_free_commit_gb": 12.62
+  },
+  {
+   "id": "app-sn-webhook",
+   "language": "en",
+   "apart": false,
+   "answerable": false,
+   "verdict": "not_enough_evidence",
+   "ai_used": true,
+   "model": "qwen2.5-coder:7b",
+   "translated_query": null,
+   "outcome": "none",
+   "right_lines_offered": false,
+   "sources": [
+    {
+     "role": "closest",
+     "where": "apps/web/src/lib/api.ts:144-147",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/web/src/lib/api.ts:139-143",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/web/src/lib/api.ts:148-150",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/web/src/collab/connection.ts:50-54",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "apps/api/src/main.ts:8-14",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": null,
+   "warnings": [
+    "Not found anywhere in the indexed code: webhook.",
+    "The repository's name was left out of the search, because every result is in this repository."
+   ],
+   "input_tokens": 1039,
+   "output_tokens": 10,
+   "seconds": 4.95,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 8.6,
+   "min_free_commit_gb": 12.44
+  },
+  {
+   "id": "manual-negative-stock",
+   "language": "tr",
+   "apart": true,
+   "answerable": true,
+   "verdict": "lines_chosen",
+   "ai_used": true,
+   "model": "qwen2.5-coder:7b",
+   "translated_query": "How does StockGuard prevent stock quantities from dropping below zero?",
+   "outcome": "correct",
+   "right_lines_offered": true,
+   "sources": [
+    {
+     "role": "answer",
+     "where": "src/main/resources/db/migration/V2__catalog_and_stock.sql:14-27",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/simulation/SimulationService.java:196-200",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/simulation/SimulationService.java:222-226",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    },
+    {
+     "role": "closest",
+     "where": "src/main/java/com/stockguard/common/config/StockGuardProperties.java:13-17",
+     "commit_is_the_indexed_one": true,
+     "exists_in_git": true,
+     "text_matches_git": true,
+     "github_url": null
+    }
+   ],
+   "index_commit_is_pinned": true,
+   "model_reading": "`stock_levels` tablosunda `available_quantity >= 0` kontrolü negatif stok miktarını engeller.",
+   "warnings": [
+    "Not found anywhere in the indexed code: prevent, dropping, below.",
+    "The repository's name was left out of the search, because every result is in this repository."
+   ],
+   "input_tokens": 1289,
+   "output_tokens": 56,
+   "seconds": 9.64,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 8.53,
+   "min_free_commit_gb": 12.47
+  }
+ ],
+ "translations": {
+  "v5-sg-jwt-secret-length": {
+   "asked": "JWT imzalamak için kullanılan gizli anahtar en az kaç karakter olmalı?",
+   "model": "What is the minimum number of characters required for a secret key used to sign JWTs?",
+   "qwen2.5:7b_stored": "What is the minimum length of the secret key used for JWT signing?",
+   "seconds": 2.16
+  },
+  "v5-sg-sku-locked": {
+   "asked": "Bir ürünün SKU kodu oluşturulduktan sonra değiştirilebilir mi?",
+   "model": "Can a product's SKU code be changed after it has been created?",
+   "qwen2.5:7b_stored": "Can an SKU code for a product be changed after it has been created?",
+   "seconds": 2.12
+  },
+  "v5-sg-page-envelope": {
+   "asked": "Sayfalı API cevaplarında Spring'in kendi sayfa biçimi neden doğrudan dönülmüyor?",
+   "model": "Why is Spring's own pagination format not directly returned in paginated API responses?",
+   "qwen2.5:7b_stored": "Why does Spring's own page model not get resolved directly in paginated API responses?",
+   "seconds": 2.6
+  },
+  "v5-sg-root-redirect": {
+   "asked": "Uygulamanın kök adresine gidildiğinde kullanıcı nereye yönlendiriliyor?",
+   "model": "When the root address of the application is accessed, where does the user get redirected?",
+   "qwen2.5:7b_stored": "When the root address of the application is accessed, where is the user redirected?",
+   "seconds": 2.77
+  },
+  "v5-sg-movements-order": {
+   "asked": "Bir ürünün stok hareketleri API'den hangi sırayla dönüyor?",
+   "model": "How are product stock movements returned from the API?",
+   "qwen2.5:7b_stored": "In which order does a product's stock movements API retrieve the records?",
+   "seconds": 2.25
+  },
+  "v5-sg-zero-quantity": {
+   "asked": "Veritabanı miktarı sıfır olan bir rezervasyon kaydını kabul eder mi?",
+   "model": "Does it accept a reservation record with zero database size?",
+   "qwen2.5:7b_stored": "Does it accept a reservation record with a database amount of zero?",
+   "seconds": 2.25
+  },
+  "v5-sg-api-language": {
+   "asked": "API, istemcinin istediği dile göre farklı dilde hata mesajı döndürüyor mu?",
+   "model": "Does the API return error messages in the language requested by the client?",
+   "qwen2.5:7b_stored": "Does the API return error messages in a different language based on the client's requested language?",
+   "seconds": 2.44
+  },
+  "v5-sg-simulation-default": {
+   "asked": "Yarış simülasyonu uygulamada varsayılan olarak açık mı?",
+   "model": "Is the race simulation application open by default?",
+   "qwen2.5:7b_stored": "Is the race simulation app defaultly enabled?",
+   "seconds": 1.9
+  },
+  "v5-sn-logout-expired": {
+   "asked": "Erişim anahtarının süresi dolmuş bir kullanıcı çıkış yapabilir mi?",
+   "model": "Can a user log out if their access key has expired?",
+   "qwen2.5:7b_stored": "Can a user log out if the access key's expiration period has expired?",
+   "seconds": 2.14
+  },
+  "v5-sn-nonmember-status": {
+   "asked": "Bir notun üyesi olmayan kullanıcı o nota erişmeye çalışırsa hangi HTTP durumu dönüyor?",
+   "model": "If a user who is not a member of a note tries to access it, what HTTP status code is returned?",
+   "qwen2.5:7b_stored": "What HTTP status code is returned when a user who is not a member tries to access a note?",
+   "seconds": 2.68
+  },
+  "v5-sn-version-list-limit": {
+   "asked": "Bir notun sürüm geçmişinde en fazla kaç sürüm listeleniyor?",
+   "model": "How many versions are listed in a note's version history?",
+   "qwen2.5:7b_stored": "How many versions are listed in a single version history note?",
+   "seconds": 1.81
+  },
+  "v5-sn-version-viewer": {
+   "asked": "Görüntüleyici rolündeki bir kullanıcı not için sürüm oluşturabilir mi?",
+   "model": "Can a user with a viewer role create a version for a note?",
+   "qwen2.5:7b_stored": "Can a user with viewer role create a version for a pull request comment?",
+   "seconds": 2.21
+  },
+  "v5-sn-log-format": {
+   "asked": "İşbirliği sunucusu loglarını hangi biçimde yazıyor?",
+   "model": "What format is the collaboration server logging in?",
+   "qwen2.5:7b_stored": "How does the collaboration server log the logs?",
+   "seconds": 1.71
+  },
+  "v5-sn-email-unique": {
+   "asked": "Aynı e-posta adresiyle iki hesap açılabilir mi?",
+   "model": "Can two accounts be opened with the same email address?",
+   "qwen2.5:7b_stored": "Can two accounts be created with the same email address?",
+   "seconds": 1.9
+  },
+  "v5-sn-version-kinds": {
+   "asked": "Not sürümleri hangi türlerde olabilir?",
+   "model": "What types of releases can be made?",
+   "qwen2.5:7b_stored": "What types of versions can be available?",
+   "seconds": 1.6
+  },
+  "v5-sn-migrate-first": {
+   "asked": "Docker ile başlatırken API açılmadan önce veritabanı şeması nasıl güncelleniyor?",
+   "model": "How is the database schema updated before the API opens when starting with Docker?",
+   "qwen2.5:7b_stored": "How is the database schema updated before the API starts when starting with Docker?",
+   "seconds": 2.52
+  },
+  "v5-sg-neg-price": {
+   "asked": "Bir ürünün satış fiyatı nasıl güncelleniyor?",
+   "model": "How do you update the selling price of a product?",
+   "qwen2.5:7b_stored": "How is a product's sale price updated?",
+   "seconds": 1.86
+  },
+  "v5-sg-neg-invoice": {
+   "asked": "Onaylanan bir rezervasyon için fatura nasıl oluşturuluyor?",
+   "model": "How is an invoice created for a confirmed reservation?",
+   "qwen2.5:7b_stored": "How is an invoice created for an approved reservation?",
+   "seconds": 1.87
+  },
+  "v5-sg-neg-category": {
+   "asked": "Ürünler kategorilere göre nasıl filtreleniyor?",
+   "model": "How are products filtered by categories?",
+   "qwen2.5:7b_stored": "How is the products filtered by categories?",
+   "seconds": 1.47
+  },
+  "v5-sg-neg-shipping": {
+   "asked": "Onaylanan rezervasyonların kargo takibi nasıl yapılıyor?",
+   "model": "How is cargo tracking done for confirmed reservations?",
+   "qwen2.5:7b_stored": "How is the shipment tracking done for confirmed reservations?",
+   "seconds": 1.8
+  },
+  "v5-sn-neg-google": {
+   "asked": "Google hesabıyla giriş nasıl çalışıyor?",
+   "model": "How does Google account login work?",
+   "qwen2.5:7b_stored": "How does login work with a Google account?",
+   "seconds": 1.38
+  },
+  "v5-sn-neg-photo": {
+   "asked": "Kullanıcı profil fotoğrafı nasıl yükleniyor?",
+   "model": "How do you upload a profile picture?",
+   "qwen2.5:7b_stored": "How is the profile picture uploaded?",
+   "seconds": 1.46
+  },
+  "v5-sn-neg-reminder": {
+   "asked": "Bir not için hatırlatıcı nasıl kuruluyor?",
+   "model": "How do you set up a reminder for a note?",
+   "qwen2.5:7b_stored": "How is a reminder set for a note?",
+   "seconds": 1.79
+  },
+  "v5-sn-neg-workspace": {
+   "asked": "Kullanıcılar ortak bir çalışma alanı nasıl oluşturuyor?",
+   "model": "How do users create a common workspace?",
+   "qwen2.5:7b_stored": "How do users create a shared workspace?",
+   "seconds": 1.48
+  },
+  "sg-db-connection-error": {
+   "asked": "PostgreSQL bağlantı hatası nasıl ele alınıyor?",
+   "model": "How is a PostgreSQL connection error handled?",
+   "qwen2.5:7b_stored": "How is a PostgreSQL connection error handled?",
+   "seconds": 1.53
+  },
+  "sg-oversell": {
+   "asked": "Aynı anda gelen isteklerde fazla satış nasıl önleniyor?",
+   "model": "How is excessive sales prevented during concurrent requests?",
+   "qwen2.5:7b_stored": "How is overselling prevented when there are concurrent requests?",
+   "seconds": 1.8
+  },
+  "v2-sg-error-status-map": {
+   "asked": "Yetersiz stok hatası hangi HTTP durum koduyla dönüyor?",
+   "model": "The insufficient stock error is returned by which HTTP status code?",
+   "qwen2.5:7b_stored": "Which HTTP status code is returned for an out of stock error?",
+   "seconds": 2.16
+  },
+  "v2-sn-redis-durability": {
+   "asked": "Redis verilerini diske hangi ayarla yazıyor?",
+   "model": "How do you configure Redis to write data to disk?",
+   "qwen2.5:7b_stored": "What setting writes Redis data to disk?",
+   "seconds": 2.04
+  },
+  "v2-sg-neg-transfer": {
+   "asked": "Stok bir depodan başka bir depoya nasıl aktarılıyor?",
+   "model": "How do you transfer items from one warehouse to another?",
+   "qwen2.5:7b_stored": "How can a package be transferred from one repository to another?",
+   "seconds": 2.01
+  },
+  "v4-sg-neg-wishlist": {
+   "asked": "Kullanıcılar ürünleri favori listesine nasıl ekliyor?",
+   "model": "How do users add products to their favorites list?",
+   "qwen2.5:7b_stored": "How do users add products to their favorites?",
+   "seconds": 2.17
+  },
+  "v4-sg-neg-reduce-quantity": {
+   "asked": "Mevcut bir rezervasyonun miktarı sonradan nasıl azaltılıyor?",
+   "model": "How can the amount of an existing reservation be reduced later?",
+   "qwen2.5:7b_stored": "How can the amount of an existing reservation be reduced later?",
+   "seconds": 2.34
+  },
+  "manual-negative-stock": {
+   "asked": "StockGuard stok miktarının negatife düşmesini nasıl engelliyor?",
+   "model": "How does StockGuard prevent stock quantities from dropping below zero?",
+   "qwen2.5:7b_stored": "How does StockGuard prevent stock quantities from going negative?",
+   "seconds": 2.28
+  }
+ },
+ "github": {}
+}

@@ -1,0 +1,2739 @@
+{
+ "version": "v2",
+ "part": "B",
+ "run": null,
+ "model": "qwen2.5:7b",
+ "code": "C:\\Projects\\repomind-ai\\.data\\v6-eval\\code\\v2",
+ "code_commit": "fd03dcecb5fb62a944fb2f4fc2321220bc507d3b",
+ "pipeline_version": "3",
+ "database": "repomind_rt_eval_v2",
+ "settings": {
+  "selection": "choose",
+  "linked_evidence": false,
+  "max_input_tokens": 4000,
+  "max_output_tokens": 250
+ },
+ "memory_at_start": "physical 14.57 GB, commit 21.81 GB; physical 14.59 GB, commit 21.91 GB",
+ "placement": {
+  "size_mib": 6082,
+  "in_gpu_mib": 3282
+ },
+ "rows": [
+  {
+   "id": "v6-sg-product-page-size",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 71,
+     "end_line": 80
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 71,
+     "end_line": 80
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 62,
+     "end_line": 65
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 70,
+     "end_line": 77
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 90,
+     "end_line": 94
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 71,
+     "end_line": 80
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 62,
+     "end_line": 65
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 70,
+     "end_line": 77
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 90,
+     "end_line": 94
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How many products can be requested per page when listing products?",
+   "model_translation": "{\"english\": \"How many products can be requested per page when listing products?\"}",
+   "note": "`size` parametresi 1 ile 100 arasında olabilir, bu sayede bir sayfada en fazla 100 ürün istenebilir.",
+   "warnings": [],
+   "completions": [],
+   "prompt_sha256": [
+    "f53c6d571813f7c881f4196f2f61a6f97b8e18794b822fcc8c3e5e6f6b4b3ff3"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1222,
+   "output_tokens": 68,
+   "seconds": 16.69,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 8.77,
+   "min_free_commit_gb": 13.27
+  },
+  {
+   "id": "v6-sg-description-length",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 90,
+     "end_line": 94
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 50,
+     "end_line": 54
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 71,
+     "end_line": 75
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 110,
+     "end_line": 114
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 90,
+     "end_line": 94
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 50,
+     "end_line": 54
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 71,
+     "end_line": 75
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 110,
+     "end_line": 114
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What is the maximum character length for a product description?",
+   "model_translation": "{\"english\": \"What is the maximum character length for a product description?\"}",
+   "note": "`@Size(max = 2000) String description)` ifadesi gösteriyor ki bir ürün açıklaması en fazla 2000 karakter olabilir.",
+   "warnings": [],
+   "completions": [],
+   "prompt_sha256": [
+    "c680b95e98ccaa566c111cde4b9f9081a7e4d37d34da5fbf7aed3ad749f9727a"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 971,
+   "output_tokens": 66,
+   "seconds": 8.49,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 8.74,
+   "min_free_commit_gb": 13.25
+  },
+  {
+   "id": "v6-sg-simulation-consistent",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 295,
+     "end_line": 299
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 108,
+     "end_line": 116
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 295,
+     "end_line": 299
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 31,
+     "end_line": 35
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 281,
+     "end_line": 283
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 11,
+     "end_line": 22
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 108,
+     "end_line": 116
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 295,
+     "end_line": 299
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 31,
+     "end_line": 35
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 281,
+     "end_line": 283
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 11,
+     "end_line": 22
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What conditions does the simulation report consider consistent for storing a run's data?",
+   "model_translation": "{\"english\": \"What conditions does the simulation report consider consistent for storing a run's data?\"}",
+   "note": "`dataConsistent` parametresi raporun verilerinin tutarlı olduğuna dair bir durumu gösterir.",
+   "warnings": [],
+   "completions": [
+    [
+     "SIMULATION_EXECUTED",
+     "src/main/java/com/stockguard/simulation/SimulationService.java:108-116",
+     false,
+     "no declaration of SIMULATION_EXECUTED was found"
+    ],
+    [
+     "IN_SCOPE",
+     "src/main/java/com/stockguard/inventory/ConsistencyService.java:11-22",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "f9af0c0cae7fea9e710127de6bb9ad371d2002847321862f1fd1590176dca010"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1183,
+   "output_tokens": 61,
+   "seconds": 9.06,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 9.22,
+   "min_free_commit_gb": 13.7
+  },
+  {
+   "id": "v6-sg-delta-total",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 79,
+     "end_line": 83
+    }
+   ],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 79,
+     "end_line": 83
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 10,
+     "end_line": 20
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 1,
+     "end_line": 5
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 19,
+     "end_line": 22
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockMovement.java",
+     "start_line": 79,
+     "end_line": 83
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 10,
+     "end_line": 20
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 1,
+     "end_line": 5
+    },
+    {
+     "path": "src/main/resources/db/migration/V4__ledger_and_audit.sql",
+     "start_line": 19,
+     "end_line": 22
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How is the total change in quantity calculated in a stock movement?",
+   "model_translation": "{\"english\": \"How is the total change in quantity calculated in a stock movement?\"}",
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: calculated."
+   ],
+   "completions": [
+    [
+     "STOCK_IN",
+     "src/main/resources/db/migration/V4__ledger_and_audit.sql:19-22",
+     false,
+     "no declaration of STOCK_IN was found"
+    ],
+    [
+     "CANCEL_RELEASED",
+     "src/main/resources/db/migration/V4__ledger_and_audit.sql:19-22",
+     false,
+     "no declaration of CANCEL_RELEASED was found"
+    ],
+    [
+     "EXPIRY_RELEASED",
+     "src/main/resources/db/migration/V4__ledger_and_audit.sql:19-22",
+     false,
+     "no declaration of EXPIRY_RELEASED was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "99ce5a7a810d84d8ab54f5470afae73a9b2a9fc423da8939005b652dd4c827ef"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1198,
+   "output_tokens": 57,
+   "seconds": 9.21,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 9.16,
+   "min_free_commit_gb": 13.64
+  },
+  {
+   "id": "v6-sg-confirm-counters",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 39,
+     "end_line": 45
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 92,
+     "end_line": 97
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 39,
+     "end_line": 45
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 113,
+     "end_line": 117
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 109,
+     "end_line": 111
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 25,
+     "end_line": 39
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 92,
+     "end_line": 97
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLedger.java",
+     "start_line": 39,
+     "end_line": 45
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 113,
+     "end_line": 117
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 109,
+     "end_line": 111
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 25,
+     "end_line": 39
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "Which stock counters change when a reservation is approved?",
+   "model_translation": "{\"english\": \"Which stock counters change when a reservation is approved?\"}",
+   "note": "`StockLedger.tryReserve` fonksiyonu rezervasyon oluşturulduğunda kullanılabilir stok sayacından tahsil edilen sayaca taşınır.",
+   "warnings": [
+    "Not found anywhere in the indexed code: approved."
+   ],
+   "completions": [
+    [
+     "RESERVATION_EXPIRED",
+     "src/main/java/com/stockguard/reservation/ReservationController.java:92-97",
+     false,
+     "no declaration of RESERVATION_EXPIRED was found"
+    ],
+    [
+     "RESERVATION_ALREADY_SETTLED",
+     "src/main/java/com/stockguard/reservation/ReservationController.java:92-97",
+     false,
+     "no declaration of RESERVATION_ALREADY_SETTLED was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "0a71b8b7a9ed21bc0a66d845f27acb5f795bbe57862b143eafabbcb4e41d14c5"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1226,
+   "output_tokens": 66,
+   "seconds": 9.61,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 9.19,
+   "min_free_commit_gb": 13.67
+  },
+  {
+   "id": "v6-sg-unknown-constraint",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 97,
+     "end_line": 107
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 97,
+     "end_line": 107
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 44,
+     "end_line": 47
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 29,
+     "end_line": 42
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/ApiException.java",
+     "start_line": 5,
+     "end_line": 9
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 120,
+     "end_line": 121
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 97,
+     "end_line": 107
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 44,
+     "end_line": 47
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java",
+     "start_line": 29,
+     "end_line": 42
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/error/ApiException.java",
+     "start_line": 5,
+     "end_line": 9
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 120,
+     "end_line": 121
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How does the API respond when a database constraint violation occurs, aside from known conflicts?",
+   "model_translation": "{\"english\": \"How does the API respond when a database constraint violation occurs, aside from known conflicts?\"}",
+   "note": "`handleIntegrity` metodunun yanıt verdiği hata durumu, bilinen çakışmalar dışında bir veritabanı kısıtlaması ihlali olduğunda, uygulama koduna ait bir hata olduğunu belirtir.",
+   "warnings": [
+    "Not found anywhere in the indexed code: aside.",
+    "The chosen lines use KNOWN_CONSTRAINTS, whose value is at src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:36, which was not chosen."
+   ],
+   "completions": [
+    [
+     "KNOWN_CONSTRAINTS",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:97-107",
+     true,
+     "already shown"
+    ],
+    [
+     "INTERNAL_ERROR",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:97-107",
+     false,
+     "no declaration of INTERNAL_ERROR was found"
+    ],
+    [
+     "KNOWN_CONSTRAINTS",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:29-42",
+     true,
+     "already shown"
+    ],
+    [
+     "SKU_TAKEN",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:29-42",
+     false,
+     "no declaration of SKU_TAKEN was found"
+    ],
+    [
+     "SERVER_GOING_AWAY",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:29-42",
+     true,
+     "already shown"
+    ],
+    [
+     "POOL_CONNECTION_CLOSED",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:29-42",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "a74c7ea3daf312b9537b69020910675200ced54edbee6432a6103c49a880973a"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1251,
+   "output_tokens": 90,
+   "seconds": 11.52,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 9.18,
+   "min_free_commit_gb": 13.66
+  },
+  {
+   "id": "v6-sg-compose-healthcheck",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "compose.yaml",
+     "start_line": 5,
+     "end_line": 17
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyController.java",
+     "start_line": 22,
+     "end_line": 26
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 82,
+     "end_line": 88
+    }
+   ],
+   "sent": [],
+   "returned_sources": 3,
+   "returned_sources_matching_git": 3,
+   "sent_holding_a_credential": null,
+   "translated_query": "How is the readiness of an application container checked in Docker Compose?",
+   "model_translation": "{\"english\": \"How is the readiness of an application container checked in Docker Compose?\"}",
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: Docker.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 1,
+   "input_tokens": 73,
+   "output_tokens": 20,
+   "seconds": 2.38,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 9.2,
+   "min_free_commit_gb": 13.63
+  },
+  {
+   "id": "v6-sg-stock-received-records",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 48,
+     "end_line": 53
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 29,
+     "end_line": 36
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 48,
+     "end_line": 53
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 26,
+     "end_line": 31
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 14,
+     "end_line": 23
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditTrail.java",
+     "start_line": 32,
+     "end_line": 36
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 29,
+     "end_line": 36
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 48,
+     "end_line": 53
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/InventoryService.java",
+     "start_line": 26,
+     "end_line": 31
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 14,
+     "end_line": 23
+    },
+    {
+     "path": "src/main/java/com/stockguard/audit/AuditTrail.java",
+     "start_line": 32,
+     "end_line": 36
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What journal entry is recorded in the ledger when a stock entry is made and which audit event is logged?",
+   "model_translation": "{\"english\": \"What journal entry is recorded in the ledger when a stock entry is made and which audit event is logged?\"}",
+   "note": "`InventoryService.addStock` ledger'de hareket kaydeder ve `AuditEventType.STOCK_RECEIVED` denetim olayı kaydeder.",
+   "warnings": [
+    "Not found anywhere in the indexed code: journal, made."
+   ],
+   "completions": [
+    [
+     "PRODUCT_CREATED",
+     "src/main/java/com/stockguard/catalog/ProductService.java:29-36",
+     false,
+     "no declaration of PRODUCT_CREATED was found"
+    ],
+    [
+     "STOCK_RECEIVED",
+     "src/main/java/com/stockguard/inventory/InventoryService.java:48-53",
+     false,
+     "no declaration of STOCK_RECEIVED was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "1c4e2f52799f40ecb54ae5d4b1e242d97553599f156183459e060a88141377a4"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1262,
+   "output_tokens": 71,
+   "seconds": 9.76,
+   "peak_gpu_mib": 2812,
+   "min_free_physical_gb": 9.15,
+   "min_free_commit_gb": 13.62
+  },
+  {
+   "id": "v6-sg-user-reservations-index",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 22,
+     "end_line": 22
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 54,
+     "end_line": 61
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 54,
+     "end_line": 61
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 22,
+     "end_line": 22
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 70,
+     "end_line": 77
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 20,
+     "end_line": 21
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 76,
+     "end_line": 80
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 54,
+     "end_line": 61
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 22,
+     "end_line": 22
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationController.java",
+     "start_line": 70,
+     "end_line": 77
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 20,
+     "end_line": 21
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 76,
+     "end_line": 80
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "Which index is supported for listing reservations by date, and which query does the application use to fetch this list?",
+   "model_translation": "{\"english\": \"Which index is supported for listing reservations by date, and which query does the application use to fetch this list?\"}",
+   "note": "`ix_reservations_user_created` indeksi tarihye göre rezervasyonları listelemek için destekliyor ve uygulama bu indeksten faydalanıyor.",
+   "warnings": [
+    "Not found anywhere in the indexed code: supported, date, fetch."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "ee47184e4f56c05b9bf6f20b93a54c8c0584ce2973ba8374de52f3fec176b483"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1163,
+   "output_tokens": 85,
+   "seconds": 10.79,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.14,
+   "min_free_commit_gb": 13.62
+  },
+  {
+   "id": "v6-sg-simulated-user-prefix",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 254,
+     "end_line": 257
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 50,
+     "end_line": 50
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 254,
+     "end_line": 257
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 50,
+     "end_line": 50
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 258,
+     "end_line": 262
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 244,
+     "end_line": 248
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 19,
+     "end_line": 23
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 31,
+     "end_line": 35
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 254,
+     "end_line": 257
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 50,
+     "end_line": 50
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 258,
+     "end_line": 262
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationService.java",
+     "start_line": 244,
+     "end_line": 248
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 19,
+     "end_line": 23
+    },
+    {
+     "path": "src/main/java/com/stockguard/simulation/SimulationController.java",
+     "start_line": 31,
+     "end_line": 35
+    }
+   ],
+   "returned_sources": 6,
+   "returned_sources_matching_git": 6,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What prefix are the user names of simulation customers starting with?",
+   "model_translation": "{\"english\": \"What prefix are the user names of simulation customers starting with?\"}",
+   "note": "`SimulationService.simulatedUsers` ve `SIMULATED_USERS_PREFIX` sabitinin değerleri gösterir.`SIMULATED_USERS_PREFIX` değeri `__sim-` ile başlıyor.",
+   "warnings": [],
+   "completions": [
+    [
+     "SIMULATED_USERS_PREFIX",
+     "src/main/java/com/stockguard/simulation/SimulationService.java:254-257",
+     true,
+     ""
+    ],
+    [
+     "SIMULATED_USERS_PREFIX",
+     "src/main/java/com/stockguard/simulation/SimulationService.java:258-262",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "8efa92fd903e6515d53faea8515545927e0409c47a5270704cc2e33d3d380698"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1164,
+   "output_tokens": 75,
+   "seconds": 10.18,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.31,
+   "min_free_commit_gb": 13.65
+  },
+  {
+   "id": "v6-sn-note-list-limit",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 45,
+     "end_line": 51
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 45,
+     "end_line": 51
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 55,
+     "end_line": 56
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 54,
+     "end_line": 58
+    },
+    {
+     "path": "apps/api/src/notes/versions.service.ts",
+     "start_line": 15,
+     "end_line": 30
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 45,
+     "end_line": 51
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 55,
+     "end_line": 56
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 54,
+     "end_line": 58
+    },
+    {
+     "path": "apps/api/src/notes/versions.service.ts",
+     "start_line": 15,
+     "end_line": 30
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How many issues does a single request return in the issue list?",
+   "model_translation": "{\"english\": \"How many issues does a single request return in the issue list?\"}",
+   "note": "`NotesController.list` methodu bir istekten çok not döndürür.",
+   "warnings": [],
+   "completions": [],
+   "prompt_sha256": [
+    "890aaf6ca32710eb9f40b9cf61f9df4d6f0ac227dba580c30f182c53c8c6f11b"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1145,
+   "output_tokens": 50,
+   "seconds": 8.27,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.32,
+   "min_free_commit_gb": 13.64
+  },
+  {
+   "id": "v6-sn-owner-leave",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 122,
+     "end_line": 127
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 81,
+     "end_line": 90
+    },
+    {
+     "path": "apps/web/src/hooks/queries.ts",
+     "start_line": 70,
+     "end_line": 80
+    },
+    {
+     "path": "apps/web/src/pages/dashboard-page.tsx",
+     "start_line": 51,
+     "end_line": 65
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 91,
+     "end_line": 98
+    }
+   ],
+   "sent": [],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": null,
+   "translated_query": "What happens if a contributor tries to fork the repository?",
+   "model_translation": "{\"english\": \"What happens if a contributor tries to fork the repository?\"}",
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: contributor, fork, repository.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 1,
+   "input_tokens": 68,
+   "output_tokens": 17,
+   "seconds": 3.24,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.3,
+   "min_free_commit_gb": 13.62
+  },
+  {
+   "id": "v6-sn-invite-existing-member",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 62,
+     "end_line": 66
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 121,
+     "end_line": 125
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 46,
+     "end_line": 50
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 62,
+     "end_line": 66
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 52,
+     "end_line": 56
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 117,
+     "end_line": 120
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 121,
+     "end_line": 125
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 46,
+     "end_line": 50
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 62,
+     "end_line": 66
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 52,
+     "end_line": 56
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 117,
+     "end_line": 120
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "If an already registered user is invited again, what does the API return?",
+   "model_translation": "{\"english\": \"If an already registered user is invited again, what does the API return?\"}",
+   "note": "`MembersService.invite` işlevi tekrar bir üye olmayan kullanıcının daveti başarısız olduğunda, already a member hatasını fırlatır.",
+   "warnings": [],
+   "completions": [],
+   "prompt_sha256": [
+    "a8da36cd872224b87b376164e5f9aab1bf26d38d4f171c0f718fb781eb71b1e0"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1009,
+   "output_tokens": 72,
+   "seconds": 10.05,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.29,
+   "min_free_commit_gb": 13.6
+  },
+  {
+   "id": "v6-sn-foreign-folder",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 69,
+     "end_line": 77
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 69,
+     "end_line": 77
+    },
+    {
+     "path": "apps/api/src/common/auth-user.ts",
+     "start_line": 4,
+     "end_line": 11
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 153,
+     "end_line": 157
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 133,
+     "end_line": 137
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 151,
+     "end_line": 152
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 69,
+     "end_line": 77
+    },
+    {
+     "path": "apps/api/src/common/auth-user.ts",
+     "start_line": 4,
+     "end_line": 11
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 153,
+     "end_line": 157
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 133,
+     "end_line": 137
+    },
+    {
+     "path": "apps/web/src/lib/api.ts",
+     "start_line": 151,
+     "end_line": 152
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How does the API respond when a directory ID belonging to another user is sent?",
+   "model_translation": "{\"english\": \"How does the API respond when a directory ID belonging to another user is sent?\"}",
+   "note": "`FoldersService.assertOwned` throws an error if the folder id does not belong to the user.",
+   "warnings": [
+    "Not found anywhere in the indexed code: respond, directory."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "9fac987a97aab64dadc048acf0f13a8c689934a0aca3bee4a89ea6ce560c24c1"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1101,
+   "output_tokens": 54,
+   "seconds": 8.21,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.3,
+   "min_free_commit_gb": 13.62
+  },
+  {
+   "id": "v6-sn-role-cache-db-down",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 40,
+     "end_line": 44
+    },
+    {
+     "path": "apps/api/src/notes/collab-ticket.service.ts",
+     "start_line": 17,
+     "end_line": 21
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 115,
+     "end_line": 119
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 98,
+     "end_line": 109
+    },
+    {
+     "path": "apps/collab/src/permissions.ts",
+     "start_line": 9,
+     "end_line": 22
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 40,
+     "end_line": 44
+    },
+    {
+     "path": "apps/api/src/notes/collab-ticket.service.ts",
+     "start_line": 17,
+     "end_line": 21
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 115,
+     "end_line": 119
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How does the collaboration server determine a user's role when database access fails?",
+   "model_translation": "{\"english\": \"How does the collaboration server determine a user's role when database access fails?\"}",
+   "note": "`PermissionService` kullanıcının rolünü veritabanı erişiminin başarısız olup olmadığını bakmadan son bilgiden belirler.",
+   "warnings": [
+    "Not found anywhere in the indexed code: determine."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "9b4bc3cba0a999aa91fb0e7840ed8ca290883b8461aed8ca12956fb7606eeddf"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1268,
+   "output_tokens": 67,
+   "seconds": 9.75,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.3,
+   "min_free_commit_gb": 13.63
+  },
+  {
+   "id": "v6-sn-note-delete-versions",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 66,
+     "end_line": 76
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 66,
+     "end_line": 76
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 134,
+     "end_line": 135
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 75,
+     "end_line": 87
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 137,
+     "end_line": 138
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 117,
+     "end_line": 120
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/collab/src/versions.ts",
+     "start_line": 66,
+     "end_line": 76
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 134,
+     "end_line": 135
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 75,
+     "end_line": 87
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 137,
+     "end_line": 138
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 117,
+     "end_line": 120
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What happens to the version records in the database when a note is deleted?",
+   "model_translation": "{\"english\": \"What happens to the version records in the database when a note is deleted?\"}",
+   "note": "`VersionService.pruneAuto` silinen notun sürüm kayıtlarını veritabanından siliyor.",
+   "warnings": [],
+   "completions": [
+    [
+     "CURRENT_TIMESTAMP",
+     "packages/db/prisma/migrations/20261104110838_init/migration.sql:75-87",
+     false,
+     "no declaration of CURRENT_TIMESTAMP was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "e324df38b1619808e8bd70ff13099c654952770bc8e3ea8464463a9b43523314"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1148,
+   "output_tokens": 59,
+   "seconds": 8.56,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.3,
+   "min_free_commit_gb": 13.63
+  },
+  {
+   "id": "v6-sn-web-port",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "docker-compose.yml",
+     "start_line": 90,
+     "end_line": 99
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "docker-compose.yml",
+     "start_line": 90,
+     "end_line": 99
+    },
+    {
+     "path": "docker-compose.yml",
+     "start_line": 31,
+     "end_line": 32
+    },
+    {
+     "path": "docker-compose.yml",
+     "start_line": 42,
+     "end_line": 53
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 41,
+     "end_line": 45
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 9,
+     "end_line": 9
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 3,
+     "end_line": 7
+    }
+   ],
+   "sent": [
+    {
+     "path": "docker-compose.yml",
+     "start_line": 90,
+     "end_line": 99
+    },
+    {
+     "path": "docker-compose.yml",
+     "start_line": 31,
+     "end_line": 32
+    },
+    {
+     "path": "docker-compose.yml",
+     "start_line": 42,
+     "end_line": 53
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 41,
+     "end_line": 45
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 9,
+     "end_line": 9
+    },
+    {
+     "path": "apps/web/playwright.config.ts",
+     "start_line": 3,
+     "end_line": 7
+    }
+   ],
+   "returned_sources": 6,
+   "returned_sources_matching_git": 6,
+   "sent_holding_a_credential": 0,
+   "translated_query": "Which port is the web interface opening from when run with Docker Compose?",
+   "model_translation": "{\"english\": \"Which port is the web interface opening from when run with Docker Compose?\"}",
+   "note": "`ports: - '8080:80'",
+   "warnings": [],
+   "completions": [
+    [
+     "WEB_URL",
+     "apps/web/playwright.config.ts:41-45",
+     true,
+     ""
+    ]
+   ],
+   "prompt_sha256": [
+    "7b24b58df554be2bfad82d9e6dcea41e6f81e8fa5690d15e6de4c6b5527c647f"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1128,
+   "output_tokens": 46,
+   "seconds": 7.27,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.29,
+   "min_free_commit_gb": 13.62
+  },
+  {
+   "id": "v6-sn-title-caret",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 12,
+     "end_line": 16
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 111,
+     "end_line": 115
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 39,
+     "end_line": 43
+    },
+    {
+     "path": "apps/web/src/editor/title-input.tsx",
+     "start_line": 6,
+     "end_line": 6
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 17,
+     "end_line": 20
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 12,
+     "end_line": 16
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 111,
+     "end_line": 115
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 39,
+     "end_line": 43
+    },
+    {
+     "path": "apps/web/src/editor/title-input.tsx",
+     "start_line": 6,
+     "end_line": 6
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 17,
+     "end_line": 20
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How is the cursor position being maintained when another user changes the title?",
+   "model_translation": "{\"english\": \"How is the cursor position being maintained when another user changes the title?\"}",
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: maintained."
+   ],
+   "completions": [
+    [
+     "LOCAL_ORIGIN",
+     "apps/web/src/editor/title-input.tsx:6-6",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "1404d753f76014106eb221124476cd0feb44d95dc0a8fd3d3a463096f167600d"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 931,
+   "output_tokens": 30,
+   "seconds": 5.86,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.29,
+   "min_free_commit_gb": 13.63
+  },
+  {
+   "id": "v6-sn-role-change-live",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 40,
+     "end_line": 44
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 133,
+     "end_line": 142
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 40,
+     "end_line": 44
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 44,
+     "end_line": 56
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 115,
+     "end_line": 119
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 39,
+     "end_line": 43
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 133,
+     "end_line": 142
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 40,
+     "end_line": 44
+    },
+    {
+     "path": "apps/web/src/pages/note-page.tsx",
+     "start_line": 44,
+     "end_line": 56
+    },
+    {
+     "path": "apps/web/src/collab/use-collaboration.ts",
+     "start_line": 115,
+     "end_line": 119
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 39,
+     "end_line": 43
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "When a user's role is changed, how does this change propagate to collaborative workspaces?",
+   "model_translation": "{\"english\": \"When a user's role is changed, how does this change propagate to collaborative workspaces?\"}",
+   "note": "`useCollaboration` kullanıcının yazma izininin değişmesi durumunda kopyası atılacak ve sunucidan yeniden oluşturulacağını gösteriyor.",
+   "warnings": [],
+   "completions": [
+    [
+     "ACCESS_MESSAGES",
+     "apps/web/src/pages/note-page.tsx:44-56",
+     true,
+     "the declaration is too long to add"
+    ]
+   ],
+   "prompt_sha256": [
+    "aeaca36a355c0bd804c81a600056652b05604e8625d06a8021e1f9cc10a95e7a"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1154,
+   "output_tokens": 74,
+   "seconds": 10.18,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.32,
+   "min_free_commit_gb": 13.67
+  },
+  {
+   "id": "v6-sn-member-order",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": true,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 12,
+     "end_line": 12
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 12,
+     "end_line": 12
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 111,
+     "end_line": 115
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 21,
+     "end_line": 36
+    },
+    {
+     "path": "apps/api/src/common/note-access/note-access.service.ts",
+     "start_line": 25,
+     "end_line": 29
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 131,
+     "end_line": 135
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 12,
+     "end_line": 12
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 111,
+     "end_line": 115
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 21,
+     "end_line": 36
+    },
+    {
+     "path": "apps/api/src/common/note-access/note-access.service.ts",
+     "start_line": 25,
+     "end_line": 29
+    },
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 131,
+     "end_line": 135
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What roles are listed in order of precedence for a note's members?",
+   "model_translation": "{\"english\": \"What roles are listed in order of precedence for a note's members?\"}",
+   "note": "`OWNER: 0, EDITOR: 1, VIEWER: 2` olarak rol sırası gösterilmiştir.",
+   "warnings": [
+    "Not found anywhere in the indexed code: precedence."
+   ],
+   "completions": [
+    [
+     "ROLE_ORDER",
+     "apps/api/src/notes/members.service.ts:12-12",
+     true,
+     "already shown"
+    ],
+    [
+     "ROLE_ORDER",
+     "apps/api/src/notes/members.service.ts:21-36",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "1409ea4b40cd8ee0692eebc5f8ba99245f8a61d82502b517ab1595ec2f1ce92b"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1048,
+   "output_tokens": 59,
+   "seconds": 8.2,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.31,
+   "min_free_commit_gb": 13.63
+  },
+  {
+   "id": "v6-sg-neg-supplier",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 110,
+     "end_line": 114
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 47,
+     "end_line": 48
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 43,
+     "end_line": 46
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/Product.java",
+     "start_line": 50,
+     "end_line": 54
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 71,
+     "end_line": 80
+    }
+   ],
+   "sent": [],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": null,
+   "translated_query": "Where are the supplier information of products stored?",
+   "model_translation": "{\"english\": \"Where are the supplier information of products stored?\"}",
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: supplier, information.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 1,
+   "input_tokens": 70,
+   "output_tokens": 15,
+   "seconds": 2.31,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.33,
+   "min_free_commit_gb": 13.72
+  },
+  {
+   "id": "v6-sg-neg-loyalty",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [],
+   "sent": [],
+   "returned_sources": 0,
+   "returned_sources_matching_git": 0,
+   "sent_holding_a_credential": null,
+   "translated_query": "How are loyalty points awarded to customers?",
+   "model_translation": "{\"english\": \"How are loyalty points awarded to customers?\"}",
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: loyalty, awarded.",
+    "Search found code, but no lines that mention what the question asks about."
+   ],
+   "completions": [],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 1,
+   "input_tokens": 66,
+   "output_tokens": 14,
+   "seconds": 1.74,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.34,
+   "min_free_commit_gb": 13.75
+  },
+  {
+   "id": "v6-sg-neg-product-delete",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 29,
+     "end_line": 36
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 123,
+     "end_line": 124
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 96,
+     "end_line": 98
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/inventory/StockLevelRepository.java",
+     "start_line": 63,
+     "end_line": 74
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductService.java",
+     "start_line": 29,
+     "end_line": 36
+    },
+    {
+     "path": "src/main/java/com/stockguard/inventory/ConsistencyService.java",
+     "start_line": 123,
+     "end_line": 124
+    },
+    {
+     "path": "src/main/resources/db/migration/V2__catalog_and_stock.sql",
+     "start_line": 14,
+     "end_line": 27
+    },
+    {
+     "path": "src/main/java/com/stockguard/catalog/ProductController.java",
+     "start_line": 96,
+     "end_line": 98
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What happens to the stock record when a product is deleted?",
+   "model_translation": "{\"english\": \"What happens to the stock record when a product is deleted?\"}",
+   "note": "",
+   "warnings": [],
+   "completions": [
+    [
+     "PRODUCT_CREATED",
+     "src/main/java/com/stockguard/catalog/ProductService.java:29-36",
+     false,
+     "no declaration of PRODUCT_CREATED was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "33782bb33e5f78a3cf18d6e0d72a395f4f4d83e1a457558b487d634e085c8c40"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1212,
+   "output_tokens": 28,
+   "seconds": 6.45,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.31,
+   "min_free_commit_gb": 13.64
+  },
+  {
+   "id": "v6-sg-neg-pending-limit",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 54,
+     "end_line": 61
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 30,
+     "end_line": 32
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 54,
+     "end_line": 68
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 11,
+     "end_line": 15
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 17,
+     "end_line": 30
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationService.java",
+     "start_line": 54,
+     "end_line": 61
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationExpiryService.java",
+     "start_line": 30,
+     "end_line": 32
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationRepository.java",
+     "start_line": 54,
+     "end_line": 68
+    },
+    {
+     "path": "src/main/resources/db/migration/V3__reservations.sql",
+     "start_line": 11,
+     "end_line": 15
+    },
+    {
+     "path": "src/main/java/com/stockguard/reservation/ReservationTransactions.java",
+     "start_line": 17,
+     "end_line": 30
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "What is the maximum number of reservations that can be queued at the same time?",
+   "model_translation": "{\"english\": \"What is the maximum number of reservations that can be queued at the same time?\"}",
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: queued."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "66ee9037ab3130ba2d16a9c1fd7a0fd2929df63fc417e14bf39b6181d64295ce"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1259,
+   "output_tokens": 32,
+   "seconds": 6.87,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.3,
+   "min_free_commit_gb": 13.63
+  },
+  {
+   "id": "v6-sg-neg-refresh-token",
+   "repo": "stockguard",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 57,
+     "end_line": 58
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 29,
+     "end_line": 33
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 43,
+     "end_line": 47
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 21,
+     "end_line": 25
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/config/OpenApiConfig.java",
+     "start_line": 23,
+     "end_line": 27
+    }
+   ],
+   "sent": [
+    {
+     "path": "src/main/java/com/stockguard/user/AuthController.java",
+     "start_line": 57,
+     "end_line": 58
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 29,
+     "end_line": 33
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 43,
+     "end_line": 47
+    },
+    {
+     "path": "src/main/java/com/stockguard/security/JwtTokenService.java",
+     "start_line": 21,
+     "end_line": 25
+    },
+    {
+     "path": "src/main/java/com/stockguard/common/config/OpenApiConfig.java",
+     "start_line": 23,
+     "end_line": 27
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How do you renew an expired access token?",
+   "model_translation": "{\"english\": \"How do you renew an expired access token?\"}",
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: renew."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "de881609b0abafe71491c260f892ca55769bdf9b98d5396e4a7ed38022a4b7c2"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 957,
+   "output_tokens": 25,
+   "seconds": 5.38,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.31,
+   "min_free_commit_gb": 13.63
+  },
+  {
+   "id": "v6-sn-neg-subscription",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": false,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "packages/shared/src/access-events.ts",
+     "start_line": 3,
+     "end_line": 8
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 12,
+     "end_line": 16
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 33,
+     "end_line": 35
+    },
+    {
+     "path": "apps/web/src/components/share-dialog.tsx",
+     "start_line": 17,
+     "end_line": 20
+    },
+    {
+     "path": "apps/collab/src/access-events.ts",
+     "start_line": 12,
+     "end_line": 20
+    }
+   ],
+   "sent": [],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": null,
+   "translated_query": "How are paid subscription plans managed?",
+   "model_translation": "{\"english\": \"How are paid subscription plans managed?\"}",
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: paid.",
+    "The closest lines mention too little of the question to count as evidence."
+   ],
+   "completions": [
+    [
+     "ACCESS_EVENTS_CHANNEL",
+     "packages/shared/src/access-events.ts:3-8",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [],
+   "requests": 0,
+   "translation_requests": 1,
+   "input_tokens": 64,
+   "output_tokens": 13,
+   "seconds": 1.76,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.34,
+   "min_free_commit_gb": 13.76
+  },
+  {
+   "id": "v6-sn-neg-voice",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 53,
+     "end_line": 56
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 119,
+     "end_line": 120
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 47,
+     "end_line": 60
+    },
+    {
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 22,
+     "end_line": 26
+    },
+    {
+     "path": "packages/shared/src/roles.ts",
+     "start_line": 8,
+     "end_line": 12
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/api/src/notes/notes.controller.ts",
+     "start_line": 53,
+     "end_line": 56
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 119,
+     "end_line": 120
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 47,
+     "end_line": 60
+    },
+    {
+     "path": "apps/api/src/notes/dto.ts",
+     "start_line": 22,
+     "end_line": 26
+    },
+    {
+     "path": "packages/shared/src/roles.ts",
+     "start_line": 8,
+     "end_line": 12
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How is audio recording added to notes?",
+   "model_translation": "{\"english\": \"How is audio recording added to notes?\"}",
+   "note": "",
+   "warnings": [
+    "Not found anywhere in the indexed code: audio."
+   ],
+   "completions": [
+    [
+     "CURRENT_TIMESTAMP",
+     "packages/db/prisma/migrations/20261104110838_init/migration.sql:47-60",
+     false,
+     "no declaration of CURRENT_TIMESTAMP was found"
+    ],
+    [
+     "ROLE_RANK",
+     "packages/shared/src/roles.ts:8-12",
+     true,
+     "already shown"
+    ]
+   ],
+   "prompt_sha256": [
+    "c00a7e6b66ffd228a2d029534b3b25f7bcdce3ddac27447b1d95a5a5c80ece59"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1024,
+   "output_tokens": 24,
+   "seconds": 4.93,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.3,
+   "min_free_commit_gb": 13.64
+  },
+  {
+   "id": "v6-sn-neg-member-limit",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": false,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 128,
+     "end_line": 129
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 122,
+     "end_line": 123
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 125,
+     "end_line": 126
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 30,
+     "end_line": 43
+    }
+   ],
+   "sent": [
+    {
+     "path": "packages/db/prisma/migrations/20261104111500_owner_invariant/migration.sql",
+     "start_line": 1,
+     "end_line": 6
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 128,
+     "end_line": 129
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 122,
+     "end_line": 123
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 125,
+     "end_line": 126
+    },
+    {
+     "path": "apps/api/src/notes/notes.service.ts",
+     "start_line": 30,
+     "end_line": 43
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How many members can be added at most in a team?",
+   "model_translation": "{\"english\": \"How many members can be added at most in a team?\"}",
+   "note": "`CREATE UNIQUE INDEX \"note_members_one_owner_per_note\"` kısıtlaması her notaya sadece bir OWNER üyesi eklenmesini sağlar.",
+   "warnings": [
+    "Not found anywhere in the indexed code: team."
+   ],
+   "completions": [],
+   "prompt_sha256": [
+    "8cae87e50da46c3398b53beb21626e295848785a5278470002afe2ef2beac989"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1117,
+   "output_tokens": 65,
+   "seconds": 9.09,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.25,
+   "min_free_commit_gb": 13.64
+  },
+  {
+   "id": "v6-sn-neg-subfolder",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": false,
+   "status": "answered",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 24,
+     "end_line": 39
+    }
+   ],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/web/src/components/sidebar.tsx",
+     "start_line": 224,
+     "end_line": 228
+    },
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 24,
+     "end_line": 39
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 36,
+     "end_line": 45
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 101,
+     "end_line": 102
+    },
+    {
+     "path": "packages/shared/src/api-types.ts",
+     "start_line": 15,
+     "end_line": 20
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/web/src/components/sidebar.tsx",
+     "start_line": 224,
+     "end_line": 228
+    },
+    {
+     "path": "apps/api/src/folders/folders.service.ts",
+     "start_line": 24,
+     "end_line": 39
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 36,
+     "end_line": 45
+    },
+    {
+     "path": "packages/db/prisma/migrations/20261104110838_init/migration.sql",
+     "start_line": 101,
+     "end_line": 102
+    },
+    {
+     "path": "packages/shared/src/api-types.ts",
+     "start_line": 15,
+     "end_line": 20
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How is an inner folder created in a directory?",
+   "model_translation": "{\"english\": \"How is an inner folder created in a directory?\"}",
+   "note": "`FoldersService.create` fonksiyonu bir klasörün oluşturulmasını gösterir.",
+   "warnings": [
+    "Not found anywhere in the indexed code: inner, directory."
+   ],
+   "completions": [
+    [
+     "CURRENT_TIMESTAMP",
+     "packages/db/prisma/migrations/20261104110838_init/migration.sql:36-45",
+     false,
+     "no declaration of CURRENT_TIMESTAMP was found"
+    ]
+   ],
+   "prompt_sha256": [
+    "ce2482f71b3c4d6cda67a341dd51d40cde176a194e7c0b95f145b9b049749792"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1057,
+   "output_tokens": 48,
+   "seconds": 7.41,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.15,
+   "min_free_commit_gb": 13.54
+  },
+  {
+   "id": "v6-sn-neg-change-email",
+   "repo": "syncnotes",
+   "language": "tr",
+   "answerable": false,
+   "status": "insufficient",
+   "reached_model": true,
+   "blocked": null,
+   "answers": [],
+   "review": [],
+   "offered": [
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 216,
+     "end_line": 220
+    },
+    {
+     "path": "apps/api/src/auth/dto.ts",
+     "start_line": 8,
+     "end_line": 23
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 206,
+     "end_line": 210
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 75,
+     "end_line": 79
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 46,
+     "end_line": 50
+    }
+   ],
+   "sent": [
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 216,
+     "end_line": 220
+    },
+    {
+     "path": "apps/api/src/auth/dto.ts",
+     "start_line": 8,
+     "end_line": 23
+    },
+    {
+     "path": "apps/web/src/pages/auth-pages.tsx",
+     "start_line": 206,
+     "end_line": 210
+    },
+    {
+     "path": "apps/api/src/auth/auth.service.ts",
+     "start_line": 75,
+     "end_line": 79
+    },
+    {
+     "path": "apps/api/src/notes/members.service.ts",
+     "start_line": 46,
+     "end_line": 50
+    }
+   ],
+   "returned_sources": 5,
+   "returned_sources_matching_git": 5,
+   "sent_holding_a_credential": 0,
+   "translated_query": "How can I change my account's email address?",
+   "model_translation": "{\"english\": \"How can I change my account's email address?\"}",
+   "note": "",
+   "warnings": [],
+   "completions": [],
+   "prompt_sha256": [
+    "5265943e802d2122656d995507d71ac80f37ada12c25476c8f363070166e9db3"
+   ],
+   "requests": 1,
+   "translation_requests": 1,
+   "input_tokens": 1012,
+   "output_tokens": 26,
+   "seconds": 5.47,
+   "peak_gpu_mib": 2814,
+   "min_free_physical_gb": 9.13,
+   "min_free_commit_gb": 13.54
+  }
+ ],
+ "translations": {}
+}

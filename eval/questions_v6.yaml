@@ -1,0 +1,743 @@
+# The sixth question set: 48 new questions for the one comparison of v2 with v1.
+# Rules, counting and the conditions for a release are in eval/V2_EVALUATION_PLAN.md.
+#
+# Written on 2026-11-15 by reading the code at the pinned commits, before any of them was asked,
+# searched or traced in any version of RepoMind. None repeats an earlier question. The first place
+# listed for each answer lies outside every span an earlier question set accepted. A later place may
+# overlap one, because a source that really answers the question has to be accepted wherever it is.
+#
+# After the first question has been asked, nothing in this file changes: no question, no accepted
+# place, no label.
+#
+# How to read it
+#   kind: one        the answer is in one place. `places` has one entry, with every place that states it.
+#   kind: two        the answer needs two places. `places` has two entries, each with its alternatives.
+#   targets_completion: true
+#                    one of the four questions asking for the value of a named constant: the line
+#                    that uses it and the line that declares it. Reported with and without these.
+#   accepted         a source is right when it overlaps one of these line ranges. `anchor` is text
+#                    those lines hold at the pinned commit, checked before the run.
+#   unanswerable     kind `absent`: the repository has nothing on the subject.
+#                    kind `adjacent`: it has the subject, and not the detail that is asked for.
+#                    `absent_terms` are checked not to occur in any indexed file.
+
+version: 6
+
+repositories:
+  stockguard:
+    commit: b6698d81475232f2b8ca95af45336fae5665cd81
+  syncnotes:
+    commit: bb217cddc89088f27b68715cf9585e94ce2fe3a6
+
+questions:
+  # ------------------------------------------------------------------ StockGuard, one place
+  - id: v6-sg-product-page-size
+    repo: stockguard
+    language: tr
+    kind: one
+    question: Ürünler listelenirken bir sayfada en fazla kaç ürün istenebilir?
+    expected: 100. The size parameter of the product list is limited to 1..100, with 20 as the default.
+    places:
+      - name: answer
+        accepted:
+          - path: src/main/java/com/stockguard/catalog/ProductController.java
+            start_line: 71
+            end_line: 75
+            anchor: "@Min(1) @Max(100) int size"
+
+  - id: v6-sg-sku-characters
+    repo: stockguard
+    language: en
+    kind: one
+    question: Which characters may a product's SKU contain?
+    expected: Letters, digits, dots, underscores and hyphens, starting with a letter or a digit, up to 64 characters.
+    places:
+      - name: answer
+        accepted:
+          - path: src/main/java/com/stockguard/catalog/ProductController.java
+            start_line: 82
+            end_line: 85
+            anchor: "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+
+  - id: v6-sg-description-length
+    repo: stockguard
+    language: tr
+    kind: one
+    question: Bir ürünün açıklaması en fazla kaç karakter olabilir?
+    expected: 2000 characters, in the create and update requests and in the column.
+    places:
+      - name: answer
+        accepted:
+          - path: src/main/java/com/stockguard/catalog/ProductController.java
+            start_line: 86
+            end_line: 87
+            anchor: "@Size(max = 2000) String description"
+          - path: src/main/java/com/stockguard/catalog/ProductController.java
+            start_line: 90
+            end_line: 93
+            anchor: "@Size(max = 2000) String description"
+          - path: src/main/resources/db/migration/V2__catalog_and_stock.sql
+            start_line: 5
+            end_line: 5
+            anchor: "description VARCHAR(2000)"
+
+  - id: v6-sg-latency-percentile
+    repo: stockguard
+    language: en
+    kind: one
+    question: How does the simulation report work out the 95th percentile of request latency?
+    expected: It sorts the latencies and takes the element at ceil(percentile / 100 * count) - 1.
+    places:
+      - name: answer
+        accepted:
+          - path: src/main/java/com/stockguard/simulation/SimulationService.java
+            start_line: 235
+            end_line: 242
+            anchor: "percentile / 100.0 * sorted.length"
+
+  - id: v6-sg-simulation-consistent
+    repo: stockguard
+    language: tr
+    kind: one
+    question: Simülasyon raporu bir çalıştırmanın verisini hangi koşullar sağlanırsa tutarlı sayıyor?
+    expected: The consistency check passes, nothing is oversold, no counter is negative, no unexpected failure, reservation rows equal the successes, and the successes equal what the stock allows.
+    places:
+      - name: answer
+        accepted:
+          - path: src/main/java/com/stockguard/simulation/SimulationService.java
+            start_line: 196
+            end_line: 207
+            anchor: "boolean consistent = check.consistent()"
+
+  - id: v6-sg-delta-total
+    repo: stockguard
+    language: tr
+    kind: one
+    question: Bir stok hareketinde toplam miktardaki değişim nasıl hesaplanıyor?
+    expected: As the sum of the change in available and the change in reserved, which the database also checks.
+    places:
+      - name: answer
+        accepted:
+          - path: src/main/java/com/stockguard/inventory/StockMovement.java
+            start_line: 80
+            end_line: 82
+            anchor: "this.deltaTotal = deltaAvailable + deltaReserved"
+          - path: src/main/resources/db/migration/V4__ledger_and_audit.sql
+            start_line: 20
+            end_line: 20
+            anchor: "delta_total = delta_available + delta_reserved"
+
+  - id: v6-sg-audit-entity-index
+    repo: stockguard
+    language: en
+    kind: one
+    question: Which database index supports looking up the audit events of a single entity?
+    expected: ix_audit_events_entity on audit_events (entity_id, id).
+    places:
+      - name: answer
+        accepted:
+          - path: src/main/resources/db/migration/V4__ledger_and_audit.sql
+            start_line: 39
+            end_line: 39
+            anchor: "ix_audit_events_entity"
+
+  - id: v6-sg-confirm-counters
+    repo: stockguard
+    language: tr
+    kind: one
+    question: Bir rezervasyon onaylandığında stok sayaçlarından hangileri değişiyor?
+    expected: Total and reserved go down by the quantity. Available does not change, because it was reduced when the units were reserved.
+    places:
+      - name: answer
+        accepted:
+          - path: src/main/java/com/stockguard/inventory/StockLevelRepository.java
+            start_line: 63
+            end_line: 74
+            anchor: "total_quantity = total_quantity - :quantity"
+          - path: src/main/java/com/stockguard/inventory/StockLedger.java
+            start_line: 47
+            end_line: 52
+            anchor: "MovementType.CONFIRMED, 0, -quantity"
+
+  - id: v6-sg-invalid-fields
+    repo: stockguard
+    language: en
+    kind: one
+    question: How does an error response list the fields of a request body that failed validation?
+    expected: In an "errors" property of the problem document, as a list of field and message pairs.
+    places:
+      - name: answer
+        accepted:
+          - path: src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java
+            start_line: 115
+            end_line: 124
+            anchor: 'ex.getBody().setProperty("errors", violations)'
+          - path: src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java
+            start_line: 126
+            end_line: 142
+            anchor: 'ex.getBody().setProperty("errors", violations)'
+          - path: src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java
+            start_line: 168
+            end_line: 169
+            anchor: "record FieldViolation(String field, String message)"
+
+  - id: v6-sg-unknown-constraint
+    repo: stockguard
+    language: tr
+    kind: one
+    question: Bilinen çakışmalar dışında bir veritabanı kısıtı ihlal edildiğinde API nasıl yanıt veriyor?
+    expected: It logs it as a bug and answers with INTERNAL_ERROR, "An unexpected error occurred."
+    places:
+      - name: answer
+        accepted:
+          - path: src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java
+            start_line: 97
+            end_line: 107
+            anchor: "Database rejected a write that should have been impossible"
+
+  - id: v6-sg-actuator-exposure
+    repo: stockguard
+    language: en
+    kind: one
+    question: Which actuator endpoints are exposed over HTTP, and are health details shown?
+    expected: Only health is exposed. Details are never shown, and the probes are enabled.
+    places:
+      - name: answer
+        accepted:
+          - path: src/main/resources/application.yml
+            start_line: 34
+            end_line: 43
+            anchor: "include: health"
+
+  - id: v6-sg-compose-healthcheck
+    repo: stockguard
+    language: tr
+    kind: one
+    question: Docker Compose'ta uygulama container'ının hazır olup olmadığı nasıl kontrol ediliyor?
+    expected: A healthcheck fetches /actuator/health/readiness with wget every 5 seconds, up to 30 times.
+    places:
+      - name: answer
+        accepted:
+          - path: compose.yaml
+            start_line: 12
+            end_line: 17
+            anchor: "actuator/health/readiness"
+
+  # ------------------------------------------------------------------ StockGuard, two places
+  - id: v6-sg-stock-received-records
+    repo: stockguard
+    language: tr
+    kind: two
+    question: Stok girişi yapıldığında deftere hangi hareket yazılıyor ve hangi denetim olayı kaydediliyor?
+    expected: A STOCK_IN movement in the ledger, and a STOCK_RECEIVED audit event.
+    places:
+      - name: the ledger movement
+        accepted:
+          - path: src/main/java/com/stockguard/inventory/StockLedger.java
+            start_line: 31
+            end_line: 37
+            anchor: "MovementType.STOCK_IN"
+      - name: the audit event
+        accepted:
+          - path: src/main/java/com/stockguard/inventory/InventoryService.java
+            start_line: 48
+            end_line: 53
+            anchor: "AuditEventType.STOCK_RECEIVED"
+
+  - id: v6-sg-user-reservations-index
+    repo: stockguard
+    language: tr
+    kind: two
+    question: Bir kullanıcının rezervasyonlarını tarihe göre listelemeyi hangi indeks destekliyor ve uygulama bu listeyi hangi sorguyla alıyor?
+    expected: The index ix_reservations_user_created on (user_id, created_at DESC), and the repository method findByUserId, called with a sort on createdAt.
+    places:
+      - name: the index
+        accepted:
+          - path: src/main/resources/db/migration/V3__reservations.sql
+            start_line: 22
+            end_line: 22
+            anchor: "ix_reservations_user_created"
+      - name: the query
+        accepted:
+          - path: src/main/java/com/stockguard/reservation/ReservationRepository.java
+            start_line: 27
+            end_line: 27
+            anchor: "findByUserId(UUID userId, Pageable pageable)"
+          - path: src/main/java/com/stockguard/reservation/ReservationService.java
+            start_line: 54
+            end_line: 61
+            anchor: "reservations.findByUserId(actor.userId(), request)"
+
+  - id: v6-sg-simulated-user-prefix
+    repo: stockguard
+    language: tr
+    kind: two
+    targets_completion: true
+    question: Simülasyon müşterilerinin kullanıcı adları hangi önekle başlıyor?
+    expected: '"__sim-", the constant SIMULATED_USERS_PREFIX, which the query that creates the simulated users is given.'
+    places:
+      - name: the declaration
+        accepted:
+          - path: src/main/java/com/stockguard/simulation/SimulationService.java
+            start_line: 50
+            end_line: 50
+            anchor: 'SIMULATED_USERS_PREFIX = "__sim-"'
+      - name: the use
+        accepted:
+          - path: src/main/java/com/stockguard/simulation/SimulationService.java
+            start_line: 248
+            end_line: 262
+            anchor: '.param("prefix", SIMULATED_USERS_PREFIX)'
+
+  - id: v6-sg-replay-header
+    repo: stockguard
+    language: en
+    kind: two
+    targets_completion: true
+    question: Which response header tells a client that its reservation request was a replay of an earlier one?
+    expected: 'Idempotency-Replayed: true. The constant REPLAY_HEADER, set on the response when the outcome is a replay.'
+    places:
+      - name: the declaration
+        accepted:
+          - path: src/main/java/com/stockguard/reservation/ReservationController.java
+            start_line: 35
+            end_line: 35
+            anchor: 'REPLAY_HEADER = "Idempotency-Replayed"'
+      - name: the use
+        accepted:
+          - path: src/main/java/com/stockguard/reservation/ReservationController.java
+            start_line: 63
+            end_line: 66
+            anchor: '.header(REPLAY_HEADER, "true")'
+
+  # ------------------------------------------------------------------ SyncNotes, one place
+  - id: v6-sn-note-list-limit
+    repo: syncnotes
+    language: tr
+    kind: one
+    question: Not listesi tek istekte en fazla kaç not döndürüyor?
+    expected: 200, the most recently updated first.
+    places:
+      - name: answer
+        accepted:
+          - path: apps/api/src/notes/notes.service.ts
+            start_line: 71
+            end_line: 76
+            anchor: "take: 200"
+
+  - id: v6-sn-delete-note-role
+    repo: syncnotes
+    language: en
+    kind: one
+    question: Who is allowed to delete a note?
+    expected: Only its owner. The endpoint requires the OWNER role, and the page offers deleting to the owner only.
+    places:
+      - name: answer
+        accepted:
+          - path: apps/api/src/notes/notes.controller.ts
+            start_line: 74
+            end_line: 79
+            anchor: "@RequireNoteRole('OWNER')"
+          - path: apps/web/src/pages/dashboard-page.tsx
+            start_line: 106
+            end_line: 114
+            anchor: "{isOwner ? ("
+
+  - id: v6-sn-owner-leave
+    repo: syncnotes
+    language: tr
+    kind: one
+    question: Notun sahibi nottan ayrılmaya çalışırsa ne oluyor?
+    expected: The request is refused with "The owner cannot leave a note; delete it instead".
+    places:
+      - name: answer
+        accepted:
+          - path: apps/api/src/notes/notes.service.ts
+            start_line: 122
+            end_line: 127
+            anchor: "The owner cannot leave a note; delete it instead"
+
+  - id: v6-sn-invite-existing-member
+    repo: syncnotes
+    language: tr
+    kind: one
+    question: Zaten üye olan bir kullanıcı tekrar davet edilirse API ne döndürüyor?
+    expected: A conflict, "This user is already a member of the note", from the unique violation P2002.
+    places:
+      - name: answer
+        accepted:
+          - path: apps/api/src/notes/members.service.ts
+            start_line: 62
+            end_line: 67
+            anchor: "This user is already a member of the note"
+
+  - id: v6-sn-folder-name-length
+    repo: syncnotes
+    language: en
+    kind: one
+    question: How long may a folder's name be?
+    expected: 1 to 60 characters. The API validates it, and the inputs on the page stop at 60.
+    places:
+      - name: answer
+        accepted:
+          - path: apps/api/src/folders/folders.controller.ts
+            start_line: 9
+            end_line: 14
+            anchor: "@Length(1, 60)"
+          - path: apps/web/src/components/sidebar.tsx
+            start_line: 113
+            end_line: 120
+            anchor: "maxLength={60}"
+          - path: apps/web/src/components/sidebar.tsx
+            start_line: 218
+            end_line: 227
+            anchor: "maxLength={60}"
+
+  - id: v6-sn-foreign-folder
+    repo: syncnotes
+    language: tr
+    kind: one
+    question: Başka bir kullanıcıya ait klasör kimliği gönderildiğinde API nasıl yanıt veriyor?
+    expected: With "Folder not found", exactly as for a folder that does not exist, because folders are private.
+    places:
+      - name: answer
+        accepted:
+          - path: apps/api/src/folders/folders.service.ts
+            start_line: 69
+            end_line: 77
+            anchor: "Folders are private"
+
+  - id: v6-sn-role-cache-db-down
+    repo: syncnotes
+    language: tr
+    kind: one
+    question: Veritabanına ulaşılamadığında işbirliği sunucusu bir kullanıcının rolünü nasıl belirliyor?
+    expected: It keeps serving the last role it knew, and refuses when it knows none.
+    places:
+      - name: answer
+        accepted:
+          - path: apps/collab/src/permissions.ts
+            start_line: 42
+            end_line: 50
+            anchor: "if (cached) return cached.role"
+          - path: apps/collab/src/permissions.ts
+            start_line: 10
+            end_line: 19
+            anchor: "keep serving the last known role"
+
+  - id: v6-sn-collab-url
+    repo: syncnotes
+    language: en
+    kind: one
+    question: How does the web app decide which WebSocket URL to use for the collaboration server?
+    expected: VITE_COLLAB_URL when it is set, otherwise ws or wss on the page's own host under /collab.
+    places:
+      - name: answer
+        accepted:
+          - path: apps/web/src/lib/config.ts
+            start_line: 1
+            end_line: 7
+            anchor: "VITE_COLLAB_URL"
+
+  - id: v6-sn-versions-index
+    repo: syncnotes
+    language: en
+    kind: one
+    question: Which database index supports listing a note's versions by creation time?
+    expected: note_versions_note_id_created_at_idx on note_versions (note_id, created_at).
+    places:
+      - name: answer
+        accepted:
+          - path: packages/db/prisma/migrations/20261104110838_init/migration.sql
+            start_line: 110
+            end_line: 111
+            anchor: "note_versions_note_id_created_at_idx"
+
+  - id: v6-sn-note-delete-versions
+    repo: syncnotes
+    language: tr
+    kind: one
+    question: Bir not silindiğinde veritabanındaki sürüm kayıtlarına ne oluyor?
+    expected: They are deleted with it. The foreign key from note_versions to notes is ON DELETE CASCADE.
+    places:
+      - name: answer
+        accepted:
+          - path: packages/db/prisma/migrations/20261104110838_init/migration.sql
+            start_line: 134
+            end_line: 135
+            anchor: '"note_versions_note_id_fkey"'
+
+  - id: v6-sn-web-port
+    repo: syncnotes
+    language: tr
+    kind: one
+    question: Docker Compose ile çalıştırıldığında web arayüzü hangi porttan açılıyor?
+    expected: 8080, mapped to port 80 of the web container.
+    places:
+      - name: answer
+        accepted:
+          - path: docker-compose.yml
+            start_line: 90
+            end_line: 95
+            anchor: "'8080:80'"
+          - path: docker-compose.yml
+            start_line: 3
+            end_line: 3
+            anchor: "full stack on http://localhost:8080"
+          - path: docker-compose.yml
+            start_line: 71
+            end_line: 71
+            anchor: "WEB_ORIGIN: http://localhost:8080"
+
+  - id: v6-sn-title-caret
+    repo: syncnotes
+    language: tr
+    kind: one
+    question: Başka bir kullanıcı başlığı değiştirdiğinde başlık alanındaki imlecin yeri nasıl korunuyor?
+    expected: The selection start and end are mapped through the remote change's delta with transformIndex, and set again on the input.
+    places:
+      - name: answer
+        accepted:
+          - path: apps/web/src/editor/title-input.tsx
+            start_line: 27
+            end_line: 45
+            anchor: "transformIndex(input.selectionStart ?? 0, delta)"
+          - path: apps/web/src/lib/ytext.ts
+            start_line: 38
+            end_line: 58
+            anchor: "export function transformIndex"
+
+  # ------------------------------------------------------------------ SyncNotes, two places
+  - id: v6-sn-role-change-live
+    repo: syncnotes
+    language: tr
+    kind: two
+    question: Bir üyenin rolü değiştirildiğinde bu değişiklik açık işbirliği bağlantılarına nasıl ulaşıyor?
+    expected: The API publishes a member.updated access event, and the collaboration server, subscribed to those events, applies the new role to the open connections in place.
+    places:
+      - name: the API publishes the event
+        accepted:
+          - path: apps/api/src/notes/members.service.ts
+            start_line: 70
+            end_line: 81
+            anchor: "type: 'member.updated'"
+      - name: the collaboration server applies it
+        accepted:
+          - path: apps/collab/src/extensions/access-control.ts
+            start_line: 185
+            end_line: 196
+            anchor: "case 'member.updated'"
+          - path: apps/collab/src/extensions/access-control.ts
+            start_line: 209
+            end_line: 217
+            anchor: "Flip read-only in place"
+          - path: apps/collab/src/extensions/access-control.ts
+            start_line: 46
+            end_line: 55
+            anchor: "membership events from the API are applied to live connections immediately"
+          - path: apps/collab/src/extensions/access-control.ts
+            start_line: 64
+            end_line: 66
+            anchor: "this.handleAccessEvent(event)"
+          - path: apps/collab/src/access-events.ts
+            start_line: 12
+            end_line: 17
+            anchor: "Subscribes to membership changes published by the API"
+          - path: apps/collab/src/access-events.ts
+            start_line: 46
+            end_line: 50
+            anchor: "parseAccessEvent(raw)"
+
+  - id: v6-sn-folder-placement
+    repo: syncnotes
+    language: en
+    kind: two
+    question: Where is a note's folder stored for each user, and which code updates it when a note is moved?
+    expected: In the folder_id column of note_members, one row per member, updated by moveToFolder for the calling user's own membership.
+    places:
+      - name: the column
+        accepted:
+          - path: packages/db/prisma/migrations/20261104110838_init/migration.sql
+            start_line: 63
+            end_line: 72
+            anchor: '"folder_id" UUID'
+      - name: the update
+        accepted:
+          - path: apps/api/src/notes/notes.service.ts
+            start_line: 102
+            end_line: 115
+            anchor: "data: { folderId }"
+          - path: apps/api/src/notes/notes.controller.ts
+            start_line: 64
+            end_line: 72
+            anchor: "this.notes.moveToFolder"
+
+  - id: v6-sn-member-order
+    repo: syncnotes
+    language: tr
+    kind: two
+    targets_completion: true
+    question: Bir notun üyeleri hangi rol sırasıyla listeleniyor?
+    expected: Owner first, then editors, then viewers. The list is sorted by ROLE_ORDER, which gives OWNER 0, EDITOR 1 and VIEWER 2.
+    places:
+      - name: the declaration
+        accepted:
+          - path: apps/api/src/notes/members.service.ts
+            start_line: 12
+            end_line: 12
+            anchor: "ROLE_ORDER = { OWNER: 0, EDITOR: 1, VIEWER: 2 }"
+      - name: the use
+        accepted:
+          - path: apps/api/src/notes/members.service.ts
+            start_line: 27
+            end_line: 35
+            anchor: "ROLE_ORDER[a.role] - ROLE_ORDER[b.role]"
+
+  - id: v6-sn-publish-timeout
+    repo: syncnotes
+    language: en
+    kind: two
+    targets_completion: true
+    question: How long does the API wait for an access event to be published to Redis before giving up?
+    expected: 1000 milliseconds, PUBLISH_TIMEOUT_MS, the delay of the timer that publish races against.
+    places:
+      - name: the declaration
+        accepted:
+          - path: apps/api/src/redis/access-events.publisher.ts
+            start_line: 21
+            end_line: 21
+            anchor: "PUBLISH_TIMEOUT_MS = 1000"
+      - name: the use
+        accepted:
+          - path: apps/api/src/redis/access-events.publisher.ts
+            start_line: 37
+            end_line: 44
+            anchor: "AccessEventsPublisher.PUBLISH_TIMEOUT_MS"
+
+unanswerable:
+  # ------------------------------------------------------------------ StockGuard
+  - id: v6-sg-neg-supplier
+    repo: stockguard
+    language: tr
+    kind: absent
+    question: Ürünlerin tedarikçi bilgileri nerede tutuluyor?
+    expected: Not in the code. StockGuard has no suppliers.
+    absent_terms: [tedarik, vendor]
+
+  - id: v6-sg-neg-loyalty
+    repo: stockguard
+    language: tr
+    kind: absent
+    question: Müşterilere sadakat puanı nasıl veriliyor?
+    expected: Not in the code. StockGuard has no loyalty points.
+    absent_terms: [loyalty, sadakat]
+
+  - id: v6-sg-neg-reviews
+    repo: stockguard
+    language: en
+    kind: absent
+    question: How are customer reviews of a product stored?
+    expected: Not in the code. StockGuard has no reviews.
+    absent_terms: [review]
+
+  - id: v6-sg-neg-tax
+    repo: stockguard
+    language: en
+    kind: absent
+    question: How is sales tax calculated for a reservation?
+    expected: Not in the code. StockGuard has no prices or taxes.
+    absent_terms: [tax]
+
+  - id: v6-sg-neg-product-delete
+    repo: stockguard
+    language: tr
+    kind: adjacent
+    question: Bir ürün silindiğinde stok kaydına ne oluyor?
+    expected: Not in the code. Products can be created and updated, and there is no way to delete one.
+    absent_terms: [DeleteMapping]
+
+  - id: v6-sg-neg-pending-limit
+    repo: stockguard
+    language: tr
+    kind: adjacent
+    question: Bir kullanıcının aynı anda en fazla kaç bekleyen rezervasyonu olabilir?
+    expected: Not in the code. Reservations are limited by stock and by time, and not in number per user.
+
+  - id: v6-sg-neg-refresh-token
+    repo: stockguard
+    language: tr
+    kind: adjacent
+    question: Süresi dolan erişim token'ı nasıl yenileniyor?
+    expected: Not in the code. A token lasts 60 minutes, and there is no refresh. The user logs in again.
+    absent_terms: [refresh]
+
+  - id: v6-sg-neg-account-lock
+    repo: stockguard
+    language: en
+    kind: adjacent
+    question: After how many failed logins is a StockGuard account locked?
+    expected: Not in the code. Failed logins are answered alike, and no account is ever locked.
+    absent_terms: [lockout, LockedException]
+
+  # ------------------------------------------------------------------ SyncNotes
+  - id: v6-sn-neg-subscription
+    repo: syncnotes
+    language: tr
+    kind: absent
+    question: Ücretli abonelik planları nasıl yönetiliyor?
+    expected: Not in the code. SyncNotes has no plans or payments.
+    absent_terms: [abonelik, billing]
+
+  - id: v6-sn-neg-voice
+    repo: syncnotes
+    language: tr
+    kind: absent
+    question: Notlara sesli kayıt nasıl ekleniyor?
+    expected: Not in the code. Notes hold text only.
+    absent_terms: [voice, audio]
+
+  - id: v6-sn-neg-evernote
+    repo: syncnotes
+    language: en
+    kind: absent
+    question: How are notes imported from Evernote?
+    expected: Not in the code. There is no import.
+    absent_terms: [evernote]
+
+  - id: v6-sn-neg-calendar
+    repo: syncnotes
+    language: en
+    kind: absent
+    question: How does SyncNotes sync notes with a calendar?
+    expected: Not in the code. There is no calendar.
+    absent_terms: [calendar]
+
+  - id: v6-sn-neg-member-limit
+    repo: syncnotes
+    language: tr
+    kind: adjacent
+    question: Bir nota en fazla kaç üye eklenebilir?
+    expected: Not in the code. Members can be invited, and their number has no limit.
+
+  - id: v6-sn-neg-subfolder
+    repo: syncnotes
+    language: tr
+    kind: adjacent
+    question: Bir klasörün içinde alt klasör nasıl oluşturuluyor?
+    expected: Not in the code. Folders are flat. A folder has an owner and a name, and no parent.
+    absent_terms: [parentId, parent_id, subfolder]
+
+  - id: v6-sn-neg-change-email
+    repo: syncnotes
+    language: tr
+    kind: adjacent
+    question: Kullanıcı hesabının e-posta adresini nasıl değiştiriyor?
+    expected: Not in the code. An account registers with an e-mail address, and nothing changes it afterwards.
+    absent_terms: [updateEmail, changeEmail]
+
+  - id: v6-sn-neg-folder-limit
+    repo: syncnotes
+    language: en
+    kind: adjacent
+    question: How many folders may one user create at most?
+    expected: Not in the code. Folder names are unique per owner, and their number has no limit.

@@ -59,12 +59,16 @@ A `.env` that *was* committed is still reachable through Git, so the filters bel
 - files whose name starts with the word `secret`, `secrets`, `credential`, `credentials` or `creds` (so `secrets.ts`, but not `SecretRotationService.java`), or that carry an `.env.` segment (`prod.env.js`);
 - generated files (`*.d.ts`, `*.min.js`, bundles), files over 1 MB, and unsupported languages.
 
-Content rules then reject binary files, non-UTF-8 files, minified code, and files matching high-confidence credential patterns (private keys and AWS, GitHub, OpenAI, Anthropic, Google and Slack tokens). The report names such a file but never its secret. This scan does not catch generic values such as `password = "..."` in code; see [limitations](#known-limitations).
+Content rules then reject binary files, non-UTF-8 files, minified code, and files matching high-confidence credential patterns (private keys and AWS, GitHub, OpenAI, Anthropic, Google and Slack tokens). The report names such a file but never its secret.
 
-Two more file types need rules of their own:
+Every language then has rules of its own for a credential that is not in a known format:
 
-- **YAML** files with a personal or secret marker in the name (`application-local.yml`, `*-override.yml`, `vault.yml`, `kubeconfig.yml`) and lock files are skipped. In the rest, a chunk holding a literal credential, such as a password key or a URL with a password, is withheld on its own and reported, so that one development password does not hide a whole compose file.
+- **Code** (Java, JavaScript, TypeScript, TSX): a statement in which a credential-named variable, property or setter is given a quoted literal, such as `JWT_SECRET = "..."`, `password: "..."` or `setApiKey("...")`, is left out of the chunk around it, and the rest of the chunk stays. The name has to hold a word such as password, secret, token or api key, and not end in a word that says it only describes one, such as header, prefix, name or length. A value from elsewhere (`process.env.X`, a call, a placeholder) is not a literal, and a literal with spaces is taken for prose. A URL with a password in it is left out in any language. Tree-sitter widens the place to the whole statement, so the second half of a value written over two lines goes too. See [limitations](#known-limitations) for what this cannot see.
+
+- **YAML** files with a personal or secret marker in the name (`application-local.yml`, `*-override.yml`, `vault.yml`, `kubeconfig.yml`) and lock files are skipped. In the rest, a chunk holding a literal credential, such as a password key or a URL with a password, is withheld on its own and reported, so that one development password does not hide a whole compose file. An entry holding one is taken apart down to the flat list of settings that holds it, such as a service's `environment`, which is withheld whole, so the same service's `build` and `depends_on` stay searchable.
 - **SQL** files with a literal `PASSWORD '...'` or `IDENTIFIED BY '...'` are rejected.
+
+The same rules run again when something is asked, because an index made by an older version may still hold such lines. Search leaves out any chunk that holds a credential, so no result, passage or prompt starts from one. Before lines are checked against Git and offered to a model, each passage is checked once more, which also covers a declaration that [completion](#a-constants-declaration) fetched. The file view hides the same statements in every language.
 
 ## Parsing and chunking
 
@@ -95,6 +99,14 @@ PostgreSQL 17 with pgvector runs in RepoMind's own Compose project, on `127.0.0.
 - `llm_usage`, used to enforce the total budget.
 
 Re-indexing the same commit with the same `PIPELINE_VERSION` does nothing.
+
+### The index version
+
+`PIPELINE_VERSION` in `repomind/__init__.py` is the version of what indexing stores for a commit: which lines become chunks, symbols and imports, and which are withheld. Each snapshot records the version that made it.
+
+- **When it changes.** Whenever a change to parsing, chunking or withholding gives any file different output. `tests/test_pipeline_version.py` parses fixed files in every indexed language and compares a fingerprint of the result with the one recorded for the current version, so such a change fails the tests until the version is bumped and the new fingerprint recorded. It is 3 now. Version 2 is the first published one, and by mistake it also covers a later change to YAML chunking.
+- **What an upgrade asks for.** Run `python -m repomind index --path <repository>` again for each indexed repository. With a newer version the same commit is read and parsed again, with no `--force`, and vectors are kept for chunks whose text did not change. Nothing is re-indexed by itself. A repository added by URL is indexed again when it is added again.
+- **Until then.** The older index keeps working. `python -m repomind repos` marks it as outdated, and every search and question on it carries a warning. Its chunks are the older ones, so results can differ from a fresh index. Lines that are now withheld may still be stored in it, and are not shown: search leaves out any chunk holding a credential, whatever version stored it.
 
 Semantic search is an exact cosine scan. At about 1,200 chunks it is fast enough, and it keeps an approximate index from capping the measured recall.
 
@@ -128,7 +140,7 @@ These ideas were tested and rejected, and their code removed:
 1. Translate a Turkish question to English with the same model. This wording is better than the local translator's, at about 2.5 seconds, so only `ask` uses it. `search` keeps working without any LLM.
 2. Retrieve up to 12 chunks with hybrid search, and for a Turkish question up to 5 more through the glossary.
 3. Refuse if the question is about something the code never mentions.
-4. Narrow the chunks to at most 5 short passages with no LLM, and compare each with Git.
+4. Narrow the chunks to at most 5 short passages with no LLM, add the declaration of a constant they use when it can be found for certain, and compare each with Git.
 5. Refuse if no passage mentions enough of the question.
 6. Without an LLM, stop and list the passages, labelled as not being an AI answer.
 7. Enforce the budget, and send the passages to the model in one request.
@@ -144,6 +156,31 @@ Each source in `AskResult.sources()` carries both of them:
 The first does not imply the second, and `passed` is a check, not a proof. In [a trial](evaluation.md#two-short-trials), all 15 lines 7B chose were real, and 7 of them answered the question.
 
 **A source to review** (`AskResult.review_candidates`, "İncelenebilecek kaynak adayı" for a Turkish question) is a choice the rule turned down. The reader gets its path, lines and code, and is told that nothing confirms it answers the question. It does not change the status, the answer or the citations, so "I do not know" stays "I do not know", and the model's note about it is never shown. There can be none when the rule refuses before the model is asked. The closest lines are listed then, as before.
+
+### A constant's declaration
+
+A passage that reads `.timeout(REQUEST_TIMEOUT)` does not say how long the timeout is. `repomind/qa/completion.py` adds at most two declarations of constants the passages use, read from Git at the indexed commit and found with Tree-sitter. A declaration is added only when it lies inside an indexed chunk, holds no credential and is at most 4 lines long. It is offered to the model like any other passage.
+
+**The value is shown with the line that names it.** A question about a value needs two places, the line that uses the constant and the line that gives it its value, and the model usually chooses the first. So when chosen lines pass the evidence rule and use a constant whose declaration was offered, the declaration is shown with them: `AskResult.declared_values`, the role `declaration` in the API, a heading of its own on the page. It is marked as added by RepoMind, and not as the model's choice. This goes one way only. Chosen lines bring the declaration of what they name, and a chosen declaration brings nothing: that is linked evidence, below.
+
+**A declaration the rule turned down is shown with the line that uses it, to review.** The model sometimes chooses only the declaration: asked how many books a member may borrow at once, it chose `MAX_ACTIVE_LOANS = 3`. That line shares no word with the question, so it is turned down, and the verdict stays "not enough evidence". Such a declaration is then shown under **Source to review**, together with the lines that use it (`review_uses`, role `review_use`), so that the reader sees the value and where it is enforced.
+
+The use is taken only when four things hold:
+- completion resolved the constant in it to exactly this declaration;
+- it was offered to the model, so it passed the credential and Git checks;
+- it is from the same commit;
+- it passes the evidence rule on its own.
+
+A chosen passage counts as a declaration only if it is no longer than four lines. At most two uses are added, and nothing is shown twice. The use is marked as added by RepoMind, and it is never an answer: accepting a declaration through a line that uses it was measured on 342 questions with no model, and about two in three such acceptances were a wrong place or an unanswerable question.
+
+Which declaration a name means is decided where it is used, by `repomind/qa/declarations.py`, from the syntax tree alone. The same name is often declared twice in one repository, so a declaration found anywhere else is not an answer:
+
+- **TypeScript and JavaScript** follow lexical scope: the nearest `const`, `let` or `var` around the use, or a name the file imports from a relative module, followed to the top level of that file. A parameter, a destructured name, a loop or catch variable, a function, a class or an enum of that name hides everything outside it, and is not followed. `Class.NAME` is followed to a static field of a class the same file declares.
+- **Java** follows the language's own order. A plain name means a local variable declared earlier in an enclosing block, then a field an enclosing type declares itself, then a single static import. `Type.NAME` looks for `Type` in the types around the use, the file's top-level types, a single-type import, the file's own package and last the on-demand imports. An import of a type that is not in the repository ends the search, so a library's `Limits` is never taken for the repository's own.
+
+Anything else is refused: a field that may be inherited, `package.Type.NAME`, `variable.NAME`, `this.NAME` in TypeScript, re-exports, default and namespace imports, path aliases, two declarations in one scope, two files declaring the same type, and lines where the name means two things. On StockGuard and SyncNotes at their indexed commits, this finds the same declaration as the file-wide search it replaced in all 148 cases where that search found one.
+
+**Linked evidence is experimental, and off.** With `REPOMIND_LLM_LINKED_EVIDENCE=1`, a declaration the model chose that fails the evidence rule is still shown as an answer when the line that uses it was offered and passes the rule, and the declaration shares one word with the question. The use is then shown too, marked as added by RepoMind and not chosen by the model: `AskResult.linked_uses` holds it, the API gives it the role `linked_use` instead of `answer`, the page lists it under a heading of its own, and the command line prints it apart. It is off by default because the link shows that one line refers to the other, and not that either answers the question. The one shared word usually comes from the constant's own name, and on the two test repositories 1 of 15 declarations it could accept was a right source. See [EVIDENCE_COMPLETION.md](../eval/EVIDENCE_COMPLETION.md) for the record made while it was always on.
 
 ### Real lines, not sentences
 
@@ -164,9 +201,11 @@ Retrieval similarity does not help: on the measured questions, unanswerable ones
 - a name-like term (`Kafka`, `GraphQL`, `S3`) from the question occurs nowhere in the code;
 - at least two ordinary words of an English question occur nowhere in the code.
 
+A word counts as occurring when the code writes another word of its family: "exposed" where the code says `exposure`, "shown" for `show`, "creation" for `created`. One has to be the start of the other, four letters or more, and what is left an ending English builds such words with, so "comment" is not known because the code says `commit`. A number such as "95th" is neither a name nor a word. On the sixth question set, the check without these refused three answerable English questions for "95th", for "exposed, shown" and for "supports, creation".
+
 Words of a translated question only produce a warning. A translation's wording says little about the code, and this rule refused 3 answerable Turkish questions while catching only 2 negatives. Questions refused this way cost nothing. The check cannot catch a question whose every word happens to appear in the code.
 
-A second rule looks at the lines themselves: a passage counts as evidence only if it shares at least two terms with the question. One shared word is what nearby code looks like. On an earlier question set it took unanswerable questions refused from 3 of 10 to 7 of 10, while answers from gold fell from 15 to 13. It is a blunt rule. In the pilot it also refused one answerable question, and it let through two unanswerable ones whose words appear in nearby code.
+A second rule looks at the lines themselves: a passage counts as evidence only if it shares at least two terms with the question. The terms of a passage are those of its lines, of its file's name and of the unit it belongs to: three lines inside `StockMovement` are about stock movements whether or not they say so. Folder names are left out. A Turkish question is compared through the model's translation and through the local translator's, each on its own, and passing either is enough. A translation that changes the subject then no longer turns down the right lines, and the words of a wrong wording are never added to those of a right one. One shared word is what nearby code looks like. On an earlier question set it took unanswerable questions refused from 3 of 10 to 7 of 10, while answers from gold fell from 15 to 13. It is a blunt rule. In the pilot it also refused one answerable question, and it let through two unanswerable ones whose words appear in nearby code.
 
 Thresholds on similarity, or on the share of question terms, do not work: on the second question set, unanswerable questions scored as high as answerable ones.
 
@@ -215,6 +254,8 @@ Measured with no model on the 147 stored questions, 101 answerable and 46 unansw
 
 - Each passage's lines are compared with the blob in Git at the indexed commit before the model sees them, so a tampered database row is never shown.
 - A reply can only choose passages by the ids it was offered. Anything else in it is ignored, and a reply that chooses nothing offered counts as invalid.
+- A reply that cannot be used is neither an answer nor a refusal by the model. Only `{"chosen": []}` says that nothing was chosen. An empty reply, one cut off at the output limit, text that is not JSON, a reply with no list, and ids that were not offered each end as `invalid_response`, with no source, and with what was wrong in `AskResult.reply_problem` and in the API's `reply_problem`. The start of the reply is kept in `AskResult.invalid_reply` for looking into it, and is not shown. It is not asked again.
+- An endpoint that reports 0 input tokens has reported no count: the size of the request is then estimated, so that it is still accounted for, and it is not taken for a truncated prompt.
 - A note is left out, and the lines stay, if it names something that is in neither the chosen lines nor the question, gives a number they do not contain, drifts into a script that is in neither, or is too long to be one sentence.
 
 **What this does not prove.** Verification shows that the lines exist at the commit, and that a note names nothing the lines do not contain. It does not show that the lines answer the question, or that a note made of real names is true. A citation alone does not prove an answer, and `ask` says so under every answer. See [limitations](#known-limitations).
@@ -240,9 +281,88 @@ Repository content is untrusted: a comment can address the model directly. The d
 | Output tokens per request | 250 |
 | Total spend | $0 unless prices and a budget are set |
 
-The budget check runs before each request, using worst-case cost. A non-loopback endpoint is refused unless `REPOMIND_LLM_ALLOW_REMOTE=1`, because it sends source code to a third party, and a remote endpoint with an API key is refused until prices are configured. If an endpoint reports far fewer input tokens than were sent, a warning says that it may have truncated the source.
+The budget check runs before each request, using worst-case cost. A request that failed after it may have reached the model is recorded at the most it could cost, and marked so (see [the OpenAI API](#the-openai-api)). A non-loopback endpoint is refused unless `REPOMIND_LLM_ALLOW_REMOTE=1`, because it sends source code to a third party, and a remote endpoint with an API key is refused until prices are configured. If an endpoint reports far fewer input tokens than were sent, a warning says that it may have truncated the source.
 
 All providers share one small OpenAI-compatible client using only the standard library. The default local setup is Ollama in a container from RepoMind's Compose file, with no account or API key.
+
+### A model on another machine
+
+The same client talks to any OpenAI-compatible server, and to Ollama on another machine through its `/v1` address, so a larger model needs settings and no code: `REPOMIND_LLM_BASE_URL`, `REPOMIND_LLM_MODEL`, `REPOMIND_LLM_API_KEY`, `REPOMIND_LLM_ALLOW_REMOTE=1`, and `REPOMIND_LLM_TIMEOUT_SECONDS` for a slow one. `.env.example` has them as one block, and going back to the local model is restoring two lines.
+
+- **Code leaves the machine.** Each question and the passages chosen for it are sent to that server. It is refused until `REPOMIND_LLM_ALLOW_REMOTE=1` says this is meant. While a remote model is in use, the status in the top bar says "remote", the AI panel names the host, and `/api/health` reports `remote` and `endpoint`.
+- **The key** is read from `.env`, which Git ignores, sent only in the `Authorization` header to that server, and never returned by the API.
+- **Memory.** The rule that keeps the local model from starting on low memory looks at this machine, so it does not apply to a remote model.
+- **What stays the same.** Search, passage selection, the credential checks, the refusal rules and the check against Git all run here, before anything is sent. Passages holding a credential are not sent to a remote model either.
+
+On the 35 prompts of the sixth question set that reached the model, a run made outside this repository gave, for 27 answerable questions, 14 fully right with `qwen2.5:7b`, 17 with `qwen2.5-coder:14b` and 16 with `qwen2.5-coder:32b`, at a median of about 23 and 51 seconds for the larger two. That is the choice among the same passages, not the application end to end, and the models differ in more than size. It is why 14B is the model to try remotely, and not a result recorded here.
+
+### The OpenAI API
+
+`REPOMIND_LLM_PROVIDER=openai` uses the OpenAI API through the same client. The default, `ollama`, is what RepoMind always did, and its request has not changed.
+
+**Settings.** [`repomind/qa/llm.py`](../repomind/qa/llm.py) refuses an OpenAI setup unless it has all of these:
+- a model;
+- a key, read only from `REPOMIND_LLM_API_KEY`;
+- consent to send code, `REPOMIND_LLM_ALLOW_REMOTE=1`;
+- both prices above 0;
+- a budget above 0.
+
+The address is fixed at `https://api.openai.com/v1`, and a configuration pointing elsewhere cannot even be made, so the key cannot be sent to another server. The OpenAI address used with the `ollama` provider is refused too, because that would skip the price and budget rules.
+
+The key is left out of the configuration's `repr`. An error repeats a setting's value only when it is short and plain, so a key pasted into the wrong setting is not printed. A setup that is wrong does not stop search: the status is `misconfigured` and names the setting.
+
+**The request.** A request to the Chat Completions endpoint sends:
+- `max_completion_tokens`, which also counts a reasoning model's thinking, so it caps what one request can cost;
+- `response_format` `json_object`;
+- `store: false`, which asks OpenAI not to keep the exchange for its distillation and evaluation products, and is not a promise that nothing is kept;
+- either `temperature` 0, or `reasoning_effort` and no temperature when `REPOMIND_LLM_REASONING_EFFORT` is set.
+
+Redirects are not followed. For any other server, the key goes in a header that a redirect would not carry.
+
+**Errors.** Each failure is an `LLMRequestError` with a kind. The message never holds the server's text or the key. It names the HTTP status, the parameter and code when they are plain identifiers, and the request ID.
+
+| What OpenAI answered | Kind | State | Sent again |
+| --- | --- | --- | --- |
+| 401, 403 | `auth`, `forbidden` | `auth_failed` | no |
+| 404 | `not_found` | `model_missing` | no |
+| 429 naming a quota, credit, billing, spending or usage limit | `quota` | `limited` | no |
+| other 429 | `rate_limit` | `limited` | once, after a `Retry-After` of 10 seconds or less |
+| 503 | `server` | `offline` | once, after a `Retry-After` of 10 seconds or less |
+| 500, 502, 504, a timeout, a lost connection | `server`, `timeout`, `connection` | `offline` | no, since it may have been processed |
+| other 4xx, a redirect, an answer that cannot be read | `bad_request`, `redirect`, `bad_response` | `rejected` | no |
+
+**The status.** The status asks OpenAI about the model with `GET /v1/models/<model>`. That request generates nothing, sends no question or code, and costs nothing. It is asked at most once a minute. After a refused key, a quota or a refused request, OpenAI is not asked again for a minute; after trouble that passes by itself, after 15 seconds. The memory rule applies only to a model on this machine. Whatever stops OpenAI, a question is still answered with the lines search finds, and says why.
+
+**Prices.** OpenAI caches the start of a long prompt by itself, 1,024 tokens or more, for 30 minutes in Chat Completions. It bills each input token at one of three rates: uncached, read from the cache, or written to it. A cache write is billed instead of the uncached rate, not on top of it.
+
+So `usage_cost` in [`repomind/qa/llm.py`](../repomind/qa/llm.py) takes `usage.prompt_tokens_details.cached_tokens` and `cache_write_tokens` out of `prompt_tokens`, and prices each part at its own rate:
+- `REPOMIND_LLM_INPUT_USD_PER_MTOK`;
+- `REPOMIND_LLM_CACHED_INPUT_USD_PER_MTOK`, optional, which counts reads at the input rate when unset;
+- `REPOMIND_LLM_CACHE_WRITE_USD_PER_MTOK`, required for OpenAI.
+
+A part the reply does not break down, or parts that add up to more than the whole, are counted at the highest input rate. The answer then says its cost is at most that, and its row is recorded as `estimated`. On the first real request, 1,050 input tokens, 1,047 of them written to the cache, and 45 output tokens came to $0.000153675 at gpt-6-luna's prices. The earlier count, before cache writes were priced, recorded $0.000128 for it. That row was left as it was.
+
+**The budget.** Before every request, and every time the status is read, RepoMind adds up what it has recorded. The largest request it allows for counts every input token at the highest of the three input rates. The state is `budget_reached` once the largest request a question can make no longer fits in what is left, and then nothing is sent. Each `llm_usage` row has a kind:
+- `reported`: the server's token counts;
+- `estimated`: an answer without counts;
+- `worst_case`: a request that failed after it may have reached the model, after a timeout, a lost connection, a server error other than 503, or an unreadable answer, counted at the most it could cost;
+- `legacy`: from before kinds were kept.
+
+Requests turned away with a 4xx, 429 or 503, a refused connection and an unknown host are not counted. Nothing in OpenAI's documentation says whether either kind of failure is charged.
+
+The budget is not an exact ceiling. It is passed if:
+- the prices set are wrong, a cache price included;
+- the token estimate, three characters a token, is below the real count, by at most one request's error;
+- the web page and the command line ask at the same moment;
+- requests turned away are charged after all.
+
+**The page.** It names the provider and where the model runs. For OpenAI it shows a note on what is sent, and the spending RepoMind has counted, with the cautious, estimated and legacy parts named apart, as its own count and not a bill. A model gets an accuracy figure only if it was measured in RepoMind. Today that is `qwen2.5:7b`, in `_MEASURED` in [`repomind/api/services.py`](../repomind/api/services.py).
+
+**Before the first real request:** [docs/openai-first-run.md](openai-first-run.md) holds what an older index can store, how to check what would be sent, the checklist, and what the three real requests made so far showed.
+
+### Tracing where the right lines are lost
+
+For a developer. `python -m repomind ask "..." --repo name --expect "src/Order.java:10-20"` prints, for each expected place, the first stage it did not pass: not in the index, not among the chunks search returned, retrieved and not made a passage, refused before the model and by which rule, sent and not chosen, chosen and turned down by the evidence rule, or shown as an answer. `--expect` can be repeated for an answer that needs two places, with `|` between places that would do as well. Nothing is computed without it. [`repomind/qa/trace.py`](../repomind/qa/trace.py) does the same from an `AskResult`, and [`eval/tools/stage_trace.py`](../eval/tools/stage_trace.py) runs a whole question file with no model.
 
 ### Memory limits
 
@@ -263,14 +383,14 @@ Free memory here means the smaller of free physical memory and free commit space
 
 `repomind/api` is a thin FastAPI layer over the same `SearchEngine`, `QAEngine` and `index_repository` that the command line uses. `web/` is a React and TypeScript client, whose types are generated from the API's OpenAPI document, and a test fails if the two drift apart. `python -m repomind serve` runs both in one process.
 
-Routes are synchronous and run in FastAPI's thread pool, because the engine is. Each request has its own `Store`, and they share the embedder, translator, LLM client and keyword index cache. The model's state is checked at most every 5 seconds. If it is off, or dies during a question, a question still returns the closest lines and says the model was not used.
+Routes are synchronous and run in FastAPI's thread pool, because the engine is. Each request has its own `Store`, and they share the embedder, translator, LLM client and keyword index cache. The model's state is checked at most every 5 seconds, and the OpenAI API's once a minute. If it is off, or dies during a question, a question still returns the closest lines and says the model was not used.
 
 ### What the browser can reach
 
 | Risk | What stands in the way |
 | --- | --- |
 | Reading outside the repository | A path is served only if it exactly matches a row of the `files` table for that snapshot, and its content comes from Git objects, not from the disk. Traversal and excluded files get `404` |
-| Secrets | Excluded files are not in that table. In YAML, lines that `credential_lines` flags are replaced before they leave the server |
+| Secrets | Excluded files are not in that table. In every language, the lines `hidden_lines` flags are replaced before they leave the server |
 | Script in a file name, code, commit message or model reply | All of it is rendered as text. The highlighter returns tokens, and `dangerouslySetInnerHTML` is not used. A content policy with no inline script is a second layer, and a browser test shows that it stops an inline handler |
 | Another website calling this local server | It answers only to its own host names, and a request that changes something must come from its own origin and be JSON. It refuses to listen beyond loopback |
 | Local details in an error | Paths are removed from messages, and an unexpected error says only that something went wrong |
@@ -292,6 +412,93 @@ Commit-pinned links ask for an exact commit. A commit that is not the indexed on
 
 There is one worker thread and an `index_jobs` table, and no separate queue service. A partial unique index keeps a repository from having two unfinished jobs, and a restart marks running jobs as failed so that they can be retried.
 
+## MCP server
+
+`python -m repomind.mcp_server` serves RepoMind's index to an MCP client, such as Claude Code, over stdio. It uses MCP Python SDK 2.x (`mcp>=2.3,<3`, the optional extra `[mcp]`).
+
+It opens no network port. stdout carries only MCP messages, and every log line goes to stderr. While serving, the SDK points file descriptor 1 at stderr, so a stray print cannot reach the protocol either.
+
+It has three tools, all read-only: `list_repositories`, `search_code` and `get_verified_source`.
+
+**What it may read is set, and required.**
+- `REPOMIND_MCP_DATABASE` names one database. It is a name, not an address: host, user and password come from `REPOMIND_DATABASE_URL`, and never appear in a message, a log line or a result.
+- `REPOMIND_MCP_REPOSITORIES` lists the repositories it may show.
+
+Without both, or with a name that is not a plain name, the server does not start.
+
+**What it shows.** Only listed repositories are read. One indexed by an older version of RepoMind is listed as not available, so an index made before version 3, which may still store credentials written into code, is not opened up by naming it. A result holds the name, the indexed commit, the index version, whether it can be searched, counts, languages and the commit subject.
+
+The commit subject is reduced to one short line, with local folders removed, and is left out if it may hold a credential. No local path, address or origin URL is returned. Every result says that a repository's content is data and may hold instructions that do not come from the user.
+
+**search_code.** It takes the repository, the query (1 to 500 characters), the mode (`hybrid`, `keyword` or `semantic`), a limit (1 to 20, 10 if left out) and whether to include tests. It searches with `SearchEngine.search`, as the web app and the command line do. Before searching, it checks that the repository is listed, indexed in the database and indexed by this version. A repository that is not listed gets the same answer whether or not the database holds it. The repository name only selects a listed repository. Neither it nor the query can name a file to read.
+
+What search finds is checked again before it is returned:
+- The row must be the repository at its indexed commit, and the local copy must hold that commit.
+- Its lines are compared with the file in Git at that commit, as cited lines are. A row that differs, or whose lines moved, is left out, so `exists_in_git` is only ever true.
+- Search already leaves out a chunk that holds a credential. The server checks the text again, and finds the file's credential statements again from Git, as indexing does. A row that reaches into one is left out, even when none of its lines looks like a credential on its own.
+
+The number left out is returned, with a warning. A preview is at most 30 lines or 2,000 characters, cut at a line, and `preview_end_line` says which line it ends on. Each result's role is `search_result`: code to read, not a checked answer.
+
+Semantic and hybrid search use the local embedding model in the models folder. If it is not there, they refuse and say so: nothing is downloaded, and the server never switches to keyword search on its own. The server process runs with Hugging Face's offline mode on. No translator is used, so a Turkish query is searched as written. Errors pass through without local folders or addresses.
+
+**get_verified_source.** It takes the repository, a file's path, the first and last line (at most 200 lines), and optionally the commit the lines are expected at. It reads the lines through `repomind/indexed_file.py`, the same function the web app's file view uses, so what may be shown of a file is decided in one place.
+
+Before anything is read:
+- The repository must be listed, indexed in the database and indexed by this version, as for `search_code`. Both tools check this through `repomind/mcp_server/access.py`.
+- A path with `..`, `.`, an empty part, a leading `/`, a backslash, a drive letter or a control character is refused before the index or Git is asked anything.
+- Any other path must equal a path in the `files` table for the active snapshot exactly. A file left out of the index, such as `.env`, one committed after indexing, or one only in the working folder, cannot be read, and the message is the same for all of them.
+- A commit, when given, must be the indexed one, whole or by its first 7 or more characters. Any other is refused.
+
+The lines come from the Git object at the indexed commit, never from the working folder, and the local copy must hold that commit. The bytes Git gives are hashed as Git hashes a blob and compared with the `blob_sha` that indexing recorded for the path. A file that differs is not returned, and neither is one whose record holds no usable object id, because then nothing shows that these bytes are the ones that passed indexing's filters. So `matches_index` is true in every result. The web app's file view does not make this comparison, and answers as before.
+
+Credential lines are found over the whole file and widened to their statement, as indexing finds them, then blanked before anything else happens to the lines. A secret over several lines is hidden whole, and asking for one of its lines alone, or giving a commit, does not bring it back. Each line has its number, its text and whether it is hidden, and `hidden_lines` counts the hidden ones. The role is `source`: the repository's text, not an answer. Errors never repeat the path or any line.
+
+**How much a tool returns.** The limit is 12,000 characters, and it covers the code a tool returns, not the whole response:
+- For `search_code`, the `results` list: each result's compact JSON, its preview included, added up.
+- For `get_verified_source`, the `lines` list: each line's compact JSON and the comma after it, added up.
+
+The rest of the response is outside the limit: the repository, commit, index version, query or path, counts, warnings and notice. Measured, it is 500 to 700 characters, and about 1,000 with a 500-character query. The limit is applied after the Git and credential checks, so it can only leave out more:
+- `search_code` returns the first results, in search's order, that fit. A result that does not fit ends the list, so that a shorter one further down never takes its rank. `cut_for_size` counts the rest, apart from `left_out`, and has its own warning, so a cut for size is never shown as a result left out for safety.
+- `get_verified_source` returns whole lines up to the limit, sets `truncated`, ends `end_line` at the last line returned, and says which line to ask for next.
+
+**Every response is sent twice.** A `tools/call` result holds the same JSON as `structuredContent` and again as one text block, because the MCP specification asks a tool with structured output to send the text too, for clients that read only text. A full response is therefore about 12,500 to 13,000 characters of JSON, and twice that in the message. How much of it reaches the client's model depends on the client: in a test with Claude Code 2.1.330, the tool result its model received held one compact copy. The SDK would write the text with an indent of two. The server writes it compact instead, through the SDK's own `CallToolResult`, which cuts 200 short lines from about 16,600 characters to about 9,800. Both copies stay, because a client may read either.
+
+**Read-only.** The server never applies the schema. Its session is made read-only (`default_transaction_read_only = on`) before anything is read. It then checks that the session is on the database it names and that the read-only setting took effect, both at start and on every call. Tests check that inserts, updates, deletes, `CREATE TABLE` and `TRUNCATE` are refused, and that searching and reading lines write nothing.
+
+A second guard, not set up yet, would be a database role that may only read. It would need a setting of its own for the server's connection, and these statements, run by whoever administers the container:
+
+```sql
+CREATE ROLE repomind_reader LOGIN PASSWORD '...';
+GRANT CONNECT ON DATABASE <the database the server reads> TO repomind_reader;
+GRANT USAGE ON SCHEMA public TO repomind_reader;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO repomind_reader;
+```
+
+**What it never does.** It does not read the model settings, and it loads neither the question engine, the web API, a model client nor the translator. It asks no model. Tests check the modules it loads. They also run the real server process with Python's audit hook watching every connection and name lookup, and with HTTP sent to a closed port: it reaches no address but its own loopback.
+
+**Where the results go.** An MCP client passes what the server returns to its own model, and Claude Code passes it to Anthropic's API. Lines of code returned by `search_code` and `get_verified_source` leave the machine that way. The code in each response is kept under 12,000 characters, and the response is sent once as structured content and once as text.
+
+**Connecting Claude Code.** From the project folder, with only the two settings the server needs:
+
+```powershell
+claude mcp add -e REPOMIND_MCP_DATABASE=<database> -e REPOMIND_MCP_REPOSITORIES=<repositories> --scope local repomind '--' "$PWD\.venv\Scripts\python.exe" -m repomind.mcp_server
+```
+
+In Windows PowerShell, `claude` is npm's PowerShell script, and PowerShell keeps a bare `--` from reaching a script, so the `--` that ends Claude Code's own options is quoted. In another shell, it is a bare `--`.
+
+- **Where the entry is kept.** `--scope local` keeps it private to that folder, in Claude Code's own settings outside the repository. It makes no `.mcp.json`, and Git ignores one anyway.
+- **What the command must not hold.** It passes neither a model setting nor a key.
+- **Every tool call asks for permission,** unless that tool is allowed.
+
+`claude mcp get repomind` and `claude mcp list` then report it as connected. The server needs the database container running.
+
+It was tested this way on 2026-11-23, with the made-up library repository and separate sessions that kept nothing and could use no other tool:
+- **`list_repositories`:** listed that repository only.
+- **`search_code`:** "late fee" found `src/fees.ts:6-10` first.
+- **`get_verified_source`:** read those lines back exactly as Git holds them, with `matches_index` true.
+- **Credentials:** the two planted fake credentials came back as hidden lines.
+- **Refused:** an unlisted repository and a path with `..`.
+
 ## Known limitations
 
 - **The web application is for one person on one machine.** It has no accounts, quotas or sandbox. Nothing from a repository runs, so a sandbox has not been needed, but hosting it for others would need a different design.
@@ -307,7 +514,7 @@ There is one worker thread and an `index_jobs` table, and no separate queue serv
 - **Turkish depends on an imperfect translator**, and detection relies on Turkish letters or common function words, so a bare `stok rezervasyon` is not translated.
 - **Adding SQL and YAML cost some Turkish ranking on code questions**, because the new chunks compete with code.
 - **2.4% of the code chunks exceed the model's 512-token window** (26 of 1,106, longest 623). Their tails are not embedded, although keyword search still covers them.
-- **Secret detection is pattern based.** It catches known token formats and literal credential keys, not every hardcoded password.
+- **Secret detection is pattern based.** It catches known token formats, literal credential keys in configuration, and credential-named variables given a literal in code. It does not catch a credential under a name that says nothing (`const x = "..."`), one built from pieces under other names, a passphrase with spaces, or one passed as a plain argument to a call not named for it. It also withholds some lines that hold none: a name with a credential word in it and a quoted value without spaces is all it sees, so `TOKEN_REGION = 'eu'` is left out too. Python, JSON and `.properties` files are not indexed at all.
 - **Only the latest indexed commit is kept per repository.**
 - **The keyword index is rebuilt in memory per process.**
 - **The evaluation has 85 answerable questions on two repositories**, labelled and graded by one reviewer, so intervals are wide and results may not generalize.

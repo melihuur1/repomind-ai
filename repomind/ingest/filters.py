@@ -74,9 +74,10 @@ _DATA_DUMP = re.compile(r"(?:^|[._-])(?:dump|backup|bak|seeds?|fixtures?|export)
 
 _SQL_CREDENTIAL = re.compile(r"\b(?:PASSWORD|IDENTIFIED\s+BY)\s+'[^']+'", re.IGNORECASE)
 
+# What a name has to say for its value to be taken for a credential, in configuration and in code alike.
+_CREDENTIAL_WORD = r"(?:password|passwd|pwd|secret|token|api[_-]?key|private[_-]?key|access[_-]?key|credential|auth[_-]?key)"
 _CONFIG_SECRET_KEY = re.compile(
-    r"^[\s-]*#?\s*[\"']?([\w.-]*(?:password|passwd|pwd|secret|token|api[_-]?key|private[_-]?key|access[_-]?key"
-    r"|credential|auth[_-]?key)[\w.-]*)[\"']?\s*:\s*(.*)$",
+    rf"^[\s-]*#?\s*[\"']?([\w.-]*{_CREDENTIAL_WORD}[\w.-]*)[\"']?\s*:\s*(.*)$",
     re.IGNORECASE,
 )
 _CONFIG_BENIGN_KEY = re.compile(
@@ -107,13 +108,117 @@ def find_config_secret(text: str) -> str | None:
     return None
 
 
-def credential_lines(text: str) -> list[int]:
-    """1-indexed lines of a configuration file holding a literal credential.
+CODE_LANGUAGES = frozenset({"java", "javascript", "typescript", "tsx"})
+_CREDENTIAL_NAME = re.compile(_CREDENTIAL_WORD, re.IGNORECASE)
+# A credential-named variable, property or setter that is handed a quoted literal:
+#   NAME = "..."    NAME: Type = "..."    name: "..."    "name": "..."    setName("...")
+# Whitespace before the literal may include a line break, so a value on the next line is seen too.
+_CODE_LITERAL = re.compile(
+    r"""(?<![\w$])(?P<name>[A-Za-z_$][\w$]*)["']?
+        (?P<how>
+            \s*(?::\s*[\w.<>\[\]?]+(?:\s*[|&]\s*[\w.<>\[\]?]+)*)?\s*=(?![=>])
+          | \s*:(?![:=])
+          | \s*\(
+        )
+        \s*(?P<quote>["'`])(?P<value>(?:\\.|(?!(?P=quote)).)*)(?P=quote)""",
+    re.VERBOSE,
+)
+# A setter or a builder step named for exactly a credential: password("..."), setApiKey("...").
+_CREDENTIAL_SETTER = re.compile(
+    r"^(?:password|passwd|pwd|secret|token|apikey|privatekey|accesskey|secretkey|authkey|credentials?)$"
+)
+_CODE_REFERENCE = re.compile(r"\$\{|#\{|\{\{|%s|%\(")
+# The browser's fetch takes `credentials: "include"`. That names a mode, and holds nothing.
+_FETCH_CREDENTIALS_MODES = frozenset({"include", "omit", "same-origin"})
 
-    Such chunks are withheld from the index, but the file around them stays readable,
-    so anything that shows the whole file has to hide these lines too.
+
+def _is_a_literal_credential(value: str) -> bool:
+    """Whether a quoted value could be one. Prose, such as an error message, has spaces, and is not."""
+    value = value.strip()
+    if not value or any(character.isspace() for character in value):
+        return False
+    if value.lower() in {"null", "none", "undefined", "true", "false"} or value.isdigit():
+        return False
+    return not (_CODE_REFERENCE.search(value) or _CONFIG_PLACEHOLDER.match(value) or _CONFIG_REFERENCE.match(value))
+
+
+def code_credentials(text: str) -> list[tuple[str, int, int]]:
+    """Names in code that are given a literal credential, with where each starts and ends in the text.
+
+    The places are character offsets, from the name to the end of the literal. Never the value.
     """
-    return [number for number, line in enumerate(text.split("\n"), start=1) if find_config_secret(line)]
+    found = []
+    for match in _CODE_LITERAL.finditer(text):
+        name, how = match.group("name"), match.group("how").strip()[-1]
+        if not _is_a_literal_credential(match.group("value")):
+            continue
+        if how == "(":
+            setter = re.sub(r"^(?:set|with)(?=[A-Z_])", "", name).replace("_", "").lower()
+            # Only as the single argument, so that a lookup such as token("refresh", user) is left alone.
+            if not _CREDENTIAL_SETTER.match(setter) or text[match.end() :].lstrip()[:1] != ")":
+                continue
+        elif not _CREDENTIAL_NAME.search(name) or _CONFIG_BENIGN_KEY.search(name):
+            continue
+        if name.lower() == "credentials" and match.group("value").strip() in _FETCH_CREDENTIALS_MODES:
+            continue
+        if how == ":":
+            # A property or a named argument, and not the middle of `condition ? token : "none"`.
+            before = text[: match.start("name")].rstrip(" \t")
+            before = before[:-1].rstrip(" \t") if before[-1:] in "\"'" else before
+            if before[-1:] not in ("", "\n", "{", ",", "(", "["):
+                continue
+        found.append((name, match.start("name"), match.end()))
+    return found
+
+
+def _code_credential_lines(text: str) -> list[tuple[str, int, int]]:
+    return [(name, text.count("\n", 0, start) + 1, text.count("\n", 0, end) + 1) for name, start, end in code_credentials(text)]
+
+
+def find_credential(text: str, language: str | None) -> str | None:
+    """What in these lines may hold a credential, by the rules of the language they are in. Never the value.
+
+    Every language: a known key format, and a URL with a password. YAML: a credential key with a literal
+    value. SQL: a literal password. Code: a credential-named variable, property or setter given a quoted
+    literal. An unknown language gets every rule, so that what cannot be told apart is not let through.
+    """
+    rules = find_secret_rules(text)
+    if rules:
+        return rules[0]
+    if _URL_CREDENTIALS.search(text):
+        return "credentials in a URL"
+    if language in (None, "yaml"):
+        name = find_config_secret(text)
+        if name:
+            return name
+    if language in (None, "sql") and _SQL_CREDENTIAL.search(text):
+        return "a literal password"
+    if language is None or language in CODE_LANGUAGES:
+        found = code_credentials(text)
+        if found:
+            return found[0][0]
+    return None
+
+
+def credential_lines(text: str, language: str | None = "yaml") -> list[int]:
+    """1-indexed lines of a file holding a literal credential, by the rules of its language.
+
+    They are withheld from the index, but the file around them stays readable, so anything that
+    shows the whole file has to hide these lines too. For code, ``repomind.parsing.credentials``
+    widens each to the whole statement, which this module cannot see.
+    """
+    hidden: set[int] = set()
+    for number, line in enumerate(text.split("\n"), start=1):
+        if find_secret_rules(line) or _URL_CREDENTIALS.search(line):
+            hidden.add(number)
+        elif language in (None, "yaml") and find_config_secret(line):
+            hidden.add(number)
+        elif language in (None, "sql") and _SQL_CREDENTIAL.search(line):
+            hidden.add(number)
+    if language is None or language in CODE_LANGUAGES:
+        for _name, start, end in _code_credential_lines(text):
+            hidden.update(range(start, end + 1))
+    return sorted(hidden)
 
 
 @dataclass(frozen=True)

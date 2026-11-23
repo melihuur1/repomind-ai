@@ -31,10 +31,13 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "httpx>=0.27"]
+# The local MCP server: python -m repomind.mcp_server. Not needed for the web app or the command line.
+mcp = ["mcp>=2.3,<3"]
+dev = ["pytest>=8", "httpx>=0.27", "mcp>=2.3,<3"]
 
 [project.scripts]
 repomind = "repomind.cli:main"
+repomind-mcp = "repomind.mcp_server.__main__:main"
 
 [tool.setuptools.packages.find]
 include = ["repomind*"]
@@ -48,5 +51,5 @@ addopts = "-q"
 markers = [
     "db: requires the RepoMind PostgreSQL container (skipped when it is not reachable)",
     "gold: requires local clones of the evaluation repositories (skipped when they are not configured)",
-    "llm: calls the configured local LLM (skipped when it is not running)",
+    "llm: calls the configured local LLM (skipped unless REPOMIND_RUN_LLM_TESTS=1, 12 GB of free memory and commit space, and the model is running)",
 ]

@@ -144,7 +144,7 @@ def run(output: Path, min_free_gb: float) -> int:
     from repomind.cli import _embedder, _store
     from repomind.config import Settings
     from repomind.evaluation.ask_runner import Checkpoint
-    from repomind.evaluation.memory import available_memory_gb
+    from repomind.evaluation.memory import available_memory_gb, check_before_loading
     from repomind.qa.engine import AskResult, QAEngine
     from repomind.qa.llm import OpenAICompatibleClient, load_llm_config
     from repomind.qa.prompt import build_selection_prompt, fit_passages, new_nonce
@@ -155,6 +155,11 @@ def run(output: Path, min_free_gb: float) -> int:
     if output.exists():
         print(f"{output} already exists, and is not overwritten.")
         return 2
+    check = check_before_loading()
+    print(f"Free memory before the model loads: {check.describe()}", flush=True)
+    if check.refusal:
+        print(f"Not started: {check.refusal}. Nothing was loaded.")
+        return 3
     settings = Settings.load()
     config = load_llm_config()
     if config is None or config.model != MODEL:

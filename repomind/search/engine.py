@@ -8,6 +8,7 @@ from typing import Sequence
 
 from repomind.embeddings.provider import Embedder
 from repomind.errors import RepoMindError
+from repomind.ingest.filters import find_credential
 from repomind.search.glossary import repository_terms
 from repomind.search.hybrid import reciprocal_rank_fusion
 from repomind.search.keyword import BM25Config, KeywordIndex
@@ -71,9 +72,18 @@ class SearchEngine:
         # so a new commit never reads an old index.
         self._indexes: dict[tuple, KeywordIndex] = {} if keyword_indexes is None else keyword_indexes
         self._translations: dict[str, str | None] = {}
+        self._credential_free: dict[int, bool] = {}
 
-    def _snapshot_ids(self, repos: list[str] | None) -> list[int]:
+    def _snapshot_ids(self, repos: list[str] | None, warnings: list[str] | None = None) -> list[int]:
         snapshots = self.store.active_snapshots(repos)
+        if warnings is not None:
+            # Search still works on it, and a chunk holding a credential is left out whatever stored it.
+            warnings.extend(
+                f"{snapshot.repo} was indexed by an older version of RepoMind, so its chunks are not the ones "
+                "this version would make. Index it again to refresh them."
+                for snapshot in snapshots
+                if not snapshot.is_current
+            )
         if repos:
             missing = set(repos) - {s.repo for s in snapshots}
             if missing:
@@ -109,10 +119,20 @@ class SearchEngine:
                 self._translations[query] = None
         return self._translations[query]
 
+    def _may_be_shown(self, chunk: ChunkRow) -> bool:
+        """Not a chunk holding a credential, whatever pipeline indexed it.
+
+        Indexing withholds such chunks. An index made before it did still holds them, and search is
+        where every result, passage and prompt starts, so they are left out here as well.
+        """
+        if chunk.id not in self._credential_free:
+            self._credential_free[chunk.id] = find_credential(chunk.content, chunk.language) is None
+        return self._credential_free[chunk.id]
+
     def _keyword_index(self, snapshot_ids: list[int], include_tests: bool) -> KeywordIndex:
         key = (tuple(snapshot_ids), include_tests)
         if key not in self._indexes:
-            chunks = self.store.load_chunks(snapshot_ids, include_tests)
+            chunks = [chunk for chunk in self.store.load_chunks(snapshot_ids, include_tests) if self._may_be_shown(chunk)]
             self._indexes[key] = KeywordIndex(chunks, self.config.bm25)
         return self._indexes[key]
 
@@ -140,9 +160,10 @@ class SearchEngine:
         matches = self.store.semantic_search(
             self.embedder.embed_query(query), self.embedder.model_name, snapshot_ids, limit, include_tests
         )
+        shown = [(chunk, similarity) for chunk, similarity in matches if self._may_be_shown(chunk)]
         return [
             SearchHit(chunk=chunk, rank=rank, score=similarity, explanation={"cosine_similarity": round(similarity, 4)})
-            for rank, (chunk, similarity) in enumerate(matches, start=1)
+            for rank, (chunk, similarity) in enumerate(shown, start=1)
         ]
 
     def _require_embeddings(self, snapshot_ids: list[int], warnings: list[str]) -> None:
@@ -219,7 +240,7 @@ class SearchEngine:
             raise RepoMindError(f"Unknown search mode: {mode}", hint=f"Choose one of: {', '.join(MODES)}.")
 
         warnings: list[str] = []
-        snapshot_ids = self._snapshot_ids(repos)
+        snapshot_ids = self._snapshot_ids(repos, warnings)
         translated = translated or self._translate(query, warnings)
         include_tests = self._tests_included(query, translated)
         depth = max(limit, self.config.candidates)

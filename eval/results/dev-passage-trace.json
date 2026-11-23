@@ -1,0 +1,1746 @@
+[
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-stock-consistency",
+  "stage": "not a candidate",
+  "fused_rank": 25
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-reservation-cancel",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-db-connection-error",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-user-permissions",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "src/main/java/com/stockguard/security/Actor.java:7-21 (15 lines, candidate 14)"
+  ],
+  "windows_in_ranking": 49,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "src/main/java/com/stockguard/security/Actor.java:17-19",
+  "window_position": 11,
+  "ranks": {
+   "terms": 5,
+   "search": 42,
+   "meaning": 13
+  },
+  "passages_above": [
+   "V1__users.sql:1-11",
+   "ProblemAuthErrorHandler.java:34-38",
+   "AuthService.java:34-45",
+   "ReservationService.java:54-61",
+   "AuthController.java:31-36"
+  ],
+  "unit": true
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-oversell",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-idempotency",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-expiry",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-retry",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-lock-order",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-jwt",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-password",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-audit",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-stale-version",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-invariants",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-simulation-race",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "src/main/java/com/stockguard/simulation/SimulationService.java:118-145 (28 lines, candidate 4)"
+  ],
+  "windows_in_ranking": 71,
+  "reason": "its file already had three passages",
+  "window": "src/main/java/com/stockguard/simulation/SimulationService.java:118-120",
+  "window_position": 9,
+  "ranks": {
+   "terms": 10,
+   "search": 27,
+   "meaning": 6
+  },
+  "passages_above": [
+   "SimulationService.java:98-102",
+   "SimulationService.java:90-92",
+   "SimulationService.java:157-169"
+  ],
+  "unit": false
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sg-first-admin",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-realtime",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "apps/web/src/collab/use-collaboration.ts:141-177 (37 lines, candidate 6)"
+  ],
+  "windows_in_ranking": 72,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "apps/web/src/collab/use-collaboration.ts:167-169",
+  "window_position": 36,
+  "ranks": {
+   "terms": 38,
+   "search": 36,
+   "meaning": 25
+  },
+  "passages_above": [
+   "screenshots.ts:57-61",
+   "use-collaboration.ts:98-109",
+   "use-collaboration.ts:36-40",
+   "connection.ts:38-40",
+   "use-collaboration.ts:41-44"
+  ],
+  "unit": false
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-user-permissions",
+  "stage": "not a candidate",
+  "fused_rank": null
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-revocation",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-lost-updates",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-redis-outage",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "apps/collab/src/extensions/resilient-redis.ts:32-52 (21 lines, candidate 4)",
+   "apps/collab/src/extensions/degraded-reconciler.ts:19-37 (19 lines, candidate 6)"
+  ],
+  "windows_in_ranking": 57,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "apps/collab/src/extensions/degraded-reconciler.ts:23-25",
+  "window_position": 10,
+  "ranks": {
+   "terms": 2,
+   "search": 26,
+   "meaning": 21
+  },
+  "passages_above": [
+   "access-events.publisher.ts:9-21",
+   "server.ts:33-37",
+   "permissions.ts:9-22",
+   "resilient-redis.ts:165-168",
+   "server.ts:49-51"
+  ],
+  "unit": false
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-offline",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-ticket",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-refresh-reuse",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-csrf",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-password",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-version-restore",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-auto-version",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-presence",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-viewer-readonly",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "apps/collab/src/extensions/access-control.ts:209-217 (9 lines, candidate 10)"
+  ],
+  "windows_in_ranking": 75,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "apps/collab/src/extensions/access-control.ts:211-213",
+  "window_position": 21,
+  "ranks": {
+   "terms": 19,
+   "search": 40,
+   "meaning": 14
+  },
+  "passages_above": [
+   "use-collaboration.ts:98-109",
+   "share-dialog.tsx:39-43",
+   "queries.ts:123-127",
+   "roles.ts:20-22",
+   "access-control.ts:46-60"
+  ],
+  "unit": true
+ },
+ {
+  "language": "tr",
+  "set": "first",
+  "id": "sn-session-refresh",
+  "stage": "not a candidate",
+  "fused_rank": 32
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-negative-stock-db",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-settled-immutable",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-append-only",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-sweep-index",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-why-separate-stock",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-lock-timeout-config",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-reservation-defaults",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-two-instances",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "compose.yaml:56-62 (7 lines, candidate 10)"
+  ],
+  "windows_in_ranking": 25,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "compose.yaml:58-60",
+  "window_position": 11,
+  "ranks": {
+   "terms": 23,
+   "search": 12,
+   "meaning": 4
+  },
+  "passages_above": [
+   "AppUserRepository.java:12-16",
+   "compose.yaml:1-3",
+   "AuthService.java:57-62",
+   "V2__catalog_and_stock.sql:14-27",
+   "OpenApiConfig.java:23-27"
+  ],
+  "unit": true
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-auth-error-format",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-username-race",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-simulation-limit",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-error-status-map",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sg-add-stock-limits",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-one-owner",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-collab-instances",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-redis-durability",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-cookie-flags",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-env-validation",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "apps/api/src/config/env.ts:37-46 (10 lines, candidate 7)"
+  ],
+  "windows_in_ranking": 40,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "apps/api/src/config/env.ts:43-45",
+  "window_position": 13,
+  "ranks": {
+   "terms": 12,
+   "search": 12,
+   "meaning": 20
+  },
+  "passages_above": [
+   "env.ts:35-35",
+   "app.setup.ts:8-12",
+   "env.ts:33-33",
+   "config.module.ts:7-9",
+   "config.module.ts:15-19"
+  ],
+  "unit": true
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-account-lock",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-folder-delete",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-note-search",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-health-redis",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-logout-access-token",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-cursor-color",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-title-merge",
+  "stage": "not a candidate",
+  "fused_rank": null
+ },
+ {
+  "language": "tr",
+  "set": "second",
+  "id": "v2-sn-theme-flash",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "third",
+  "id": "v3-sg-instance-header",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java:14-33 (20 lines, candidate 4)"
+  ],
+  "windows_in_ranking": 57,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java:30-32",
+  "window_position": 27,
+  "ranks": {
+   "terms": 39,
+   "search": 13,
+   "meaning": 34
+  },
+  "passages_above": [
+   "InstanceHeaderFilter.java:14-16",
+   "ReservationTransactions.java:72-80",
+   "SimulationService.java:275-276",
+   "SimulationService.java:62-65",
+   "ProductService.java:38-42"
+  ],
+  "unit": false
+ },
+ {
+  "language": "tr",
+  "set": "third",
+  "id": "v3-sg-audit-page-size",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "third",
+  "id": "v3-sg-movement-types",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "third",
+  "id": "v3-sg-username-lowercase",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "third",
+  "id": "v3-sg-request-fingerprint",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "third",
+  "id": "v3-sg-no-setters",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "third",
+  "id": "v3-sn-register-password",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "third",
+  "id": "v3-sn-who-can-edit",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "third",
+  "id": "v3-sn-share-ownership",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "third",
+  "id": "v3-sn-role-cache-ttl",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "third",
+  "id": "v3-sn-redis-access-events",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "third",
+  "id": "v3-sn-user-delete-sql",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sg-token-ttl",
+  "stage": "not a candidate",
+  "fused_rank": 42
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sg-db-port",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sg-reservation-states",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sg-audit-null-actor",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sg-username-format",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sg-login-response",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sg-consistency-endpoint",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sg-register-role",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sn-refresh-token-storage",
+  "stage": "not a candidate",
+  "fused_rank": null
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sn-guard-order",
+  "stage": "not a candidate",
+  "fused_rank": 31
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sn-unknown-fields",
+  "stage": "not a candidate",
+  "fused_rank": 29
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sn-offline-message",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sn-revoked-close-code",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sn-ticket-not-access-token",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sn-folder-name-unique",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fourth",
+  "id": "v4-sn-postgres-port",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sg-jwt-secret-length",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sg-sku-locked",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sg-page-envelope",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sg-root-redirect",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "src/main/java/com/stockguard/common/config/WebConfig.java:7-15 (9 lines, candidate 13)"
+  ],
+  "windows_in_ranking": 35,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "src/main/java/com/stockguard/common/config/WebConfig.java:11-13",
+  "window_position": 25,
+  "ranks": {
+   "terms": 7,
+   "search": 28,
+   "meaning": 30
+  },
+  "passages_above": [
+   "AppUserRepository.java:10-14",
+   "AuthService.java:91-93",
+   "ReservationService.java:54-61",
+   "AppUserDetails.java:33-37",
+   "ReservationTransactions.java:102-107"
+  ],
+  "unit": true
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sg-movements-order",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sg-zero-quantity",
+  "stage": "not a candidate",
+  "fused_rank": 13
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sg-api-language",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sg-simulation-default",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sn-logout-expired",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sn-nonmember-status",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sn-version-list-limit",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sn-version-viewer",
+  "stage": "not a candidate",
+  "fused_rank": 18
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sn-log-format",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sn-email-unique",
+  "stage": "chosen"
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sn-version-kinds",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "packages/shared/src/api-types.ts:52-59 (8 lines, candidate 11)"
+  ],
+  "windows_in_ranking": 37,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "packages/shared/src/api-types.ts:52-54",
+  "window_position": 28,
+  "ranks": {
+   "terms": 36,
+   "search": 35,
+   "meaning": 6
+  },
+  "passages_above": [
+   "queries.ts:33-39",
+   "collab.ts:35-42",
+   "migration.sql:75-87",
+   "versions.ts:7-7",
+   "versions.service.ts:15-30"
+  ],
+  "unit": true
+ },
+ {
+  "language": "tr",
+  "set": "fifth",
+  "id": "v5-sn-migrate-first",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "docker-compose.yml:60-62 (3 lines, candidate 4)",
+   "docker-compose.yml:74-76 (3 lines, candidate 7)"
+  ],
+  "windows_in_ranking": 41,
+  "reason": "no window touching the right lines shares a term with the question"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-stock-consistency",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "src/main/java/com/stockguard/inventory/StockLedger.java:10-20 (11 lines, candidate 8)"
+  ],
+  "windows_in_ranking": 45,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "src/main/java/com/stockguard/inventory/StockLedger.java:10-12",
+  "window_position": 12,
+  "ranks": {
+   "terms": 12,
+   "search": 30,
+   "meaning": 9
+  },
+  "passages_above": [
+   "SimulationService.java:202-204",
+   "ConsistencyService.java:11-22",
+   "SimulationService.java:222-226",
+   "ConsistencyController.java:24-28",
+   "ConsistencyController.java:20-22"
+  ],
+  "unit": true
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-reservation-cancel",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-db-connection-error",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-user-permissions",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "src/main/java/com/stockguard/reservation/ReservationTransactions.java:102-107 (6 lines, candidate 11)"
+  ],
+  "windows_in_ranking": 31,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "src/main/java/com/stockguard/reservation/ReservationTransactions.java:105-107",
+  "window_position": 26,
+  "ranks": {
+   "terms": 28,
+   "search": 28,
+   "meaning": 9
+  },
+  "passages_above": [
+   "V1__users.sql:1-11",
+   "ProblemAuthErrorHandler.java:34-38",
+   "V3__reservations.sql:22-22",
+   "V3__reservations.sql:25-39",
+   "V3__reservations.sql:13-17"
+  ],
+  "unit": true
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-oversell",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-61 (12 lines, candidate 10)"
+  ],
+  "windows_in_ranking": 42,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "src/main/java/com/stockguard/inventory/StockLevelRepository.java:50-52",
+  "window_position": 8,
+  "ranks": {
+   "terms": 4,
+   "search": 38,
+   "meaning": 4
+  },
+  "passages_above": [
+   "V2__catalog_and_stock.sql:14-27",
+   "SimulationService.java:96-100",
+   "StockLevelRepository.java:14-23",
+   "SimulationService.java:90-92",
+   "SimulationController.java:39-41"
+  ],
+  "unit": true
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-idempotency",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-expiry",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-retry",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-lock-order",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-jwt",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-password",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-audit",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-stale-version",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-invariants",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-simulation-race",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sg-first-admin",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-realtime",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "apps/web/src/collab/use-collaboration.ts:141-177 (37 lines, candidate 3)"
+  ],
+  "windows_in_ranking": 79,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "apps/web/src/collab/use-collaboration.ts:167-169",
+  "window_position": 17,
+  "ranks": {
+   "terms": 25,
+   "search": 23,
+   "meaning": 19
+  },
+  "passages_above": [
+   "use-collaboration.ts:98-109",
+   "use-collaboration.ts:36-40",
+   "use-collaboration.ts:42-46",
+   "screenshots.ts:57-61",
+   "note-page.tsx:107-109"
+  ],
+  "unit": false
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-user-permissions",
+  "stage": "not a candidate",
+  "fused_rank": 36
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-revocation",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-lost-updates",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-redis-outage",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "apps/collab/src/extensions/resilient-redis.ts:32-52 (21 lines, candidate 8)"
+  ],
+  "windows_in_ranking": 54,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "apps/collab/src/extensions/resilient-redis.ts:34-36",
+  "window_position": 21,
+  "ranks": {
+   "terms": 14,
+   "search": 41,
+   "meaning": 12
+  },
+  "passages_above": [
+   "access-events.publisher.ts:9-21",
+   "server.ts:33-37",
+   "access-events.ts:3-8",
+   "permissions.ts:83-86",
+   "health.controller.ts:15-17"
+  ],
+  "unit": false
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-offline",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-ticket",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-refresh-reuse",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-csrf",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-password",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-version-restore",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-auto-version",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "apps/collab/src/versions.ts:66-76 (11 lines, candidate 2)",
+   "apps/collab/src/extensions/persistence.ts:103-127 (25 lines, candidate 7)"
+  ],
+  "windows_in_ranking": 65,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "apps/collab/src/versions.ts:66-68",
+  "window_position": 9,
+  "ranks": {
+   "terms": 11,
+   "search": 9,
+   "meaning": 11
+  },
+  "passages_above": [
+   "versions.service.ts:6-12",
+   "versions.ts:40-44",
+   "config.ts:17-19",
+   "versions.ts:24-28",
+   "versions.ts:30-32"
+  ],
+  "unit": true
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-presence",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "apps/web/src/collab/presence.tsx:36-56 (21 lines, candidate 11)"
+  ],
+  "windows_in_ranking": 55,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "apps/web/src/collab/presence.tsx:44-46",
+  "window_position": 17,
+  "ranks": {
+   "terms": 5,
+   "search": 48,
+   "meaning": 22
+  },
+  "passages_above": [
+   "note-page.tsx:44-56",
+   "notes.controller.ts:53-56",
+   "notes.controller.ts:45-51",
+   "notes.controller.ts:58-62",
+   "offline-store.ts:3-9"
+  ],
+  "unit": false
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-viewer-readonly",
+  "stage": "not a candidate",
+  "fused_rank": null
+ },
+ {
+  "language": "en",
+  "set": "first",
+  "id": "sn-session-refresh",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-negative-stock-db",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-settled-immutable",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-append-only",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-sweep-index",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-why-separate-stock",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-lock-timeout-config",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-reservation-defaults",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-two-instances",
+  "stage": "not a candidate",
+  "fused_rank": null
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-auth-error-format",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-username-race",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-simulation-limit",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-error-status-map",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sg-add-stock-limits",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "src/main/java/com/stockguard/inventory/InventoryController.java:60-63 (4 lines, candidate 9)"
+  ],
+  "windows_in_ranking": 50,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "src/main/java/com/stockguard/inventory/InventoryController.java:60-62",
+  "window_position": 19,
+  "ranks": {
+   "terms": 22,
+   "search": 34,
+   "meaning": 9
+  },
+  "passages_above": [
+   "ReservationRepository.java:88-90",
+   "StockLedger.java:31-37",
+   "StockLevelRepository.java:76-87",
+   "StockLevelRepository.java:63-74",
+   "StockLevelRepository.java:50-61"
+  ],
+  "unit": true
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-one-owner",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-collab-instances",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-redis-durability",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-cookie-flags",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-env-validation",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-account-lock",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-folder-delete",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-note-search",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "apps/api/src/notes/notes.service.ts:54-78 (25 lines, candidate 6)"
+  ],
+  "windows_in_ranking": 40,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "apps/api/src/notes/notes.service.ts:62-64",
+  "window_position": 12,
+  "ranks": {
+   "terms": 22,
+   "search": 10,
+   "meaning": 9
+  },
+  "passages_above": [
+   "notes.service.ts:11-16",
+   "migration.sql:8-9",
+   "notes.controller.ts:45-51",
+   "queries.ts:17-19",
+   "notes.service.ts:54-56"
+  ],
+  "unit": false
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-health-redis",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-logout-access-token",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-cursor-color",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-title-merge",
+  "stage": "not a candidate",
+  "fused_rank": 24
+ },
+ {
+  "language": "en",
+  "set": "second",
+  "id": "v2-sn-theme-flash",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "third",
+  "id": "v3-sg-instance-header",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java:14-33 (20 lines, candidate 1)"
+  ],
+  "windows_in_ranking": 27,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "src/main/java/com/stockguard/common/web/InstanceHeaderFilter.java:30-32",
+  "window_position": 10,
+  "ranks": {
+   "terms": 18,
+   "search": 5,
+   "meaning": 14
+  },
+  "passages_above": [
+   "InstanceHeaderFilter.java:14-18",
+   "SimulationService.java:275-276",
+   "application.yml:26-29",
+   "SimulationService.java:40-44",
+   "compose.yaml:1-3"
+  ],
+  "unit": false
+ },
+ {
+  "language": "en",
+  "set": "third",
+  "id": "v3-sg-audit-page-size",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "third",
+  "id": "v3-sg-movement-types",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "third",
+  "id": "v3-sg-username-lowercase",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "third",
+  "id": "v3-sg-request-fingerprint",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "third",
+  "id": "v3-sg-no-setters",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "third",
+  "id": "v3-sn-register-password",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "third",
+  "id": "v3-sn-who-can-edit",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "third",
+  "id": "v3-sn-share-ownership",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "third",
+  "id": "v3-sn-role-cache-ttl",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "third",
+  "id": "v3-sn-redis-access-events",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "apps/api/src/redis/access-events.publisher.ts:9-21 (13 lines, candidate 6)"
+  ],
+  "windows_in_ranking": 55,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "apps/api/src/redis/access-events.publisher.ts:13-15",
+  "window_position": 10,
+  "ranks": {
+   "terms": 16,
+   "search": 35,
+   "meaning": 2
+  },
+  "passages_above": [
+   "notes.service.ts:122-127",
+   "degraded-reconciler.ts:8-17",
+   "members.service.ts:72-74",
+   "health.controller.ts:15-17",
+   "persistence.ts:20-31"
+  ],
+  "unit": true
+ },
+ {
+  "language": "en",
+  "set": "third",
+  "id": "v3-sn-user-delete-sql",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sg-token-ttl",
+  "stage": "not a candidate",
+  "fused_rank": 22
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sg-db-port",
+  "stage": "not a candidate",
+  "fused_rank": 19
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sg-reservation-states",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sg-audit-null-actor",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sg-username-format",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sg-login-response",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sg-consistency-endpoint",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sg-register-role",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sn-refresh-token-storage",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "apps/api/src/auth/token.service.ts:16-37 (22 lines, candidate 7)"
+  ],
+  "windows_in_ranking": 61,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "apps/api/src/auth/token.service.ts:30-32",
+  "window_position": 18,
+  "ranks": {
+   "terms": 33,
+   "search": 39,
+   "meaning": 2
+  },
+  "passages_above": [
+   "auth.service.ts:34-40",
+   "auth.service.ts:116-118",
+   "auth.service.ts:120-124",
+   "persistence.ts:63-67",
+   "persistence.ts:81-83"
+  ],
+  "unit": false
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sn-guard-order",
+  "stage": "not a candidate",
+  "fused_rank": 29
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sn-unknown-fields",
+  "stage": "not a candidate",
+  "fused_rank": 48
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sn-offline-message",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sn-revoked-close-code",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sn-ticket-not-access-token",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sn-folder-name-unique",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fourth",
+  "id": "v4-sn-postgres-port",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sg-jwt-secret-length",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sg-sku-locked",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "src/main/java/com/stockguard/catalog/Product.java:15-45 (31 lines, candidate 9)"
+  ],
+  "windows_in_ranking": 57,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "src/main/java/com/stockguard/catalog/Product.java:27-29",
+  "window_position": 23,
+  "ranks": {
+   "terms": 41,
+   "search": 40,
+   "meaning": 5
+  },
+  "passages_above": [
+   "Product.java:63-67",
+   "ProductService.java:29-36",
+   "V2__catalog_and_stock.sql:1-12",
+   "Product.java:50-54",
+   "ProductController.java:110-112"
+  ],
+  "unit": false
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sg-page-envelope",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sg-root-redirect",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "src/main/java/com/stockguard/common/config/WebConfig.java:7-15 (9 lines, candidate 7)"
+  ],
+  "windows_in_ranking": 28,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "src/main/java/com/stockguard/common/config/WebConfig.java:11-13",
+  "window_position": 12,
+  "ranks": {
+   "terms": 2,
+   "search": 20,
+   "meaning": 20
+  },
+  "passages_above": [
+   "AppUserRepository.java:10-14",
+   "AuthService.java:91-93",
+   "AppUserDetails.java:33-37",
+   "AppUserRepository.java:16-18",
+   "AppUserDetails.java:13-15"
+  ],
+  "unit": true
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sg-movements-order",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sg-zero-quantity",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "src/main/resources/db/migration/V3__reservations.sql:1-18 (18 lines, candidate 4)"
+  ],
+  "windows_in_ranking": 75,
+  "reason": "the five passages were taken by windows ranked above it",
+  "window": "src/main/resources/db/migration/V3__reservations.sql:15-17",
+  "window_position": 18,
+  "ranks": {
+   "terms": 23,
+   "search": 27,
+   "meaning": 14
+  },
+  "passages_above": [
+   "V3__reservations.sql:3-7",
+   "V2__catalog_and_stock.sql:14-27",
+   "ReservationRepository.java:70-74",
+   "ReservationRepository.java:86-90",
+   "StockLevelRepository.java:50-61"
+  ],
+  "unit": false
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sg-api-language",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sg-simulation-default",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sn-logout-expired",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sn-nonmember-status",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sn-version-list-limit",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sn-version-viewer",
+  "stage": "not a candidate",
+  "fused_rank": 42
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sn-log-format",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sn-email-unique",
+  "stage": "chosen"
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sn-version-kinds",
+  "stage": "not a candidate",
+  "fused_rank": 13
+ },
+ {
+  "language": "en",
+  "set": "fifth",
+  "id": "v5-sn-migrate-first",
+  "stage": "not chosen",
+  "gold_chunks": [
+   "docker-compose.yml:74-76 (3 lines, candidate 6)",
+   "docker-compose.yml:60-62 (3 lines, candidate 8)"
+  ],
+  "windows_in_ranking": 26,
+  "reason": "no window touching the right lines shares a term with the question"
+ }
+]

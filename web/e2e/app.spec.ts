@@ -1,7 +1,7 @@
 import { expect, test as base, type APIRequestContext, type Locator, type Page } from "@playwright/test";
 
 const HOSTILE = "<img src=x onerror=window.__xss=1>";
-const NOTHING_CHOSEN = { raw: '{"chosen": [], "note": ""}' };
+const NOTHING_CHOSEN = { choose: [] };
 
 /** Every test also fails if the page logged an error, broke its content policy, or ran anything it was shown. */
 const test = base.extend<{ watchdog: void }>({
@@ -50,8 +50,19 @@ const filterFiles = (page: Page) => page.getByLabel("Filter files by name");
 const codeView = (page: Page) => page.getByTestId("code-view");
 
 test.beforeEach(async ({ request }) => {
-  await setState(request, { ai: "ready", reply: NOTHING_CHOSEN });
+  await setState(request, { ai: "ready", reply: NOTHING_CHOSEN, provider: "ollama", model: null, problem: null, tokens: [10, 5], clear_usage: true });
 });
+
+/** The made-up key the test server's OpenAI settings hold. No response the page gets may contain it. */
+const E2E_KEY = "e2e-made-up-key-0001";
+
+function collectApiBodies(page: Page): string[] {
+  const bodies: string[] = [];
+  page.on("response", async (response) => {
+    if (new URL(response.url()).pathname.startsWith("/api/")) bodies.push(await response.text().catch(() => ""));
+  });
+  return bodies;
+}
 
 test.describe("Repositories", () => {
   test("lists what is indexed, and a local repository offers no way to remove it", async ({ page }) => {
@@ -134,6 +145,26 @@ test.describe("Reading code", () => {
     await expect(page.locator("body")).not.toContainText("hunter2");
   });
 
+  test("a credential written into code is hidden in the file, in search and in an answer", async ({ page, request }) => {
+    await page.goto(`/r/demo/blob/${await commitOf(request)}/src/tokens.ts`);
+    await expect(page.getByText("1 line is hidden because it may hold a credential")).toBeVisible();
+    await expect(codeView(page)).toContainText("DEFAULT_REGION");
+    await expect(page.locator("body")).not.toContainText("FAKE_E2E_TOKEN_VALUE");
+
+    await search(page, "API_TOKEN default region");
+    await expect(page.getByTestId("search-result").first()).toBeVisible();
+    await expect(page.locator("body")).not.toContainText("FAKE_E2E_TOKEN_VALUE");
+
+    await setState(request, { reply: { choose: ["src/tokens.ts"] } });
+    await page.goto("/r/demo");
+    const answer = await ask(page, "default region");
+    await expect(answer.getByTestId("source-link").first()).toBeVisible();
+    await expect(page.locator("body")).not.toContainText("FAKE_E2E_TOKEN_VALUE");
+    for (const path of ["/api/search?repo=demo&q=API_TOKEN&mode=keyword", "/api/file?repo=demo&path=src/tokens.ts"]) {
+      expect(await (await request.get(path)).text()).not.toContain("FAKE_E2E_TOKEN_VALUE");
+    }
+  });
+
   for (const path of [".env", "config/secrets.yml", "src/leak.ts", ".git/config", "..%2F..%2F..%2Fetc%2Fpasswd", "src/..%2F.env", "..%5C..%5Cwindows%5Cwin.ini"]) {
     test(`nothing outside the index can be opened: ${path}`, async ({ page, request }) => {
       await page.goto(`/r/demo/blob/${await commitOf(request)}/${path}`);
@@ -179,11 +210,116 @@ test.describe("Search", () => {
 });
 
 test.describe("Experimental AI Analysis", () => {
-  test("is labelled as experimental, with what was measured", async ({ page }) => {
+  test("is labelled as experimental, with a figure only for the model that was measured", async ({ page, request }) => {
     await page.goto("/r/demo");
     await expect(page.getByRole("heading", { name: "Experimental AI Analysis" })).toBeVisible();
-    await expect(page.getByTestId("ai-warning")).toContainText("8 of 16");
-    await expect(page.getByTestId("ai-warning")).toContainText("a wrong one for 4");
+    await expect(page.getByTestId("ai-warning")).toContainText("fake-model has not been evaluated in RepoMind yet");
+    await expect(page.getByTestId("ai-warning")).not.toContainText("13 of 32");
+
+    await setState(request, { model: "qwen2.5:7b" });
+    await page.reload();
+    await expect(page.getByTestId("ai-warning")).toContainText("Measured on 2026-11-15 with qwen2.5:7b");
+    await expect(page.getByTestId("ai-warning")).toContainText("13 of 32");
+    await expect(page.getByTestId("ai-warning")).toContainText("a wrong one for 6");
+    await expect(page.getByTestId("ai-warning")).toContainText("Changes made since are not measured");
+  });
+
+  test("a local model says so, and shows no OpenAI note and no spending", async ({ page }) => {
+    await page.goto("/r/demo");
+    await expect(page.getByTestId("ai-status")).toContainText("fake-model");
+    await expect(page.getByTestId("ai-provider-pill")).toHaveText("local");
+    await expect(page.getByTestId("ai-provider")).toContainText("a local model on this machine (Ollama)");
+    await expect(page.getByTestId("ai-privacy")).toHaveCount(0);
+    await expect(page.getByTestId("ai-spending")).toHaveCount(0);
+  });
+
+  test("OpenAI says what is sent, what it costs as RepoMind counts it, and no response holds the key", async ({ page, request }) => {
+    const bodies = collectApiBodies(page);
+    await setState(request, {
+      provider: "openai",
+      tokens: [1500, 40],
+      reply: { choose: ["src/payment.ts"] },
+      usage: [{ cost: 0.01, kind: "reported" }, { cost: 0.002, kind: "worst_case" }],
+    });
+    await page.goto("/r/demo");
+    await expect(page.getByTestId("ai-status")).toContainText("AI ready");
+    await expect(page.getByTestId("ai-status")).toContainText("gpt-e2e-mini");
+    await expect(page.getByTestId("ai-provider-pill")).toHaveText("OpenAI API");
+    await expect(page.getByTestId("ai-provider")).toContainText("gpt-e2e-mini through the OpenAI API, in the cloud");
+    await expect(page.getByTestId("ai-warning")).toContainText("gpt-e2e-mini has not been evaluated in RepoMind yet");
+
+    const privacy = page.getByTestId("ai-privacy");
+    await expect(privacy).toContainText("the lines of code chosen for it, are sent to OpenAI (api.openai.com)");
+    await expect(privacy).toContainText("store: false");
+    await expect(privacy).toContainText("That is not a promise that nothing is kept");
+
+    const spending = page.getByTestId("ai-spending");
+    await expect(spending).toContainText("$0.0120 of a $1.00 budget, $0.9880 left, partly estimated");
+    await expect(page.getByTestId("ai-spending-worst-case")).toBeHidden();
+    await spending.locator("summary").click();
+    await expect(page.getByTestId("ai-spending-worst-case")).toContainText("$0.0020 of it is a cautious count");
+    await expect(page.getByTestId("ai-spending-worst-case")).toContainText("Whether they were charged is not known");
+    await expect(spending).toContainText("not OpenAI's bill");
+
+    const answer = await ask(page, "Where is the payment refund handled?");
+    await expect(answer).toHaveAttribute("data-verdict", "lines_chosen");
+    await expect(answer.getByTestId("answer-usage")).toContainText("1,500 in, 40 out tokens · $0.0007 by the prices set");
+    await expect(answer.getByTestId("source-answer").first()).toContainText("In Git at");
+
+    const health = await (await request.get("/api/health")).text();
+    expect(health).toContain('"provider":"openai"');
+    for (const body of [...bodies, health]) expect(body).not.toContain(E2E_KEY);
+    expect(bodies.length).toBeGreaterThan(1);
+  });
+
+  for (const [state, label, title] of [
+    ["auth_failed", "AI key refused", "The API key was refused."],
+    ["limited", "AI limited", "A usage limit was reached."],
+    ["rejected", "AI request refused", "The model's server did not accept RepoMind's request."],
+    ["offline", "AI offline", "The model cannot be reached."],
+    ["model_missing", "AI model missing", "The model is not available."],
+  ]) {
+    test(`OpenAI ${state} is explained, and a question still returns lines found without the model`, async ({ page, request }) => {
+      const bodies = collectApiBodies(page);
+      await setState(request, { provider: "openai", ai: state });
+      await page.goto("/r/demo");
+      await expect(page.getByTestId("ai-status")).toContainText(label);
+      const unavailable = page.getByTestId("ai-unavailable");
+      await expect(unavailable).toHaveAttribute("data-state", state);
+      await expect(unavailable).toContainText(title);
+      await expect(unavailable).toContainText("Search and the code view keep working");
+      await expect(page.getByTestId("ai-privacy")).toBeVisible();
+
+      const answer = await ask(page, "cancel order payment");
+      await expect(answer).toHaveAttribute("data-verdict", "ai_unavailable");
+      await expect(answer.getByTestId("answer-ai-state")).toContainText(title);
+      await expect(answer.locator(".closest summary")).toContainText("found by search, without the model");
+      await expect(answer.getByTestId("source-closest").first()).toContainText("In Git at");
+      for (const body of bodies) expect(body).not.toContain(E2E_KEY);
+    });
+  }
+
+  test("a spent OpenAI budget sends nothing, says so, and search still answers", async ({ page, request }) => {
+    await setState(request, { provider: "openai", reply: { choose: ["src/payment.ts"] }, usage: [{ cost: 1.0, kind: "reported" }] });
+    await page.goto("/r/demo");
+    await expect(page.getByTestId("ai-status")).toContainText("AI budget spent");
+    await expect(page.getByTestId("ai-unavailable")).toContainText("The budget for the model is spent.");
+    await expect(page.getByTestId("ai-unavailable")).toContainText("Search still works");
+    await expect(page.getByTestId("ai-spending")).toContainText("$1.00 of a $1.00 budget, $0.0000 left");
+    const answer = await ask(page, "Where is the payment refund handled?");
+    await expect(answer).toHaveAttribute("data-verdict", "ai_unavailable");
+    await expect(answer.locator(".answer-meta")).toContainText("model not asked");
+    await expect(answer.getByTestId("source-closest").first()).toBeVisible();
+  });
+
+  test("model settings that are not valid are named, not shown as not set up, and search still answers", async ({ page, request }) => {
+    await setState(request, { problem: "REPOMIND_LLM_PROVIDER=openai needs REPOMIND_LLM_API_KEY. Set it in .env, which Git ignores." });
+    await page.goto("/r/demo");
+    await expect(page.getByTestId("ai-status")).toContainText("AI settings invalid");
+    await expect(page.getByTestId("ai-unavailable")).toContainText("The model settings are not valid.");
+    await expect(page.getByTestId("ai-unavailable")).toContainText("REPOMIND_LLM_API_KEY");
+    await expect(page.getByTestId("ai-unavailable")).not.toContainText("No model is configured");
+    await expect(await ask(page, "cancel order payment")).toHaveAttribute("data-verdict", "ai_unavailable");
   });
 
   test("chosen lines keep Git's check and the model's judgement apart, and link to the code", async ({ page, request }) => {
@@ -289,6 +425,53 @@ test.describe("Experimental AI Analysis", () => {
       await expect(await ask(page, "cancel order payment")).toHaveAttribute("data-verdict", "ai_unavailable");
     });
   }
+
+  test("a declaration the model chose alone is shown for review with the check that uses it, and nothing is an answer", async ({ page, request }) => {
+    const commit = await commitOf(request, "other");
+    await setState(request, { reply: { choose: ["src/limits.ts"] } });
+    await page.goto("/r/other");
+    const answer = await ask(page, "What is the maximum number of items a cart holds?");
+
+    await expect(answer).toHaveAttribute("data-verdict", "not_enough_evidence");
+    await expect(answer.locator(".answer-message")).toContainText("I do not know");
+    await expect(answer.getByTestId("source-answer")).toHaveCount(0);
+    await expect(answer.getByRole("heading", { name: "Lines the model chose" })).toHaveCount(0);
+
+    const chosen = answer.getByTestId("source-review_candidate");
+    await expect(chosen).toHaveCount(1);
+    await expect(chosen.getByTestId("source-link")).toContainText("src/limits.ts:1");
+    await expect(chosen.locator(".snippet-line").first().locator(".snippet-number")).toHaveText("1");
+    await expect(chosen).toContainText("export const MAX_ITEMS = 3;");
+    await expect(chosen).toContainText("In Git at");
+    await expect(chosen).toContainText(commit.slice(0, 7));
+    await expect(chosen).toContainText("Answer not verified");
+
+    const folded = answer.getByTestId("review-uses");
+    await expect(folded.locator("summary")).toContainText("added by RepoMind: not an answer (1)");
+    const added = folded.getByTestId("source-review_use");
+    await expect(added).toBeHidden();
+    await folded.locator("summary").click();
+    await expect(added).toBeVisible();
+    await expect(folded).toContainText("The model did not choose these lines");
+    await expect(added.getByTestId("source-link")).toContainText("src/cart.ts");
+    const check = added.locator(".snippet-line", { hasText: "MAX_ITEMS) throw" });
+    await expect(check.locator(".snippet-number")).toHaveText("10");
+    await expect(added).toContainText("In Git at");
+    await expect(added).toContainText(commit.slice(0, 7));
+    await expect(added).toContainText("Not judged");
+    await expect(added).not.toContainText("Answer not verified");
+
+    // Text content, so that links inside a folded section count too.
+    const links = await answer.getByTestId("source-link").allTextContents();
+    expect(links.length).toBeGreaterThanOrEqual(2);
+    expect(new Set(links).size).toBe(links.length);
+    await expect(answer).not.toContainText("fake-cart-token-e2e");
+    await expect(answer).not.toContainText("CART_TOKEN");
+
+    await added.getByTestId("source-link").click();
+    await expect(page).toHaveURL(new RegExp(`/blob/${commit}/src/cart\\.ts#L\\d+`));
+    await expect(codeView(page)).not.toContainText("fake-cart-token-e2e");
+  });
 
   test("a model that dies during a question does not break the page", async ({ page, request }) => {
     await setState(request, { reply: { fail: true } });

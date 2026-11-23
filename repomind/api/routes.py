@@ -11,7 +11,8 @@ from repomind.api import schemas
 from repomind.api.errors import ApiError
 from repomind.api.services import Services, public_message
 from repomind.errors import RepoMindError
-from repomind.ingest.filters import credential_lines, is_test_path, normalize_source
+from repomind.indexed_file import read_indexed_file
+from repomind.ingest.filters import is_test_path
 from repomind.ingest.git_source import GitRepository
 from repomind.ingest.github import IndexFailure
 from repomind.qa.engine import AnswerCheck, AskResult
@@ -200,25 +201,19 @@ def file_content(request: Request, repo: RepoName, path: FilePath, commit: str |
     if entry is None:
         raise ApiError(404, "file_not_available", _FILE_NOT_AVAILABLE)
     try:
-        raw = GitRepository(snapshot.source_path).read_file(snapshot.commit_sha, path)
+        git = GitRepository(snapshot.source_path)
     except RepoMindError as exc:
         raise ApiError(503, "source_unavailable", "The local copy of this repository cannot be read.") from exc
-    text = normalize_source(raw) if raw is not None else None
-    if text is None:
+    shown = read_indexed_file(git, snapshot.commit_sha, path, entry["language"])
+    if shown is None:
         raise ApiError(404, "file_not_available", _FILE_NOT_AVAILABLE)
-    lines = text.split("\n")
-    if lines and lines[-1] == "":
-        lines.pop()
-    hidden = credential_lines(text) if entry["language"] == "yaml" else []
-    for number in hidden:
-        lines[number - 1] = ""
     return schemas.FileContent(
         repo=snapshot.repo,
         commit=snapshot.commit_sha,
         path=path,
         language=entry["language"],
-        lines=lines,
-        hidden_lines=hidden,
+        lines=shown.lines,
+        hidden_lines=shown.hidden_lines,
         has_syntax_errors=entry["has_syntax_errors"],
         origin_url=snapshot.origin_url,
     )
@@ -271,16 +266,31 @@ def search(
 
 
 def _sources(result: AskResult) -> list[schemas.AskSource]:
-    """Answers first, then anything to review, then the closest lines, each role in the engine's order."""
+    """What the model chose first, then a line added beside it, anything to review, and the closest lines.
+
+    Each role keeps the engine's order. Lines RepoMind added beside a choice have a role of their own,
+    so that they are never shown as the model's choice: the declaration of a constant that chosen
+    lines use, and, with linked evidence on, the use of a constant a chosen line declares.
+    """
     roles = {
         AnswerCheck.PASSED: "answer",
         AnswerCheck.FAILED: "review_candidate",
         AnswerCheck.NOT_MADE: "closest",
     }
-    ordered = sorted(result.sources(), key=lambda source: list(roles).index(source.answer_check))
+    order = ("answer", "declaration", "linked_use", "review_candidate", "review_use", "closest")
+
+    def role(source) -> str:
+        if source.declares_a_value:
+            return "declaration"
+        if source.added_for_review:
+            # Found by RepoMind from a declaration the model chose, to review beside it. Never an answer.
+            return "review_use"
+        return "linked_use" if source.added_by_link else roles[source.answer_check]
+
+    ordered = sorted(result.sources(), key=lambda source: order.index(role(source)))
     return [
         schemas.AskSource(
-            role=roles[source.answer_check],
+            role=role(source),
             repo=source.passage.chunk.repo,
             commit=source.passage.chunk.commit_sha,
             path=source.passage.path,
@@ -319,6 +329,7 @@ def ask(request: Request, body: schemas.AskRequest) -> schemas.AskResponse:
     return schemas.AskResponse(
         verdict=verdict,
         message=_MESSAGES[verdict],
+        reply_problem=result.reply_problem,
         ai_used=used,
         ai=ai,
         model_reading=result.note or None,
@@ -330,5 +341,8 @@ def ask(request: Request, body: schemas.AskRequest) -> schemas.AskResponse:
         model=result.model,
         input_tokens=result.input_tokens,
         output_tokens=result.output_tokens,
+        cost_usd=round(result.cost_usd, 6),
+        tokens_are_estimated=result.tokens_are_estimated,
+        cost_is_cautious=result.cost_is_cautious,
         seconds=round(time.perf_counter() - started, 2),
     )

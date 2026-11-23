@@ -176,6 +176,24 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * Accuracy
+         * @description The last measurement of this model in RepoMind, from the record named.
+         */
+        Accuracy: {
+            /** Fully Right */
+            fully_right: number;
+            /** Measured On */
+            measured_on: string;
+            /** Model */
+            model: string;
+            /** Questions */
+            questions: number;
+            /** Record */
+            record: string;
+            /** Wrong */
+            wrong: number;
+        };
         /** AddRepositoryRequest */
         AddRepositoryRequest: {
             /** Url */
@@ -183,15 +201,35 @@ export interface components {
         };
         /** AiStatus */
         AiStatus: {
+            /** @description Nothing when this model has not been measured in RepoMind. */
+            accuracy?: components["schemas"]["Accuracy"] | null;
             /** Detail */
             detail: string;
+            /**
+             * Endpoint
+             * @description The host of a remote model server. Never a key, and nothing for a local one.
+             */
+            endpoint?: string | null;
             /** Model */
             model?: string | null;
+            /**
+             * Provider
+             * @description ollama: Ollama or another OpenAI-compatible server. openai: the OpenAI API.
+             */
+            provider?: ("ollama" | "openai") | null;
+            /**
+             * Remote
+             * @description The model runs on another machine: each question and the lines of code chosen for it are sent there.
+             * @default false
+             */
+            remote: boolean;
+            /** @description For a model with prices set. Nothing for a free one. */
+            spending?: components["schemas"]["Spending"] | null;
             /**
              * State
              * @enum {string}
              */
-            state: "ready" | "offline" | "model_missing" | "not_configured" | "low_memory";
+            state: "ready" | "offline" | "model_missing" | "not_configured" | "low_memory" | "misconfigured" | "auth_failed" | "budget_reached" | "limited" | "rejected";
         };
         /** AskRequest */
         AskRequest: {
@@ -205,6 +243,18 @@ export interface components {
             ai: components["schemas"]["AiStatus"];
             /** Ai Used */
             ai_used: boolean;
+            /**
+             * Cost Is Cautious
+             * @description The server did not say how the input was split between its cache and the rest, so that part was counted at the highest input price: the cost is at most this.
+             * @default false
+             */
+            cost_is_cautious: boolean;
+            /**
+             * Cost Usd
+             * @description What this answer was counted at, from the prices set. 0 for a free model or no model.
+             * @default 0
+             */
+            cost_usd: number;
             /** Discarded */
             discarded: string[];
             /**
@@ -228,10 +278,21 @@ export interface components {
             model_reading_removed_because: string | null;
             /** Output Tokens */
             output_tokens: number;
+            /**
+             * Reply Problem
+             * @description With the verdict invalid_response, what was wrong with the model's reply. An invalid reply is neither an answer nor a refusal by the model, and it gives no source.
+             */
+            reply_problem?: ("empty" | "cut_off" | "not_json" | "no_choice_list" | "not_offered" | "no_judgement") | null;
             /** Seconds */
             seconds: number;
             /** Sources */
             sources: components["schemas"]["AskSource"][];
+            /**
+             * Tokens Are Estimated
+             * @description The server did not report token counts for this answer, so they were estimated.
+             * @default false
+             */
+            tokens_are_estimated: boolean;
             /** Translated Query */
             translated_query: string | null;
             /**
@@ -266,9 +327,10 @@ export interface components {
             repo: string;
             /**
              * Role
+             * @description answer: the model chose these lines and they were accepted. declaration: the model did not choose these lines. They declare a constant that chosen lines use, and RepoMind shows them so that the value is seen with the lines that name it. linked_use: the model did not choose these lines. RepoMind added them because they use a constant whose declaration the model chose. Only with the experimental linked evidence setting. review_candidate: the model chose these lines and the evidence rule turned them down. closest: the closest lines found, which nothing judged.
              * @enum {string}
              */
-            role: "answer" | "review_candidate" | "closest";
+            role: "answer" | "declaration" | "linked_use" | "review_candidate" | "review_use" | "closest";
             /** Start Line */
             start_line: number;
             /** Symbol */
@@ -443,6 +505,51 @@ export interface components {
             start_line: number;
             /** Symbol */
             symbol: string | null;
+        };
+        /**
+         * Spending
+         * @description RepoMind's own count of what a paid model cost, from the prices set in .env. It is not a bill.
+         */
+        Spending: {
+            /** Budget Usd */
+            budget_usd: number;
+            /**
+             * Cache Write Usd Per Mtok
+             * @description For input written to the provider's cache, instead of the input price. The input price when none is set.
+             */
+            cache_write_usd_per_mtok: number;
+            /**
+             * Cached Input Usd Per Mtok
+             * @description For input read from the provider's cache. The input price when none is set.
+             */
+            cached_input_usd_per_mtok: number;
+            /**
+             * Estimated Usd
+             * @description Part of recorded_usd: answers whose token counts the server did not report, so they were estimated.
+             */
+            estimated_usd: number;
+            /** Input Usd Per Mtok */
+            input_usd_per_mtok: number;
+            /** Left Usd */
+            left_usd: number;
+            /**
+             * Legacy Usd
+             * @description Part of recorded_usd: recorded before RepoMind kept how each cost was counted, so whether it was reported or estimated is not known.
+             * @default 0
+             */
+            legacy_usd: number;
+            /** Output Usd Per Mtok */
+            output_usd_per_mtok: number;
+            /**
+             * Recorded Usd
+             * @description Everything counted against the budget.
+             */
+            recorded_usd: number;
+            /**
+             * Worst Case Usd
+             * @description Part of recorded_usd: requests that failed after they may have reached the model, counted at the most they could cost. Whether they were charged is not known.
+             */
+            worst_case_usd: number;
         };
         /** Tree */
         Tree: {

@@ -45,6 +45,11 @@ Question: How are refunds paid to a credit card? The passages show orders and st
 {"chosen": [], "note": ""}"""
 
 
+# "About a software repository" leads the model to write about repositories: on 177 Turkish questions,
+# 9 translations named a repository, an issue, a fork, a commit or a branch that the question did not,
+# so a list of notes became "the issue list". Two other wordings removed that, and both lost some of
+# the right code on the older question sets, so this one stays. See eval/ACCURACY_WORK.md. What
+# guards against a wrong translation is in the engine: the second translator's wording counts too.
 TRANSLATION_PROMPT = """Translate the user's question about a software repository into English. Use the usual software terms. Keep code identifiers and product names unchanged. Reply with one JSON object: {"english": "..."}"""
 
 

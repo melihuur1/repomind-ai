@@ -20,6 +20,7 @@ from repomind.qa.passages import (
     MAX_PASSAGE_LINES,
     MAX_PASSAGES,
     MAX_PASSAGES_PER_FILE,
+    UNIT_LINES,
     Passage,
     _merged,
     _Window,
@@ -131,7 +132,8 @@ class TestPassageSelection:
             text = "\n".join(source.content.split("\n")[start - 1 : end])
             return _Window(0, source, start, end, text, frozenset(tokenize(text)))
 
-        passages = _merged([window(1, 3), window(5, 9), window(3, 5)], {"comput"}, MAX_PASSAGES)
+        # The window path, which a chunk longer than a whole unit takes.
+        passages = _merged([window(1, 3), window(5, 9), window(3, 5)], {"comput"}, MAX_PASSAGES, unit_lines=0)
         assert [(p.start_line, p.end_line) for p in passages] == [(1, 4), (5, 9)]
 
     def test_the_closest_window_in_meaning_is_shown_when_other_words_are_used(self):
@@ -142,7 +144,7 @@ class TestPassageSelection:
             def embed_passages(self, texts):
                 return [[1.0, 0.0] if "closest" in text else [0.0, 1.0] for text in texts]
 
-        lines = ["compute rare_word"] * 2 + ["other = 1"] * 12 + ["compute closest"]
+        lines = ["compute rare_word"] * 2 + ["other = 1"] * 20 + ["compute closest"]
         content = "\n".join(f"{line} {n}" for n, line in enumerate(lines))
         source = chunk(start=1, end=len(lines), content=content)
         assert "closest" in select_passages([source], ["compute rare word"], OneMeaning(), limit=1)[0].text
@@ -156,6 +158,38 @@ class TestPassageSelection:
         big = chunk(start=1, end=60, content=numbered_content(1, 60))
         passages = select_passages([big], ["compute"], None)
         assert [p.id for p in passages] == [f"P{i}" for i in range(1, len(passages) + 1)]
+
+    def test_a_short_unit_is_shown_whole_so_its_condition_is_not_cut_off(self):
+        method = "\n".join(
+            [
+                "@Query(value = \"\"\"",
+                "    UPDATE stock_levels",
+                "       SET available = available - :quantity",
+                "     WHERE product_id = :productId",
+                "       AND available >= :quantity",
+                "    \"\"\")",
+                "Optional<Counts> reserve(UUID productId, int quantity);",
+            ]
+        )
+        source = chunk(path="src/StockRepository.java", start=50, end=56, content=method, symbol="StockRepository.reserve")
+        passages = select_passages([source], ["reserve stock quantity"], None)
+        assert [(p.start_line, p.end_line) for p in passages] == [(50, 56)]
+        assert passages[0].text == method, "exactly the chunk's lines, which are the file's"
+
+    def test_a_unit_is_shown_once_however_many_of_its_windows_rank(self):
+        source = chunk(start=1, end=12, content=numbered_content(1, 12))
+        passages = select_passages([source], ["compute"], None)
+        assert [(p.start_line, p.end_line) for p in passages] == [(1, 12)]
+
+    def test_a_long_chunk_still_gives_short_passages(self):
+        long_one = chunk(start=1, end=UNIT_LINES + 1, content=numbered_content(1, UNIT_LINES + 1))
+        assert all(p.end_line - p.start_line + 1 <= MAX_PASSAGE_LINES for p in select_passages([long_one], ["compute"], None))
+
+    def test_whole_units_respect_the_limits_on_passages_and_files(self):
+        many = [chunk(path=f"src/{n % 2}.ts", start=n * 10 + 1, end=n * 10 + 8, content=numbered_content(n * 10 + 1, n * 10 + 8), identifier=n) for n in range(10)]
+        passages = select_passages(many, ["compute"], None)
+        assert len(passages) == MAX_PASSAGES
+        assert max(sum(p.path == path for p in passages) for path in ("src/0.ts", "src/1.ts")) <= MAX_PASSAGES_PER_FILE
 
     def test_an_embedder_is_used_when_there_is_one_but_cannot_bring_in_unrelated_lines(self):
         source = chunk(start=1, end=9, content="alpha compute\n\n\n\nbeta compute\n\n\n\ngamma compute")
@@ -418,7 +452,8 @@ class FakeClient:
         return LLMResponse(text, self.input_tokens, self.output_tokens)
 
 
-LOCAL = LLMConfig("http://127.0.0.1:11535/v1", "local-model")
+# These tests cover choosing among all passages at once. Judging one at a time is in test_judge.py.
+LOCAL = LLMConfig("http://127.0.0.1:11535/v1", "local-model", selection="choose")
 FIRST = '{"chosen": ["P1"], "note": "It releases stock."}'
 NONE = '{"chosen": []}'
 

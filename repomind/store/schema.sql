@@ -124,3 +124,9 @@ CREATE TABLE IF NOT EXISTS llm_usage (
     output_tokens INTEGER NOT NULL,
     cost_usd      NUMERIC(12, 6) NOT NULL
 );
+-- reported: the server's own token counts. estimated: an answer whose counts the server did not give.
+-- worst_case: a request that failed after it may have reached the model, counted at the most it could cost.
+-- legacy: recorded before this column, when reported and estimated counts were not told apart. Every
+-- insert names its kind, so the default only ever applies to rows that were already there.
+ALTER TABLE llm_usage ADD COLUMN IF NOT EXISTS kind TEXT NOT NULL DEFAULT 'legacy';
+ALTER TABLE llm_usage ALTER COLUMN kind SET DEFAULT 'legacy';

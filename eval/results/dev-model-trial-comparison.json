@@ -1,0 +1,202 @@
+{
+ "questions": 32,
+ "identical_prompts": 31,
+ "qwen2.5:7b": {
+  "summary": {
+   "answerable": 20,
+   "correct": 9,
+   "wrong": 3,
+   "no_answer": 7,
+   "right_lines_offered": 15,
+   "wrong_with_right_lines_offered": 2,
+   "refused_with_right_lines_offered": 4,
+   "unanswerable": 11,
+   "unanswerable_given_a_source": 1,
+   "wrong_in_all": 4,
+   "invalid": 1,
+   "failed_turkish_questions": [
+    "sg-oversell",
+    "v2-sg-error-status-map",
+    "v2-sn-redis-durability",
+    "v5-sg-movements-order",
+    "v5-sg-root-redirect",
+    "v5-sg-sku-locked",
+    "v5-sg-zero-quantity",
+    "v5-sn-log-format",
+    "v5-sn-migrate-first",
+    "v5-sn-version-kinds",
+    "v5-sn-version-viewer",
+    "v5-sg-neg-price"
+   ],
+   "seconds_median": 5.1,
+   "seconds_max": 12.27,
+   "seconds_median_when_the_model_was_asked": 5.4,
+   "input_tokens_mean": 1027,
+   "output_tokens_mean": 29,
+   "peak_gpu_mib": 2816,
+   "min_free_physical_gb": 8.33,
+   "min_free_commit_gb": 12.88
+  },
+  "placement": {
+   "size_mib": 6082,
+   "in_gpu_mib": 3282
+  },
+  "memory_at_start": "physical 15.19 GB, commit 22.52 GB; physical 15.21 GB, commit 22.54 GB"
+ },
+ "qwen2.5-coder:7b": {
+  "summary": {
+   "answerable": 20,
+   "correct": 10,
+   "wrong": 1,
+   "no_answer": 9,
+   "right_lines_offered": 15,
+   "wrong_with_right_lines_offered": 0,
+   "refused_with_right_lines_offered": 5,
+   "unanswerable": 11,
+   "unanswerable_given_a_source": 1,
+   "wrong_in_all": 2,
+   "invalid": 0,
+   "failed_turkish_questions": [
+    "sg-oversell",
+    "v5-sg-api-language",
+    "v5-sg-root-redirect",
+    "v5-sg-sku-locked",
+    "v5-sg-zero-quantity",
+    "v5-sn-log-format",
+    "v5-sn-migrate-first",
+    "v5-sn-version-kinds",
+    "v5-sn-version-list-limit",
+    "v5-sn-version-viewer",
+    "v5-sg-neg-price"
+   ],
+   "seconds_median": 3.9,
+   "seconds_max": 10.34,
+   "seconds_median_when_the_model_was_asked": 4.1,
+   "input_tokens_mean": 1062,
+   "output_tokens_mean": 20,
+   "peak_gpu_mib": 2818,
+   "min_free_physical_gb": 8.9,
+   "min_free_commit_gb": 13.38
+  },
+  "placement": {
+   "size_mib": 6082,
+   "in_gpu_mib": 3282
+  },
+  "memory_at_start": "physical 14.81 GB, commit 22.17 GB; physical 14.83 GB, commit 22.18 GB"
+ },
+ "differ": [
+  {
+   "id": "v5-sg-sku-locked",
+   "negative": false,
+   "gold_offered": true,
+   "qwen2.5:7b": "wrong",
+   "qwen2.5-coder:7b": "none",
+   "chosen": {
+    "qwen2.5:7b": [
+     "src/main/resources/db/migration/V2__catalog_and_stock.sql:1-12"
+    ],
+    "qwen2.5-coder:7b": []
+   }
+  },
+  {
+   "id": "v5-sg-movements-order",
+   "negative": false,
+   "gold_offered": true,
+   "qwen2.5:7b": "invalid",
+   "qwen2.5-coder:7b": "correct",
+   "chosen": {
+    "qwen2.5:7b": [],
+    "qwen2.5-coder:7b": [
+     "src/main/java/com/stockguard/inventory/InventoryService.java:55-61"
+    ]
+   }
+  },
+  {
+   "id": "v5-sg-api-language",
+   "negative": false,
+   "gold_offered": true,
+   "qwen2.5:7b": "correct",
+   "qwen2.5-coder:7b": "none",
+   "chosen": {
+    "qwen2.5:7b": [
+     "src/main/resources/application.yml:26-29"
+    ],
+    "qwen2.5-coder:7b": []
+   }
+  },
+  {
+   "id": "v5-sn-version-list-limit",
+   "negative": false,
+   "gold_offered": true,
+   "qwen2.5:7b": "correct",
+   "qwen2.5-coder:7b": "none",
+   "chosen": {
+    "qwen2.5:7b": [
+     "apps/api/src/notes/versions.service.ts:15-30"
+    ],
+    "qwen2.5-coder:7b": []
+   }
+  },
+  {
+   "id": "sg-db-connection-error",
+   "negative": false,
+   "gold_offered": true,
+   "qwen2.5:7b": "correct",
+   "qwen2.5-coder:7b": "correct",
+   "chosen": {
+    "qwen2.5:7b": [
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:82-95",
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:71-80"
+    ],
+    "qwen2.5-coder:7b": [
+     "src/main/java/com/stockguard/common/error/GlobalExceptionHandler.java:82-95"
+    ]
+   }
+  },
+  {
+   "id": "v2-sg-error-status-map",
+   "negative": false,
+   "gold_offered": true,
+   "qwen2.5:7b": "wrong",
+   "qwen2.5-coder:7b": "correct",
+   "chosen": {
+    "qwen2.5:7b": [
+     "src/main/java/com/stockguard/common/error/ErrorCode.java:28-32",
+     "src/main/java/com/stockguard/common/error/ErrorCode.java:23-27"
+    ],
+    "qwen2.5-coder:7b": [
+     "src/main/java/com/stockguard/common/error/ErrorCode.java:13-17"
+    ]
+   }
+  },
+  {
+   "id": "v2-sn-redis-durability",
+   "negative": false,
+   "gold_offered": true,
+   "qwen2.5:7b": "none",
+   "qwen2.5-coder:7b": "correct",
+   "chosen": {
+    "qwen2.5:7b": [],
+    "qwen2.5-coder:7b": [
+     "docker-compose.yml:42-53"
+    ]
+   }
+  }
+ ],
+ "negative_stock": {
+  "qwen2.5:7b": {
+   "chose_simulation_service": false,
+   "chose_check_constraint": true,
+   "offered_check_constraint": true,
+   "offered_repository_guard": true,
+   "chose_repository_guard": false
+  },
+  "qwen2.5-coder:7b": {
+   "chose_simulation_service": false,
+   "chose_check_constraint": true,
+   "offered_check_constraint": true,
+   "offered_repository_guard": true,
+   "chose_repository_guard": false
+  }
+ }
+}

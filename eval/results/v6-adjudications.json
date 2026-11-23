@@ -1,0 +1,18 @@
+{
+ "decided_on": "2026-11-15",
+ "how": "Every source returned as an answer that overlaps no accepted place, from all six passes, once each, in a shuffled order, with no version and no run shown. Decided by the person who wrote the questions, before the per-source results of either version were looked at. Only the totals of the first, undecided count had been seen.",
+ "decisions": {
+  "v6-sn-invite-existing-member|apps/api/src/notes/notes.controller.ts|121-125": {"right": false, "reason": "The endpoint that passes the invitation on. It does not say what comes back for someone who is already a member."},
+  "v6-sg-simulation-consistent|src/main/java/com/stockguard/simulation/SimulationService.java|295-299": {"right": false, "reason": "The report's fields, dataConsistent among them. No condition is stated."},
+  "v6-sg-confirm-counters|src/main/java/com/stockguard/reservation/ReservationController.java|85-87": {"right": false, "reason": "The closest call of the twelve. The summary says the held units leave the stock, and names no counter: it does not say that total and reserved go down and available stays. Both versions gave these lines as their only answer in part A, so counting it right would add one correct answer to each version alike and change no comparison between them. See the report."},
+  "v6-sg-confirm-counters|src/main/java/com/stockguard/reservation/ReservationController.java|85-90": {"right": false, "reason": "The same lines as the entry above, with the method that calls the service."},
+  "v6-sn-note-delete-versions|apps/collab/src/versions.ts|72-76": {"right": false, "reason": "Deletes old automatic versions when there are too many. Nothing to do with deleting a note."},
+  "v6-sn-note-list-limit|apps/api/src/notes/notes.controller.ts|47-51": {"right": false, "reason": "The endpoint that calls the list. The limit is not in it."},
+  "v6-sn-role-change-live|apps/web/src/collab/use-collaboration.ts|40-44": {"right": false, "reason": "What the browser does after its permission has changed. Neither how the API sends the change nor how the collaboration server applies it."},
+  "v6-sg-confirm-counters|src/main/java/com/stockguard/inventory/StockLedger.java|39-43": {"right": false, "reason": "Reserving, not confirming."},
+  "v6-sg-simulation-consistent|src/main/java/com/stockguard/simulation/SimulationService.java|112-116": {"right": false, "reason": "Writes the result to the audit trail. No condition is stated."},
+  "v6-sn-note-delete-versions|apps/collab/src/versions.ts|66-76": {"right": false, "reason": "Pruning of automatic versions, as above."},
+  "v6-sg-confirm-counters|src/main/java/com/stockguard/inventory/StockLedger.java|39-45": {"right": false, "reason": "Reserving, not confirming."},
+  "v6-sn-note-list-limit|apps/api/src/notes/notes.controller.ts|45-51": {"right": false, "reason": "The endpoint that calls the list. The limit is not in it."}
+ }
+}

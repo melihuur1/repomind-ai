@@ -2,6 +2,7 @@ import { FlaskConical, Send } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
 import { api, ApiError, type AskResponse } from "../api/client";
 import { ErrorNote, Spinner, useHealth } from "../components/common";
+import { AiNotes } from "./AiNotes";
 import { AnswerCard } from "./AnswerCard";
 
 export interface Turn {
@@ -25,7 +26,6 @@ export function AiPanel({ repo, turns, setTurns, closeButton }: Props) {
   const [pending, setPending] = useState(false);
   const scroller = useRef<HTMLDivElement>(null);
   const { data: health } = useHealth();
-  const ready = health?.ai.state === "ready";
 
   // To the top of the newest turn: an answer can be long, and it starts with what matters most.
   useEffect(() => {
@@ -64,17 +64,13 @@ export function AiPanel({ repo, turns, setTurns, closeButton }: Props) {
         </h2>
         {closeButton}
       </div>
-      <p className="ai-warning" data-testid="ai-warning">
-        Experimental. In our last measurement the model found the right source for 8 of 16 questions and showed a wrong one for 4. Read the code it points at.
-      </p>
-      {health && !ready ? (
-        <div className="note" data-testid="ai-unavailable">
-          <p>
-            <strong>AI is unavailable.</strong> {health.ai.detail}
-          </p>
-          <p>Search and the code view keep working, and a question will return the closest lines without a model.</p>
-        </div>
-      ) : null}
+      {health ? (
+        <AiNotes ai={health.ai} />
+      ) : (
+        <p className="ai-warning" data-testid="ai-warning">
+          Experimental. Read the code it points at.
+        </p>
+      )}
       <div className="ai-conversation" ref={scroller} data-testid="ai-conversation">
         {turns.length === 0 ? (
           <div className="ai-empty muted">

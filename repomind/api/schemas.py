@@ -18,13 +18,69 @@ class ApiErrorBody(BaseModel):
     message: str
 
 
-AiState = Literal["ready", "offline", "model_missing", "not_configured", "low_memory"]
+# misconfigured: settings are present and not valid. auth_failed: the key was refused. budget_reached:
+# the next request could go over the budget. limited: a quota, spending or rate limit at the provider.
+# rejected: the provider did not accept RepoMind's request, or answered with something unreadable.
+AiState = Literal[
+    "ready",
+    "offline",
+    "model_missing",
+    "not_configured",
+    "low_memory",
+    "misconfigured",
+    "auth_failed",
+    "budget_reached",
+    "limited",
+    "rejected",
+]
+
+
+AiProvider = Literal["ollama", "openai"]
+
+
+class Spending(BaseModel):
+    """RepoMind's own count of what a paid model cost, from the prices set in .env. It is not a bill."""
+
+    budget_usd: float
+    recorded_usd: float = Field(description="Everything counted against the budget.")
+    left_usd: float
+    worst_case_usd: float = Field(
+        description="Part of recorded_usd: requests that failed after they may have reached the model, counted at the most they could cost. Whether they were charged is not known."
+    )
+    estimated_usd: float = Field(description="Part of recorded_usd: answers whose token counts the server did not report, so they were estimated.")
+    legacy_usd: float = Field(
+        default=0.0,
+        description="Part of recorded_usd: recorded before RepoMind kept how each cost was counted, so whether it was reported or estimated is not known.",
+    )
+    input_usd_per_mtok: float
+    cached_input_usd_per_mtok: float = Field(description="For input read from the provider's cache. The input price when none is set.")
+    cache_write_usd_per_mtok: float = Field(description="For input written to the provider's cache, instead of the input price. The input price when none is set.")
+    output_usd_per_mtok: float
+
+
+class Accuracy(BaseModel):
+    """The last measurement of this model in RepoMind, from the record named."""
+
+    model: str
+    fully_right: int
+    wrong: int
+    questions: int
+    measured_on: str
+    record: str
 
 
 class AiStatus(BaseModel):
     state: AiState
     model: str | None = None
     detail: str
+    provider: AiProvider | None = Field(default=None, description="ollama: Ollama or another OpenAI-compatible server. openai: the OpenAI API.")
+    spending: Spending | None = Field(default=None, description="For a model with prices set. Nothing for a free one.")
+    accuracy: Accuracy | None = Field(default=None, description="Nothing when this model has not been measured in RepoMind.")
+    remote: bool = Field(
+        default=False,
+        description="The model runs on another machine: each question and the lines of code chosen for it are sent there.",
+    )
+    endpoint: str | None = Field(default=None, description="The host of a remote model server. Never a key, and nothing for a local one.")
 
 
 class Health(BaseModel):
@@ -131,14 +187,24 @@ class AskRequest(BaseModel):
     question: str = Field(min_length=1, max_length=MAX_QUESTION_CHARACTERS)
 
 
-SourceRole = Literal["answer", "review_candidate", "closest"]
+SourceRole = Literal["answer", "declaration", "linked_use", "review_candidate", "review_use", "closest"]
 AnswerCheck = Literal["passed", "failed", "not_made"]
 
 
 class AskSource(BaseModel):
     """Two checks that must not be confused. ``exists_in_git`` does not mean the lines answer the question."""
 
-    role: SourceRole
+    role: SourceRole = Field(
+        description=(
+            "answer: the model chose these lines and they were accepted. "
+            "declaration: the model did not choose these lines. They declare a constant that chosen lines use, "
+            "and RepoMind shows them so that the value is seen with the lines that name it. "
+            "linked_use: the model did not choose these lines. RepoMind added them because they use a constant "
+            "whose declaration the model chose. Only with the experimental linked evidence setting. "
+            "review_candidate: the model chose these lines and the evidence rule turned them down. "
+            "closest: the closest lines found, which nothing judged."
+        )
+    )
     repo: str
     commit: str
     path: str
@@ -152,12 +218,20 @@ class AskSource(BaseModel):
 
 
 Verdict = Literal["lines_chosen", "not_enough_evidence", "invalid_response", "ai_unavailable"]
+ReplyProblem = Literal["empty", "cut_off", "not_json", "no_choice_list", "not_offered", "no_judgement"]
 
 
 class AskResponse(BaseModel):
     experimental: Literal[True] = True
     verdict: Verdict
     message: str
+    reply_problem: ReplyProblem | None = Field(
+        default=None,
+        description=(
+            "With the verdict invalid_response, what was wrong with the model's reply. An invalid reply is "
+            "neither an answer nor a refusal by the model, and it gives no source."
+        ),
+    )
     ai_used: bool
     ai: AiStatus
     model_reading: str | None = Field(description="The model's own sentence. It is unverified, and may be false.")
@@ -169,4 +243,10 @@ class AskResponse(BaseModel):
     model: str | None
     input_tokens: int
     output_tokens: int
+    cost_usd: float = Field(default=0.0, description="What this answer was counted at, from the prices set. 0 for a free model or no model.")
+    tokens_are_estimated: bool = Field(default=False, description="The server did not report token counts for this answer, so they were estimated.")
+    cost_is_cautious: bool = Field(
+        default=False,
+        description="The server did not say how the input was split between its cache and the rest, so that part was counted at the highest input price: the cost is at most this.",
+    )
     seconds: float

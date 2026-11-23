@@ -54,6 +54,19 @@ def keep_technical_terms(question: str, translation: str) -> str:
     return f"{translation} {' '.join(missing)}" if missing else translation
 
 
+_JOINER = re.compile(r"[_-]")
+
+
+def plain_sentence(translation: str) -> str:
+    """A model sometimes writes a whole sentence with underscores or hyphens where the spaces belong.
+
+    Only a text with next to no spaces is changed, so an identifier inside a real sentence stays as written.
+    """
+    if translation.count(" ") <= 1 and len(_JOINER.findall(translation)) >= 3:
+        return " ".join(_JOINER.sub(" ", translation).split())
+    return translation
+
+
 class QueryTranslator(Protocol):
     def translate(self, text: str) -> str: ...
 

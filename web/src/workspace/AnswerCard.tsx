@@ -1,8 +1,9 @@
-import { CheckCircle2, CircleHelp, CircleSlash, GitCommitHorizontal, Info, ScanSearch, Sparkles, TriangleAlert } from "lucide-react";
+import { CheckCircle2, CircleHelp, CircleSlash, GitCommitHorizontal, Info, Link2, ScanSearch, Sparkles, TriangleAlert } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { AskResponse, AskSource } from "../api/client";
 import { CodeSnippet } from "../components/CodeLines";
 import { blobUrl, shortCommit } from "../lib/links";
+import { STATE_TITLES, usd } from "./AiNotes";
 
 const VERDICTS = {
   lines_chosen: { icon: Sparkles, title: "The model chose these lines", tone: "chosen" },
@@ -75,12 +76,24 @@ export function AnswerCard({ response }: { response: AskResponse }) {
       </div>
       <p className="answer-message">{response.message}</p>
       {!response.ai_used && response.ai.state !== "ready" ? (
-        <p className="note" data-testid="answer-ai-state">
-          {response.ai.detail}
+        <p className="note" data-testid="answer-ai-state" data-state={response.ai.state}>
+          <strong>{STATE_TITLES[response.ai.state]}</strong> {response.ai.detail}
         </p>
       ) : null}
 
       <Section title="Lines the model chose" hint="They exist at this commit. Whether they answer the question is the model’s judgement." sources={of("answer")} />
+      <Section
+        title="Value of a constant the chosen lines use"
+        hint="Added by RepoMind, not chosen by the model. These lines declare a constant that the lines above use, so that its value is shown with them. They exist at this commit."
+        icon={<Link2 size={14} aria-hidden />}
+        sources={of("declaration")}
+      />
+      <Section
+        title="Added by RepoMind, not chosen by the model"
+        hint="These lines use a constant that is declared in a line the model chose. They exist at this commit. The model did not pick them, and nothing confirms that they answer the question."
+        icon={<Link2 size={14} aria-hidden />}
+        sources={of("linked_use")}
+      />
 
       {response.model_reading ? (
         <details className="reading" data-testid="model-reading">
@@ -102,11 +115,27 @@ export function AnswerCard({ response }: { response: AskResponse }) {
         icon={<ScanSearch size={14} aria-hidden />}
         sources={of("review_candidate")}
       />
+      {of("review_use").length ? (
+        // Folded, and named as not an answer before it is opened: most such lines are not the right place.
+        <details className="closest review-uses" data-testid="review-uses">
+          <summary>
+            <Link2 size={13} aria-hidden /> Lines that use the constant above, added by RepoMind: not an answer ({of("review_use").length})
+          </summary>
+          <p className="muted answer-small">
+            The model did not choose these lines. They use a constant declared in a line the model pointed to, and they exist at this commit.
+            Nothing confirms that they answer the question.
+          </p>
+          {of("review_use").map((source) => (
+            <SourceCard key={`${source.path}:${source.start_line}`} source={source} />
+          ))}
+        </details>
+      ) : null}
 
       {of("closest").length ? (
         <details className="closest" open={response.verdict === "ai_unavailable"}>
           <summary>
-            <Info size={13} aria-hidden /> Closest lines found: not an answer ({of("closest").length})
+            <Info size={13} aria-hidden /> {response.ai_used ? "Closest lines found" : "Closest lines found by search, without the model"}: not an
+            answer ({of("closest").length})
           </summary>
           {of("closest").map((source) => (
             <SourceCard key={`${source.path}:${source.start_line}`} source={source} />
@@ -123,6 +152,13 @@ export function AnswerCard({ response }: { response: AskResponse }) {
       ) : null}
       <div className="answer-meta muted">
         {response.translated_query ? <span title="Translations can be wrong.">Searched as “{response.translated_query}”</span> : null}
+        {response.ai_used && (response.input_tokens || response.output_tokens) ? (
+          <span data-testid="answer-usage" title="What this answer used. A cost is RepoMind's count from the prices set, not a bill.">
+            {response.input_tokens.toLocaleString("en")} in, {response.output_tokens.toLocaleString("en")} out tokens
+            {response.cost_usd > 0 ? ` · ${usd(response.cost_usd)} by the prices set` : ""}
+            {response.tokens_are_estimated ? " (estimated)" : response.cost_is_cautious && response.cost_usd > 0 ? " (at most)" : ""}
+          </span>
+        ) : null}
         <span>
           {response.model ?? "model not asked"} · {response.seconds.toFixed(1)} s
         </span>

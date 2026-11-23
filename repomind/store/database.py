@@ -12,6 +12,7 @@ from pgvector.psycopg import register_vector
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
+from repomind import PIPELINE_VERSION
 from repomind.errors import RepoMindError
 from repomind.parsing.models import ParsedFile
 
@@ -62,6 +63,12 @@ class SnapshotInfo:
     stats: dict
     indexed_at: object
     origin_url: str | None = None
+    pipeline_version: str = ""
+
+    @property
+    def is_current(self) -> bool:
+        """Whether this version of RepoMind would store the same thing for the commit. See PIPELINE_VERSION."""
+        return self.pipeline_version == PIPELINE_VERSION
 
 
 class Store:
@@ -189,7 +196,7 @@ class Store:
         rows = self.connection.execute(
             """
             SELECT s.id, r.name AS repo, r.source_path, s.commit_sha, s.committed_at, s.commit_subject,
-                   s.stats, s.indexed_at, r.origin_url
+                   s.stats, s.indexed_at, r.origin_url, s.pipeline_version
               FROM snapshots s JOIN repositories r ON r.id = s.repository_id
              WHERE s.is_active AND (%(names)s::text[] IS NULL OR r.name = ANY(%(names)s))
              ORDER BY r.name
@@ -284,10 +291,31 @@ class Store:
         ).fetchall()
 
     def indexed_file(self, snapshot_id: int, path: str) -> dict | None:
+        """``path`` must equal an indexed file's path exactly. ``blob_sha`` is the Git object that was indexed."""
         return self.connection.execute(
-            "SELECT path, language, line_count, has_syntax_errors FROM files WHERE snapshot_id = %s AND path = %s",
+            "SELECT path, language, blob_sha, line_count, has_syntax_errors FROM files WHERE snapshot_id = %s AND path = %s",
             (snapshot_id, path),
         ).fetchone()
+
+    def file_chunks(self, snapshot_id: int, path: str) -> list[ChunkRow]:
+        """Every indexed chunk of one file, by line. Withheld lines are in none of them."""
+        rows = self.connection.execute(
+            f"SELECT {_CHUNK_COLUMNS} {_CHUNK_SOURCE} WHERE c.snapshot_id = %s AND c.path = %s ORDER BY c.start_line",
+            (snapshot_id, path),
+        ).fetchall()
+        return [ChunkRow(**row) for row in rows]
+
+    def type_paths(self, snapshot_id: int, name: str) -> list[str]:
+        """Files declaring a class, interface, enum or record called ``name``."""
+        rows = self.connection.execute(
+            """
+            SELECT DISTINCT path FROM symbols
+             WHERE snapshot_id = %s AND name = %s AND kind IN ('class', 'interface', 'enum', 'record')
+             ORDER BY path
+            """,
+            (snapshot_id, name),
+        ).fetchall()
+        return [row["path"] for row in rows]
 
     # ------------------------------------------------------------------- chunks
 
@@ -375,11 +403,18 @@ class Store:
 
     # ---------------------------------------------------------------- LLM usage
 
-    def record_llm_usage(self, base_url: str, model: str, input_tokens: int, output_tokens: int, cost_usd: float) -> None:
+    def record_llm_usage(
+        self, base_url: str, model: str, input_tokens: int, output_tokens: int, cost_usd: float, kind: str = "reported"
+    ) -> None:
         self.connection.execute(
-            "INSERT INTO llm_usage (base_url, model, input_tokens, output_tokens, cost_usd) VALUES (%s, %s, %s, %s, %s)",
-            (base_url, model, input_tokens, output_tokens, cost_usd),
+            "INSERT INTO llm_usage (base_url, model, input_tokens, output_tokens, cost_usd, kind) VALUES (%s, %s, %s, %s, %s, %s)",
+            (base_url, model, input_tokens, output_tokens, cost_usd, kind),
         )
+
+    def llm_spending(self) -> dict[str, float]:
+        """What is counted against the budget, by kind: reported, estimated, worst_case and legacy."""
+        rows = self.connection.execute("SELECT kind, COALESCE(SUM(cost_usd), 0) AS total FROM llm_usage GROUP BY kind").fetchall()
+        return {row["kind"]: float(row["total"]) for row in rows}
 
     def total_llm_cost(self) -> float:
         row = self.connection.execute("SELECT COALESCE(SUM(cost_usd), 0) AS total FROM llm_usage").fetchone()

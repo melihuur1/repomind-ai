@@ -1,6 +1,45 @@
 {
  "components": {
   "schemas": {
+   "Accuracy": {
+    "description": "The last measurement of this model in RepoMind, from the record named.",
+    "properties": {
+     "fully_right": {
+      "title": "Fully Right",
+      "type": "integer"
+     },
+     "measured_on": {
+      "title": "Measured On",
+      "type": "string"
+     },
+     "model": {
+      "title": "Model",
+      "type": "string"
+     },
+     "questions": {
+      "title": "Questions",
+      "type": "integer"
+     },
+     "record": {
+      "title": "Record",
+      "type": "string"
+     },
+     "wrong": {
+      "title": "Wrong",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "model",
+     "fully_right",
+     "wrong",
+     "questions",
+     "measured_on",
+     "record"
+    ],
+    "title": "Accuracy",
+    "type": "object"
+   },
    "AddRepositoryRequest": {
     "properties": {
      "url": {
@@ -18,9 +57,32 @@
    },
    "AiStatus": {
     "properties": {
+     "accuracy": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/Accuracy"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Nothing when this model has not been measured in RepoMind."
+     },
      "detail": {
       "title": "Detail",
       "type": "string"
+     },
+     "endpoint": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "The host of a remote model server. Never a key, and nothing for a local one.",
+      "title": "Endpoint"
      },
      "model": {
       "anyOf": [
@@ -33,13 +95,51 @@
       ],
       "title": "Model"
      },
+     "provider": {
+      "anyOf": [
+       {
+        "enum": [
+         "ollama",
+         "openai"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "ollama: Ollama or another OpenAI-compatible server. openai: the OpenAI API.",
+      "title": "Provider"
+     },
+     "remote": {
+      "default": false,
+      "description": "The model runs on another machine: each question and the lines of code chosen for it are sent there.",
+      "title": "Remote",
+      "type": "boolean"
+     },
+     "spending": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/Spending"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "For a model with prices set. Nothing for a free one."
+     },
      "state": {
       "enum": [
        "ready",
        "offline",
        "model_missing",
        "not_configured",
-       "low_memory"
+       "low_memory",
+       "misconfigured",
+       "auth_failed",
+       "budget_reached",
+       "limited",
+       "rejected"
       ],
       "title": "State",
       "type": "string"
@@ -82,6 +182,18 @@
      "ai_used": {
       "title": "Ai Used",
       "type": "boolean"
+     },
+     "cost_is_cautious": {
+      "default": false,
+      "description": "The server did not say how the input was split between its cache and the rest, so that part was counted at the highest input price: the cost is at most this.",
+      "title": "Cost Is Cautious",
+      "type": "boolean"
+     },
+     "cost_usd": {
+      "default": 0.0,
+      "description": "What this answer was counted at, from the prices set. 0 for a free model or no model.",
+      "title": "Cost Usd",
+      "type": "number"
      },
      "discarded": {
       "items": {
@@ -142,6 +254,26 @@
       "title": "Output Tokens",
       "type": "integer"
      },
+     "reply_problem": {
+      "anyOf": [
+       {
+        "enum": [
+         "empty",
+         "cut_off",
+         "not_json",
+         "no_choice_list",
+         "not_offered",
+         "no_judgement"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "With the verdict invalid_response, what was wrong with the model's reply. An invalid reply is neither an answer nor a refusal by the model, and it gives no source.",
+      "title": "Reply Problem"
+     },
      "seconds": {
       "title": "Seconds",
       "type": "number"
@@ -152,6 +284,12 @@
       },
       "title": "Sources",
       "type": "array"
+     },
+     "tokens_are_estimated": {
+      "default": false,
+      "description": "The server did not report token counts for this answer, so they were estimated.",
+      "title": "Tokens Are Estimated",
+      "type": "boolean"
      },
      "translated_query": {
       "anyOf": [
@@ -238,9 +376,13 @@
       "type": "string"
      },
      "role": {
+      "description": "answer: the model chose these lines and they were accepted. declaration: the model did not choose these lines. They declare a constant that chosen lines use, and RepoMind shows them so that the value is seen with the lines that name it. linked_use: the model did not choose these lines. RepoMind added them because they use a constant whose declaration the model chose. Only with the experimental linked evidence setting. review_candidate: the model chose these lines and the evidence rule turned them down. closest: the closest lines found, which nothing judged.",
       "enum": [
        "answer",
+       "declaration",
+       "linked_use",
        "review_candidate",
+       "review_use",
        "closest"
       ],
       "title": "Role",
@@ -730,6 +872,71 @@
      "reasons"
     ],
     "title": "SearchResultItem",
+    "type": "object"
+   },
+   "Spending": {
+    "description": "RepoMind's own count of what a paid model cost, from the prices set in .env. It is not a bill.",
+    "properties": {
+     "budget_usd": {
+      "title": "Budget Usd",
+      "type": "number"
+     },
+     "cache_write_usd_per_mtok": {
+      "description": "For input written to the provider's cache, instead of the input price. The input price when none is set.",
+      "title": "Cache Write Usd Per Mtok",
+      "type": "number"
+     },
+     "cached_input_usd_per_mtok": {
+      "description": "For input read from the provider's cache. The input price when none is set.",
+      "title": "Cached Input Usd Per Mtok",
+      "type": "number"
+     },
+     "estimated_usd": {
+      "description": "Part of recorded_usd: answers whose token counts the server did not report, so they were estimated.",
+      "title": "Estimated Usd",
+      "type": "number"
+     },
+     "input_usd_per_mtok": {
+      "title": "Input Usd Per Mtok",
+      "type": "number"
+     },
+     "left_usd": {
+      "title": "Left Usd",
+      "type": "number"
+     },
+     "legacy_usd": {
+      "default": 0.0,
+      "description": "Part of recorded_usd: recorded before RepoMind kept how each cost was counted, so whether it was reported or estimated is not known.",
+      "title": "Legacy Usd",
+      "type": "number"
+     },
+     "output_usd_per_mtok": {
+      "title": "Output Usd Per Mtok",
+      "type": "number"
+     },
+     "recorded_usd": {
+      "description": "Everything counted against the budget.",
+      "title": "Recorded Usd",
+      "type": "number"
+     },
+     "worst_case_usd": {
+      "description": "Part of recorded_usd: requests that failed after they may have reached the model, counted at the most they could cost. Whether they were charged is not known.",
+      "title": "Worst Case Usd",
+      "type": "number"
+     }
+    },
+    "required": [
+     "budget_usd",
+     "recorded_usd",
+     "left_usd",
+     "worst_case_usd",
+     "estimated_usd",
+     "input_usd_per_mtok",
+     "cached_input_usd_per_mtok",
+     "cache_write_usd_per_mtok",
+     "output_usd_per_mtok"
+    ],
+    "title": "Spending",
     "type": "object"
    },
    "Tree": {

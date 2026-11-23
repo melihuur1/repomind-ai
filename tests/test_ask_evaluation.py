@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import urllib.request
 
 import pytest
@@ -213,7 +214,22 @@ def test_a_one_line_citation_counts_as_citing_a_longer_gold_span():
     assert not touches(GoldSpan("b.java", 7, 7, "x"), gold)
 
 
+RUN_LLM_TESTS = "REPOMIND_RUN_LLM_TESTS"
+
+
 def _running_llm() -> LLMConfig:
+    """The configured model, only when asked for and when memory allows it. Otherwise the test is skipped.
+
+    Loading a 7B model takes several GB, so an ordinary `pytest` must never do it just because the
+    model server happens to be running.
+    """
+    from repomind.evaluation.memory import check_before_loading
+
+    if os.environ.get(RUN_LLM_TESTS) != "1":
+        pytest.skip(f"Calls the real model. Set {RUN_LLM_TESTS}=1 to run it.")
+    check = check_before_loading()
+    if check.refusal:
+        pytest.skip(f"Not loading the model: {check.refusal} ({check.describe()}).")
     config = load_llm_config()
     if config is None:
         pytest.skip("No LLM configured")

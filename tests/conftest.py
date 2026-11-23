@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import hashlib
+import os
+import re
 import subprocess
 from pathlib import Path
 
@@ -14,6 +16,22 @@ from repomind.search.tokenizer import tokenize
 from repomind.store.database import Store
 
 TEST_DATABASE = "repomind_test"
+
+# Every model setting RepoMind reads, taken from the code so that a new one is never missed.
+MODEL_SETTINGS = sorted(set(re.findall(r"REPOMIND_LLM_[A-Z_]+", (Path(__file__).resolve().parents[1] / "repomind" / "qa" / "llm.py").read_text(encoding="utf-8"))))
+
+
+@pytest.fixture(autouse=True)
+def _no_model_settings_from_the_developers_env(request, monkeypatch):
+    """The model settings of the developer's own .env and shell never reach a test: they may hold a real API key.
+
+    A test that needs a setting sets it itself. Only the opt-in real-model test reads them, when
+    REPOMIND_RUN_LLM_TESTS=1 asks for it.
+    """
+    if request.node.get_closest_marker("llm") and os.environ.get("REPOMIND_RUN_LLM_TESTS") == "1":
+        return
+    for name in MODEL_SETTINGS:
+        monkeypatch.setenv(name, "")
 
 
 class FakeEmbedder:

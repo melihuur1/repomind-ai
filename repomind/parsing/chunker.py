@@ -21,7 +21,8 @@ from dataclasses import dataclass, replace
 
 from tree_sitter import Node
 
-from repomind.ingest.filters import is_test_path
+from repomind.ingest.filters import find_credential, is_test_path
+from repomind.parsing.credentials import hidden_lines
 from repomind.parsing.languages import LanguageSpec, parser_for, spec_for
 from repomind.parsing.models import Chunk, ImportInfo, ParsedFile, SymbolInfo
 from repomind.parsing.structured import parse_sql, parse_yaml
@@ -57,7 +58,55 @@ def parse_source(path: str, language: str, text: str, config: ChunkingConfig | N
         return parse_sql(path, text)
     if language == "yaml":
         return parse_yaml(path, text)
-    return _FileChunker(path, language, text, config or ChunkingConfig()).run()
+    return _without_credentials(_FileChunker(path, language, text, config or ChunkingConfig()).run(), text)
+
+
+def _without_credentials(parsed: ParsedFile, text: str) -> ParsedFile:
+    """Leaves the statements that hold a credential out of the chunks around them.
+
+    A chunk with such a statement becomes the lines before it and the lines after it, each still
+    a contiguous range of the file, so a small class is not lost for one constant. A signature is
+    the start of a declaration, which for a variable can run into its value, so one that holds a
+    credential is replaced by the name alone.
+    """
+    language = parsed.language
+    hidden = set(hidden_lines(language, text))
+    lines = text.split("\n")
+    chunks: list[Chunk] = []
+    for chunk in parsed.chunks:
+        if hidden.isdisjoint(range(chunk.start_line, chunk.end_line + 1)):
+            chunks.append(chunk)
+            continue
+        parsed.withheld_chunks += 1
+        pieces: list[tuple[int, int]] = []
+        start = None
+        for number in range(chunk.start_line, chunk.end_line + 2):
+            shown = number <= chunk.end_line and number not in hidden
+            if shown and start is None:
+                start = number
+            elif not shown and start is not None:
+                pieces.append((start, number - 1))
+                start = None
+        for first, last in pieces:
+            while first <= last and not lines[first - 1].strip():
+                first += 1
+            while last >= first and not lines[last - 1].strip():
+                last -= 1
+            content = "\n".join(lines[first - 1 : last])
+            # What is left after the cut may be nothing but closing brackets, or, if the rules and the
+            # syntax tree disagree about where a statement ends, may still hold the credential.
+            if first > last or _CLOSERS_ONLY.match(content) or find_credential(content, language):
+                continue
+            names = tuple(dict.fromkeys(s.name for s in parsed.symbols if first <= s.start_line <= last))
+            chunks.append(replace(chunk, start_line=first, end_line=last, content=content, symbols=names))
+    parsed.chunks = [
+        replace(chunk, signature=None) if chunk.signature and find_credential(chunk.signature, language) else chunk for chunk in chunks
+    ]
+    parsed.symbols = [
+        replace(symbol, signature=symbol.qualified_name) if find_credential(symbol.signature, language) else symbol
+        for symbol in parsed.symbols
+    ]
+    return parsed
 
 
 class _FileChunker:

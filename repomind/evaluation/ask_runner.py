@@ -129,6 +129,9 @@ def _row(identifier: str, repo: str, language: str, result: AskResult, seconds: 
             for source in result.sources()
         ],
         "review_candidates": [p.id for p in result.review_candidates],
+        # What was wrong with a reply that could not be used, and the reply itself, so that it can be looked into later.
+        "reply_problem": result.reply_problem,
+        "invalid_reply": result.invalid_reply,
         "rejected": result.rejected,
         "warnings": result.warnings,
         "input_tokens": result.input_tokens,

@@ -10,6 +10,7 @@ import socket
 import sys
 from pathlib import Path
 
+from repomind import PIPELINE_VERSION
 from repomind.config import PROJECT_ROOT, Settings
 from repomind.errors import RepoMindError
 from repomind.search.engine import MODES, SearchConfig, SearchEngine
@@ -93,7 +94,7 @@ def command_index(args: argparse.Namespace, settings: Settings) -> int:
     if report.skipped_for_secrets:
         _emit(f"  WARNING     skipped because they appear to contain secrets: {report.skipped_for_secrets}")
     if report.config_chunks_withheld:
-        _emit(f"  withheld    configuration chunks holding a credential: {report.config_chunks_withheld}")
+        _emit(f"  withheld    chunks holding a credential, in configuration or code: {report.config_chunks_withheld}")
     if report.files_with_syntax_errors:
         _emit(f"  syntax      {len(report.files_with_syntax_errors)} file(s) with parse errors were kept: {report.files_with_syntax_errors}")
     if report.embedding:
@@ -131,6 +132,9 @@ def command_repos(_args: argparse.Namespace, settings: Settings) -> int:
             _emit(f"  symbols    {counts['symbols']}   imports {counts['imports']}")
             _emit(f"  languages  {snapshot.stats['languages']}")
             _emit(f"  embeddings {embedded}/{total} with {settings.embedding_model}")
+            if not snapshot.is_current:
+                _emit(f"  OUTDATED   indexed by pipeline {snapshot.pipeline_version}, and this version is {PIPELINE_VERSION}.")
+                _emit(f'             Run `python -m repomind index --path "{snapshot.source_path}" --name {snapshot.repo}` to index it again.')
     return 0
 
 
@@ -251,6 +255,10 @@ _REVIEW_HEADINGS = {
         "They do exist at this commit, but nothing confirms that they answer the question. This is not an answer."
     ),
 }
+_REVIEW_USE_HEADINGS = {
+    "tr": "RepoMind ekledi, model seçmedi: yukarıda tanımlanan sabiti kullanan satırlar. Bunlar da bir cevap değildir.",
+    "en": "Added by RepoMind, not chosen by the model: lines that use a constant declared above. These are not an answer either.",
+}
 
 
 def _print_passage(passage) -> None:
@@ -265,25 +273,50 @@ def _print_review_candidates(result) -> None:
 
     if not result.review_candidates:
         return
+    language = "tr" if looks_turkish(result.question) else "en"
     _emit("")
-    _emit(_REVIEW_HEADINGS["tr" if looks_turkish(result.question) else "en"])
+    _emit(_REVIEW_HEADINGS[language])
     for passage in result.review_candidates:
         _emit("")
         _print_passage(passage)
+    if result.review_uses:
+        _emit("")
+        _emit(_REVIEW_USE_HEADINGS[language])
+        for passage in result.review_uses:
+            _emit("")
+            _print_passage(passage)
 
 
 def command_ask(args: argparse.Namespace, settings: Settings) -> int:
     with _store(settings) as store:
         result = _qa_engine(store, settings, args).ask(args.question, args.repo)
+        traced = _trace_expected(store, result, args) if getattr(args, "expect", None) else []
     if result.translated_query:
         _emit(f"translated query: {safe_text(result.translated_query)}")
     for warning in result.warnings:
         _emit(f"warning: {safe_text(warning)}")
     if result.status == "answered":
+        added = {passage.id for passage in result.linked_uses}
+        declared = {passage.id for passage in result.declared_values}
         _emit("The model chose these lines as the answer:")
         for item in result.evidence:
+            if item.passage.id not in added | declared:
+                _emit("")
+                _print_passage(item.passage)
+        if declared:
             _emit("")
-            _print_passage(item.passage)
+            _emit("Added by RepoMind, not chosen by the model: the declaration of a constant the lines above use.")
+            for item in result.evidence:
+                if item.passage.id in declared:
+                    _emit("")
+                    _print_passage(item.passage)
+        if added:
+            _emit("")
+            _emit("Added by RepoMind, not chosen by the model: these lines use a constant declared above.")
+            for item in result.evidence:
+                if item.passage.id in added:
+                    _emit("")
+                    _print_passage(item.passage)
         if result.note:
             _emit("")
             _emit(f"Model's reading, not verified: {safe_text(result.note)}")
@@ -296,7 +329,7 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
     else:
         _emit(_STATUS_MESSAGES[result.status])
         _print_review_candidates(result)
-        under_review = {passage.id for passage in result.review_candidates}
+        under_review = {passage.id for passage in (*result.review_candidates, *result.review_uses)}
         closest = [passage for passage in result.passages if passage.id not in under_review]
         if closest:
             if result.status != "no_llm":
@@ -319,7 +352,28 @@ def command_ask(args: argparse.Namespace, settings: Settings) -> int:
             f"${result.cost_usd:.6f}; {result.sources_sent} passages read, "
             f"{result.sources_dropped} left out by the limits"
         )
+    if traced:
+        _emit("")
+        _emit("Where the expected lines got to:")
+        for line in traced:
+            _emit(f"  {line}")
     return 0
+
+
+def _trace_expected(store, result, args: argparse.Namespace) -> list[str]:
+    """For a developer: the first stage each expected place did not pass. Asked for with --expect, and not run otherwise."""
+    from repomind.qa.trace import Lines, describe, trace
+
+    snapshots = store.active_snapshots(args.repo)
+
+    def indexed(path: str):
+        return [chunk for snapshot in snapshots for chunk in store.file_chunks(snapshot.id, path)]
+
+    try:
+        places = [[Lines.parse(text) for text in place.split("|")] for place in args.expect]
+    except ValueError as exc:
+        raise RepoMindError(str(exc), hint='Use --expect "src/Order.java:10-20", with | between places that would do as well.') from exc
+    return describe(trace(result, places, indexed))
 
 
 def command_serve(args: argparse.Namespace, settings: Settings) -> int:
@@ -385,6 +439,17 @@ def command_evaluate_ask(args: argparse.Namespace, settings: Settings) -> int:
     should_stop = _memory_guard(args.min_free_memory_gb)
     # Before any model is loaded, because loading is when memory runs out fastest.
     reason = should_stop()
+    if not reason and not args.no_llm:
+        from repomind.evaluation.memory import START_MINIMUM_GB, check_before_loading
+
+        check = check_before_loading()
+        _emit(f"Free memory before the model loads: {check.describe()}")
+        reason = check.refusal
+        if reason:
+            raise RepoMindError(
+                f"Not starting: {reason}. Nothing was loaded.",
+                hint=f"A run that loads the model needs {START_MINIMUM_GB:.0f} GB of free physical memory and of commit space.",
+            )
     if reason:
         raise RepoMindError(f"Not starting: {reason}.", hint="Close other programs, or set --min-free-memory-gb.")
     with _store(settings) as store:
@@ -470,6 +535,14 @@ def build_parser() -> argparse.ArgumentParser:
     ask.add_argument("--model", help="embedding model")
     ask.add_argument("--translate", action=argparse.BooleanOptionalAction, default=True)
     ask.add_argument("--no-llm", action="store_true", help="only list the closest lines, even if a model is configured")
+    ask.add_argument(
+        "--expect",
+        action="append",
+        metavar="PATH:START-END",
+        help="for a developer: lines the answer should show. Prints the stage at which they were lost: the index, search, "
+        "the passages, a refusal, the model's choice or the evidence rule. Repeat it for each place an answer needs, "
+        "and write | between places that would do as well",
+    )
     ask.set_defaults(handler=command_ask)
 
     evaluate_ask = commands.add_parser("evaluate-ask", help="measure answers from the configured LLM")

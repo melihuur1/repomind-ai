@@ -4,9 +4,9 @@
 
 **Find where and how something is done in a codebase, and read the exact lines that do it.**
 
-RepoMind indexes a GitHub repository locally and lets you browse, search and question it in Turkish or English. Every result is a real range of lines, pinned to the Git commit it came from, so you can open it, link to it and check it yourself. It runs on your own machine, with no account and no paid API.
+RepoMind indexes a GitHub repository locally and lets you browse, search and question it in Turkish or English. Every result is a real range of lines, pinned to the Git commit it came from, so you can open it, link to it and check it yourself. It runs on your own machine. The default setup needs no account, no API key and no paid API. The OpenAI API is an option, and it costs money.
 
-> **Status: a working local web application for one person on one machine.** Searching and reading code are dependable. **The AI analysis is experimental and often wrong:** in the last measurement it pointed at the right source for 8 of 16 questions, and at a wrong one for 4. Read every line it points at. See [AI accuracy](#ai-accuracy).
+> **Status: a working local web application for one person on one machine.** Searching and reading code are dependable. **The AI analysis is experimental and often wrong:** in the last measurement, with `qwen2.5:7b`, it gave a fully right source for 13 of 32 questions, and a wrong one for 6. Read every line it points at. See [AI accuracy](#ai-accuracy).
 
 ![RepoMind showing StockGuard's file tree and a Java file at the indexed commit, with a linked range of lines selected](docs/screenshots/repository-explorer.png)
 
@@ -14,7 +14,7 @@ RepoMind indexes a GitHub repository locally and lets you browse, search and que
 
 - [Why](#why) · [Features](#features) · [Screenshots](#screenshots) · [How it works](#how-it-works)
 - [Getting started on Windows](#getting-started-on-windows): [your first repository](#your-first-repository), [AI analysis](#ai-analysis-optional), [with or without a GPU](#with-or-without-a-gpu), [common problems](#common-problems)
-- [Using it](#using-it) · [AI accuracy](#ai-accuracy) · [Security](#security) · [Tests](#tests)
+- [Using it](#using-it) · [MCP server](#mcp-server) · [AI accuracy](#ai-accuracy) · [Security](#security) · [Tests](#tests)
 - [Project structure](#project-structure) · [Known limitations](#known-limitations) · [Third-party software and models](#third-party-software-and-models) · [License](#license)
 
 ## Why
@@ -27,7 +27,8 @@ Asking a chat model about an unfamiliar repository tends to produce confident an
 - **Browse the code as committed.** A file tree and a code view with line numbers and syntax highlighting, read from Git at the indexed commit. Links such as `…/blob/<commit>/src/App.ts#L12-L20` always open the same lines, and for a repository added from GitHub, a button opens them there too.
 - **Search code three ways.** Keyword (BM25), semantic (vector search with pgvector), or hybrid, which fuses both with Reciprocal Rank Fusion. Each result shows why it was found and opens at its lines.
 - **Ask in Turkish or English.** Turkish questions are translated locally, and both wordings are searched. Code, identifiers and config keys stay unchanged.
-- **Experimental AI analysis.** A local model, `qwen2.5:7b` on Ollama, chooses among the lines found, or declines. Lines that exist in Git, lines that passed the evidence rule, and the model's own sentence are shown as separate, labelled things.
+- **Experimental AI analysis.** By default a local model, `qwen2.5:7b` on Ollama, chooses among the lines found, or declines. The OpenAI API can be used instead: it costs money, and has to be switched on. Lines that exist in Git, lines that passed the evidence rule, and the model's own sentence are shown as separate, labelled things.
+- **An MCP server.** An MCP client such as Claude Code can search the listed repositories and read lines from Git at their indexed commit, through a local stdio server with three read-only tools: `list_repositories`, `search_code` and `get_verified_source`. It asks no model.
 - **Local and private by default.** It listens only on `127.0.0.1`, embeddings run on the CPU, and a GPU is optional.
 - **Treats repositories as hostile.** Code is never executed, secrets and credentials stay out of the index, prompt injection in code is contained, and everything is rendered as text.
 
@@ -61,7 +62,7 @@ flowchart LR
     Q[Question in Turkish or English] --> S[BM25 + vector search, fused with RRF]
     DB --> S
     S --> P[A few short passages, checked against Git]
-    P --> M[Optional local LLM: choose passages, or none]
+    P --> M[Optional LLM, local by default: choose passages, or none]
     M --> A[The repository's own lines, with labelled checks]
 ```
 
@@ -80,7 +81,8 @@ flowchart LR
 | Embeddings | [`intfloat/multilingual-e5-small`](https://huggingface.co/intfloat/multilingual-e5-small), 384 dimensions, through fastembed and ONNX Runtime, on the CPU |
 | Search | BM25 and cosine similarity, fused with Reciprocal Rank Fusion |
 | Translation | Opus-MT Turkish to English through CTranslate2, on the CPU, and the LLM when it is running |
-| LLM, optional | `qwen2.5:7b` on Ollama in Docker, or any OpenAI-compatible endpoint |
+| LLM, optional | `qwen2.5:7b` on Ollama in Docker, the default. Any OpenAI-compatible endpoint, or the OpenAI API, which costs money |
+| MCP | A local stdio server built with the MCP Python SDK 2.x, the optional extra `[mcp]` |
 | Frontend | React 19, TypeScript, Vite, TanStack Query, React Router, highlight.js through lowlight |
 | Tests | pytest, Vitest, Playwright in Edge or Chrome |
 
@@ -116,7 +118,7 @@ npm --prefix web run build           # builds the web client into web\dist
 .\.venv\Scripts\python.exe -m repomind serve
 ```
 
-Open <http://127.0.0.1:7321>. The commands call the virtual environment's Python directly, so PowerShell's script policy does not get in the way of activating it. On macOS or Linux, use `python3 -m venv .venv`, `.venv/bin/python` and `cp .env.example .env`.
+Open <http://127.0.0.1:7321>. None of this needs an API key. The commands call the virtual environment's Python directly, so PowerShell's script policy does not get in the way of activating it. On macOS or Linux, use `python3 -m venv .venv`, `.venv/bin/python` and `cp .env.example .env`.
 
 ### Your first repository
 
@@ -148,6 +150,38 @@ REPOMIND_LLM_MODEL=qwen2.5:7b
 
 The model can be started and stopped while RepoMind runs, and the status in the top bar follows it. `docker compose stop ollama` gives its memory back. The container keeps one model loaded at a time and is limited to 8 GB.
 
+**A server of your own.** A larger model on another machine works through the same settings: see the block in `.env.example`. Each question and the lines of code chosen for it are sent to that server. It has to be switched on with `REPOMIND_LLM_ALLOW_REMOTE=1`, and the page says when one is in use.
+
+**The OpenAI API.** Optional, and it costs money. Each question, and the lines of code chosen for it, are sent to OpenAI. Lines that may hold a credential are left out first, by rules that can miss what they do not recognise. RepoMind sends `store: false`, which asks OpenAI not to keep the exchange for its own products. It is not a promise that nothing is kept: OpenAI's own data policy decides that. In `.env`, which Git ignores:
+
+```bash
+REPOMIND_LLM_PROVIDER=openai
+REPOMIND_LLM_MODEL=              # from OpenAI's model list, checked on the day
+REPOMIND_LLM_API_KEY=            # never in a file Git tracks
+REPOMIND_LLM_ALLOW_REMOTE=1      # consent to send code
+REPOMIND_LLM_INPUT_USD_PER_MTOK=     # from OpenAI's pricing page, above 0
+REPOMIND_LLM_OUTPUT_USD_PER_MTOK=    # the same
+REPOMIND_LLM_CACHE_WRITE_USD_PER_MTOK=   # the 30-minute cache write price, above 0
+# REPOMIND_LLM_CACHED_INPUT_USD_PER_MTOK= # optional; without it, cache reads count at the full input price
+REPOMIND_LLM_MAX_TOTAL_COST_USD=0.05 # RepoMind's own count from your prices, not an exact ceiling
+# REPOMIND_LLM_REASONING_EFFORT=low  # only for a reasoning model, with a value it accepts
+```
+
+- **No model or price is written in here.** Both change, so take them from [OpenAI's model list](https://platform.openai.com/docs/models) and [pricing page](https://openai.com/api/pricing/) on the day.
+- **The address is fixed.** It is `https://api.openai.com/v1`, and the key is never sent anywhere else, also not after a redirect.
+- **Cached input has its own prices.** OpenAI caches the start of a long prompt by itself. Each input token is billed at one of three prices: uncached, read from the cache, or written to it, and a write replaces the uncached price instead of adding to it. RepoMind counts each part at its own price. Before a request, it allows for every input token at the highest of them.
+- **The budget is not an exact ceiling.** RepoMind sends nothing more once its own count, from the prices you entered, says the next request could pass the budget.
+  - It can still be passed: by wrong prices, by a token estimate that is too low, or by two questions asked at the same moment.
+  - The count is not OpenAI's bill.
+  - Set a spending limit on the OpenAI project as well.
+- **A Turkish question is two requests.** The model translates the question first, then chooses among the passages. Search on its own translates on this machine and sends nothing.
+- **A setting that is wrong is named** in the top bar as **AI settings invalid**, and no request is made.
+- **What the page shows.** The AI panel shows the model, the note on what is sent, and the spending RepoMind has counted from your prices, which is not OpenAI's bill. A cost counted at its most, for a request that failed after it may have been charged, is marked as such.
+- **When OpenAI fails,** whether the key is refused, a limit is reached, the budget is spent or it cannot be reached, a question still returns the closest lines found by search, and says why.
+- **Going back.** Remove `REPOMIND_LLM_PROVIDER` and the key, and restore the two local lines.
+
+Before the first real request, read [docs/openai-first-run.md](docs/openai-first-run.md).
+
 ### With or without a GPU
 
 **Without a GPU** nothing changes: this is the default, and only the optional LLM is slower. On the development machine one Turkish question took about 50 seconds on the CPU, including loading the model.
@@ -172,6 +206,11 @@ Those are single questions on one machine, not benchmarks.
 | **AI offline** | Ollama is not running | `docker compose --profile llm up -d ollama` |
 | **AI model missing** | The model was not pulled | `docker exec repomind-ollama ollama pull qwen2.5:7b` |
 | **AI paused** | Less than 4 GB of memory is free | Close something, and ask again |
+| **AI settings invalid** | A model setting in `.env` is wrong, for example `REPOMIND_LLM_PROVIDER=openai` without a key or prices | The AI panel names the setting |
+| **AI key refused** | OpenAI did not accept the key (HTTP 401 or 403) | Check `REPOMIND_LLM_API_KEY`, and that the key is active |
+| **AI budget spent** | The next request could pass `REPOMIND_LLM_MAX_TOTAL_COST_USD` | Raise it, if more spending is intended |
+| **AI limited** | OpenAI's quota, spending limit or rate limit | The AI panel says which. A rate limit passes; a quota needs the OpenAI account |
+| **AI request refused** | OpenAI did not accept the request, often a parameter the model does not take | For a reasoning model, set `REPOMIND_LLM_REASONING_EFFORT` |
 | `GitHub is limiting requests from this machine` | GitHub's anonymous API allows about 60 requests an hour | Wait, then press **Retry** |
 | `Git on Windows cannot write a clone this deep in the folder tree` | The clone's path would pass 260 characters | Set `REPOMIND_DATA_DIR=C:\repomind-data` in `.env`, or keep the project in a short path |
 | `npm warn install-scripts … esbuild` during `npm ci` | npm 11 does not run install scripts unless approved | Harmless: the build works without it |
@@ -192,7 +231,48 @@ Those are single questions on one machine, not benchmarks.
 | **Not enough evidence** | "I do not know": no lines passed | That the code certainly lacks it. Search misses things |
 | **Source to review** | The model pointed here, and the evidence rule did not accept it | An answer |
 | **Closest lines found** | What search found, with no judgement from a model | An answer |
-| **AI unavailable** | The model is off or memory is low, so it was not asked | A failure: everything else keeps working |
+| **AI unavailable** | The model was not asked: it is off, memory is low, its key was refused, its budget is spent or a limit was reached. The lines below were found by search alone, and the reason is given | A failure: everything else keeps working |
+
+## MCP server
+
+`python -m repomind.mcp_server` lets an MCP client, such as Claude Code, search RepoMind's index and read verified lines from it. It is a local server on stdio, built with the MCP Python SDK. It opens no network port and asks no model. The install command above already includes the SDK; on its own, it is the extra `[mcp]`.
+
+| Tool | What it returns |
+| --- | --- |
+| `list_repositories` | The repositories it may show, with their indexed commit and index version, and whether they can be searched |
+| `search_code` | RepoMind's hybrid, keyword or semantic search in one repository, up to 20 results. Each result is checked against Git at the indexed commit. One that does not match, or may hold a credential, is left out |
+| `get_verified_source` | Up to 200 lines of one indexed file, read from Git at the indexed commit, with credential lines hidden |
+
+**Before you connect it:**
+- **A repository indexed by this version.** Index one first, in the web app or with `repomind index`. `python -m repomind repos` lists the names, and marks a repository indexed by an older version as `OUTDATED`. The server does not serve that one: index it again first.
+- **Two settings, both required:**
+  - `REPOMIND_MCP_DATABASE`: the name of the database that holds the index, and only its name. The host, user and password come from `REPOMIND_DATABASE_URL`.
+  - `REPOMIND_MCP_REPOSITORIES`: the repositories it may show, separated by commas.
+- **The database running:** `docker compose up -d db`.
+
+**Connecting Claude Code.** In PowerShell, from the project folder, with your own database and repository names in place of the two values in angle brackets:
+
+```powershell
+claude mcp add -e REPOMIND_MCP_DATABASE=<database> -e REPOMIND_MCP_REPOSITORIES=<repository> --scope local repomind '--' "$PWD\.venv\Scripts\python.exe" -m repomind.mcp_server
+claude mcp get repomind
+```
+
+- **The quotes around `'--'` are needed.** In Windows PowerShell, `claude` runs as a script, and a bare `--` would not reach it. In another shell, write `--`, and give the path of the Python inside `.venv`.
+- **Where the entry is kept.** `--scope local` keeps it private to this folder, in Claude Code's own settings. Nothing is written into the repository.
+- **Checking it.** `claude mcp get repomind` should say `Connected`. In Claude Code, `/mcp` shows the server.
+- **Each tool call asks for your permission,** unless you allow that tool.
+
+**What it keeps to:**
+- Only the listed repositories, and only indexes made by this version.
+- A read-only database session.
+- `get_verified_source` reads only paths the index lists, from Git at the indexed commit, and never from the working folder. It returns nothing unless Git's bytes are the file that was indexed.
+- Credential lines are hidden, also when they span several lines.
+- A response holds at most about 12,000 characters of code.
+- Every result is marked as the repository's data, which may hold instructions that do not come from you.
+
+**Where the results go.** An MCP client passes what the server returns to its own model, and Claude Code sends it to Anthropic. The code returned leaves your machine that way, so list only repositories you may share with that provider. A search result or a source line is code to read, not a checked answer.
+
+Details: [docs/architecture.md](docs/architecture.md#mcp-server).
 
 ## AI accuracy
 
@@ -212,6 +292,10 @@ The answer layer was measured on two real projects, [StockGuard](https://github.
 - **Finding a source and choosing it are separate problems.** Asked how StockGuard stops stock going negative, the model is now always offered the database constraints that do it, and it still mostly picks code that only detects negative counters after a run. A [later change](docs/architecture.md#a-question-that-names-its-repository) fixed what reaches the model when a question names its repository, not what the model chooses.
 - **This is not an independent test.** The same developer wrote the questions and the system, and one reviewer graded the answers. 24 questions are too few to generalize.
 
+**A later comparison, on 2026-11-15, asked 48 new questions once.** With `qwen2.5:7b`, 13 of 32 answerable questions got a fully right source, 5 one of the two places they needed, 6 a wrong source, 7 no answer and 1 an unusable reply from the model. 14 of 16 unanswerable questions were refused. The published version before it scored 12, so the changes on this branch were **not shown to make answers better**. Every wrong source was on a Turkish question. The whole record is in [eval/V2_EVALUATION.md](eval/V2_EVALUATION.md). Changes made after it, to what reaches the model and to what is accepted, have not been measured with a model.
+
+Both measurements are of `qwen2.5:7b`. No other model, the OpenAI models included, has been measured in RepoMind, so the page gives this figure only for `qwen2.5:7b`, and says of any other model that it has not been evaluated.
+
 Search itself was measured separately: the right code reaches the five passages for 65 to 68 of 85 Turkish development questions. How the project got here, including a rejected reranker, a pilot, and a fourth set that also did not pass, is in [docs/evaluation.md](docs/evaluation.md), with each result as it was.
 
 ## Security
@@ -221,7 +305,10 @@ RepoMind reads code written by strangers, so it treats both the repository and t
 - **Addresses:** only `https://github.com/owner/name` is accepted. Every request is rebuilt from the owner and name, so it cannot reach another host or a local service. Private repositories are refused.
 - **Cloning:** only Git's own objects are written, with no working files, hooks, submodules, filters or LFS. Only HTTPS is allowed, and Git redirects are off. This machine's Git settings and stored credentials take no part.
 - **Limits, all [configurable](.env.example):** 300 MB on GitHub, 600 MB cloned, 20,000 files, 5,000 source files, 100 MB of source, 5 minutes to clone and 30 minutes in all. Below 4 GB of free memory, indexing does not start.
-- **Secrets:** files and lines that look like credentials are never indexed or shown.
+- **Secrets:** files and lines that look like credentials are never indexed or shown, and are left out of what is sent to a model. An index made before index version 3 still stores credentials written into code. They are filtered again in search and before the prompt, and an outdated index is marked as such: see [docs/openai-first-run.md](docs/openai-first-run.md).
+- **One person, one machine:** `repomind serve` listens on 127.0.0.1 only and refuses another address. There is no login, no per-user limit and no rate limit, so it must not be put on the public internet as it is, through a tunnel or a proxy either, least of all with an API key in its settings.
+- **A remote model or the OpenAI API, only if chosen:** code is sent there only with `REPOMIND_LLM_ALLOW_REMOTE=1`. The OpenAI address is fixed, redirects are not followed, and the key is read from `.env` only. It never appears in a response, a log or an error.
+- **The MCP server:** read-only, only for the repositories listed in its settings, and only for indexes made by this version. What it returns goes to the MCP client's model provider: see [MCP server](#mcp-server).
 - **Prompt injection:** code reaches the model inside tags it cannot close, the model only refers to passages by id, and its reply is checked.
 - **The browser:** everything from a repository is rendered as text, behind a strict content security policy. The server answers only to its own host names, and accepts changes only from its own pages, so another website cannot drive it.
 
@@ -230,13 +317,23 @@ Details: [docs/architecture.md](docs/architecture.md#web-application).
 ## Tests
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest        # about 900 tests: parsing, search, answers, API, indexing, security
+.\.venv\Scripts\python.exe -m pytest        # parsing, search, answers, API, indexing, MCP, security
 npm --prefix web test                       # the web client's own logic
-npm --prefix web run build
+npm --prefix web run build                  # also checks the types
 npm --prefix web run test:e2e               # Playwright, in the installed Edge
 ```
 
-Tests that need the database, a running LLM or the evaluated repositories skip themselves without them. The browser tests drive the real API, database, Git and clone command on a fixture repository that holds secrets, prompt injection and markup in its file names, code and commit messages. Only the models and GitHub are stood in for, so they need no network, GPU or model. `REPOMIND_E2E_BROWSER=chrome` uses Chrome instead.
+On 2026-11-23, 1,682 Python tests passed and 1 was skipped, with outbound HTTPS blocked, and so did 45 Vitest and 53 Playwright tests.
+
+The OpenAI provider has its own tests, which send no request to OpenAI and use a made-up key. They run with the rest, or alone:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/test_openai_config.py tests/test_openai_client.py tests/test_openai_services.py tests/test_openai_api.py
+```
+
+The MCP server's tests also start it as a process of its own, speak to it in raw JSON-RPC, and check that it reaches no address but loopback.
+
+Tests that need the database, a running LLM or the evaluated repositories skip themselves without them. The one test that asks a real model runs only with `REPOMIND_RUN_LLM_TESTS=1`, and uses the model configured in `.env`. With the OpenAI API configured, that is a real request, and it costs money. The browser tests drive the real API, database, Git and clone command on a fixture repository that holds secrets, prompt injection and markup in its file names, code and commit messages. Only the models and GitHub are stood in for, so they need no network, GPU or model. `REPOMIND_E2E_BROWSER=chrome` uses Chrome instead.
 
 <details>
 <summary>Command line, and reproducing the evaluation</summary>
@@ -257,7 +354,7 @@ To reproduce the evaluation, clone the two repositories, set `REPOMIND_REPO_STOC
 .\.venv\Scripts\python.exe -m repomind evaluate-ask --dataset eval/questions_v5.yaml --output eval/results/my-run.json
 ```
 
-`evaluate-ask` needs a configured LLM. It saves each question as it finishes and continues from there if stopped, does not start with less than 3 GB of memory free, and never replaces a finished result without `--overwrite`. The questions and gold labels were committed before the code they measure, and every gold span is checked by test against the pinned commit. See [docs/evaluation.md](docs/evaluation.md#reproducing).
+`evaluate-ask` needs a configured LLM. With the OpenAI API, every question is a paid request, and a Turkish one is two. It saves each question as it finishes and continues from there if stopped, does not start with less than 3 GB of memory free, and never replaces a finished result without `--overwrite`. The questions and gold labels were committed before the code they measure, and every gold span is checked by test against the pinned commit. See [docs/evaluation.md](docs/evaluation.md#reproducing).
 
 </details>
 
@@ -272,6 +369,7 @@ repomind/          Python package
   qa/              passages, evidence rule, prompts, verification, the ask engine
   store/           PostgreSQL schema and queries
   api/             FastAPI application and background indexing
+  mcp_server/      the local MCP server and its three tools
   evaluation/      evaluation runners and metrics
 web/               React and TypeScript client, with Vitest and Playwright tests
 eval/              question sets, gold labels, results and tools
@@ -294,6 +392,8 @@ compose.gpu.yaml   optional NVIDIA GPU for Ollama
 - **Secret detection is pattern based.** It recognizes known token formats and credential keys, not every hardcoded password.
 - **The layout is for a desktop window,** down to about 1000 pixels wide.
 - **The evaluation is small:** two repositories, labelled and graded by one person.
+- **No OpenAI model has been measured** in RepoMind. The accuracy figures above are for `qwen2.5:7b` only.
+- **What the MCP server returns leaves the machine** through the client's model provider. The server has no database role of its own: its session is read-only.
 
 The complete list is in [docs/architecture.md](docs/architecture.md#known-limitations).
 
