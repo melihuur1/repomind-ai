@@ -4,9 +4,9 @@
 
 **Bir kod tabanında bir işin nerede ve nasıl yapıldığını bulun, o işi yapan satırları birebir okuyun.**
 
-RepoMind bir GitHub deposunu (repository) yerel olarak indeksler; depoyu gezmenizi, içinde arama yapmanızı ve ona Türkçe ya da İngilizce soru sormanızı sağlar. Her sonuç, geldiği Git commit'ine sabitlenmiş gerçek bir satır aralığıdır; böylece onu açabilir, bağlantısını paylaşabilir ve kendiniz kontrol edebilirsiniz. Kendi makinenizde çalışır; hesap ya da ücretli API gerektirmez.
+RepoMind bir GitHub deposunu (repository) yerel olarak indeksler; depoyu gezmenizi, içinde arama yapmanızı ve ona Türkçe ya da İngilizce soru sormanızı sağlar. Her sonuç, geldiği Git commit'ine sabitlenmiş gerçek bir satır aralığıdır; böylece onu açabilir, bağlantısını paylaşabilir ve kendiniz kontrol edebilirsiniz. Kendi makinenizde çalışır. Varsayılan kurulum hesap, API anahtarı ya da ücretli bir API gerektirmez. OpenAI API'si isteğe bağlı bir seçenektir ve ücretlidir.
 
-> **Durum: tek bir makinede tek bir kişi için çalışan, yerel bir web uygulaması.** Kodda arama yapmak ve kodu okumak güvenilir biçimde çalışır. **Yapay zekâ analizi deneyseldir ve sık sık yanılır:** son ölçümde 16 sorunun 8'inde doğru kaynağı, 4'ünde ise yanlış bir kaynağı gösterdi. Gösterdiği her satırı okuyun. Bkz. [Yapay zekâ doğruluğu](#yapay-zekâ-doğruluğu).
+> **Durum: tek bir makinede tek bir kişi için çalışan, yerel bir web uygulaması.** Kodda arama yapmak ve kodu okumak güvenilir biçimde çalışır. **Yapay zekâ analizi deneyseldir ve sık sık yanılır:** `qwen2.5:7b` ile yapılan son ölçümde, yanıtlanabilir 32 sorunun 13'ünde tamamen doğru kaynağı, 6'sında ise yanlış bir kaynağı gösterdi. Gösterdiği her satırı okuyun. Bkz. [Yapay zekâ doğruluğu](#yapay-zekâ-doğruluğu).
 
 ![RepoMind, StockGuard'ın dosya ağacını ve indekslenen commit'teki bir Java dosyasını, bağlantıyla seçilmiş bir satır aralığıyla gösteriyor](docs/screenshots/repository-explorer.png)
 
@@ -14,7 +14,7 @@ RepoMind bir GitHub deposunu (repository) yerel olarak indeksler; depoyu gezmeni
 
 - [Neden](#neden) · [Özellikler](#özellikler) · [Ekran görüntüleri](#ekran-görüntüleri) · [Nasıl çalışır](#nasıl-çalışır)
 - [Windows'ta başlarken](#windowsta-başlarken): [önce bir depo ekleyin](#önce-bir-depo-ekleyin), [yapay zekâ analizi](#yapay-zekâ-analizi-isteğe-bağlı), [GPU ile veya GPU olmadan](#gpu-ile-veya-gpu-olmadan), [sık karşılaşılan sorunlar](#sık-karşılaşılan-sorunlar)
-- [Kullanım](#kullanım) · [Yapay zekâ doğruluğu](#yapay-zekâ-doğruluğu) · [Güvenlik](#güvenlik) · [Testler](#testler)
+- [Kullanım](#kullanım) · [MCP sunucusu](#mcp-sunucusu) · [Yapay zekâ doğruluğu](#yapay-zekâ-doğruluğu) · [Güvenlik](#güvenlik) · [Testler](#testler)
 - [Proje yapısı](#proje-yapısı) · [Bilinen sınırlamalar](#bilinen-sınırlamalar) · [Üçüncü taraf yazılımlar ve modeller](#üçüncü-taraf-yazılımlar-ve-modeller) · [Lisans](#lisans)
 
 ## Neden
@@ -27,7 +27,8 @@ Bir sohbet modeline tanımadığınız bir depo hakkında soru sormak, çoğu za
 - **Kodu commit'lendiği hâliyle gezin.** Bir dosya ağacı ile satır numaralı ve sözdizimi renklendirmeli bir kod görünümü; içerik, indekslenen commit'te Git'ten okunur. `…/blob/<commit>/src/App.ts#L12-L20` gibi bağlantılar her zaman aynı satırları açar; GitHub'dan eklenen bir depoda bir düğme aynı satırları GitHub'da da açar.
 - **Kodda üç yolla arayın.** Anahtar kelime (BM25), anlamsal (pgvector ile vektör araması) ya da ikisini Reciprocal Rank Fusion (RRF) ile birleştiren hibrit arama. Her sonuç neden bulunduğunu gösterir ve kendi satırlarında açılır.
 - **Türkçe veya İngilizce sorun.** Türkçe sorular yerel olarak çevrilir ve her iki ifade de aranır. Kod, tanımlayıcılar (identifier) ve yapılandırma anahtarları değiştirilmeden korunur.
-- **Deneysel yapay zekâ analizi.** Ollama üzerinde çalışan yerel bir model (`qwen2.5:7b`), bulunan satırlar arasından seçim yapar ya da hiçbirini seçmez. Git'te var olan satırlar, kanıt kuralını geçen satırlar ve modelin kendi cümlesi birbirinden ayrı ve etiketli olarak gösterilir.
+- **Deneysel yapay zekâ analizi.** Varsayılan olarak Ollama üzerinde çalışan yerel bir model (`qwen2.5:7b`), bulunan satırlar arasından seçim yapar ya da hiçbirini seçmez. Onun yerine OpenAI API'si de kullanılabilir; ücretlidir ve ayrıca açılması gerekir. Git'te var olan satırlar, kanıt kuralını geçen satırlar ve modelin kendi cümlesi birbirinden ayrı ve etiketli olarak gösterilir.
+- **Bir MCP sunucusu.** Claude Code gibi bir MCP istemcisi, üç salt okunur araç sunan yerel bir stdio sunucusu üzerinden, izin verilen depolarda arama yapabilir ve satırları indekslenen commit'te Git'ten okuyabilir: `list_repositories`, `search_code` ve `get_verified_source`. Sunucu hiçbir modele soru sormaz.
 - **Varsayılan olarak yerel ve size özel.** Yalnızca `127.0.0.1` üzerinde dinler, embedding'ler CPU'da hesaplanır, GPU isteğe bağlıdır.
 - **Depoları güvenilmez (hostile) kabul eder.** Kod asla çalıştırılmaz, gizli bilgiler (secrets) ve kimlik bilgileri (credentials) indekse girmez, koddaki prompt injection (istem enjeksiyonu) girişimlerinin etkisi sınırlandırılır ve her şey düz metin olarak gösterilir.
 
@@ -61,7 +62,7 @@ flowchart LR
     Q["Türkçe veya İngilizce soru"] --> S["BM25 + vektör araması, RRF ile birleştirilir"]
     DB --> S
     S --> P["Git'e karşı doğrulanmış birkaç kısa pasaj"]
-    P --> M["İsteğe bağlı yerel LLM: pasajları seçer ya da hiçbirini seçmez"]
+    P --> M["İsteğe bağlı LLM, varsayılanı yerel: pasajları seçer ya da hiçbirini seçmez"]
     M --> A["Deponun kendi satırları, etiketli kontrollerle"]
 ```
 
@@ -80,7 +81,8 @@ flowchart LR
 | Embedding'ler | [`intfloat/multilingual-e5-small`](https://huggingface.co/intfloat/multilingual-e5-small), 384 boyutlu; fastembed ve ONNX Runtime aracılığıyla CPU'da |
 | Arama | BM25 ve kosinüs benzerliği, Reciprocal Rank Fusion ile birleştirilir |
 | Çeviri | CTranslate2 üzerinden CPU'da çalışan Opus-MT (Türkçeden İngilizceye); LLM çalışıyorsa o da kullanılır |
-| LLM (isteğe bağlı) | Docker'daki Ollama üzerinde `qwen2.5:7b` ya da OpenAI uyumlu herhangi bir uç nokta (endpoint) |
+| LLM (isteğe bağlı) | Varsayılan olarak Docker'daki Ollama üzerinde `qwen2.5:7b`. OpenAI uyumlu herhangi bir uç nokta (endpoint) ya da ücretli OpenAI API'si de kullanılabilir |
+| MCP | MCP Python SDK 2.x ile yazılmış, stdio üzerinden çalışan yerel bir sunucu; isteğe bağlı `[mcp]` eki (extra) |
 | Ön yüz (frontend) | React 19, TypeScript, Vite, TanStack Query, React Router, lowlight aracılığıyla highlight.js |
 | Testler | pytest, Vitest, Edge veya Chrome'da Playwright |
 
@@ -116,7 +118,7 @@ npm --prefix web run build           # web istemcisini web\dist içine derler
 .\.venv\Scripts\python.exe -m repomind serve
 ```
 
-<http://127.0.0.1:7321> adresini açın. Komutlar sanal ortamın Python'unu doğrudan çağırır; böylece PowerShell'in betik çalıştırma ilkesi (execution policy) sanal ortamı etkinleştirmeye engel olmaz. macOS veya Linux'ta `python3 -m venv .venv`, `.venv/bin/python` ve `cp .env.example .env` kullanın.
+<http://127.0.0.1:7321> adresini açın. Bunların hiçbiri API anahtarı gerektirmez. Komutlar sanal ortamın Python'unu doğrudan çağırır; böylece PowerShell'in betik çalıştırma ilkesi (execution policy) sanal ortamı etkinleştirmeye engel olmaz. macOS veya Linux'ta `python3 -m venv .venv`, `.venv/bin/python` ve `cp .env.example .env` kullanın.
 
 ### Önce bir depo ekleyin
 
@@ -148,6 +150,38 @@ REPOMIND_LLM_MODEL=qwen2.5:7b
 
 Model, RepoMind çalışırken başlatılıp durdurulabilir; üst çubuktaki durum göstergesi bunu takip eder. `docker compose stop ollama` modelin kullandığı belleği geri verir. Konteyner aynı anda yalnızca bir modeli yüklü tutar ve 8 GB ile sınırlıdır.
 
+**Kendi sunucunuz.** Başka bir makinedeki daha büyük bir model de aynı ayarlarla çalışır: `.env.example` içindeki ilgili bölüme bakın. Her soru ve onun için seçilen kod satırları o sunucuya gönderilir. Bunun `REPOMIND_LLM_ALLOW_REMOTE=1` ile açıkça açılması gerekir; sayfa da uzak bir modelin kullanıldığını belirtir.
+
+**OpenAI API'si.** İsteğe bağlıdır ve ücretlidir. Her soru ve onun için seçilen kod satırları OpenAI'ye gönderilir. Kimlik bilgisi içerebilecek satırlar önce çıkarılır; ancak bunu yapan kurallar tanımadıkları bir gizli bilgiyi kaçırabilir. RepoMind `store: false` gönderir; bu, OpenAI'den konuşmayı kendi ürünleri için saklamamasını ister. Hiçbir şeyin saklanmayacağına dair bir söz değildir: bunu OpenAI'nin kendi veri politikası belirler. Git'in yoksaydığı `.env` dosyasında:
+
+```bash
+REPOMIND_LLM_PROVIDER=openai
+REPOMIND_LLM_MODEL=              # OpenAI'nin model listesinden, o gün kontrol edilerek
+REPOMIND_LLM_API_KEY=            # hiçbir zaman Git'in izlediği bir dosyada değil
+REPOMIND_LLM_ALLOW_REMOTE=1      # kodun gönderilmesine açık izin
+REPOMIND_LLM_INPUT_USD_PER_MTOK=     # OpenAI'nin fiyat sayfasından, 0'dan büyük
+REPOMIND_LLM_OUTPUT_USD_PER_MTOK=    # aynı şekilde
+REPOMIND_LLM_CACHE_WRITE_USD_PER_MTOK=   # 30 dakikalık önbellek yazma fiyatı, 0'dan büyük
+# REPOMIND_LLM_CACHED_INPUT_USD_PER_MTOK= # isteğe bağlı; yoksa önbellekten okumalar tam girdi fiyatıyla sayılır
+REPOMIND_LLM_MAX_TOTAL_COST_USD=0.05 # RepoMind'ın sizin fiyatlarınızla tuttuğu sayım; kesin bir üst sınır değil
+# REPOMIND_LLM_REASONING_EFFORT=low  # yalnızca akıl yürüten (reasoning) bir model için, kabul ettiği bir değerle
+```
+
+- **Burada hiçbir model ya da fiyat yazılı değildir.** İkisi de değişir; bu yüzden ikisini de o gün [OpenAI'nin model listesinden](https://platform.openai.com/docs/models) ve [fiyat sayfasından](https://openai.com/api/pricing/) alın.
+- **Adres sabittir.** Adres `https://api.openai.com/v1`'dir ve anahtar asla başka bir yere, bir yönlendirmeden sonra da gönderilmez.
+- **Önbellekli girdinin kendi fiyatları vardır.** OpenAI uzun bir prompt'un başını kendiliğinden önbelleğe alır. Her girdi token'ı üç fiyattan biriyle faturalanır: önbelleksiz, önbellekten okunan ya da önbelleğe yazılan. Yazma, önbelleksiz fiyatın üstüne eklenmez, onun yerine geçer. RepoMind her bölümü kendi fiyatıyla sayar. Bir istekten önce her girdi token'ını bu fiyatların en yükseğiyle hesaba katar.
+- **Bütçe kesin bir üst sınır değildir.** RepoMind, girdiğiniz fiyatlarla tuttuğu kendi sayımı bir sonraki isteğin bütçeyi aşabileceğini gösterdiğinde artık istek göndermez.
+  - Bütçe yine de aşılabilir: yanlış fiyatlarla, gerçek sayıdan düşük kalan bir token tahminiyle ya da aynı anda sorulan iki soruyla.
+  - Bu sayım OpenAI'nin faturası değildir.
+  - OpenAI projesinde de bir harcama sınırı koyun.
+- **Türkçe bir soru iki istektir.** Model önce soruyu çevirir, sonra pasajlar arasından seçim yapar. Yalnızca arama yaptığınızda çeviri bu makinede yapılır ve hiçbir şey gönderilmez.
+- **Yanlış bir ayar** üst çubukta **AI settings invalid** (yapay zekâ ayarları geçersiz) olarak adıyla gösterilir ve hiçbir istek gönderilmez.
+- **Sayfanın gösterdikleri.** Yapay zekâ paneli modeli, neyin gönderildiğine dair notu ve RepoMind'ın sizin fiyatlarınızdan saydığı harcamayı gösterir; bu, OpenAI'nin faturası değildir. Ücretlendirilmiş olabileceği bir anda başarısız olan bir istek için en yüksek tutarla sayılan maliyet ayrıca işaretlenir.
+- **OpenAI başarısız olduğunda** (anahtar reddedildiğinde, bir sınıra ulaşıldığında, bütçe bittiğinde ya da OpenAI'ye ulaşılamadığında) soru yine de aramanın bulduğu en yakın satırları döndürür ve nedenini söyler.
+- **Geri dönmek için** `REPOMIND_LLM_PROVIDER` satırını ve anahtarı kaldırın, iki yerel satırı geri getirin.
+
+İlk gerçek istekten önce [docs/openai-first-run.md](docs/openai-first-run.md) (İngilizce) belgesini okuyun.
+
 ### GPU ile veya GPU olmadan
 
 **GPU olmadan** hiçbir şey değişmez: varsayılan budur ve yalnızca isteğe bağlı LLM daha yavaş çalışır. Geliştirme makinesinde tek bir Türkçe soru, modelin yüklenmesi dahil, CPU'da yaklaşık 50 saniye sürdü.
@@ -172,6 +206,11 @@ Bunlar tek bir makinede ölçülmüş tekil sorulardır; kıyaslama (benchmark) 
 | **AI offline** (yapay zekâ çevrim dışı) | Ollama çalışmıyor | `docker compose --profile llm up -d ollama` |
 | **AI model missing** (model eksik) | Model indirilmemiş (pull edilmemiş) | `docker exec repomind-ollama ollama pull qwen2.5:7b` |
 | **AI paused** (yapay zekâ duraklatıldı) | 4 GB'tan az boş bellek var | Bazı programları kapatın ve yeniden sorun |
+| **AI settings invalid** (yapay zekâ ayarları geçersiz) | `.env` içindeki bir model ayarı hatalı; örneğin anahtar ya da fiyatlar olmadan `REPOMIND_LLM_PROVIDER=openai` | Yapay zekâ paneli ilgili ayarın adını verir |
+| **AI key refused** (anahtar reddedildi) | OpenAI anahtarı kabul etmedi (HTTP 401 veya 403) | `REPOMIND_LLM_API_KEY` değerini ve anahtarın etkin olduğunu kontrol edin |
+| **AI budget spent** (bütçe tükendi) | Bir sonraki istek `REPOMIND_LLM_MAX_TOTAL_COST_USD` değerini aşabilir | Daha fazla harcama gerçekten isteniyorsa değeri artırın |
+| **AI limited** (yapay zekâ sınırlandı) | OpenAI'nin kotası, harcama sınırı ya da istek hızı sınırı | Yapay zekâ paneli hangisi olduğunu söyler. Hız sınırı kendiliğinden geçer; kota için OpenAI hesabında işlem gerekir |
+| **AI request refused** (istek reddedildi) | OpenAI isteği kabul etmedi; çoğunlukla modelin almadığı bir parametre yüzünden | Akıl yürüten bir model için `REPOMIND_LLM_REASONING_EFFORT` ayarlayın |
 | `GitHub is limiting requests from this machine` | GitHub'ın anonim API'si saatte yaklaşık 60 isteğe izin verir | Bekleyin, ardından **Retry** (yeniden dene) düğmesine basın |
 | `Git on Windows cannot write a clone this deep in the folder tree` | Klonun yolu 260 karakteri aşacak | `.env` içinde `REPOMIND_DATA_DIR=C:\repomind-data` ayarlayın ya da projeyi kısa bir yolda tutun |
 | `npm ci` sırasında `npm warn install-scripts … esbuild` | npm 11, onaylanmadıkça kurulum betiklerini (install scripts) çalıştırmaz | Zararsızdır: derleme bu betik olmadan da çalışır |
@@ -194,7 +233,48 @@ Arayüz İngilizcedir. Aşağıda düğme ve etiketler arayüzdeki özgün adlar
 | **Not enough evidence** (yeterli kanıt yok) | "Bilmiyorum": hiçbir satır kontrolü geçmedi | Kodda bunun kesinlikle bulunmadığı. Arama bazı şeyleri kaçırır |
 | **Source to review** (incelenecek kaynak) | Model burayı gösterdi, ancak kanıt kuralı kabul etmedi | Bir yanıt olduğu |
 | **Closest lines found** (bulunan en yakın satırlar) | Aramanın bulduğu satırlar; hiçbir model bunları değerlendirmedi | Bir yanıt olduğu |
-| **AI unavailable** (yapay zekâ kullanılamıyor) | Model kapalı ya da bellek az olduğu için modele sorulmadı | Bir arıza olduğu: geri kalan her şey çalışmaya devam eder |
+| **AI unavailable** (yapay zekâ kullanılamıyor) | Modele sorulmadı: model kapalı, bellek az, anahtarı reddedildi, bütçesi bitti ya da bir sınıra ulaşıldı. Aşağıdaki satırları yalnızca arama buldu ve nedeni belirtilir | Bir arıza olduğu: geri kalan her şey çalışmaya devam eder |
+
+## MCP sunucusu
+
+`python -m repomind.mcp_server`, Claude Code gibi bir MCP istemcisinin RepoMind'ın indeksinde arama yapmasını ve doğrulanmış satırları okumasını sağlar. MCP Python SDK ile yazılmış, stdio üzerinden çalışan yerel bir sunucudur. Hiçbir ağ portu açmaz ve hiçbir modele soru sormaz. Yukarıdaki kurulum komutu SDK'yı zaten kurar; tek başına kurmak için isteğe bağlı `[mcp]` ekini (extra) kullanın.
+
+| Araç | Döndürdüğü |
+| --- | --- |
+| `list_repositories` | Gösterebileceği depolar; indekslenen commit'leri, indeks sürümleri ve aranıp aranamayacakları |
+| `search_code` | RepoMind'ın tek bir depodaki hibrit, anahtar kelime ya da anlamsal araması, en fazla 20 sonuç. Her sonuç indekslenen commit'te Git'e karşı kontrol edilir. Eşleşmeyen ya da kimlik bilgisi içerebilecek bir sonuç dışarıda bırakılır |
+| `get_verified_source` | İndekslenmiş bir dosyanın en fazla 200 satırı; indekslenen commit'te Git'ten okunur, kimlik bilgisi içeren satırlar gizlenir |
+
+**Bağlamadan önce gerekenler:**
+- **Bu sürümle indekslenmiş bir depo.** Önce web uygulamasında ya da `repomind index` ile bir depo indeksleyin. `python -m repomind repos` adları listeler ve eski bir sürümle indekslenmiş depoyu `OUTDATED` olarak işaretler. Sunucu böyle bir depoyu sunmaz: önce yeniden indeksleyin.
+- **İkisi de zorunlu iki ayar:**
+  - `REPOMIND_MCP_DATABASE`: indeksi tutan veritabanının adı, yalnızca adı. Sunucu, kullanıcı ve parola `REPOMIND_DATABASE_URL` ayarından alınır.
+  - `REPOMIND_MCP_REPOSITORIES`: gösterebileceği depolar, virgülle ayrılmış olarak.
+- **Çalışan bir veritabanı:** `docker compose up -d db`.
+
+**Claude Code'a bağlamak.** PowerShell'de, proje klasöründen; köşeli parantez içindeki iki değerin yerine kendi veritabanı ve depo adlarınızı yazarak:
+
+```powershell
+claude mcp add -e REPOMIND_MCP_DATABASE=<database> -e REPOMIND_MCP_REPOSITORIES=<repository> --scope local repomind '--' "$PWD\.venv\Scripts\python.exe" -m repomind.mcp_server
+claude mcp get repomind
+```
+
+- **`'--'` etrafındaki tırnaklar gereklidir.** Windows PowerShell'de `claude` bir betik olarak çalışır ve tırnaksız bir `--` ona ulaşmaz. Başka bir kabukta `--` yazın ve `.venv` içindeki Python'un yolunu verin.
+- **Kaydın tutulduğu yer.** `--scope local` kaydı yalnızca bu klasöre özel olarak, Claude Code'un kendi ayarlarında tutar. Depoya hiçbir şey yazılmaz.
+- **Kontrol etmek için.** `claude mcp get repomind` çıktısında `Connected` görünmelidir. Claude Code içinde `/mcp` sunucuyu gösterir.
+- **Her araç çağrısı sizden izin ister;** siz o araca izin vermediğiniz sürece.
+
+**Uyduğu kurallar:**
+- Yalnızca listelenen depolar ve yalnızca bu sürümle yapılmış indeksler.
+- Salt okunur bir veritabanı oturumu.
+- `get_verified_source` yalnızca indeksin listelediği yolları, indekslenen commit'te Git'ten okur; çalışma klasöründen asla okumaz. Git'in verdiği baytlar indekslenen dosya değilse hiçbir şey döndürmez.
+- Kimlik bilgisi içeren satırlar, birden fazla satıra yayıldıklarında da gizlenir.
+- Bir yanıt en fazla yaklaşık 12.000 karakter kod içerir.
+- Her sonuç deponun verisi olarak işaretlenir; bu veri sizden gelmeyen talimatlar içerebilir.
+
+**Sonuçların gittiği yer.** Bir MCP istemcisi sunucunun döndürdüğünü kendi modeline iletir; Claude Code bunu Anthropic'e gönderir. Döndürülen kod makinenizden bu yolla çıkar; bu yüzden yalnızca o sağlayıcıyla paylaşabileceğiniz depoları listeleyin. Bir arama sonucu ya da kaynak satırı okunacak koddur, doğrulanmış bir yanıt değildir.
+
+Ayrıntılar: [docs/architecture.md](docs/architecture.md#mcp-server) (İngilizce).
 
 ## Yapay zekâ doğruluğu
 
@@ -216,6 +296,10 @@ Kısacası: cevabı depoda bulunan 16 sorunun yalnızca yarısında doğru kayna
 - **Kaynağı bulmak ile onu seçmek ayrı sorunlardır.** StockGuard'ın stoğun negatife düşmesini nasıl engellediği sorulduğunda, bunu sağlayan veritabanı kısıtları (constraint) artık her seferinde modele sunuluyor; buna rağmen model çoğunlukla, negatif sayaçları yalnızca bir çalıştırmanın ardından tespit eden kodu seçiyor. [Sonraki bir değişiklik](docs/architecture.md#a-question-that-names-its-repository) (İngilizce), soru deponun adını andığında modele neyin ulaştığını düzeltti; modelin neyi seçtiğini değil.
 - **Bu bağımsız bir test değildir.** Soruları ve sistemi aynı geliştirici yazdı, yanıtları tek bir değerlendirici notlandırdı. 24 soru, genelleme yapmak için çok azdır.
 
+**2026-11-15'teki sonraki bir karşılaştırmada 48 yeni soru bir kez soruldu.** `qwen2.5:7b` ile yanıtlanabilir 32 sorunun 13'ünde tamamen doğru kaynak, 5'inde gereken iki yerden biri, 6'sında yanlış kaynak gösterildi; 7'si yanıtsız kaldı ve 1'inde model kullanılamaz bir yanıt verdi. Yanıtlanamaz 16 sorunun 14'ü reddedildi. Bundan önce yayımlanan sürüm aynı sorularda 12 tam doğru kaynak bulmuştu; yani bu daldaki değişikliklerin yanıtları **iyileştirdiği gösterilemedi**. Yanlış kaynakların hepsi Türkçe sorulardaydı. Kaydın tamamı [eval/V2_EVALUATION.md](eval/V2_EVALUATION.md) (İngilizce) belgesindedir. Bundan sonra modele ulaşan ve kabul edilen satırlarda yapılan değişiklikler bir modelle ölçülmedi.
+
+Her iki ölçüm de `qwen2.5:7b` ile yapıldı. OpenAI modelleri dahil başka hiçbir model RepoMind'da ölçülmedi; bu yüzden sayfa bu doğruluk bilgisini yalnızca `qwen2.5:7b` için verir, diğer modeller için değerlendirilmediklerini söyler.
+
 Aramanın kendisi ayrıca ölçüldü: 85 Türkçe geliştirme sorusunun (sistemin üzerinde ayarlandığı sorular; bağımsız bir ölçüm değildir) 65 ila 68'inde doğru kod beş pasaja ulaşıyor. Projenin buraya nasıl geldiği (reddedilen bir reranker, bir pilot çalışma ve yine geçemeyen dördüncü bir soru seti dahil), her sonuç olduğu gibi aktarılarak [docs/evaluation.md](docs/evaluation.md) (İngilizce) belgesinde anlatılır.
 
 ## Güvenlik
@@ -225,7 +309,10 @@ RepoMind yabancıların yazdığı kodu okur; bu yüzden hem depoyu hem de depon
 - **Adresler:** Yalnızca `https://github.com/owner/name` biçimi kabul edilir. Her istek, sahip (owner) ve ad (name) bilgisinden yeniden oluşturulur; böylece başka bir sunucuya ya da yerel bir servise ulaşamaz. Özel (private) depolar reddedilir.
 - **Klonlama:** Yalnızca Git'in kendi nesneleri yazılır; çalışma dosyaları, hook'lar, submodule'ler, filtreler ya da LFS kullanılmaz. Yalnızca HTTPS'e izin verilir ve Git yönlendirmeleri kapalıdır. Bu makinenin Git ayarları ve kayıtlı kimlik bilgileri sürece dahil olmaz.
 - **Sınırlar, tümü [yapılandırılabilir](.env.example):** GitHub'da 300 MB, klonlanmış hâlde 600 MB, 20.000 dosya, 5.000 kaynak dosya, 100 MB kaynak kod, klonlama için 5 dakika ve toplamda 30 dakika. Boş bellek 4 GB'ın altındaysa indeksleme başlamaz.
-- **Gizli bilgiler (secrets):** Kimlik bilgisine benzeyen dosya ve satırlar asla indekslenmez ya da gösterilmez.
+- **Gizli bilgiler (secrets):** Kimlik bilgisine benzeyen dosya ve satırlar asla indekslenmez ya da gösterilmez; bir modele gönderilenlerin de dışında tutulur. İndeks sürümü 3'ten önce yapılmış bir indeks, koda yazılmış kimlik bilgilerini hâlâ saklar. Bunlar aramada ve prompt'tan önce yeniden süzülür, eski indeks de eski olarak işaretlenir: bkz. [docs/openai-first-run.md](docs/openai-first-run.md) (İngilizce).
+- **Tek kişi, tek makine:** `repomind serve` yalnızca 127.0.0.1 üzerinde dinler ve başka bir adresi reddeder. Giriş, kullanıcı başına sınır ya da istek hızı sınırı yoktur; bu yüzden olduğu gibi herkese açık internete açılmamalıdır, bir tünel ya da proxy üzerinden de. Ayarlarında bir API anahtarı varsa bu daha da önemlidir.
+- **Uzak bir model ya da OpenAI API'si, yalnızca seçilirse:** Kod oraya yalnızca `REPOMIND_LLM_ALLOW_REMOTE=1` ile gönderilir. OpenAI adresi sabittir, yönlendirmeler izlenmez ve anahtar yalnızca `.env` dosyasından okunur. Anahtar hiçbir yanıtta, log'da ya da hata mesajında görünmez.
+- **MCP sunucusu:** Salt okunurdur; yalnızca ayarlarında listelenen depolar ve yalnızca bu sürümle yapılmış indeksler için çalışır. Döndürdükleri, MCP istemcisinin model sağlayıcısına gider: bkz. [MCP sunucusu](#mcp-sunucusu).
 - **Prompt injection:** Kod modele, kapatamayacağı etiketlerin (tag) içinde ulaşır; model pasajlara yalnızca kimlikleriyle (id) atıfta bulunur ve yanıtı kontrol edilir.
 - **Tarayıcı:** Depodan gelen her şey, katı bir içerik güvenlik politikasının (Content Security Policy) arkasında düz metin olarak gösterilir. Sunucu yalnızca kendi ana makine adlarına (host name) yanıt verir ve değişiklikleri yalnızca kendi sayfalarından kabul eder; böylece başka bir web sitesi onu yönetemez.
 
@@ -234,13 +321,23 @@ Ayrıntılar: [docs/architecture.md](docs/architecture.md#web-application) (İng
 ## Testler
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest        # yaklaşık 900 test: ayrıştırma, arama, yanıtlar, API, indeksleme, güvenlik
+.\.venv\Scripts\python.exe -m pytest        # ayrıştırma, arama, yanıtlar, API, indeksleme, MCP, güvenlik
 npm --prefix web test                       # web istemcisinin kendi mantığı
-npm --prefix web run build
+npm --prefix web run build                  # tipleri de kontrol eder
 npm --prefix web run test:e2e               # Playwright, kurulu Edge tarayıcısında
 ```
 
-Veritabanına, çalışan bir LLM'e ya da değerlendirilen depolara ihtiyaç duyan testler, bunlar yoksa kendilerini atlar. Tarayıcı testleri gerçek API'yi, veritabanını, Git'i ve klonlama komutunu; dosya adlarında, kodunda ve commit mesajlarında gizli bilgiler, prompt injection ve HTML işaretlemesi (markup) barındıran bir test deposu (fixture) üzerinde çalıştırır. Yalnızca modellerin ve GitHub'ın yerine sahteleri kullanılır; bu yüzden ağ, GPU ya da model gerekmez. `REPOMIND_E2E_BROWSER=chrome` ile Edge yerine Chrome kullanılır.
+2026-11-23'te, dışarıya HTTPS erişimi engellenmişken 1.682 Python testi geçti ve 1'i atlandı; 45 Vitest ve 53 Playwright testi de geçti.
+
+OpenAI sağlayıcısının kendi testleri vardır; bunlar OpenAI'ye hiçbir istek göndermez ve uydurma bir anahtar kullanır. Diğerleriyle birlikte ya da tek başlarına çalışırlar:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/test_openai_config.py tests/test_openai_client.py tests/test_openai_services.py tests/test_openai_api.py
+```
+
+MCP sunucusunun testleri onu ayrıca kendi sürecinde başlatır, onunla ham JSON-RPC ile konuşur ve loopback dışında hiçbir adrese ulaşmadığını kontrol eder.
+
+Veritabanına, çalışan bir LLM'e ya da değerlendirilen depolara ihtiyaç duyan testler, bunlar yoksa kendilerini atlar. Gerçek bir modele soru soran tek test yalnızca `REPOMIND_RUN_LLM_TESTS=1` ile çalışır ve `.env` içinde yapılandırılmış modeli kullanır. OpenAI API'si yapılandırılmışsa bu gerçek bir istektir ve ücretlidir. Tarayıcı testleri gerçek API'yi, veritabanını, Git'i ve klonlama komutunu; dosya adlarında, kodunda ve commit mesajlarında gizli bilgiler, prompt injection ve HTML işaretlemesi (markup) barındıran bir test deposu (fixture) üzerinde çalıştırır. Yalnızca modellerin ve GitHub'ın yerine sahteleri kullanılır; bu yüzden ağ, GPU ya da model gerekmez. `REPOMIND_E2E_BROWSER=chrome` ile Edge yerine Chrome kullanılır.
 
 <details>
 <summary>Komut satırı ve değerlendirmeyi yeniden üretme</summary>
@@ -261,7 +358,7 @@ Değerlendirmeyi yeniden üretmek için iki depoyu klonlayın, `.env` içinde `R
 .\.venv\Scripts\python.exe -m repomind evaluate-ask --dataset eval/questions_v5.yaml --output eval/results/my-run.json
 ```
 
-`evaluate-ask` yapılandırılmış bir LLM gerektirir. Her soruyu bittiği anda kaydeder ve durdurulursa kaldığı yerden devam eder; 3 GB'tan az boş bellek varsa başlamaz ve `--overwrite` verilmedikçe tamamlanmış bir sonucun üzerine asla yazmaz. Sorular ve altın (gold) etiketler, ölçtükleri koddan önce commit'lendi; her altın aralık (gold span), sabitlenmiş commit'e karşı bir testle kontrol edilir. Bkz. [docs/evaluation.md](docs/evaluation.md#reproducing) (İngilizce).
+`evaluate-ask` yapılandırılmış bir LLM gerektirir. OpenAI API'siyle her soru ücretli bir istektir, Türkçe bir soru ise iki istek. Her soruyu bittiği anda kaydeder ve durdurulursa kaldığı yerden devam eder; 3 GB'tan az boş bellek varsa başlamaz ve `--overwrite` verilmedikçe tamamlanmış bir sonucun üzerine asla yazmaz. Sorular ve altın (gold) etiketler, ölçtükleri koddan önce commit'lendi; her altın aralık (gold span), sabitlenmiş commit'e karşı bir testle kontrol edilir. Bkz. [docs/evaluation.md](docs/evaluation.md#reproducing) (İngilizce).
 
 </details>
 
@@ -276,6 +373,7 @@ repomind/          Python paketi
   qa/              pasajlar, kanıt kuralı, prompt'lar, doğrulama, ask motoru
   store/           PostgreSQL şeması ve sorguları
   api/             FastAPI uygulaması ve arka planda indeksleme
+  mcp_server/      yerel MCP sunucusu ve üç aracı
   evaluation/      değerlendirme çalıştırıcıları ve metrikler
 web/               React ve TypeScript istemcisi, Vitest ve Playwright testleriyle
 eval/              soru setleri, altın etiketler, sonuçlar ve araçlar
@@ -298,6 +396,8 @@ compose.gpu.yaml   Ollama için isteğe bağlı NVIDIA GPU
 - **Gizli bilgi tespiti desen (pattern) tabanlıdır.** Bilinen token biçimlerini ve kimlik bilgisi anahtarlarını tanır; koda gömülü her parolayı değil.
 - **Arayüz düzeni masaüstü penceresi içindir;** yaklaşık 1000 piksel genişliğe kadar.
 - **Değerlendirme küçüktür:** iki depo; etiketleme ve notlandırma tek bir kişi tarafından yapıldı.
+- **Hiçbir OpenAI modeli** RepoMind'da ölçülmedi. Yukarıdaki doğruluk sayıları yalnızca `qwen2.5:7b` içindir.
+- **MCP sunucusunun döndürdükleri makineden çıkar;** istemcinin model sağlayıcısı üzerinden. Sunucunun kendine ait bir veritabanı rolü yoktur; oturumu salt okunurdur.
 
 Listenin tamamı [docs/architecture.md](docs/architecture.md#known-limitations) (İngilizce) belgesindedir.
 
