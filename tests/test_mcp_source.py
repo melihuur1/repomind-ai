@@ -297,12 +297,27 @@ class TestGit:
         message = error_of(read(server, path="src/fees.ts", start_line=1, end_line=6))
         assert "not the one RepoMind indexed" in message and "DAILY_RATE" not in message
 
-    def test_when_the_index_holds_no_object_id_it_says_so(self, server, store):
-        store.connection.execute("UPDATE files SET blob_sha = '' WHERE path = 'src/fees.ts'")
+    @pytest.mark.parametrize("recorded", ["", "unknown", "abc123", "g" * 40, "0" * 39, "0" * 41])
+    def test_a_file_whose_object_id_cannot_be_checked_is_not_returned(self, server, store, fake_embedder, recorded):
+        store.connection.execute("UPDATE files SET blob_sha = %s WHERE path = 'src/fees.ts'", (recorded,))
+        result = read(server, path="src/fees.ts", start_line=1, end_line=6)
+        message = error_of(result)
+        assert "cannot be checked" in message and "None of it is returned" in message
+        assert result.structured_content is None and "DAILY_RATE" not in message and "lateFee" not in message
+        # The web app's file view does not compare object ids, and answers as it did.
+        with TestClient(create_app(_services(fake_embedder))) as client:
+            shown = client.get("/api/file", params={"repo": "library", "path": "src/fees.ts"})
+        assert shown.status_code == 200 and shown.json()["lines"] == FILES["src/fees.ts"].split("\n")[:6]
+
+    def test_an_object_id_in_capitals_is_still_the_same_id(self, server, store):
+        store.connection.execute("UPDATE files SET blob_sha = upper(blob_sha) WHERE path = 'src/fees.ts'")
         body = read(server, path="src/fees.ts", start_line=1, end_line=6).structured_content
-        assert body["matches_index"] is None, "not checked is never shown as checked"
-        assert any("could not be checked" in warning for warning in body["warnings"])
-        assert body["exists_in_git"] is True and lines_of(body) == FILES["src/fees.ts"].split("\n")[:6]
+        assert body["matches_index"] is True and lines_of(body) == FILES["src/fees.ts"].split("\n")[:6]
+
+    def test_a_result_is_only_ever_one_that_matches_the_index(self, server):
+        for path, end in (("src/fees.ts", 6), ("src/signing.ts", 6), ("src/ledger.ts", 200), ("src/notes.ts", 4)):
+            body = read(server, path=path, start_line=1, end_line=end).structured_content
+            assert body["matches_index"] is True and body["exists_in_git"] is True, path
 
 
 @pytest.mark.db
@@ -432,6 +447,20 @@ class TestTheResponseSize:
             [content] = result.content
             assert json.loads(content.text) == result.structured_content
             assert "\n " not in content.text and len(content.text) < 14_000
+
+    def test_the_limit_counts_the_code_and_the_rest_is_small(self, server):
+        long_query = ("overdue ledger report " * 23)[:500]
+        for result, key, limit in (
+            (read(server, path="src/ledger.ts", start_line=1, end_line=MAX_LINES), "lines", MAX_SOURCE_CHARACTERS),
+            (search(server, query="overdue ledger report", mode="keyword", limit=20), "results", MAX_RESULTS_CHARACTERS),
+            (search(server, query=long_query, mode="keyword", limit=20), "results", MAX_RESULTS_CHARACTERS),
+        ):
+            counted = json_size(result.structured_content[key])
+            assert counted <= limit
+            # Repository, commit, query or path, counts, warnings and notice are outside the limit.
+            assert len(result.content[0].text) - counted < 1_500
+            # The same JSON is sent twice: as structured content, and as one text block.
+            assert result.structured_content and [block.type for block in result.content] == ["text"]
 
 
 @pytest.mark.db

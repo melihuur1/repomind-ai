@@ -449,15 +449,19 @@ Before anything is read:
 - Any other path must equal a path in the `files` table for the active snapshot exactly. A file left out of the index, such as `.env`, one committed after indexing, or one only in the working folder, cannot be read, and the message is the same for all of them.
 - A commit, when given, must be the indexed one, whole or by its first 7 or more characters. Any other is refused.
 
-The lines come from the Git object at the indexed commit, never from the working folder, and the local copy must hold that commit. The bytes Git gives are hashed as Git hashes a blob and compared with the `blob_sha` that indexing recorded for the path. A file that differs is not returned. `matches_index` is true only when the two match, and null, with a warning, when the index holds no usable object id. It is never false in a result.
+The lines come from the Git object at the indexed commit, never from the working folder, and the local copy must hold that commit. The bytes Git gives are hashed as Git hashes a blob and compared with the `blob_sha` that indexing recorded for the path. A file that differs is not returned, and neither is one whose record holds no usable object id, because then nothing shows that these bytes are the ones that passed indexing's filters. So `matches_index` is true in every result. The web app's file view does not make this comparison, and answers as before.
 
 Credential lines are found over the whole file and widened to their statement, as indexing finds them, then blanked before anything else happens to the lines. A secret over several lines is hidden whole, and asking for one of its lines alone, or giving a commit, does not bring it back. Each line has its number, its text and whether it is hidden, and `hidden_lines` counts the hidden ones. The role is `source`: the repository's text, not an answer. Errors never repeat the path or any line.
 
-**How much a tool returns.** All results of `search_code` together are kept under 12,000 characters of JSON, and so are the lines of `get_verified_source`. The limit is applied after the Git and credential checks, so it can only leave out more:
+**How much a tool returns.** The limit is 12,000 characters, and it covers the code a tool returns, not the whole response:
+- For `search_code`, the `results` list: each result's compact JSON, its preview included, added up.
+- For `get_verified_source`, the `lines` list: each line's compact JSON and the comma after it, added up.
+
+The rest of the response is outside the limit: the repository, commit, index version, query or path, counts, warnings and notice. Measured, it is 500 to 700 characters, and about 1,000 with a 500-character query. The limit is applied after the Git and credential checks, so it can only leave out more:
 - `search_code` returns the first results, in search's order, that fit. A result that does not fit ends the list, so that a shorter one further down never takes its rank. `cut_for_size` counts the rest, apart from `left_out`, and has its own warning, so a cut for size is never shown as a result left out for safety.
 - `get_verified_source` returns whole lines up to the limit, sets `truncated`, ends `end_line` at the last line returned, and says which line to ask for next.
 
-A tool result carries the same JSON twice: as structured content, and as text for clients that read only text, which the MCP specification asks for. The SDK would write the text with an indent of two. The server writes it compact instead, through the SDK's own `CallToolResult`, which cuts 200 short lines from about 16,600 characters to about 9,800. Both copies stay, because a client may read either.
+**Every response is sent twice.** A `tools/call` result holds the same JSON as `structuredContent` and again as one text block, because the MCP specification asks a tool with structured output to send the text too, for clients that read only text. A full response is therefore about 12,500 to 13,000 characters of JSON, and twice that in the message. How much of it reaches the client's model depends on the client. The SDK would write the text with an indent of two. The server writes it compact instead, through the SDK's own `CallToolResult`, which cuts 200 short lines from about 16,600 characters to about 9,800. Both copies stay, because a client may read either.
 
 **Read-only.** The server never applies the schema. Its session is made read-only (`default_transaction_read_only = on`) before anything is read. It then checks that the session is on the database it names and that the read-only setting took effect, both at start and on every call. Tests check that inserts, updates, deletes, `CREATE TABLE` and `TRUNCATE` are refused, and that searching and reading lines write nothing.
 
@@ -472,7 +476,7 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO repomind_reader;
 
 **What it never does.** It does not read the model settings, and it loads neither the question engine, the web API, a model client nor the translator. It asks no model. Tests check the modules it loads. They also run the real server process with Python's audit hook watching every connection and name lookup, and with HTTP sent to a closed port: it reaches no address but its own loopback.
 
-**Where the results go.** An MCP client passes what the server returns to its own model, and Claude Code passes it to Anthropic's API. Lines of code returned by `search_code` and `get_verified_source` leave the machine that way. Each result is kept under about 12,000 characters, sent once as structured content and once as text.
+**Where the results go.** An MCP client passes what the server returns to its own model, and Claude Code passes it to Anthropic's API. Lines of code returned by `search_code` and `get_verified_source` leave the machine that way. The code in each response is kept under 12,000 characters, and the response is sent once as structured content and once as text.
 
 ## Known limitations
 

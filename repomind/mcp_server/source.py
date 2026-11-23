@@ -49,9 +49,9 @@ class SourceResponse(BaseModel):
     lines: list[SourceLine]
     hidden_lines: int = Field(description="How many of the returned lines are hidden.")
     exists_in_git: bool = Field(description="True: every line was read from Git at the indexed commit, not from a working folder.")
-    matches_index: bool | None = Field(
+    matches_index: bool = Field(
         description="True: the bytes Git gave are the Git object RepoMind indexed for this path. "
-        "Null: that could not be checked, and a warning says why. A file that does not match is never returned."
+        "A file that does not match, or whose match cannot be checked, is never returned."
     )
     role: Literal["source"] = Field(
         default="source", description="The repository's own lines, to read. They are not an answer, and not a check that anything is true."
@@ -97,8 +97,14 @@ class SourceReader:
         shown = read_indexed_file(local_copy(snapshot), snapshot.commit_sha, entry["path"], entry["language"])
         if shown is None:
             raise Refused("Git holds no text file at this path at the indexed commit, so nothing is returned.")
+        # Only bytes that are the Git object indexing recorded are returned: what passed indexing's filters.
         matches = shown.matches_blob(entry["blob_sha"])
-        if matches is False:
+        if matches is None:
+            raise Refused(
+                "Whether this file is the one RepoMind indexed cannot be checked: the index holds no usable Git object id "
+                "for it. None of it is returned."
+            )
+        if not matches:
             raise Refused("The file Git holds at the indexed commit is not the one RepoMind indexed, so none of it is returned.")
         total = len(shown.lines)
         if start_line > total:
@@ -129,11 +135,6 @@ class SourceReader:
             warnings.append(
                 f"{hidden_count} line(s) are hidden: each holds, or is part of a statement that holds, something that may be a credential."
             )
-        if matches is None:
-            warnings.append(
-                "Whether these bytes are the ones RepoMind indexed could not be checked: the index holds no Git object id for this file. "
-                "They are still read from Git at the indexed commit."
-            )
         return SourceResponse(
             repo=snapshot.repo,
             commit=snapshot.commit_sha,
@@ -146,7 +147,7 @@ class SourceReader:
             lines=lines,
             hidden_lines=hidden_count,
             exists_in_git=True,
-            matches_index=matches,
+            matches_index=True,
             truncated=returned < last,
             warnings=warnings,
         )
