@@ -18,7 +18,8 @@ NOTICE = (
 _MAX_SUBJECT = 200
 _CONTROL = re.compile(r"[\x00-\x1f\x7f]+")
 # A folder on this machine, as the web API removes from its messages. A commit message can name one.
-_LOCAL_PATH = re.compile(r"(?:[A-Za-z]:[\\/]|\\\\|/(?:home|Users|tmp|var|root|opt|mnt|srv)/)[^\s'\"<>|]*")
+# The drive letter must start a word, so that the scheme of an address (https://) is not taken for one.
+LOCAL_PATH = re.compile(r"(?:(?<![A-Za-z0-9])[A-Za-z]:[\\/]|\\\\|/(?:home|Users|tmp|var|root|opt|mnt|srv)/)[^\s'\"<>|]*")
 
 
 class RepositoryEntry(BaseModel):
@@ -47,7 +48,7 @@ def _subject(text: str) -> tuple[str | None, bool]:
     line = _CONTROL.sub(" ", text or "").strip()
     if find_credential(line, None):
         return None, True
-    line = _LOCAL_PATH.sub("<local path>", line)
+    line = LOCAL_PATH.sub("<local path>", line)
     return (line[: _MAX_SUBJECT - 1] + "…" if len(line) > _MAX_SUBJECT else line) or None, False
 
 

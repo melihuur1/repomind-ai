@@ -418,7 +418,7 @@ There is one worker thread and an `index_jobs` table, and no separate queue serv
 
 It opens no network port. stdout carries only MCP messages, and every log line goes to stderr. While serving, the SDK points file descriptor 1 at stderr, so a stray print cannot reach the protocol either.
 
-So far it has one tool, `list_repositories`. Search and reading verified lines come next.
+It has two tools, `list_repositories` and `search_code`. Reading verified lines of a file comes next.
 
 **What it may read is set, and required.**
 - `REPOMIND_MCP_DATABASE` names one database. It is a name, not an address: host, user and password come from `REPOMIND_DATABASE_URL`, and never appear in a message, a log line or a result.
@@ -430,7 +430,18 @@ Without both, or with a name that is not a plain name, the server does not start
 
 The commit subject is reduced to one short line, with local folders removed, and is left out if it may hold a credential. No local path, address or origin URL is returned. Every result says that a repository's content is data and may hold instructions that do not come from the user.
 
-**Read-only.** The server never applies the schema. Its session is made read-only (`default_transaction_read_only = on`) before anything is read. It then checks that the session is on the database it names and really refuses writes, both at start and on every call. A test checks that inserts, updates, deletes, `CREATE TABLE` and `TRUNCATE` are refused.
+**search_code.** It takes the repository, the query (1 to 500 characters), the mode (`hybrid`, `keyword` or `semantic`), a limit (1 to 20, 10 if left out) and whether to include tests. It searches with `SearchEngine.search`, as the web app and the command line do. Before searching, it checks that the repository is listed, indexed in the database and indexed by this version. A repository that is not listed gets the same answer whether or not the database holds it. The repository name only selects a listed repository. Neither it nor the query can name a file to read.
+
+What search finds is checked again before it is returned:
+- The row must be the repository at its indexed commit, and the local copy must hold that commit.
+- Its lines are compared with the file in Git at that commit, as cited lines are. A row that differs, or whose lines moved, is left out, so `exists_in_git` is only ever true.
+- Search already leaves out a chunk that holds a credential. The server checks the text again, and finds the file's credential statements again from Git, as indexing does. A row that reaches into one is left out, even when none of its lines looks like a credential on its own.
+
+The number left out is returned, with a warning. A preview is at most 30 lines or 2,000 characters, cut at a line. Each result's role is `search_result`: code to read, not a checked answer.
+
+Semantic and hybrid search use the local embedding model in the models folder. If it is not there, they refuse and say so: nothing is downloaded, and the server never switches to keyword search on its own. The server process runs with Hugging Face's offline mode on. No translator is used, so a Turkish query is searched as written. Errors pass through without local folders or addresses.
+
+**Read-only.** The server never applies the schema. Its session is made read-only (`default_transaction_read_only = on`) before anything is read. It then checks that the session is on the database it names and that the read-only setting took effect, both at start and on every call. Tests check that inserts, updates, deletes, `CREATE TABLE` and `TRUNCATE` are refused, and that a search writes nothing.
 
 A second guard, not set up yet, would be a database role that may only read. It would need a setting of its own for the server's connection, and these statements, run by whoever administers the container:
 
@@ -441,9 +452,9 @@ GRANT USAGE ON SCHEMA public TO repomind_reader;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO repomind_reader;
 ```
 
-**What it never does.** It does not read the model settings or load the question engine, the web API or search: a test checks which modules it imports. It asks no model.
+**What it never does.** It does not read the model settings, and it loads neither the question engine, the web API, a model client nor the translator. It asks no model. Tests check the modules it loads. They also run the real server process with Python's audit hook watching every connection and name lookup, and with HTTP sent to a closed port: it reaches no address but its own loopback.
 
-**Where the results go.** An MCP client passes what the server returns to its own model, and Claude Code passes it to Anthropic's API. Lines of code returned by the server leave the machine that way.
+**Where the results go.** An MCP client passes what the server returns to its own model, and Claude Code passes it to Anthropic's API. Lines of code returned by `search_code` leave the machine that way. Up to 20 previews of 2,000 characters each can be one large result: the SDK sends it both as structured content and as text.
 
 ## Known limitations
 

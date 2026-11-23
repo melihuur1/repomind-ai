@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import sys
 
 from repomind.mcp_server.config import ConfigurationError, load_config
@@ -14,6 +15,10 @@ log = logging.getLogger("repomind.mcp_server")
 def main() -> int:
     # Before anything else, so that the SDK's own logging setup finds stderr already in place.
     logging.basicConfig(stream=sys.stderr, level=logging.INFO, format="repomind-mcp %(levelname)s: %(message)s")
+    # The embedding model is used only from the models folder: never downloaded, and no progress bars.
+    os.environ["HF_HUB_OFFLINE"] = "1"
+    os.environ["TQDM_DISABLE"] = "1"
+    os.environ["GIT_OPTIONAL_LOCKS"] = "0"
     try:
         config = load_config()
         check_database(config)

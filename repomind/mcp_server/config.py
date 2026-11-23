@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
 
 from repomind.config import Settings, get_setting
@@ -27,6 +28,9 @@ class McpConfig:
     repositories: tuple[str, ...]
     # Holds the user name and password of the database. Never in repr, a log line or a message.
     database_url: str = field(repr=False)
+    # The local embedding model semantic and hybrid search use, and the folder it is kept in. Nothing is downloaded.
+    embedding_model: str = ""
+    models_dir: Path | None = field(default=None, repr=False)
 
 
 def load_config() -> McpConfig:
@@ -46,7 +50,8 @@ def load_config() -> McpConfig:
         raise ConfigurationError(f"{REPOSITORIES_SETTING} holds something that is not a repository name.")
     if len(names) > MAX_REPOSITORIES:
         raise ConfigurationError(f"{REPOSITORIES_SETTING} lists more than {MAX_REPOSITORIES} repositories.")
-    return McpConfig(database, tuple(names), _with_database(Settings.load().database_url, database))
+    settings = Settings.load()
+    return McpConfig(database, tuple(names), _with_database(settings.database_url, database), settings.embedding_model, settings.models_dir)
 
 
 def _with_database(url: str, database: str) -> str:

@@ -180,12 +180,13 @@ def two_repositories(store, sample_repo, fake_embedder):
 
 @pytest.mark.db
 class TestListRepositories:
-    def test_it_is_the_only_tool_and_it_is_read_only(self, store, mcp_settings):
+    def test_its_tools_are_these_and_all_read_only(self, store, mcp_settings):
         mcp_settings()
-        listed = tools(build_server(load_config())).tools
-        assert [tool.name for tool in listed] == ["list_repositories"]
-        assert listed[0].annotations.read_only_hint is True and listed[0].annotations.open_world_hint is False
-        assert listed[0].output_schema and "repositories" in listed[0].output_schema["properties"]
+        listed = {tool.name: tool for tool in tools(build_server(load_config())).tools}
+        assert sorted(listed) == ["list_repositories", "search_code"]
+        for tool in listed.values():
+            assert tool.annotations.read_only_hint is True and tool.annotations.open_world_hint is False
+        assert listed["list_repositories"].output_schema and "repositories" in listed["list_repositories"].output_schema["properties"]
 
     def test_only_the_listed_repositories_are_shown(self, two_repositories, mcp_settings):
         mcp_settings(repositories="library")
@@ -262,11 +263,12 @@ class TestListRepositories:
 
 
 class TestWhatTheServerLoads:
-    def test_neither_the_question_engine_nor_the_web_api(self):
+    def test_neither_the_question_engine_the_web_api_nor_a_model_client(self):
+        # Search is loaded, for search_code. The question engine, a model client or a translator never is.
         script = (
             "import sys\n"
             "import repomind.mcp_server.__main__, repomind.mcp_server.server, repomind.mcp_server.repositories\n"
-            "print(sorted(m for m in sys.modules if m.startswith(('repomind.qa', 'repomind.api', 'repomind.search'))))\n"
+            "print(sorted(m for m in sys.modules if m.startswith(('repomind.qa', 'repomind.api', 'openai', 'ollama', 'ctranslate2'))))\n"
         )
         loaded = subprocess.run([PYTHON, "-c", script], capture_output=True, text=True, cwd=PROJECT, timeout=60)
         assert loaded.returncode == 0, loaded.stderr
@@ -281,9 +283,9 @@ def _environment(**settings: str) -> dict[str, str]:
 class _Server:
     """The real server in its own process, spoken to in raw JSON-RPC. Every stdout line is kept."""
 
-    def __init__(self, **settings: str) -> None:
+    def __init__(self, command: list[str] | None = None, **settings: str) -> None:
         self.process = subprocess.Popen(
-            [PYTHON, "-m", "repomind.mcp_server"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            command or [PYTHON, "-m", "repomind.mcp_server"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             cwd=PROJECT, env=_environment(**settings),
         )
         self.lines: queue.Queue[bytes] = queue.Queue()
@@ -333,7 +335,7 @@ class TestStdio:
         code = server.close()
         assert code == 0, b"".join(server.stderr).decode("utf-8", "replace")
         assert answers["initialized"]["result"]["serverInfo"]["name"] == "repomind"
-        assert [tool["name"] for tool in answers["listed"]["result"]["tools"]] == ["list_repositories"]
+        assert sorted(tool["name"] for tool in answers["listed"]["result"]["tools"]) == ["list_repositories", "search_code"]
         assert [entry["name"] for entry in answers["called"]["result"]["structuredContent"]["repositories"]] == ["library"]
         for line in server.stdout:
             message = json.loads(line)
