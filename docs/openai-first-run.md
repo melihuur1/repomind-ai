@@ -1,26 +1,24 @@
 # Before the first real request to OpenAI
 
-Everything about the OpenAI provider has been tested against stand-ins: a fake HTTP opener, two HTTP servers on 127.0.0.1, and a browser test server with a made-up key. **No real request has been sent to OpenAI, and nothing has been charged.** This page is what has to be true before the first one, and how to check each point. The first real run needs the owner's approval, their own key, and a small budget.
+The OpenAI provider was built and tested against stand-ins: a fake HTTP opener, two HTTP servers on 127.0.0.1, and a browser test server with a made-up key. The tests still send nothing to OpenAI.
+
+**Three real requests have been sent since, on 2026-11-22**, each approved by the owner beforehand. They went to a made-up lending library, indexed in a database of its own, with two planted fake credentials:
+- one English question, one request;
+- one Turkish question, two requests: one to translate it, one to choose.
+
+They cost about $0.0003 in all. No planted value was in any request or answer, and every line shown was in Git at the indexed commit. They checked that the integration works, not how accurate the answers are. What they showed is in [development-handoff.md](development-handoff.md#the-real-api-tests).
+
+This page is what has to be true before a first real request on any other setup, and how to check each point. It needs the owner's own key, their approval, and a small budget.
 
 ## 1. The index that the questions are asked of
 
-### What the indexes hold, read on 2026-11-22
+### What an index can hold
 
-Read-only: sessions set to read only, no index changed.
-
-| Database | Repositories | Index version | Stored text the credential rules flag |
-| --- | --- | --- | --- |
-| `repomind`, the main index | stockguard, syncnotes, expressjs/cors | 2, outdated | stockguard 3 chunks; syncnotes 11 chunks and 1 signature; cors none |
-| `repomind_rt_eval_v1` | stockguard, syncnotes | 2 | the same 14 chunks and 1 signature |
-| `repomind_rt_eval_v2` | stockguard, syncnotes | 3 | none |
-| `repomind_phase1` | stockguard, syncnotes | 1 | not readable by this code, and never used by it |
-| `repomind_test`, `repomind_e2e` | test fixtures | 3 | emptied by the tests each run |
-
-Index version 3 withholds credentials written into code when it indexes. Version 2 stored them. Most of the flagged chunks are in test files and configuration, such as test passwords and a database URL.
+Index version 3 withholds credentials written into code when it indexes. Version 2 stored them. On the two evaluated repositories, StockGuard and SyncNotes, a version 2 index held 14 chunks and 1 signature that the credential rules flag, most of them in test files and configuration, such as test passwords and a database URL. A version 1 index cannot be read by this code. The test databases are emptied by the tests on every run.
 
 ### What stops them reaching a prompt
 
-The index is not the last line. With this branch's code, a chunk is checked again in search, and a passage again before it is put in a prompt. Both checks drop anything the credential rules flag. To see whether that holds on the old index, [`eval/tools/prompt_check.py`](../eval/tools/prompt_check.py) runs questions through the real engine with a stand-in model that keeps every prompt, over a read-only session. On the main index:
+The index is not the last line. With this branch's code, a chunk is checked again in search, and a passage again before it is put in a prompt. Both checks drop anything the credential rules flag. To see whether that holds on an old index, [`eval/tools/prompt_check.py`](../eval/tools/prompt_check.py) runs questions through the real engine with a stand-in model that keeps every prompt, over a read-only session. On a version 2 index of the two evaluated repositories:
 
 - **Questions:** 68 in all. 48 are from the sixth set. 20 ask for secrets outright, such as "What is the JWT secret?" and "Veritabanı şifresi nedir?".
 - **Prompts:** 91 were recorded.
@@ -32,7 +30,7 @@ The rules can miss a secret they do not recognise, for example a password in a v
 
 ### Indexing again
 
-The main index is outdated and still stores those 14 chunks. That is not needed for a first run on a separate, safe repository, and nothing has been indexed again. If it is done later, three things should be known first:
+An index made before version 3 still stores such chunks. Indexing it again is not needed for a first run on a separate, safe repository. If it is done, three things should be known first:
 
 - **It replaces.** `index_repository` deletes a repository's old snapshot and writes the new one in one transaction. A failure leaves the old one, and a success cannot be undone except by indexing again.
 - **The repositories have moved on.** StockGuard and SyncNotes have new commits since `b6698d8` and `bb217cd`. Without `--ref` set to those commits, newer code is indexed, and line numbers in older records stop matching.
@@ -54,7 +52,7 @@ $env:REPOMIND_DATABASE_URL = "postgresql://repomind:repomind@127.0.0.1:55432/rep
 
 A database that gets the column from this version marks its existing rows `legacy`, because reported and estimated counts were not told apart then. The page shows a legacy part apart, and never as reported.
 
-The main index already has the column, with its 2,203 earlier rows marked `reported`. A test that ran an indexing command opened the main database while Phase 4's schema was being tested. That test now uses a stand-in, and the main database was not otherwise changed. All 2,203 rows cost $0, from the local model, so no figure on the page is affected. Relabelling them is one statement, and it is not run without the owner's approval:
+A database that got the column from an earlier build of this branch has its older rows marked `reported` instead. Rows from the local model cost $0, so no figure on the page changes. Relabelling them is one statement, to run only on purpose:
 
 ```sql
 UPDATE llm_usage SET kind = 'legacy' WHERE kind = 'reported' AND created_at < '2026-11-22';

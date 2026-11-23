@@ -1,6 +1,6 @@
 # Development handoff
 
-The state of RepoMind AI on 2026-11-23, written for whoever continues it: what it is, what was built on the branch `feature/openai-provider`, what was measured, and what is still only local. It holds no key, password or other secret.
+The state of RepoMind AI on 2026-11-23, after the MCP server, written for whoever continues it: what it is, what was built on the branch `feature/openai-provider`, what was measured, and what is not on GitHub yet. It holds no key, password or other secret.
 
 ## Purpose
 
@@ -27,18 +27,19 @@ question ─▶ translation (Turkish) ─▶ hybrid search: BM25 + embeddings, f
 ```
 
 - **Read-only on repositories.** Repositories are read through Git plumbing at a pinned commit, and their code is never run.
-- **Two copies of the same pipeline.** `repomind/api` is a FastAPI layer over the same engine the command line uses, and `web/` is the React client. `python -m repomind serve` runs both on 127.0.0.1.
+- **Three ways in, one engine.** `repomind/api` is a FastAPI layer over the same engine the command line uses, and `web/` is the React client. `python -m repomind serve` runs both on 127.0.0.1. `python -m repomind.mcp_server` serves search and verified lines to an MCP client over stdio.
 - **Where the details are.** [architecture.md](architecture.md) has the full design, and [evaluation.md](evaluation.md) and `eval/*.md` hold every measurement as it was taken.
 
 ## Technologies
 
 | Part | What |
 | --- | --- |
-| Engine | Python 3.13, Tree-sitter, PostgreSQL 16 with pgvector, fastembed (`intfloat/multilingual-e5-small`), a local opus-mt Turkish-English translator |
+| Engine | Python 3.13, Tree-sitter, PostgreSQL 17 with pgvector, fastembed (`intfloat/multilingual-e5-small`), a local opus-mt Turkish-English translator |
 | Search | BM25 and embeddings, fused with reciprocal rank fusion, plus a small Turkish glossary |
 | Models | Ollama with `qwen2.5:7b`, the default and local. The OpenAI API through Chat Completions, optional |
 | API | FastAPI, Pydantic. The OpenAPI document generates the client's TypeScript types |
 | Web | React, TypeScript, Vite, TanStack Query |
+| MCP | MCP Python SDK 2.x, over stdio, as the optional extra `[mcp]` |
 | Tests | pytest, Vitest, Playwright, which drives the real API and database on a fixture repository |
 | Running | Docker Compose: `repomind-db`, and `repomind-ollama` behind a profile. Windows with WSL. GPU optional |
 
@@ -46,7 +47,7 @@ question ─▶ translation (Turkish) ─▶ hybrid search: BM25 + embeddings, f
 
 - **Branch:** `feature/openai-provider`, local only, started from `feature/source-accuracy` at `f822593`. That branch is on GitHub and not merged.
 - **`main`:** `19e4a54`, the same as `origin/main`. It has one commit this branch lacks, the bilingual README (`README.md` in Turkish, `README.en.md` in English), so merging will need the README changes made here carried into both files.
-- **Not tracked by Git:** the trial repository and its questions in `.data/openai-trial/`. The databases live in RepoMind's container.
+- **Not tracked by Git:** the made-up trial repository and its questions, in the ignored `.data/` folder. The databases live in RepoMind's container.
 
 ## The OpenAI provider
 
@@ -91,7 +92,7 @@ How each piece was decided is in the commit messages, [architecture.md](architec
 
 ## The real API tests
 
-The owner approved each test. Both ran on the database `repomind_openai_trial`, which holds only a made-up lending library with two planted fake credentials. The model was `gpt-6-luna` with `reasoning_effort: none`. Its prices were read from OpenAI's pricing page on 2026-11-22: $0.10 input, $0.01 cached input, $0.125 for the 30-minute cache write and $0.50 output, per million tokens. The budget was $0.05.
+The owner approved each test. Both ran on a database of their own, which holds only a made-up lending library with two planted fake credentials. The model was `gpt-6-luna` with `reasoning_effort: none`. Its prices were read from OpenAI's pricing page on 2026-11-22: $0.10 input, $0.01 cached input, $0.125 for the 30-minute cache write and $0.50 output, per million tokens. The budget was $0.05.
 
 | | English question, 1 request | Turkish question, 2 requests |
 | --- | --- | --- |
@@ -116,38 +117,67 @@ The trial database records 3 usage rows, $0.000301 in all. Two questions measure
 - **Choosing stays the default.** `choose` is the default way of selecting, and `judge` stays experimental. The model's note is shown folded and marked as unverified. In a replay of the last evaluation, 20 of 52 notes named something not in the lines shown.
 - **The last measurement of accuracy.** On the sixth question set, on 2026-11-15, `qwen2.5:7b` gave a fully right source for 13 of 32 questions and a wrong one for 6. Later changes were not measured with a model. No OpenAI model has been evaluated in RepoMind.
 
+## The MCP server
+
+`python -m repomind.mcp_server` gives an MCP client, such as Claude Code, read-only access to RepoMind's index over stdio. It opens no network port, asks no model, and loads neither the question engine, the web API nor a model client. It was built in four steps, each approved before it started:
+
+| Step | Commit | What |
+| --- | --- | --- |
+| M1 | `e883e05` | The server and `list_repositories`. A database name and a list of repositories are required, and the session is read-only |
+| M2 | `c66b180` | `search_code`, on `SearchEngine.search`. Every result is checked against Git and for credentials before it is returned |
+| M3 | `cbf5fbc` | `get_verified_source`, which reads lines of an indexed file from Git at the indexed commit, through the same function as the web app's file view. Output size limits for both tools |
+| M4 | `3fb2794` | Lines are returned only when Git's bytes are the Git object indexing recorded. The server was connected to Claude Code and tested through it |
+
+What every tool keeps to:
+- only listed repositories, and only indexes made by this version;
+- a read-only database session, checked on every call;
+- for `get_verified_source`, only paths the index lists, never a path with `..` or a drive, and never a file from the working folder;
+- credential lines hidden whole, also across several lines;
+- at most 12,000 characters of code in a response, after the checks;
+- every result marked as the repository's data, which may hold instructions that do not come from the user.
+
+**The test through Claude Code**, on 2026-11-23 with Claude Code 2.1.330. The server was added with `--scope local`, so the entry is private to the project folder and no `.mcp.json` was made. It holds only the database and the list of repositories, set to the made-up library. Separate sessions kept nothing and could use no other tool:
+- **`list_repositories`:** listed only that library.
+- **`search_code`:** "late fee" found `src/fees.ts:6-10` first. Every preview equalled Git at `a265b92`.
+- **`get_verified_source`:** read lines 6 to 10 back exactly as Git holds them, with `matches_index` true.
+- **Credentials:** the two planted fake credentials came back as hidden lines, and neither value was anywhere in the output.
+- **Refused:** an unlisted repository and a path with `..`.
+
+Details: [architecture.md](architecture.md#mcp-server).
+
 ## Tests on 2026-11-23
 
 | Suite | Result |
 | --- | --- |
-| Python, with outbound HTTPS blocked | 1515 passed, 1 skipped. The skipped test is the real-model test, which runs only with `REPOMIND_RUN_LLM_TESTS=1` |
+| Python, with outbound HTTPS blocked | 1682 passed, 1 skipped. The skipped test is the real-model test, which runs only with `REPOMIND_RUN_LLM_TESTS=1` |
+| MCP server in its own process | Included above: 8 tests start it as a process of its own and speak raw JSON-RPC to it. Those that call its tools watch it for any connection or name lookup |
 | TypeScript | no errors |
 | Vitest | 45 passed |
 | Web build | succeeds |
-| Playwright | 53 passed, among them a test for the section that shows a declaration with the line that uses it |
+| Playwright | 53 passed |
+| `pip check` | no broken requirements |
 
-A fixture in `tests/conftest.py` blanks every `REPOMIND_LLM_*` setting for every test, so the model settings and key in a developer's `.env` never reach one. The OpenAI tests use fake HTTP and a made-up key.
+A fixture in `tests/conftest.py` blanks every `REPOMIND_LLM_*` setting for every test, so the model settings and key in a developer's `.env` never reach one. The OpenAI tests use fake HTTP and a made-up key. The real-model test is the one exception: with `REPOMIND_RUN_LLM_TESTS=1` it uses the configured provider, so with OpenAI configured it sends a real, paid request.
 
 ## Security risks to keep in mind
 
 - **Code leaves the machine with OpenAI.** Each question and the passages chosen for it are sent. The credential rules remove what they recognise, and can miss a secret they do not, such as a password in a variable called `x`. `store: false` is not zero data retention.
+- **Code leaves the machine through an MCP client.** What the MCP server returns goes to the client's own model, which for Claude Code is Anthropic's API.
 - **One person, one machine.** There is no login and no rate limit. The server listens on 127.0.0.1 only, and must not be put on the internet, through a tunnel or a proxy either.
 - **The budget is not an exact ceiling.** It depends on prices entered by hand. The token estimate can be low, by at most one request. Two clients asking at once can both pass the check. Requests turned away with a 4xx, 429 or 503 are assumed not to be charged, which OpenAI's documentation does not say.
-- **The main index is outdated.** The `repomind` database is at index version 2 and still stores 14 chunks and 2 signatures that hold credentials, mostly from test files. Search and the prompt filter them out again: a read-only check found none in 91 prompts. Rebuilding it replaces the old snapshot and needs `--ref` to the pinned commits, as [openai-first-run.md](openai-first-run.md) describes.
-- **The main database's usage rows.** It has 2,203 earlier usage rows marked `reported`. They should be `legacy`, and all cost $0. The statement to relabel them is in openai-first-run.md and has not been run.
+- **An index made before version 3 stores credentials written into code.** Search and the prompt filter them out again, and the MCP server does not serve such an index at all. Rebuilding one replaces the old snapshot and needs `--ref` set to the pinned commits, as [openai-first-run.md](openai-first-run.md) describes.
+- **The MCP server has no database role of its own.** Its session is read-only, and a role that may only read is described in [architecture.md](architecture.md#mcp-server) and not set up.
 
 ## Not on GitHub yet
 
-- All 13 commits of `feature/openai-provider`, from `557780e` to this handoff. None is pushed or merged.
+- Every commit of `feature/openai-provider` from `557780e` on. None is pushed or merged.
 - The tags `v2-candidate` and `accuracy-baseline`, which are local only.
-- The trial repository in `.data/openai-trial/` and the database `repomind_openai_trial`, which are local data and not meant for Git.
-- The scripts that ran the two real requests and the measurements. They were kept outside the repository, in a temporary folder, and may be gone.
+- The made-up trial repository and its database, which are local data and not meant for Git.
+- The scripts that ran the real requests and the measurements. They were kept outside the repository, in a temporary folder, and may be gone.
 
-## Next: MCP
+## Next
 
-The next goal is an MCP server, so that an MCP client can use RepoMind's search and its source-checked answers. Nothing of it is designed yet. The design should start from what RepoMind already guarantees, and keep each guarantee:
-
-- **What to offer.** Likely search, reading a file's lines at the indexed commit, and asking a question. Each comes back with its commit and lines, and with the same roles as the API, so that a client cannot take a source to review for an answer.
-- **How to connect.** A local transport, such as stdio, for one person on their own machine, with nothing listening on a network.
-- **Limits.** Read-only on repositories and the index. The same credential filters and Git checks. No remote model unless the settings already allow it, and the same budget.
-- **Testing.** The same way as the rest: a fake client, no real model requests, and the fixture repository.
+New features have stopped. What is left before the project is shared, each step with the owner's approval:
+- the README in both languages: the OpenAI provider and the MCP server in the Turkish `README.md` and the English `README.en.md`, from `main`;
+- merging `main` into this branch, so that its bilingual README is kept;
+- pushing the branch and opening a pull request.

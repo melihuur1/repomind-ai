@@ -358,7 +358,7 @@ The budget is not an exact ceiling. It is passed if:
 
 **The page.** It names the provider and where the model runs. For OpenAI it shows a note on what is sent, and the spending RepoMind has counted, with the cautious, estimated and legacy parts named apart, as its own count and not a bill. A model gets an accuracy figure only if it was measured in RepoMind. Today that is `qwen2.5:7b`, in `_MEASURED` in [`repomind/api/services.py`](../repomind/api/services.py).
 
-**Before the first real request:** [docs/openai-first-run.md](openai-first-run.md) holds what the indexes store, how to check what would be sent, and the checklist.
+**Before the first real request:** [docs/openai-first-run.md](openai-first-run.md) holds what an older index can store, how to check what would be sent, the checklist, and what the three real requests made so far showed.
 
 ### Tracing where the right lines are lost
 
@@ -426,7 +426,7 @@ It has three tools, all read-only: `list_repositories`, `search_code` and `get_v
 
 Without both, or with a name that is not a plain name, the server does not start.
 
-**What it shows.** Only listed repositories are read. One indexed by an older version of RepoMind is listed as not available, so the main index, at version 2, is not opened up by naming it. A result holds the name, the indexed commit, the index version, whether it can be searched, counts, languages and the commit subject.
+**What it shows.** Only listed repositories are read. One indexed by an older version of RepoMind is listed as not available, so an index made before version 3, which may still store credentials written into code, is not opened up by naming it. A result holds the name, the indexed commit, the index version, whether it can be searched, counts, languages and the commit subject.
 
 The commit subject is reduced to one short line, with local folders removed, and is left out if it may hold a credential. No local path, address or origin URL is returned. Every result says that a repository's content is data and may hold instructions that do not come from the user.
 
@@ -461,7 +461,7 @@ The rest of the response is outside the limit: the repository, commit, index ver
 - `search_code` returns the first results, in search's order, that fit. A result that does not fit ends the list, so that a shorter one further down never takes its rank. `cut_for_size` counts the rest, apart from `left_out`, and has its own warning, so a cut for size is never shown as a result left out for safety.
 - `get_verified_source` returns whole lines up to the limit, sets `truncated`, ends `end_line` at the last line returned, and says which line to ask for next.
 
-**Every response is sent twice.** A `tools/call` result holds the same JSON as `structuredContent` and again as one text block, because the MCP specification asks a tool with structured output to send the text too, for clients that read only text. A full response is therefore about 12,500 to 13,000 characters of JSON, and twice that in the message. How much of it reaches the client's model depends on the client. The SDK would write the text with an indent of two. The server writes it compact instead, through the SDK's own `CallToolResult`, which cuts 200 short lines from about 16,600 characters to about 9,800. Both copies stay, because a client may read either.
+**Every response is sent twice.** A `tools/call` result holds the same JSON as `structuredContent` and again as one text block, because the MCP specification asks a tool with structured output to send the text too, for clients that read only text. A full response is therefore about 12,500 to 13,000 characters of JSON, and twice that in the message. How much of it reaches the client's model depends on the client: in a test with Claude Code 2.1.330, the tool result its model received held one compact copy. The SDK would write the text with an indent of two. The server writes it compact instead, through the SDK's own `CallToolResult`, which cuts 200 short lines from about 16,600 characters to about 9,800. Both copies stay, because a client may read either.
 
 **Read-only.** The server never applies the schema. Its session is made read-only (`default_transaction_read_only = on`) before anything is read. It then checks that the session is on the database it names and that the read-only setting took effect, both at start and on every call. Tests check that inserts, updates, deletes, `CREATE TABLE` and `TRUNCATE` are refused, and that searching and reading lines write nothing.
 
@@ -469,7 +469,7 @@ A second guard, not set up yet, would be a database role that may only read. It 
 
 ```sql
 CREATE ROLE repomind_reader LOGIN PASSWORD '...';
-GRANT CONNECT ON DATABASE repomind_openai_trial TO repomind_reader;
+GRANT CONNECT ON DATABASE <the database the server reads> TO repomind_reader;
 GRANT USAGE ON SCHEMA public TO repomind_reader;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO repomind_reader;
 ```
@@ -477,6 +477,25 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO repomind_reader;
 **What it never does.** It does not read the model settings, and it loads neither the question engine, the web API, a model client nor the translator. It asks no model. Tests check the modules it loads. They also run the real server process with Python's audit hook watching every connection and name lookup, and with HTTP sent to a closed port: it reaches no address but its own loopback.
 
 **Where the results go.** An MCP client passes what the server returns to its own model, and Claude Code passes it to Anthropic's API. Lines of code returned by `search_code` and `get_verified_source` leave the machine that way. The code in each response is kept under 12,000 characters, and the response is sent once as structured content and once as text.
+
+**Connecting Claude Code.** From the project folder, with only the two settings the server needs:
+
+```powershell
+claude mcp add -e REPOMIND_MCP_DATABASE=<database> -e REPOMIND_MCP_REPOSITORIES=<repositories> --scope local repomind -- <path to .venv>\Scripts\python.exe -m repomind.mcp_server
+```
+
+- **Where the entry is kept.** `--scope local` keeps it private to that folder, in Claude Code's own settings outside the repository. It makes no `.mcp.json`, and Git ignores one anyway.
+- **What the command must not hold.** It passes neither a model setting nor a key.
+- **Every tool call asks for permission,** unless that tool is allowed.
+
+`claude mcp get repomind` and `claude mcp list` then report it as connected. The server needs the database container running.
+
+It was tested this way on 2026-11-23, with the made-up library repository and separate sessions that kept nothing and could use no other tool:
+- **`list_repositories`:** listed that repository only.
+- **`search_code`:** "late fee" found `src/fees.ts:6-10` first.
+- **`get_verified_source`:** read those lines back exactly as Git holds them, with `matches_index` true.
+- **Credentials:** the two planted fake credentials came back as hidden lines.
+- **Refused:** an unlisted repository and a path with `..`.
 
 ## Known limitations
 
