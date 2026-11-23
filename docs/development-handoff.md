@@ -123,10 +123,10 @@ The trial database records 3 usage rows, $0.000301 in all. Two questions measure
 
 | Step | Commit | What |
 | --- | --- | --- |
-| M1 | `e883e05` | The server and `list_repositories`. A database name and a list of repositories are required, and the session is read-only |
-| M2 | `c66b180` | `search_code`, on `SearchEngine.search`. Every result is checked against Git and for credentials before it is returned |
-| M3 | `cbf5fbc` | `get_verified_source`, which reads lines of an indexed file from Git at the indexed commit, through the same function as the web app's file view. Output size limits for both tools |
-| M4 | `3fb2794` | Lines are returned only when Git's bytes are the Git object indexing recorded. The server was connected to Claude Code and tested through it |
+| M1 | `df49ede` | The server and `list_repositories`. A database name and a list of repositories are required, and the session is read-only |
+| M2 | `64a6a23` | `search_code`, on `SearchEngine.search`. Every result is checked against Git and for credentials before it is returned |
+| M3 | `9b0786e` | `get_verified_source`, which reads lines of an indexed file from Git at the indexed commit, through the same function as the web app's file view. Output size limits for both tools |
+| M4 | `0da6ed9` | Lines are returned only when Git's bytes are the Git object indexing recorded. The server was connected to Claude Code and tested through it |
 
 What every tool keeps to:
 - only listed repositories, and only indexes made by this version;
