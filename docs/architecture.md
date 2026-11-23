@@ -418,7 +418,7 @@ There is one worker thread and an `index_jobs` table, and no separate queue serv
 
 It opens no network port. stdout carries only MCP messages, and every log line goes to stderr. While serving, the SDK points file descriptor 1 at stderr, so a stray print cannot reach the protocol either.
 
-It has two tools, `list_repositories` and `search_code`. Reading verified lines of a file comes next.
+It has three tools, all read-only: `list_repositories`, `search_code` and `get_verified_source`.
 
 **What it may read is set, and required.**
 - `REPOMIND_MCP_DATABASE` names one database. It is a name, not an address: host, user and password come from `REPOMIND_DATABASE_URL`, and never appear in a message, a log line or a result.
@@ -437,11 +437,29 @@ What search finds is checked again before it is returned:
 - Its lines are compared with the file in Git at that commit, as cited lines are. A row that differs, or whose lines moved, is left out, so `exists_in_git` is only ever true.
 - Search already leaves out a chunk that holds a credential. The server checks the text again, and finds the file's credential statements again from Git, as indexing does. A row that reaches into one is left out, even when none of its lines looks like a credential on its own.
 
-The number left out is returned, with a warning. A preview is at most 30 lines or 2,000 characters, cut at a line. Each result's role is `search_result`: code to read, not a checked answer.
+The number left out is returned, with a warning. A preview is at most 30 lines or 2,000 characters, cut at a line, and `preview_end_line` says which line it ends on. Each result's role is `search_result`: code to read, not a checked answer.
 
 Semantic and hybrid search use the local embedding model in the models folder. If it is not there, they refuse and say so: nothing is downloaded, and the server never switches to keyword search on its own. The server process runs with Hugging Face's offline mode on. No translator is used, so a Turkish query is searched as written. Errors pass through without local folders or addresses.
 
-**Read-only.** The server never applies the schema. Its session is made read-only (`default_transaction_read_only = on`) before anything is read. It then checks that the session is on the database it names and that the read-only setting took effect, both at start and on every call. Tests check that inserts, updates, deletes, `CREATE TABLE` and `TRUNCATE` are refused, and that a search writes nothing.
+**get_verified_source.** It takes the repository, a file's path, the first and last line (at most 200 lines), and optionally the commit the lines are expected at. It reads the lines through `repomind/indexed_file.py`, the same function the web app's file view uses, so what may be shown of a file is decided in one place.
+
+Before anything is read:
+- The repository must be listed, indexed in the database and indexed by this version, as for `search_code`. Both tools check this through `repomind/mcp_server/access.py`.
+- A path with `..`, `.`, an empty part, a leading `/`, a backslash, a drive letter or a control character is refused before the index or Git is asked anything.
+- Any other path must equal a path in the `files` table for the active snapshot exactly. A file left out of the index, such as `.env`, one committed after indexing, or one only in the working folder, cannot be read, and the message is the same for all of them.
+- A commit, when given, must be the indexed one, whole or by its first 7 or more characters. Any other is refused.
+
+The lines come from the Git object at the indexed commit, never from the working folder, and the local copy must hold that commit. The bytes Git gives are hashed as Git hashes a blob and compared with the `blob_sha` that indexing recorded for the path. A file that differs is not returned. `matches_index` is true only when the two match, and null, with a warning, when the index holds no usable object id. It is never false in a result.
+
+Credential lines are found over the whole file and widened to their statement, as indexing finds them, then blanked before anything else happens to the lines. A secret over several lines is hidden whole, and asking for one of its lines alone, or giving a commit, does not bring it back. Each line has its number, its text and whether it is hidden, and `hidden_lines` counts the hidden ones. The role is `source`: the repository's text, not an answer. Errors never repeat the path or any line.
+
+**How much a tool returns.** All results of `search_code` together are kept under 12,000 characters of JSON, and so are the lines of `get_verified_source`. The limit is applied after the Git and credential checks, so it can only leave out more:
+- `search_code` returns the first results, in search's order, that fit. A result that does not fit ends the list, so that a shorter one further down never takes its rank. `cut_for_size` counts the rest, apart from `left_out`, and has its own warning, so a cut for size is never shown as a result left out for safety.
+- `get_verified_source` returns whole lines up to the limit, sets `truncated`, ends `end_line` at the last line returned, and says which line to ask for next.
+
+A tool result carries the same JSON twice: as structured content, and as text for clients that read only text, which the MCP specification asks for. The SDK would write the text with an indent of two. The server writes it compact instead, through the SDK's own `CallToolResult`, which cuts 200 short lines from about 16,600 characters to about 9,800. Both copies stay, because a client may read either.
+
+**Read-only.** The server never applies the schema. Its session is made read-only (`default_transaction_read_only = on`) before anything is read. It then checks that the session is on the database it names and that the read-only setting took effect, both at start and on every call. Tests check that inserts, updates, deletes, `CREATE TABLE` and `TRUNCATE` are refused, and that searching and reading lines write nothing.
 
 A second guard, not set up yet, would be a database role that may only read. It would need a setting of its own for the server's connection, and these statements, run by whoever administers the container:
 
@@ -454,7 +472,7 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO repomind_reader;
 
 **What it never does.** It does not read the model settings, and it loads neither the question engine, the web API, a model client nor the translator. It asks no model. Tests check the modules it loads. They also run the real server process with Python's audit hook watching every connection and name lookup, and with HTTP sent to a closed port: it reaches no address but its own loopback.
 
-**Where the results go.** An MCP client passes what the server returns to its own model, and Claude Code passes it to Anthropic's API. Lines of code returned by `search_code` leave the machine that way. Up to 20 previews of 2,000 characters each can be one large result: the SDK sends it both as structured content and as text.
+**Where the results go.** An MCP client passes what the server returns to its own model, and Claude Code passes it to Anthropic's API. Lines of code returned by `search_code` and `get_verified_source` leave the machine that way. Each result is kept under about 12,000 characters, sent once as structured content and once as text.
 
 ## Known limitations
 

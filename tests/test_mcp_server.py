@@ -183,7 +183,7 @@ class TestListRepositories:
     def test_its_tools_are_these_and_all_read_only(self, store, mcp_settings):
         mcp_settings()
         listed = {tool.name: tool for tool in tools(build_server(load_config())).tools}
-        assert sorted(listed) == ["list_repositories", "search_code"]
+        assert sorted(listed) == ["get_verified_source", "list_repositories", "search_code"]
         for tool in listed.values():
             assert tool.annotations.read_only_hint is True and tool.annotations.open_world_hint is False
         assert listed["list_repositories"].output_schema and "repositories" in listed["list_repositories"].output_schema["properties"]
@@ -335,7 +335,7 @@ class TestStdio:
         code = server.close()
         assert code == 0, b"".join(server.stderr).decode("utf-8", "replace")
         assert answers["initialized"]["result"]["serverInfo"]["name"] == "repomind"
-        assert sorted(tool["name"] for tool in answers["listed"]["result"]["tools"]) == ["list_repositories", "search_code"]
+        assert sorted(tool["name"] for tool in answers["listed"]["result"]["tools"]) == ["get_verified_source", "list_repositories", "search_code"]
         assert [entry["name"] for entry in answers["called"]["result"]["structuredContent"]["repositories"]] == ["library"]
         for line in server.stdout:
             message = json.loads(line)

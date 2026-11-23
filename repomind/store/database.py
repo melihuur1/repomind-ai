@@ -291,8 +291,9 @@ class Store:
         ).fetchall()
 
     def indexed_file(self, snapshot_id: int, path: str) -> dict | None:
+        """``path`` must equal an indexed file's path exactly. ``blob_sha`` is the Git object that was indexed."""
         return self.connection.execute(
-            "SELECT path, language, line_count, has_syntax_errors FROM files WHERE snapshot_id = %s AND path = %s",
+            "SELECT path, language, blob_sha, line_count, has_syntax_errors FROM files WHERE snapshot_id = %s AND path = %s",
             (snapshot_id, path),
         ).fetchone()
 

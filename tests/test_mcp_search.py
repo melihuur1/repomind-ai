@@ -281,7 +281,7 @@ class TestRepositoryContentIsData:
         item = next(item for item in body["results"] if item["path"] == "src/notes.ts")
         assert INJECTION in item["preview"], "returned as the repository holds it, not acted on and not rewritten"
         assert item["role"] == "search_result" and "do not come from the user" in body["notice"]
-        assert sorted(tool.name for tool in tools(server).tools) == ["list_repositories", "search_code"]
+        assert sorted(tool.name for tool in tools(server).tools) == ["get_verified_source", "list_repositories", "search_code"]
 
 
 @pytest.mark.db

@@ -7,38 +7,32 @@ and what of the result may be returned.
 
 from __future__ import annotations
 
-import re
 import threading
 from pathlib import Path
 from typing import Callable, Literal
 
 from pydantic import BaseModel, Field
 
-from repomind import PIPELINE_VERSION
 from repomind.config import Settings
 from repomind.embeddings.provider import Embedder, FastEmbedProvider
 from repomind.errors import RepoMindError
 from repomind.evaluation.citations import CitationCheck, CitationVerifier
-from repomind.ingest.filters import find_credential, normalize_source
-from repomind.ingest.git_source import GitRepository
+from repomind.indexed_file import read_indexed_file
+from repomind.ingest.filters import find_credential
+from repomind.mcp_server.access import Refused, clean, current_snapshot, listed_name, local_copy
 from repomind.mcp_server.config import McpConfig
 from repomind.mcp_server.database import read_only_store
-from repomind.mcp_server.repositories import LOCAL_PATH, NOTICE
-from repomind.parsing.credentials import hidden_lines
+from repomind.mcp_server.repositories import NOTICE
 from repomind.search.engine import SearchConfig, SearchEngine
 from repomind.search.keyword import KeywordIndex
 from repomind.store.database import ChunkRow, SnapshotInfo
 
 MAX_PREVIEW_LINES = 30
 MAX_PREVIEW_CHARACTERS = 2000
-# An address of any kind, as a database address can appear in a lower layer's message.
-_ADDRESS = re.compile(r"\b[a-z][a-z0-9+.-]*://\S+", re.IGNORECASE)
+# All results together, as JSON. Checked after the Git and credential checks, so it only ever leaves out more.
+MAX_RESULTS_CHARACTERS = 12_000
 
 Mode = Literal["hybrid", "keyword", "semantic"]
-
-
-class SearchRefused(Exception):
-    """Why a search was not made, or could not finish. The message holds no path, address or secret."""
 
 
 class SearchResultItem(BaseModel):
@@ -51,6 +45,7 @@ class SearchResultItem(BaseModel):
     is_test: bool
     preview: str = Field(description="The lines as the file holds them at the indexed commit, cut to the preview limit.")
     preview_truncated: bool
+    preview_end_line: int = Field(description="The last line the preview shows. get_verified_source reads the rest.")
     role: Literal["search_result"] = Field(
         default="search_result", description="Found by search. It is code to read, not an answer that has been checked."
     )
@@ -67,13 +62,12 @@ class SearchResponse(BaseModel):
     left_out: int = Field(
         description="Results search found that are not returned, because they did not match Git or may hold a credential."
     )
+    truncated: bool = Field(description="True when results that passed every check are not returned, for size alone.")
+    cut_for_size: int = Field(
+        description=f"Results that passed every check and are not returned, to keep all results under {MAX_RESULTS_CHARACTERS:,} characters."
+    )
     warnings: list[str] = Field(default_factory=list)
     notice: str = NOTICE
-
-
-def clean(text: str) -> str:
-    """A lower layer's message, without local folders or addresses."""
-    return LOCAL_PATH.sub("<local path>", _ADDRESS.sub("<address>", text))
 
 
 def _preview(content: str) -> tuple[str, bool]:
@@ -85,6 +79,19 @@ def _preview(content: str) -> tuple[str, bool]:
         shown = cut[: cut.rfind("\n")] if "\n" in cut else cut
         truncated = True
     return shown, truncated
+
+
+def _within_limit(items: list[SearchResultItem]) -> tuple[list[SearchResultItem], int]:
+    """The first results, in search's order, whose JSON together fits the limit, and how many do not fit.
+
+    A result that does not fit ends the list, so that a shorter one further down never takes its rank.
+    """
+    used = 0
+    for count, item in enumerate(items):
+        used += len(item.model_dump_json())
+        if used > MAX_RESULTS_CHARACTERS:
+            return items[:count], len(items) - count
+    return items, 0
 
 
 def _model_is_here(models_dir: Path, model_name: str) -> bool:
@@ -113,7 +120,7 @@ class CodeSearch:
         models_dir = self.config.models_dir or settings.models_dir
         model = self.config.embedding_model or settings.embedding_model
         if not _model_is_here(models_dir, model):
-            raise SearchRefused(
+            raise Refused(
                 f"{mode.capitalize()} search needs the local embedding model {model}, and it is not in the models folder. "
                 "Nothing is downloaded. Keyword mode works without it."
             )
@@ -121,25 +128,14 @@ class CodeSearch:
         return self._embedder
 
     def search(self, repo: str, query: str, mode: Mode, limit: int, include_tests: bool | None) -> SearchResponse:
-        name = repo.strip().lower()
-        if name not in self.config.repositories:
-            # Whether it exists in the database is not said: only listed repositories are anyone's business.
-            raise SearchRefused("This repository is not one this server may show. list_repositories names those it may.")
+        name = listed_name(self.config, repo)
         query = query.strip()
         if not query:
-            raise SearchRefused("The query is empty.")
+            raise Refused("The query is empty.")
         if "\x00" in query:
-            raise SearchRefused("The query holds a character that cannot be searched for.")
+            raise Refused("The query holds a character that cannot be searched for.")
         with self._lock, read_only_store(self.config) as store:
-            snapshots = [snapshot for snapshot in store.active_snapshots([name]) if snapshot.repo == name]
-            if not snapshots:
-                raise SearchRefused("This repository is not indexed in the database the server reads.")
-            snapshot = snapshots[0]
-            if not snapshot.is_current:
-                raise SearchRefused(
-                    f"This repository was indexed by an older version of RepoMind (index version {snapshot.pipeline_version}; "
-                    f"this version reads {PIPELINE_VERSION}). It cannot be searched until it is indexed again."
-                )
+            snapshot = current_snapshot(store, name)
             embedder = None if mode == "keyword" else self._embedding_model(mode)
             # No translator: the server asks no model, and a question is searched as it was written.
             engine = SearchEngine(store, embedder, SearchConfig(include_tests=include_tests), None, keyword_indexes=self._keyword_indexes)
@@ -148,18 +144,24 @@ class CodeSearch:
             except RepoMindError as exc:
                 text = str(exc)
                 if "No embeddings exist" in text:
-                    raise SearchRefused(
+                    raise Refused(
                         f"This repository has no embeddings for the local model, so {mode} search cannot run here. Keyword mode works."
                     ) from None
                 if "embedding model" in text:
-                    raise SearchRefused(
+                    raise Refused(
                         f"The local embedding model could not be loaded, so {mode} search cannot run. Keyword mode works."
                     ) from None
-                raise SearchRefused(f"The search could not run: {clean(text)}") from None
-            results, left_out = _GitCheck(snapshot).results(found.hits)
+                raise Refused(f"The search could not run: {clean(text)}") from None
+            checked, left_out = _GitCheck(snapshot).results(found.hits)
+        results, cut = _within_limit(checked)
         warnings = [clean(warning) for warning in found.warnings]
         if left_out:
             warnings.append(f"{left_out} result(s) found by search are not returned: they did not match Git, or may hold a credential.")
+        if cut:
+            warnings.append(
+                f"{cut} more result(s) passed every check and are not returned, only to keep all results under "
+                f"{MAX_RESULTS_CHARACTERS:,} characters. A narrower query brings them up."
+            )
         return SearchResponse(
             repo=snapshot.repo,
             commit=snapshot.commit_sha,
@@ -168,6 +170,8 @@ class CodeSearch:
             mode=mode,
             results=results,
             left_out=left_out,
+            truncated=cut > 0,
+            cut_for_size=cut,
             warnings=warnings,
         )
 
@@ -182,22 +186,15 @@ class _GitCheck:
 
     def __init__(self, snapshot: SnapshotInfo) -> None:
         self.snapshot = snapshot
-        try:
-            self.git = GitRepository(snapshot.source_path)
-            resolved = self.git.resolve_commit(snapshot.commit_sha)
-        except RepoMindError:
-            raise SearchRefused("The local copy of this repository cannot be read, so no result can be checked against Git.") from None
-        if resolved != snapshot.commit_sha:
-            raise SearchRefused("The indexed commit is not in the local copy of this repository, so no result can be checked against Git.")
+        self.git = local_copy(snapshot)
         self.verifier = CitationVerifier(self.git, snapshot.commit_sha)
         self._hidden: dict[tuple[str, str | None], frozenset[int]] = {}
 
     def _hidden_lines(self, path: str, language: str | None) -> frozenset[int]:
         key = (path, language)
         if key not in self._hidden:
-            raw = self.git.read_file(self.snapshot.commit_sha, path)
-            text = None if raw is None else normalize_source(raw)
-            self._hidden[key] = frozenset(hidden_lines(language, text)) if text else frozenset()
+            shown = read_indexed_file(self.git, self.snapshot.commit_sha, path, language)
+            self._hidden[key] = frozenset(shown.hidden_lines) if shown else frozenset()
         return self._hidden[key]
 
     def _check(self, chunk: ChunkRow) -> CitationCheck:
@@ -235,6 +232,7 @@ class _GitCheck:
                     is_test=bool(chunk.is_test),
                     preview=preview,
                     preview_truncated=truncated,
+                    preview_end_line=chunk.start_line + preview.count("\n"),
                     exists_in_git=True,
                 )
             )

@@ -11,8 +11,8 @@ from repomind.api import schemas
 from repomind.api.errors import ApiError
 from repomind.api.services import Services, public_message
 from repomind.errors import RepoMindError
-from repomind.ingest.filters import is_test_path, normalize_source
-from repomind.parsing.credentials import hidden_lines
+from repomind.indexed_file import read_indexed_file
+from repomind.ingest.filters import is_test_path
 from repomind.ingest.git_source import GitRepository
 from repomind.ingest.github import IndexFailure
 from repomind.qa.engine import AnswerCheck, AskResult
@@ -201,25 +201,19 @@ def file_content(request: Request, repo: RepoName, path: FilePath, commit: str |
     if entry is None:
         raise ApiError(404, "file_not_available", _FILE_NOT_AVAILABLE)
     try:
-        raw = GitRepository(snapshot.source_path).read_file(snapshot.commit_sha, path)
+        git = GitRepository(snapshot.source_path)
     except RepoMindError as exc:
         raise ApiError(503, "source_unavailable", "The local copy of this repository cannot be read.") from exc
-    text = normalize_source(raw) if raw is not None else None
-    if text is None:
+    shown = read_indexed_file(git, snapshot.commit_sha, path, entry["language"])
+    if shown is None:
         raise ApiError(404, "file_not_available", _FILE_NOT_AVAILABLE)
-    lines = text.split("\n")
-    if lines and lines[-1] == "":
-        lines.pop()
-    hidden = hidden_lines(entry["language"], text)
-    for number in hidden:
-        lines[number - 1] = ""
     return schemas.FileContent(
         repo=snapshot.repo,
         commit=snapshot.commit_sha,
         path=path,
         language=entry["language"],
-        lines=lines,
-        hidden_lines=hidden,
+        lines=shown.lines,
+        hidden_lines=shown.hidden_lines,
         has_syntax_errors=entry["has_syntax_errors"],
         origin_url=snapshot.origin_url,
     )
