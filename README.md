@@ -182,6 +182,15 @@ REPOMIND_LLM_MAX_TOTAL_COST_USD=0.05 # RepoMind'ın sizin fiyatlarınızla tuttu
 
 İlk gerçek istekten önce [docs/openai-first-run.md](docs/openai-first-run.md) (İngilizce) belgesini okuyun.
 
+**Uydurma bir depoda tek bir gerçek OpenAI isteği.** Soru 2026-11-24'te, `gpt-6-luna` ile, `a265b92` commit'inde indekslenmiş uydurma bir kütüphane deposu hakkında bir kez soruldu. Görsel, yanıtın kırpılmış hâlidir.
+- **Seçilen ve eklenen.** Model `src/fees.ts:6-10` satırlarını seçti. RepoMind, bu satırların kullandığı sabitlerin bildirimi olan `src/fees.ts:1-4` aralığını ekledi. Bunu model seçmedi.
+- **Kanıt değil.** İki aralık da `a265b92` commit'inde Git'te var ve kanıt kuralını geçti. Bu, soruyu yanıtladıklarını kanıtlamaz.
+- **Modelin notu,** seçilen satırlarda olmayan sayılar içerdiği için gösterilmedi.
+- **Bir ölçüm değil, tek bir soru.** Hiçbir OpenAI modeli RepoMind'da doğruluk açısından değerlendirilmedi.
+- **Gösterilen maliyet** RepoMind'ın girilen fiyatlarla yaptığı sayımdır, OpenAI'nin faturası değildir.
+
+![Uydurma bir kütüphane deposunda tek bir gerçek gpt-6-luna isteğine RepoMind'ın yanıtı: model src/fees.ts dosyasının 6-10. satırlarını seçti, RepoMind 1-4. satırları ekledi; ikisi de a265b92 commit'inde Git'te var olarak işaretli](docs/screenshots/openai-answer.png)
+
 ### GPU ile veya GPU olmadan
 
 **GPU olmadan** hiçbir şey değişmez: varsayılan budur ve yalnızca isteğe bağlı LLM daha yavaş çalışır. Geliştirme makinesinde tek bir Türkçe soru, modelin yüklenmesi dahil, CPU'da yaklaşık 50 saniye sürdü.
@@ -234,6 +243,13 @@ Arayüz İngilizcedir. Aşağıda düğme ve etiketler arayüzdeki özgün adlar
 | **Source to review** (incelenecek kaynak) | Model burayı gösterdi, ancak kanıt kuralı kabul etmedi | Bir yanıt olduğu |
 | **Closest lines found** (bulunan en yakın satırlar) | Aramanın bulduğu satırlar; hiçbir model bunları değerlendirmedi | Bir yanıt olduğu |
 | **AI unavailable** (yapay zekâ kullanılamıyor) | Modele sorulmadı: model kapalı, bellek az, anahtarı reddedildi, bütçesi bitti ya da bir sınıra ulaşıldı. Aşağıdaki satırları yalnızca arama buldu ve nedeni belirtilir | Bir arıza olduğu: geri kalan her şey çalışmaya devam eder |
+
+**Kanıt yoksa yanıt "bilmiyorum" olur.** Bu, aynı uydurma depo; model yapılandırılmamış. RepoMind'a "What is the database password in the configuration?" diye soruldu:
+- **Yanıt.** "Not enough evidence" (yeterli kanıt yok); hiçbir modele sorulmadan verildi.
+- **Neden.** "database" ve "password" kelimeleri indekslenen kodun hiçbir yerinde yok, çünkü indeksleme, yapılandırma dosyasının sahte parolayı tutan kısmını dışarıda bıraktı.
+- **Kimin yanıtı.** Bu bir modelin yanıtı değil, RepoMind'ın kendi kuralıdır.
+
+![Model yapılandırılmamışken RepoMind'ın Not enough evidence yanıtı: database ve password kelimeleri indekslenen kodun hiçbir yerinde bulunmuyor](docs/screenshots/not-enough-evidence.png)
 
 ## MCP sunucusu
 
@@ -315,6 +331,10 @@ RepoMind yabancıların yazdığı kodu okur; bu yüzden hem depoyu hem de depon
 - **MCP sunucusu:** Salt okunurdur; yalnızca ayarlarında listelenen depolar ve yalnızca bu sürümle yapılmış indeksler için çalışır. Döndürdükleri, MCP istemcisinin model sağlayıcısına gider: bkz. [MCP sunucusu](#mcp-sunucusu).
 - **Prompt injection:** Kod modele, kapatamayacağı etiketlerin (tag) içinde ulaşır; model pasajlara yalnızca kimlikleriyle (id) atıfta bulunur ve yanıtı kontrol edilir.
 - **Tarayıcı:** Depodan gelen her şey, katı bir içerik güvenlik politikasının (Content Security Policy) arkasında düz metin olarak gösterilir. Sunucu yalnızca kendi ana makine adlarına (host name) yanıt verir ve değişiklikleri yalnızca kendi sayfalarından kabul eder; böylece başka bir web sitesi onu yönetemez.
+
+**Kimlik bilgisi içerebilecek bir satır gizli kalır.** Bu, aynı uydurma deponun yapılandırma dosyası; `a265b92` commit'inde Git'ten okunuyor. 6. satırda sahte bir parola var. Bu satır gizleniyor ve sayfa nedenini söylüyor. Diğer satırlar Git'teki hâlleriyle gösteriliyor.
+
+![a265b92 commit'inde config/app.yml dosyasının görünümü: 6. satır kimlik bilgisi içerebileceği için gizli, diğer satırlar gösteriliyor](docs/screenshots/hidden-credential-line.png)
 
 Ayrıntılar: [docs/architecture.md](docs/architecture.md#web-application) (İngilizce).
 
