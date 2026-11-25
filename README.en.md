@@ -182,6 +182,15 @@ REPOMIND_LLM_MAX_TOTAL_COST_USD=0.05 # RepoMind's own count from your prices, no
 
 Before the first real request, read [docs/openai-first-run.md](docs/openai-first-run.md).
 
+**One real OpenAI request, on a made-up repository.** It was asked once, on 2026-11-24, with `gpt-6-luna`, about a made-up lending library indexed at commit `a265b92`. The image is a crop of the answer.
+- **Chosen and added.** The model chose `src/fees.ts:6-10`. RepoMind added `src/fees.ts:1-4`, which declares the constants those lines use. The model did not choose it.
+- **Not proof.** Both ranges are in Git at `a265b92` and passed the evidence rule. That does not prove that they answer the question.
+- **The model's note** was left out, because it gave numbers that are not in the chosen lines.
+- **One question, not a measurement.** No OpenAI model has been evaluated for accuracy in RepoMind.
+- **The cost shown** is RepoMind's count from the prices set, not OpenAI's bill.
+
+![RepoMind's answer to one real gpt-6-luna request about a made-up library: the model chose src/fees.ts lines 6 to 10, RepoMind added lines 1 to 4, and both are marked In Git at a265b92](docs/screenshots/openai-answer.png)
+
 ### With or without a GPU
 
 **Without a GPU** nothing changes: this is the default, and only the optional LLM is slower. On the development machine one Turkish question took about 50 seconds on the CPU, including loading the model.
@@ -232,6 +241,13 @@ Those are single questions on one machine, not benchmarks.
 | **Source to review** | The model pointed here, and the evidence rule did not accept it | An answer |
 | **Closest lines found** | What search found, with no judgement from a model | An answer |
 | **AI unavailable** | The model was not asked: it is off, memory is low, its key was refused, its budget is spent or a limit was reached. The lines below were found by search alone, and the reason is given | A failure: everything else keeps working |
+
+**When the evidence is not there, the answer is "I do not know".** This is the same made-up repository, with no model configured. RepoMind was asked "What is the database password in the configuration?":
+- **The answer.** "Not enough evidence", given before any model is asked.
+- **Why.** The words "database" and "password" are nowhere in the indexed code, because indexing left out the part of the configuration file that holds the fake password.
+- **Whose answer it is.** This is a rule in RepoMind, not a model's answer.
+
+![RepoMind answering Not enough evidence, with no model set up: database and password are not found anywhere in the indexed code](docs/screenshots/not-enough-evidence.png)
 
 ## MCP server
 
@@ -311,6 +327,10 @@ RepoMind reads code written by strangers, so it treats both the repository and t
 - **The MCP server:** read-only, only for the repositories listed in its settings, and only for indexes made by this version. What it returns goes to the MCP client's model provider: see [MCP server](#mcp-server).
 - **Prompt injection:** code reaches the model inside tags it cannot close, the model only refers to passages by id, and its reply is checked.
 - **The browser:** everything from a repository is rendered as text, behind a strict content security policy. The server answers only to its own host names, and accepts changes only from its own pages, so another website cannot drive it.
+
+**A line that may hold a credential stays hidden.** This is the configuration file of the same made-up repository, read from Git at `a265b92`. Line 6 holds a fake password. It is hidden, and the page says why. The other lines are shown as Git holds them.
+
+![The file view of config/app.yml at a265b92: line 6 is hidden because it may hold a credential, and the other lines are shown](docs/screenshots/hidden-credential-line.png)
 
 Details: [docs/architecture.md](docs/architecture.md#web-application).
 
